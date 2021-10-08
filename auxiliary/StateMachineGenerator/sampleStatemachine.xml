@@ -1,0 +1,42 @@
+<statemachine name = "stateMachine">
+    <state name = "stateName1">
+        <event name = "eventName1">
+            <function>DoSomeThing1</function>
+            <nextstate>stateName2</nextstate>
+        </event>
+        <event name = "eventName2">
+            <function>DoSomeThing2</function>
+            <nextstate>stateName3</nextstate>
+        </event>
+    </state>
+    <state name = "stateName2">
+        <event name = "eventName1">
+            <function>DoSomeThing1</function>
+            <nextstate>stateName3</nextstate>
+        </event>
+        <event name = "eventName2">
+            <function>DoSomeThing2</function>
+            <nextstate>stateName4</nextstate>
+        </event>
+    </state>
+    <state name = "stateName3">
+        <event name = "eventName1">
+            <function>DoSomeThing1</function>
+            <nextstate>stateName4</nextstate>
+        </event>
+        <event name = "eventName2">
+            <function>DoSomeThing2</function>
+            <nextstate>stateName1</nextstate>
+        </event>
+    </state>
+    <state name = "stateName4">
+        <event name = "eventName1">
+            <function>DoSomeThing1</function>
+            <nextstate>stateName1</nextstate>
+        </event>
+        <event name = "eventName2">
+            <function>DoSomeThing2</function>
+            <nextstate>stateName2</nextstate>
+        </event>
+    </state>
+</statemachine>

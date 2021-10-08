@@ -1,0 +1,146 @@
+<Statemachine name="Provisioning">
+    <State name="Initialization">
+        <Event name="NoEvent">
+            <Function>NULL</Function>
+            <NextState>GetCm4Id</NextState>
+        </Event>
+        <Event name="SendFrame">
+            <Function>Null</Function>
+            <NextState>Initialization</NextState>
+        </Event>
+        <Event name="GetFrame">
+            <Function>Null</Function>
+            <NextState>Initialization</NextState>
+        </Event>
+        <Event name="VerifyFrame">
+            <Function>Null</Function>
+            <NextState>Initialization</NextState>
+        </Event>
+    </State>
+    <State name="GetCm4Id">
+        <Event name="NoEvent">
+            <Function>NULL</Function>
+            <NextState>GetCm4Id</NextState>
+        </Event>
+        <Event name="SendFrame">
+            <Function>Null</Function>
+            <NextState>GetCm4Id</NextState>
+        </Event>
+        <Event name="GetFrame">
+            <Function>Null</Function>
+            <NextState>GetCm4Id</NextState>
+        </Event>
+        <Event name="VerifyFrame">
+            <Function>Null</Function>
+            <NextState>SendSamId</NextState>
+        </Event>
+    </State>
+    <State name="SendSamId">
+        <Event name="NoEvent">
+            <Function>NULL</Function>
+            <NextState>SendSamId</NextState>
+        </Event>
+        <Event name="SendFrame">
+            <Function>Null</Function>
+            <NextState>SendSamId</NextState>
+        </Event>
+        <Event name="GetFrame">
+            <Function>Null</Function>
+            <NextState>SendSamId</NextState>
+        </Event>
+        <Event name="VerifyFrame">
+            <Function>Null</Function>
+            <NextState>GetRandCommand</NextState>
+        </Event>
+    </State>
+    <State name="GetRandCommand">
+       <Event name="NoEvent">
+            <Function>NULL</Function>
+            <NextState>GetRandCommand</NextState>
+        </Event>
+        <Event name="SendFrame">
+            <Function>Null</Function>
+            <NextState>GetRandCommand</NextState>
+        </Event>
+        <Event name="GetFrame">
+            <Function>Null</Function>
+            <NextState>GetRandCommand</NextState>
+        </Event>
+        <Event name="VerifyFrame">
+            <Function>Null</Function>
+            <NextState>SendRnd</NextState>
+        </Event>
+    </State>
+    <State name="SendRnd">
+        <Event name="NoEvent">
+            <Function>NULL</Function>
+            <NextState>SendRnd</NextState>
+        </Event>
+        <Event name="SendFrame">
+            <Function>Null</Function>
+            <NextState>SendRnd</NextState>
+        </Event>
+        <Event name="GetFrame">
+            <Function>Null</Function>
+            <NextState>SendRnd</NextState>
+        </Event>
+        <Event name="VerifyFrame">
+            <Function>Null</Function>
+            <NextState>GetHelloSam</NextState>
+        </Event>
+    </State>
+    <State name="GetHelloSam">
+        <Event name="NoEvent">
+            <Function>NULL</Function>
+            <NextState>GetHelloSam</NextState>
+        </Event>
+        <Event name="SendFrame">
+            <Function>Null</Function>
+            <NextState>GetHelloSam</NextState>
+        </Event>
+        <Event name="GetFrame">
+            <Function>Null</Function>
+            <NextState>GetHelloSam</NextState>
+        </Event>
+        <Event name="VerifyFrame">
+            <Function>Null</Function>
+            <NextState>SendHelloCm4</NextState>
+        </Event>
+    </State>
+    <State name="SendHelloCm4">
+        <Event name="NoEvent">
+            <Function>NULL</Function>
+            <NextState>SendHelloCm4</NextState>
+        </Event>
+        <Event name="SendFrame">
+            <Function>Null</Function>
+            <NextState>SendHelloCm4</NextState>
+        </Event>
+        <Event name="GetFrame">
+            <Function>Null</Function>
+            <NextState>SendHelloCm4</NextState>
+        </Event>
+        <Event name="VerifyFrame">
+            <Function>Null</Function>
+            <NextState>GetFinAck</NextState>
+        </Event>
+    </State>
+    <State name="GetFinAck">
+        <Event name="NoEvent">
+            <Function>NULL</Function>
+            <NextState>GetFinAck</NextState>
+        </Event>
+        <Event name="SendFrame">
+            <Function>Null</Function>
+            <NextState>GetFinAck</NextState>
+        </Event>
+        <Event name="GetFrame">
+            <Function>Null</Function>
+            <NextState>GetFinAck</NextState>
+        </Event>
+        <Event name="VerifyFrame">
+            <Function>Null</Function>
+            <NextState>GetFinAck</NextState>
+        </Event>
+    </State>
+ </Statemachine>

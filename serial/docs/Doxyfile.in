@@ -1,0 +1,36 @@
+OUTPUT_DIRECTORY       = @CMAKE_CURRENT_BINARY_DIR@/doc_doxygen/
+INPUT                  = @CMAKE_CURRENT_SOURCE_DIR@/serial/ @CMAKE_CURRENT_SOURCE_DIR@/docs @CMAKE_CURRENT_SOURCE_DIR@/README.md
+OUTPUT_LANGUAGE        = English
+USE_MDFILE_AS_MAINPAGE = @CMAKE_CURRENT_SOURCE_DIR@/README.md
+EXTRACT_ALL            = YES
+FILE_PATTERNS          = *.c \
+                         *.cc \
+                         *.cxx \
+                         *.cpp \
+                         *.c++ \
+                         *.h \
+                         *.hpp \
+                         *.m \
+                         *.markdown \
+                         *.md
+INLINE_SOURCES         = YES
+SOURCE_BROWSER         = YES
+REFERENCES_LINK_SOURCE = YES
+SOURCE_TOOLTIPS        = YES
+VERBATIM_HEADERS       = YES
+SEARCHENGINE           = YES
+INCLUDE_GRAPH          = YES
+INCLUDED_BY_GRAPH      = YES
+CALL_GRAPH             = YES
+GRAPHICAL_HIERARCHY    = YES
+DIRECTORY_GRAPH        = YES
+DOT_CLEANUP            = YES
+GENERATE_LEGEND        = YES
+STRIP_CODE_COMMENTS    = YES
+SUBGROUPING            = YES
+AUTOLINK_SUPPORT       = YES
+MARKDOWN_SUPPORT       = YES
+OPTIMIZE_OUTPUT_FOR_C  = YES
+BRIEF_MEMBER_DESC      = YES
+REPEAT_BRIEF           = YES
+ALPHABETICAL_INDEX     = YES

@@ -1,0 +1,58 @@
+#include <limits.h>
+#include "gtest/gtest.h"
+
+extern "C" {
+#include "../hexdump.h"
+}
+
+namespace 
+{
+    TEST(Hexdump, Test_Binary) 
+    {
+        uint8_t au8Data[100];
+        for(uint8_t i = 0; i < 100; i= i +4)
+        {
+            au8Data[i] = 0xCA;
+            au8Data[i + 1] = 0xFE;
+            au8Data[i + 2] = 0xBE;
+            au8Data[i + 3] = 0xEF;
+        }
+        ezmHexdump((void *)au8Data, 100, true);
+
+        struct TestStruture
+        {
+            uint16_t u16c = 0xCAFE;
+            uint16_t u16a = 0xBEEF;
+            uint32_t u32a = 0xFFFFFFFF;
+            uint8_t u8b = 0xAA;
+        };
+
+        TestStruture stTest;
+        ezmHexdump((void *)&stTest, sizeof(TestStruture), true);
+    }
+    
+    TEST(Hexdump, Test_Ascii)
+    {
+        uint8_t au8CapitalLetter[24];
+
+        for(uint8_t i = 0; i < 24; i++)
+        {
+            au8CapitalLetter[i] = i + 0x41;
+        }
+        ezmHexdump((void *)au8CapitalLetter, 24, true);
+
+        uint8_t au8SmallLetter[24];
+
+        for(uint8_t i = 0; i < 24; i++)
+        {
+            au8SmallLetter[i] = i + 0x61;
+        }
+        ezmHexdump((void *)au8SmallLetter, 24, true);
+    } 
+}
+
+int main(int argc, char** argv)
+{
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}
