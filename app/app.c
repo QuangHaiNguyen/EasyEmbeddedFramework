@@ -24,6 +24,10 @@
 *******************************************************************************/
 #include "app.h"
 
+#if (SCHEDULER == 1U)
+#include "../scheduler/scheduler.h"
+#endif
+
 #if (MODULE_DEBUG == 1U) && (APP_DEBUG == 1U)
     #define APPPRINT1(a)                    PRINT_DEBUG1(a)               
     #define APPPRINT2(a,b)                  PRINT_DEBUG2(a,b)             
@@ -77,49 +81,56 @@ int sum(int a, int b)
     return a + b;
 }
 
-void ezm_AppInit(void)
+void ezmApp_SdkInit(void)
 {
 #if APP_DEBUG == 1
     ezm_AppPrintActiveModule();
+#endif
+
+#if (SCHEDULER == 1U)
+    /*must call init function here, but there is problem with the init so check it later*/
+    APPPRINT1("Initialize scheduler");
+    APPPRINT2("Number of available tasks: %d", NUM_OF_TASK);
 #endif
 }
 
 static void ezm_AppPrintActiveModule(void)
 {
+    APPPRINT1("ACTIVE MODULES:");
 #if (CMD_PARSER == 1U)
-    APPPRINT1("[x] CMD_PARSER");
+    APPPRINT1("\t[x] CMD_PARSER");
 #else
-    APPPRINT1("[ ] CMD_PARSER");
+    APPPRINT1("\t[ ] CMD_PARSER");
 #endif
 
 #if (DEBUG == 1U)
-    APPPRINT1("[x] DEBUG");
+    APPPRINT1("\t[x] DEBUG");
 #else
-    APPPRINT1("[ ] DEBUG");
+    APPPRINT1("\t[ ] DEBUG");
 #endif
 
 #if (HELPER_LINKEDLIST == 1U)
-    APPPRINT1("[x] HELPER_LINKEDLIST");    
+    APPPRINT1("\t[x] HELPER_LINKEDLIST");    
 #else
-    APPPRINT1("[ ] HELPER_LINKEDLIST");
+    APPPRINT1("\t[ ] HELPER_LINKEDLIST");
 #endif
 
 #if (HELPER_HEXDUMP == 1U)
-    APPPRINT1("[x] HELPER_HEXDUMP");
+    APPPRINT1("\t[x] HELPER_HEXDUMP");
 #else
-    APPPRINT1("[ ] HELPER_HEXDUMP");
+    APPPRINT1("\t[ ] HELPER_HEXDUMP");
 #endif
 
 #if (RING_BUFFER == 1U)
-    APPPRINT1("[x] RING_BUFFER");
+    APPPRINT1("\t[x] RING_BUFFER");
 #else
-    APPPRINT1("[ ] RING_BUFFER");
+    APPPRINT1("\t[ ] RING_BUFFER");
 #endif
 
 #if (SMALLOC == 1U)
-    APPPRINT1("[x] SMALLOC");
+    APPPRINT1("\t[x] SMALLOC");
 #else
-    APPPRINT1("[ ] SMALLOC");
+    APPPRINT1("\t[ ] SMALLOC");
 #endif
 }
 /* End of file*/

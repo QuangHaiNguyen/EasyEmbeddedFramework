@@ -37,9 +37,18 @@
 #define CLI_MOD_ID                  0x01U
 #endif
 
+/* SCHEDULER SECTION*/
 #if (SCHEDULER == 1U)
+
 #define SCHEDULER_MOD_ID            0x02U
-#include "../scheduler/scheduler.h"
+/**< ID of scheduler module*/
+
+#define NUM_OF_TASK                 5U
+/**< number of supported task, maximum is 255 tasks*/
+
+#define TASK_DIAGNOSE               0U
+/**< turn on task timing debug out*/
+
 #endif
 
 #if (SMALLOC == 1U)

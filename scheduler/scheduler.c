@@ -24,6 +24,7 @@
 *******************************************************************************/
 #include "scheduler.h"
 #include "../ezmDebug/ezmDebug.h"
+#include "../app/app_config.h"
 
 #if (MODULE_DEBUG == 1U) && (SCHEDULER_DBG == 1U)
     #define SCHEDULERPRINT1(a)              PRINT_DEBUG1(a)               

@@ -9,7 +9,7 @@ namespace
 {
     TEST(Sum, Result) 
     {
-        ezm_AppInit();
+        ezmApp_SdkInit();
     }
 
 }
