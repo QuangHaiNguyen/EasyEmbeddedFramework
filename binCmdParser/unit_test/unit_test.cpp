@@ -2,6 +2,9 @@
 #include "gtest/gtest.h"
 
 extern "C" {
+#include "../../app/app_config.h"
+
+#if (BIN_PARSER == 1U)
 #include "../binCmdParser.h"
 #include "../../ezmDebug/ezmDebug.h"
 
@@ -58,10 +61,12 @@ void CrCCalculate(BinFrame * pstFrame)
     return;
 }
 
+#endif /* BIN_PARSER */
 }
 
 namespace 
 {
+#if (BIN_PARSER == 1U)
     TEST(Parser, Basic) 
     {
         BinCmdParser stParser;
@@ -139,6 +144,7 @@ namespace
         ezmParser_RunCmdParser(&stParser);
         ASSERT_EQ(stParser.stMemList.u16Size, 0x00U);
     }
+#endif /* BIN_PARSER */
 }
 
 int main(int argc, char** argv)

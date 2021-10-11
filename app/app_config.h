@@ -24,6 +24,7 @@
 #define CLI                     1U
 #define SCHEDULER               0U
 #define SMALLOC                 1U
+#define BIN_PARSER              1U
 #define HELPER_LINKEDLIST       1U
 #define HELPER_HEXDUMP          1U
 #define DEBUG                   1U
@@ -31,7 +32,6 @@
 #define HELPER_ASSERT           1U
 #define STATEMACHINE            1U
 #define IPC                     1U
-#define BIN_PARSER              1U
 
 /*Module ID section*/
 
@@ -69,9 +69,26 @@
 
 #endif /* SMALLOC */
 
+/* BIN_PARSER SECTION ********************************************************/
 #if (BIN_PARSER == 1U)
+
+#if (SMALLOC == 0U)
+#error module HELPER_LINKEDLIST must be activated
+#endif /* SMALLOC */
+
 #define BIN_PARSER_MOD_ID           0x04U
-#endif
+/**< ID of bin cmd parser module*/
+
+#define PAYLOAD_MAX_SIZE            32U
+/**< maximum size of the payload, in binary*/
+
+#define SOF                         0x00U
+/**< start of frame value*/
+
+#define CRC_SIZE                    0x02U
+/**< size of the crc, in byte*/
+
+#endif /* BIN_PARSER */
 
 #if (DEBUG == 1U)
 #define DEBUG_MOD_ID                0x05U

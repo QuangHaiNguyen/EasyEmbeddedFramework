@@ -66,7 +66,7 @@ add_subdirectory(helper/smalloc)
 add_subdirectory(helper/linked_list)
 add_subdirectory(helper/ezmAssert)
 add_subdirectory(helper/hexdump)
-#add_subdirectory(binCmdParser)
+add_subdirectory(binCmdParser)
 
 ########################################################################
 # Doxygen 

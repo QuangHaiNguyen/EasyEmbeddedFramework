@@ -16,8 +16,6 @@
 /** @file   module.h
  *  @brief  Header template for a module
  */
-
-
 #ifndef _BIN_PARSER_H
 #define _BIN_PARSER_H
 
@@ -26,21 +24,32 @@
 *******************************************************************************/
 #include "../app/app_config.h"
 
-#if (BIN_PARSER == 1U)
+#if(SMALLOC == 1U)
+#include "../helper/smalloc/smalloc.h"
+#else
+#error SMALLOC must be activated
+#endif
+
+
+
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
-#define PAYLOAD_MAX_SIZE        32U
-#define SOF                     0x00U
-#define CRC_SIZE                0x02U
-#define VERBOSE                 0x00U
-/**< a macro*/
+/*Work around to prevent compile error, the definition locates in app_conf.h*/
+#ifndef PAYLOAD_MAX_SIZE
+#define PAYLOAD_MAX_SIZE        0U
+#endif /* PAYLOAD_MAX_SIZE */
+
+/*Work around to prevent compile error, the definition locates in app_conf.h*/
+#ifndef CRC_SIZE
+#define CRC_SIZE                0U
+#endif /* CRC_SIZE */
 
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
 /**
- * Defines the each state required to receive a complete packet
+ * brief:   Defines the each state required to receive a complete packet
  */
 typedef enum
 {
@@ -128,7 +137,7 @@ typedef struct
 /******************************************************************************
 * Module Variable Definitions
 *******************************************************************************/
-
+/* None */
 
 /******************************************************************************
 * Function Prototypes
@@ -136,7 +145,6 @@ typedef struct
 void ezmParser_Init(BinCmdParser * pstParser, uint8_t u8ModuleId);
 void ezmParser_RunBinParser(BinCmdParser * pstParser, uint8_t u8Byte);
 void ezmParser_RunCmdParser(BinCmdParser * pstParser);
-#endif /* (BIN_PARSER == 1U) */
-#endif /* _BIN_PARSER_H */
 
+#endif /* _BIN_PARSER_H */
 /* End of file*/

@@ -33,6 +33,10 @@
 #include "../helper/smalloc/smalloc.h"
 #endif /* SMALLOC */
 
+#if (BIN_PARSER == 1U)
+#include "../binCmdParser/binCmdParser.h"
+#endif /* BIN_PARSER */
+
 #if (MODULE_DEBUG == 1U) && (APP_DEBUG == 1U)
     #define APPPRINT1(a)                    PRINT_DEBUG1(a)               
     #define APPPRINT2(a,b)                  PRINT_DEBUG2(a,b)             
@@ -106,6 +110,16 @@ void ezmApp_SdkInit(void)
     APPPRINT2("Availalbe memory: %d bytes", STATIC_MEMORY_SIZE);
 #endif
 
+#if (BIN_PARSER == 1U)
+    /* BIN_PARSER module has no init function*/
+    APPPRINT1("Initialize binary command parser module");
+    APPPRINT2("Module Id: %d", BIN_PARSER_MOD_ID);
+    APPPRINT2("payload size: %d bytes", PAYLOAD_MAX_SIZE);
+    APPPRINT2("CRC size: %d bytes", CRC_SIZE);
+    APPPRINT2("Start of frame: 0x%02x ", SOF);
+#endif /* BIN_PARSER */
+
+
 }
 
 static void ezm_AppPrintActiveModule(void)
@@ -124,10 +138,10 @@ static void ezm_AppPrintActiveModule(void)
     APPPRINT1("\t[ ] SMALLOC");
 #endif
 
-#if (CMD_PARSER == 1U)
-    APPPRINT1("\t[x] CMD_PARSER");
+#if (BIN_PARSER == 1U)
+    APPPRINT1("\t[x] BIN_PARSER");
 #else
-    APPPRINT1("\t[ ] CMD_PARSER");
+    APPPRINT1("\t[ ] BIN_PARSER");
 #endif
 
 #if (DEBUG == 1U)
