@@ -12,7 +12,7 @@
 *  24.01.2021   1.0.0       Quang Hai Nguyen    Initial Release.
 *
 *******************************************************************************/
-/** @file  my_math.c
+/** @file  smalloc.c
  *  @brief This is the source file for network component. Containing the init 
  *  function which point to the hardware implementation and the de-init function, 
  *  which frees the resource
@@ -21,6 +21,9 @@
 /******************************************************************************
 * Includes
 *******************************************************************************/
+#include "../../app/app_config.h"
+
+#if (SMALLOC == 1U)
 #include "smalloc.h"
 #include <stddef.h>
 #include <stdio.h>
@@ -29,6 +32,12 @@
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
+#define ENABLE_HEXDUMP              0U
+
+#if STATIC_MEMORY_SIZE == 0U
+#error memory size must be bigger than 0
+#endif /* STATIC_MEMORY_SIZE */
+
 #if (MODULE_DEBUG == 1U) && (SMALLOC_DEBUG == 1U)
     #define SMALLOCPRINT1(a)                PRINT_DEBUG1(a)               
     #define SMALLOCPRINT2(a,b)              PRINT_DEBUG2(a,b)             
@@ -561,5 +570,7 @@ void ezmSmalloc_PrintStats(void)
     PRINT1("*Block statistic end***********************************************");
 }
 #endif
-
 #endif /* SMALLOC_ANALYSIS */
+
+#endif /* SMALLOC */
+/* End of file */

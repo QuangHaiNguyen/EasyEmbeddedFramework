@@ -52,15 +52,22 @@
 /**< turn on task timing debug out*/
 #endif /* SCHEDULER */
 
-
+/* SMALLOC SECTION ***********************************************************/
 #if (SMALLOC == 1U)
 #if (HELPER_LINKEDLIST == 0U)
 #error module HELPER_LINKEDLIST must be activated
 #endif
 
 #define SMALLOC_MOD_ID              0x03U
-#include "../helper/smalloc/smalloc.h"
-#endif
+/**< ID of smaloc module*/
+
+#define STATIC_MEMORY_SIZE          512U
+/**< number of bytes reserved for the buffer*/
+
+#define ENABLE_STATS                0U
+/**< Enable statisic*/
+
+#endif /* SMALLOC */
 
 #if (BIN_PARSER == 1U)
 #define BIN_PARSER_MOD_ID           0x04U

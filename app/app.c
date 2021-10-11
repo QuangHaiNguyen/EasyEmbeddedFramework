@@ -23,10 +23,15 @@
 * Includes
 *******************************************************************************/
 #include "app.h"
+#include "app_config.h"
 
 #if (SCHEDULER == 1U)
 #include "../scheduler/scheduler.h"
-#endif
+#endif /* SCHEDULER */
+
+#if (SMALLOC == 1U)
+#include "../helper/smalloc/smalloc.h"
+#endif /* SMALLOC */
 
 #if (MODULE_DEBUG == 1U) && (APP_DEBUG == 1U)
     #define APPPRINT1(a)                    PRINT_DEBUG1(a)               
@@ -90,13 +95,35 @@ void ezmApp_SdkInit(void)
 #if (SCHEDULER == 1U)
     /*must call init function here, but there is problem with the init so check it later*/
     APPPRINT1("Initialize scheduler");
+    APPPRINT2("Module Id: %d", SCHEDULER_MOD_ID);
     APPPRINT2("Number of available tasks: %d", NUM_OF_TASK);
 #endif
+
+#if (SMALLOC == 1U)
+    /* SMALLOC module has no init function*/
+    APPPRINT1("Initialize smalloc");
+    APPPRINT2("Module Id: %d", SMALLOC_MOD_ID);
+    APPPRINT2("Availalbe memory: %d bytes", STATIC_MEMORY_SIZE);
+#endif
+
 }
 
 static void ezm_AppPrintActiveModule(void)
 {
     APPPRINT1("ACTIVE MODULES:");
+
+#if (SCHEDULER == 1U)
+    APPPRINT1("\t[x] SCHEDULER");
+#else
+    APPPRINT1("\t[ ] SCHEDULER");
+#endif
+
+#if (SMALLOC == 1U)
+    APPPRINT1("\t[x] SMALLOC");
+#else
+    APPPRINT1("\t[ ] SMALLOC");
+#endif
+
 #if (CMD_PARSER == 1U)
     APPPRINT1("\t[x] CMD_PARSER");
 #else
@@ -127,10 +154,6 @@ static void ezm_AppPrintActiveModule(void)
     APPPRINT1("\t[ ] RING_BUFFER");
 #endif
 
-#if (SMALLOC == 1U)
-    APPPRINT1("\t[x] SMALLOC");
-#else
-    APPPRINT1("\t[ ] SMALLOC");
-#endif
+
 }
 /* End of file*/

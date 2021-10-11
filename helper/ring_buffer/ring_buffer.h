@@ -32,7 +32,7 @@
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
-#define STATIC_MEM  0
+#define STATIC_MEM  1
 
 #if (STATIC_MEM == 1)
     #define STATIC_MEM_SIZE 512U
