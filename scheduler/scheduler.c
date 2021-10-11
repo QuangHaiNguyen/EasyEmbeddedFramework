@@ -10,6 +10,7 @@
 * <table align="left" style="width:800px">
 * <tr><td> Date       </td><td> Software Version </td><td> Initials         </td><td> Description </td></tr>
 * <tr><td> 24.02.2021 </td><td> 1.0.0            </td><td> Quang Hai Nguyen </td><td> Interface Created </td></tr>
+* <tr><td> 11.10.2021 </td><td> 1.0.1            </td><td> Quang Hai Nguyen </td><td> Add macro to turn on/off module </td></tr>
 * </table><br><br>
 * <hr>
 *
@@ -22,9 +23,13 @@
 /******************************************************************************
 * Includes
 *******************************************************************************/
+
+#include "../app/app_config.h"
+
+#if (SCHEDULER == 1U)
+
 #include "scheduler.h"
 #include "../ezmDebug/ezmDebug.h"
-#include "../app/app_config.h"
 
 #if (MODULE_DEBUG == 1U) && (SCHEDULER_DBG == 1U)
     #define SCHEDULERPRINT1(a)              PRINT_DEBUG1(a)               
@@ -420,4 +425,7 @@ static void ezmScheduler_DefaulTask(void)
 {
     SCHEDULERPRINT1("Running default task");
 }
+
+#endif /* SCHEDULER */
+
 /* End of file*/

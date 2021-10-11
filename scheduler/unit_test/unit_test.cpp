@@ -1,12 +1,13 @@
 #include <limits.h>
 #include "gtest/gtest.h"
+#include "../../app/app_config.h"
 
+#if ( SCHEDULER == 1U )
 extern "C" {
 #include "../scheduler.h"
 #include "stdint.h"
 #include <stdbool.h>
 #include <time.h>
-#include "../../ezmDebug/ezmDebug.h"
 
 #define TOTAL_RUNTIME               10000
 #define TASK_DEFAULT_INTERVAL       500
@@ -64,9 +65,12 @@ void Task5(void)
 }
 
 }
+#endif
 
 namespace 
 {
+#if (SCHEDULER == 1U)
+
     TEST(Scheduler, Init) 
     {
         ezmScheduler_Task * pstDefaultTask;
@@ -220,6 +224,7 @@ namespace
         ASSERT_EQ(u32Sum3, u32SumCheckpoint3);
         ASSERT_EQ(u32Sum4, u32SumCheckpoint4);
     }
+#endif /* SCHEDULER */
 }
 
 int main(int argc, char** argv)
