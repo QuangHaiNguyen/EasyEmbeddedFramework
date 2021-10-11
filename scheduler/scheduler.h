@@ -30,11 +30,7 @@
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
-#define NUM_OF_TASK     5U
-/**< number of supported task, maximum is 255 tasks*/
 
-#define TASK_DIAGNOSE   0U
-/**< turn on task timing debug out*/
 
 /******************************************************************************
 * Module Typedefs

@@ -58,7 +58,7 @@ typedef struct
 * Function Prototypes
 *******************************************************************************/
 int sum(int a, int b); /* Short description of function */
-void ezm_AppInit(void); /* Init the stach and nrequired module*/
+void ezmApp_SdkInit(void); /* Init the stach and nrequired module*/
 
 #endif /* _APP_H */
 
