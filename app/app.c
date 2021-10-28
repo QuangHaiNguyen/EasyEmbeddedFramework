@@ -129,6 +129,24 @@ void ezmApp_SdkInit(void)
     APPPRINT2("Module Id: 0x%02x", HELPER_HEXDUMP_MOD_ID);
 #endif
 
+#if (RING_BUFFER == 1U)
+    /* DEBUG module has no init function*/
+    APPPRINT1("Initialize ring buffer module");
+    APPPRINT2("Module Id: 0x%02x", RING_BUFFER_MOD_ID);
+
+#if (STATIC_MEM == 1)
+    APPPRINT2("Using static memory, buffer size of each ring %d bytes", STATIC_MEM_SIZE);
+#else
+    APPPRINT1("Using dynamic memory allocation with SMALLOC module");
+#endif /*STATIC_MEM*/
+#endif /* RING_BUFFER */
+
+#if (HELPER_ASSERT == 1U)
+    /* DEBUG module has no init function*/
+    APPPRINT1("Initialize assert module");
+    APPPRINT2("Module Id: 0x%02x", HELPER_ASSERT_MOD_ID);
+#endif
+
 }
 
 /******************************************************************************
@@ -197,6 +215,11 @@ static void ezm_AppPrintActiveModule(void)
     APPPRINT1("\t[ ] RING_BUFFER");
 #endif
 
+#if (HELPER_ASSERT == 1U)
+    APPPRINT1("\t[x] HELPER_ASSERT");
+#else
+    APPPRINT1("\t[ ] HELPER_ASSERT");
+#endif
 
 }
 /* End of file*/

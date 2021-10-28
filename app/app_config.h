@@ -28,8 +28,8 @@
 #define HELPER_LINKEDLIST       1U
 #define HELPER_HEXDUMP          0U
 #define DEBUG                   1U
-#define RING_BUFFER             1U
-#define HELPER_ASSERT           1U
+#define RING_BUFFER             0U
+#define HELPER_ASSERT           0U
 #define STATEMACHINE            1U
 #define IPC                     1U
 
@@ -118,13 +118,28 @@
 #if (RING_BUFFER == 1U)
 #define RING_BUFFER_MOD_ID          0x08U
 #include "../helper/ring_buffer/ring_buffer.h"
+
+#define STATIC_MEM  1
+
+#if (STATIC_MEM == 1)
+    #define STATIC_MEM_SIZE 512U
+    #if STATIC_MEM_SIZE > 0xFFFF
+        #error size is bigger than 16 bits
+    #endif /* STATIC_MEM_SIZE */
+#else
+    #if (SMALLOC == 0U)
+        #error SMALLOC module must be activated
+    #endif /* SMALLOC */
+#endif /*STATIC_MEM*/
+
 #endif /* RING_BUFFER */
 
 
+/* HELPER_ASSERT SECTION *****************************************************/
 #if (HELPER_ASSERT == 1U)
 #define HELPER_ASSERT_MOD_ID        0x09U
 #include "../helper/ezmAssert/ezmAssert.h"
-#endif
+#endif /* HELPER_ASSERT */
 
 #if (STATEMACHINE == 1U)
 #define STATEMACHINE_MOD_ID        0x0AU

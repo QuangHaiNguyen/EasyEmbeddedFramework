@@ -18,10 +18,10 @@ namespace
         ASSERT(var1 < 10);
         ASSERT(var1 == 10);
 
-        int * ptr;
+        int * ptr = NULL;
         int var2 = 20;
 
-        ASSERT(ptr != NULL);
+        ASSERT(ptr == NULL);
 
         ptr = &var2;
         ASSERT(ptr != NULL);

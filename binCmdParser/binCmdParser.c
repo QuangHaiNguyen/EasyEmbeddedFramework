@@ -24,13 +24,13 @@
 *******************************************************************************/
 #include "binCmdParser.h"
 
+#if (BIN_PARSER == 1U)
+
 #if(HELPER_ASSERT == 1U)
 #include "../helper/ezmAssert/ezmAssert.h"
 #else
 #error HELPER_ASSERT must be activated
 #endif
-
-#if (BIN_PARSER == 1U)
 
 REGISTER_ASSERT(BIN_PARSER_MOD_ID)
 
