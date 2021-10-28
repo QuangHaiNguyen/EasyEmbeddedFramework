@@ -22,8 +22,10 @@
 /******************************************************************************
 * Includes
 *******************************************************************************/
+#include "../../app/app_config.h"
+
+#if(HELPER_HEXDUMP == 1U)
 #include "hexdump.h"
-#include "stdio.h"
 
 
 /******************************************************************************
@@ -58,7 +60,7 @@
 * 
 * @param    pAddress: (IN)pointer to the ring buffer
 * @param    u16Size: (IN)size of the ring buffer
-* @param    bIsPrintAscii: (IN) flag to activate print data also as ascii
+* @param    eShowAscii: (IN) flag to activate print data also as ascii
 * @return   None
 *
 * \b Example Example:
@@ -67,10 +69,8 @@
 * Hexdump((void *)&au8Buffer, 4, true);
 * @endcode
 *
-* @see sum
-*
 *******************************************************************************/
-void ezmHexdump( void * pAddress, uint16_t u16Size, bool bIsPrintAscii)
+void ezmHexdump( void * pAddress, uint16_t u16Size, ENUM_SHOW_ASCII eShowAscii)
 {
     void * ulStartingAddress = pAddress;
 
@@ -90,7 +90,7 @@ void ezmHexdump( void * pAddress, uint16_t u16Size, bool bIsPrintAscii)
             }
         }
 
-        if(bIsPrintAscii)
+        if(eShowAscii == SHOW_ASCII)
         {
             PRINTF_NO_NL("%s", "| ");
             for(uint8_t i = 0; i < 16; i = i + 1)
@@ -106,10 +106,15 @@ void ezmHexdump( void * pAddress, uint16_t u16Size, bool bIsPrintAscii)
                 }
             }
         }
+        else
+        {
+            /* Do nothing */
+        }
         PRINT1("");
         ulStartingAddress = ulStartingAddress + 16;
     }
     PRINT1("");
 }
 
+#endif /* HELPER_HEXDUMP */
 /* End of file*/

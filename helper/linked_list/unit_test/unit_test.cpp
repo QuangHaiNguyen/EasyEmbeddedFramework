@@ -2,17 +2,14 @@
 #include "gtest/gtest.h"
 
 extern "C" {
-#include "../linked_list.h"
-#include "../../../ezmDebug/ezmDebug.h"
+#include "../../../app/app_config.h"
 }
-
-
-
 
 #define NUM_OF_NODE 10U
 
 namespace 
 {
+#if (HELPER_LINKEDLIST == 1U)
     TEST(Linked_List, Add_Node_To_Head) 
     {
         LinkedList stMyList;
@@ -39,8 +36,6 @@ namespace
             LinkedList_InsertToHead(&stMyList, &astNode[i]);
         }
 
-        PRINT_LIST_FORWARD(&stMyList);
-
         ASSERT_EQ(NUM_OF_NODE, stMyList.u16Size);
         ASSERT_EQ((void*)astNode, stMyList.pstTail);
         ASSERT_EQ((void*)(astNode + NUM_OF_NODE - 1), stMyList.pstHead);
@@ -65,8 +60,6 @@ namespace
         {
             LinkedList_InsertToHead(&stMyList, &astNode[i]);
         }
-
-        PRINT_LIST_FORWARD(&stMyList);
 
         for(uint8_t i = 0; i < NUM_OF_NODE - 1; i++)
         {
@@ -107,8 +100,6 @@ namespace
             LinkedList_InsertToTail(&stMyList, &astNode[i]);
         }
 
-        PRINT_LIST_FORWARD(&stMyList);
-
         ASSERT_EQ(NUM_OF_NODE, stMyList.u16Size);
         ASSERT_EQ((void*)astNode, stMyList.pstHead);
         ASSERT_EQ((void*)(astNode + NUM_OF_NODE - 1), stMyList.pstTail);
@@ -133,8 +124,6 @@ namespace
         {
             LinkedList_InsertToTail(&stMyList, &astNode[i]);
         }
-
-        PRINT_LIST_FORWARD(&stMyList);
 
         for(uint8_t i = 0; i < NUM_OF_NODE - 1; i++)
         {
@@ -169,8 +158,6 @@ namespace
         {
             LinkedList_InsertToTail(&stMyList, &astNode[i]);
         }
-
-        PRINT_LIST_FORWARD(&stMyList);
 
         Node * pstFoundNode = NULL;
 
@@ -224,8 +211,6 @@ namespace
             LinkedList_InsertToTail(&stMyList, &astNode[i]);
         }
 
-        PRINT_LIST_FORWARD(&stMyList);
-
         Node stHeadNode;
         Node stTailNode;
         Node stNodeidx3;
@@ -236,37 +221,31 @@ namespace
         Node * pstFoundNode = NULL;
 
         LinkedList_InsertNodeAtIndex(&stMyList, &stHeadNode, 0U);
-        PRINT_LIST_FORWARD(&stMyList);
         pstFoundNode = LinkedList_FindNodeAtIndex(&stMyList, 0U);
         ASSERT_EQ((void*)pstFoundNode, &stHeadNode);
         ASSERT_EQ(stMyList.u16Size, 11U);
 
         LinkedList_InsertNodeAtIndex(&stMyList, &stTailNode, 10U);
-        PRINT_LIST_FORWARD(&stMyList);
         pstFoundNode = LinkedList_FindNodeAtIndex(&stMyList, 11U);
         ASSERT_EQ((void*)pstFoundNode, &stTailNode);
         ASSERT_EQ(stMyList.u16Size, 12U);
         
         LinkedList_InsertNodeAtIndex(&stMyList, &stNodeidx3, 3U);
-        PRINT_LIST_FORWARD(&stMyList);
         pstFoundNode = LinkedList_FindNodeAtIndex(&stMyList, 3U);
         ASSERT_EQ((void*)pstFoundNode, &stNodeidx3);
         ASSERT_EQ(stMyList.u16Size, 13U);
         
         LinkedList_InsertNodeAtIndex(&stMyList, &stNodeidx5, 5U);
-        PRINT_LIST_FORWARD(&stMyList);
         pstFoundNode = LinkedList_FindNodeAtIndex(&stMyList, 5U);
         ASSERT_EQ((void*)pstFoundNode, &stNodeidx5);
         ASSERT_EQ(stMyList.u16Size, 14U);
 
         LinkedList_InsertNodeAtIndex(&stMyList, &stNodeidx7, 7U);
-        PRINT_LIST_FORWARD(&stMyList);
         pstFoundNode = LinkedList_FindNodeAtIndex(&stMyList, 7U);
         ASSERT_EQ((void*)pstFoundNode, &stNodeidx7);
         ASSERT_EQ(stMyList.u16Size, 15U);
 
         LinkedList_InsertNodeAtIndex(&stMyList, &stNodeidx9, 9U);
-        PRINT_LIST_FORWARD(&stMyList);
         pstFoundNode = LinkedList_FindNodeAtIndex(&stMyList, 9U);
         ASSERT_EQ((void*)pstFoundNode, &stNodeidx9);
         ASSERT_EQ(stMyList.u16Size, 16U);
@@ -276,19 +255,16 @@ namespace
         Node stOutOfBoundNode3;
 
         LinkedList_InsertNodeAtIndex(&stMyList, &stOutOfBoundNode1, 19U);
-        PRINT_LIST_FORWARD(&stMyList);
         pstFoundNode = LinkedList_FindNodeAtIndex(&stMyList, 19U);
         EXPECT_TRUE(pstFoundNode== nullptr);
         ASSERT_EQ(stMyList.u16Size, 16U);
 
         LinkedList_InsertNodeAtIndex(&stMyList, &stOutOfBoundNode2, 29U);
-        PRINT_LIST_FORWARD(&stMyList);
         pstFoundNode = LinkedList_FindNodeAtIndex(&stMyList, 29U);
         EXPECT_TRUE(pstFoundNode== nullptr);
         ASSERT_EQ(stMyList.u16Size, 16U);
 
         LinkedList_InsertNodeAtIndex(&stMyList, &stOutOfBoundNode3, 39U);
-        PRINT_LIST_FORWARD(&stMyList);
         pstFoundNode = LinkedList_FindNodeAtIndex(&stMyList, 39U);
         EXPECT_TRUE(pstFoundNode== nullptr);
         ASSERT_EQ(stMyList.u16Size, 16U);
@@ -314,34 +290,28 @@ namespace
             LinkedList_InsertToTail(&stMyList, &astNode[i]);
         }
 
-        PRINT_LIST_FORWARD(&stMyList);
 
         Node * pstRemoveNode;
 
         pstRemoveNode = LinkedList_RemoveNodeAtIndex(&stMyList, 0);
-        PRINT_LIST_FORWARD(&stMyList);
         ASSERT_EQ((void*)pstRemoveNode, &astNode[0U]);
         ASSERT_EQ(stMyList.u16Size, 9U);
         
         pstRemoveNode = LinkedList_RemoveNodeAtIndex(&stMyList, stMyList.u16Size - 1U);
-        PRINT_LIST_FORWARD(&stMyList);
         ASSERT_EQ((void*)pstRemoveNode, &astNode[NUM_OF_NODE - 1U]);
         ASSERT_EQ(stMyList.u16Size,8U);
 
         pstRemoveNode = LinkedList_RemoveNodeAtIndex(&stMyList, 2U);
-        PRINT_LIST_FORWARD(&stMyList);
         ASSERT_EQ((void*)pstRemoveNode, &astNode[3U]);
         ASSERT_EQ(stMyList.u16Size,7U);
 
         pstRemoveNode = LinkedList_RemoveNodeAtIndex(&stMyList, 5U);
-        PRINT_LIST_FORWARD(&stMyList);
         ASSERT_EQ((void*)pstRemoveNode, &astNode[7U]);
         ASSERT_EQ(stMyList.u16Size, 6U);
 
         for(uint8_t i = 0; i < 6U; i++)
         {
             pstRemoveNode = LinkedList_RemoveNodeAtIndex(&stMyList, 0U);
-            PRINT_LIST_FORWARD(&stMyList);
         }
         
         pstRemoveNode = LinkedList_RemoveNodeAtIndex(&stMyList, 0U);
@@ -411,7 +381,6 @@ namespace
 
         Node anotherNode2;
         LinkedList_InsertNewNodeAfterANode(&stMyList,  &astNode[9], &anotherNode2);
-        PRINT_LIST_FORWARD(&stMyList);
         pstTestNode = LinkedList_FindNodeAtIndex(&stMyList, 11);  
         ASSERT_EQ(&anotherNode2, pstTestNode);
         ASSERT_EQ(NUM_OF_NODE + 2U, stMyList.u16Size);
@@ -466,6 +435,7 @@ namespace
         ASSERT_EQ(0U, stMyList.u16Size);
 
     }
+#endif /* HELPER_LINKEDLIST */
 }
 
 int main(int argc, char** argv)

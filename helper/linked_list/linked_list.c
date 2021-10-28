@@ -22,6 +22,11 @@
 /******************************************************************************
 * Includes
 *******************************************************************************/
+
+#include "../../app/app_config.h"
+
+#if (HELPER_LINKEDLIST == 1U)
+
 #include "linked_list.h"
 #include "stdlib.h"
 #include "stdbool.h"
@@ -53,6 +58,25 @@
 /******************************************************************************
 * Function Definitions
 *******************************************************************************/
+#if HELPER_LINKEDLIST_DEBUG == 1U
+void LinkedList_PrintLinkedListMetaData(LinkedList * pstList);      /*Print linked list's metadata*/
+void LinkedList_PrintNodeMetaData(Node * pstNode);                  /*Print node's metadata*/
+void LinkedList_PrintListForward(LinkedList * pstList);             /*Print list from head -> tail*/
+void LinkedList_PrintListBackward(LinkedList * pstList);            /*Print List from tail -> head*/
+#endif
+
+#if (MODULE_DEBUG == 1U) && (HELPER_LINKEDLIST_DEBUG == 1U)
+    #define PRINT_LIST_METADATA(x)      LinkedList_PrintLinkedListMetaData(x)
+    #define PRINT_NODE_METADATA(x)      LinkedList_PrintNodeMetaData(x)
+    #define PRINT_LIST_FORWARD(x)       LinkedList_PrintListForward(x)
+    #define PRINT_LIST_BACKWARD(x)      LinkedList_PrintListBackward(x)
+#else
+    #define PRINT_LIST_METADATA(x)
+    #define PRINT_NODE_METADATA(x)
+    #define PRINT_LIST_FORWARD(x)
+    #define PRINT_LIST_BACKWARD(x)
+#endif
+
 
 /******************************************************************************
 * Function : LinkedList_AddToHead
@@ -431,5 +455,6 @@ void LinkedList_PrintListBackward(LinkedList * pstList)
         pstCurrentNode = pstCurrentNode->pstPrevNode;
     }
 }
-#endif
+#endif /* HELPER_LINKEDLIST_DEBUG */
+#endif /* HELPER_LINKEDLIST */
 /* End of file*/

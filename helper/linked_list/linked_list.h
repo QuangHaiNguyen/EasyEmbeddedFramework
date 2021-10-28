@@ -17,8 +17,8 @@
  *  @brief  Header of the linked_list
  */
 
-#ifndef _MODULE_H
-#define _MODULE_H
+#ifndef _LINKEDLIST_H
+#define _LINKEDLIST_H
 
 /*******************************************************************************
 * Includes
@@ -30,20 +30,7 @@
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
-#define A_MACRO             1
-/**< a macro*/
- 
-#if (MODULE_DEBUG == 1U) && (HELPER_LINKEDLIST_DEBUG == 1U)
-    #define PRINT_LIST_METADATA(x)      LinkedList_PrintLinkedListMetaData(x)
-    #define PRINT_NODE_METADATA(x)      LinkedList_PrintNodeMetaData(x)
-    #define PRINT_LIST_FORWARD(x)       LinkedList_PrintListForward(x)
-    #define PRINT_LIST_BACKWARD(x)      LinkedList_PrintListBackward(x)
-#else
-    #define PRINT_LIST_METADATA(x)
-    #define PRINT_NODE_METADATA(x)
-    #define PRINT_LIST_FORWARD(x)
-    #define PRINT_LIST_BACKWARD(x)
-#endif
+/* None */
 
 /******************************************************************************
 * Module Typedefs
@@ -104,13 +91,6 @@ bool LinkedList_InsertNewNodeAfterANode(LinkedList * pstList, Node * pstCurrentN
 Node * LinkedList_SearchNode(LinkedList * pstList, Node * pstSearchNode);
 bool LinkedList_RemoveNode(LinkedList * pstList, Node * pstRemovedNode);
 
-#if SMALLOC_DEBUG == 1U
-void LinkedList_PrintLinkedListMetaData(LinkedList * pstList);      /*Print linked list's metadata*/
-void LinkedList_PrintNodeMetaData(Node * pstNode);                  /*Print node's metadata*/
-void LinkedList_PrintListForward(LinkedList * pstList);             /*Print list from head -> tail*/
-void LinkedList_PrintListBackward(LinkedList * pstList);            /*Print List from tail -> head*/
-#endif
-
-#endif /* _MODULE_H */
+#endif /* _LINKEDLIST_H */
 
 /* End of file*/

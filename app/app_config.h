@@ -23,10 +23,10 @@
 
 #define CLI                     1U
 #define SCHEDULER               0U
-#define SMALLOC                 1U
-#define BIN_PARSER              1U
+#define SMALLOC                 0U
+#define BIN_PARSER              0U
 #define HELPER_LINKEDLIST       1U
-#define HELPER_HEXDUMP          1U
+#define HELPER_HEXDUMP          0U
 #define DEBUG                   1U
 #define RING_BUFFER             1U
 #define HELPER_ASSERT           1U
@@ -90,25 +90,36 @@
 
 #endif /* BIN_PARSER */
 
+/* DEBUG SECTION **************************************************************/
 #if (DEBUG == 1U)
 #define DEBUG_MOD_ID                0x05U
 #include "../ezmDebug/ezmDebug.h"
-#endif
+#endif /* DEBUG */
 
+/* HELPER_LINKEDLIST SECTION **************************************************/
 #if (HELPER_LINKEDLIST == 1U)
 #define HELPER_LINKEDLIST_MOD_ID    0x06U
 #include "../helper/linked_list/linked_list.h"
-#endif
+#endif /* HELPER_LINKEDLIST */
 
+
+/* HELPER_HEXDUMP SECTION *****************************************************/
 #if (HELPER_HEXDUMP == 1U)
 #define HELPER_HEXDUMP_MOD_ID       0x07U
 #include "../helper/hexdump/hexdump.h"
-#endif
 
+#if (DEBUG == 0U)
+#error DEBUG module must be activated
+#endif /* DEBUG */
+
+#endif /* HELPER_HEXDUMP */
+
+/* HELPER_HEXDUMP SECTION *****************************************************/
 #if (RING_BUFFER == 1U)
 #define RING_BUFFER_MOD_ID          0x08U
 #include "../helper/ring_buffer/ring_buffer.h"
-#endif
+#endif /* RING_BUFFER */
+
 
 #if (HELPER_ASSERT == 1U)
 #define HELPER_ASSERT_MOD_ID        0x09U

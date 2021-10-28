@@ -24,6 +24,8 @@
 *******************************************************************************/
 #include "../app/app_config.h"
 
+#if (BIN_PARSER == 1U)
+
 #if(SMALLOC == 1U)
 #include "../helper/smalloc/smalloc.h"
 #else
@@ -146,5 +148,6 @@ void ezmParser_Init(BinCmdParser * pstParser, uint8_t u8ModuleId);
 void ezmParser_RunBinParser(BinCmdParser * pstParser, uint8_t u8Byte);
 void ezmParser_RunCmdParser(BinCmdParser * pstParser);
 
+#endif /* BIN_PARSER */
 #endif /* _BIN_PARSER_H */
 /* End of file*/
