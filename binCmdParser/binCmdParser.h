@@ -25,14 +25,14 @@
 #include "../app/app_config.h"
 
 #if (BIN_PARSER == 1U)
+#include "stdint.h"
+#include "stdbool.h"
 
 #if(SMALLOC == 1U)
 #include "../helper/smalloc/smalloc.h"
 #else
 #error SMALLOC must be activated
 #endif
-
-
 
 /******************************************************************************
 * Module Preprocessor Macros

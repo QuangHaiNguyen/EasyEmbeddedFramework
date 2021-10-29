@@ -2,7 +2,7 @@
 #include "gtest/gtest.h"
 
 extern "C" {
-#include "../../../app/app_config.h"
+#include "../ring_buffer.h"
 }
 
 namespace 
@@ -109,7 +109,7 @@ namespace
         status = ezmRingBuffer_Init(&r_buff, BUFF_SIZE);
         ASSERT_EQ(status, BUFF_OK);
         
-        ASSERT_EQ(r_buff.capacity, 512U);
+        ASSERT_EQ(r_buff.u16Capacity, 512U);
 
         status = ezmRingBuffer_Push(&r_buff, push_512, 512);
         ASSERT_EQ(status, BUFF_OK);

@@ -25,7 +25,6 @@
 /*******************************************************************************
 * Includes
 *******************************************************************************/
-#include "../../app/app_config.h"
 #include <stdint.h>
 
 
@@ -47,7 +46,7 @@ typedef struct
 #if (STATIC_MEM == 0)
     uint8_t *pu8Buff;
 #else
-    uint8_t buff[STATIC_MEM_SIZE];
+    uint8_t pu8Buff[STATIC_MEM_SIZE];
 #endif
     /**< pointer to the data buffer*/
     uint16_t u16Capacity;

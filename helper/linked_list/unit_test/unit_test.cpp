@@ -2,7 +2,7 @@
 #include "gtest/gtest.h"
 
 extern "C" {
-#include "../../../app/app_config.h"
+#include "../linked_list.h"
 }
 
 #define NUM_OF_NODE 10U

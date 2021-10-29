@@ -2,15 +2,19 @@
 #include "gtest/gtest.h"
 
 extern "C" {
-#include "../ezmAssert.h"
+#if (HELPER_ASSERT == 1U)
+#include "../../../app/app_config.h"
 
 #define ASSERT_MOD_ID       0x01U
 
 REGISTER_ASSERT(ASSERT_MOD_ID)
+#endif /* HELPER_ASSERT */
 }
 
 namespace 
 {
+
+#if (HELPER_ASSERT == 1U)
     TEST(assert, module) 
     {
         int var1 = 10;
@@ -26,7 +30,7 @@ namespace
         ptr = &var2;
         ASSERT(ptr != NULL);
     }
-
+#endif /* HELPER_ASSERT */
 }
 
 int main(int argc, char** argv)

@@ -28,6 +28,12 @@
 
 #if (IPC == 1U)
 
+#if (SMALLOC == 1U)
+#include "../helper/smalloc/smalloc.h"
+#else
+#error SMALLOC module must be activated
+#endif /* SMALLOC */
+
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
@@ -46,7 +52,7 @@
 /******************************************************************************
 * Function Prototypes
 *******************************************************************************/
-void                ezmIpc_Init             (void);
+bool                ezmIpc_Init             (void);
 bool                ezmIpc_RegisterModule   (uint8_t u8ModuleId);
 ezmMemoryBlock *    ezmIpc_InitMsg          (uint8_t u8MsgSize);
 bool                ezmIpc_DeInitMsg        (uint8_t u8ModuleId, ezmMemoryBlock* pstMsg);

@@ -2,7 +2,7 @@
 #include "gtest/gtest.h"
 
 extern "C" {
-#include "../../../app/app_config.h"
+#include "../hexdump.h"
 }
 
 namespace 

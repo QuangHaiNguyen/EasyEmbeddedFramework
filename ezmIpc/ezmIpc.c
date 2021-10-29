@@ -25,11 +25,7 @@
 #include "ezmIpc.h"
 #include "ezmIpc_conf.h"
 
-#if (SMALLOC == 0U)
-#error SMALLOC module must be activated
-#else
-#include "../helper/smalloc/smalloc.h"
-#endif
+#if (IPC == 1U)
 
 #if (MODULE_DEBUG == 1U) && (IPC_DEBUG == 1U)
     #define IPCPRINT1(a)                    PRINT_DEBUG1(a)               
@@ -42,9 +38,6 @@
 #endif
 
 #define NUM_OF_MODULE       sizeof(au8RegisteredModule)
-#define IPC_ID              0x0BU
-
-REGISTER_ASSERT(IPC_ID)
 
 
 /******************************************************************************
@@ -86,16 +79,24 @@ static uint8_t ezmSearchModule(uint8_t u8ModuleId);
 * @see sum
 *
 *******************************************************************************/
-void ezmIpc_Init(void)
+bool ezmIpc_Init(void)
 {
-    ASSERT(NUM_OF_MODULE > 0)
-    
-    for(uint8_t i = 0; i < NUM_OF_MODULE; i++)
+    bool bIsInit = false;
+    if(NUM_OF_MODULE > 0)
     {
-        /* Parse module id into the mem list*/
-        IPCPRINT2("Init module: %x", au8RegisteredModule[i]);
-        ezmSmalloc_InitMemList(&astRegisteredMemList[i], au8RegisteredModule[i]);
+        for(uint8_t i = 0; i < NUM_OF_MODULE; i++)
+        {
+            /* Parse module id into the mem list*/
+            IPCPRINT2("Init module: %x", au8RegisteredModule[i]);
+            ezmSmalloc_InitMemList(&astRegisteredMemList[i], au8RegisteredModule[i]);
+        }
+        bIsInit = true;
     }
+    else
+    {
+        /* Do nothing, return false*/
+    }
+    return bIsInit;
 }
 
 /******************************************************************************
@@ -383,5 +384,5 @@ static uint8_t ezmSearchModule(uint8_t u8ModuleId)
     return u8Index;
 }
 
-
+#endif /* IPC */
 /* End of file*/

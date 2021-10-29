@@ -24,7 +24,11 @@
 #include "../../app/app_config.h"
 
 #if (SMALLOC == 1U)
+
+#include "../linked_list/linked_list.h"
+
 #include "smalloc.h"
+#include "stdbool.h"
 #include <stddef.h>
 #include <stdio.h>
 #include <string.h>
@@ -77,8 +81,6 @@
 #else
     #define PRINTSTATS()
 #endif
-
-REGISTER_ASSERT(SMALLOC_MOD_ID);
 
 #define SIZE_OF_METADATA        sizeof(ezmMemoryBlock)
 #define END_OF_MEMORY           ((void*)au8StaticMemory + STATIC_MEMORY_SIZE)

@@ -25,14 +25,7 @@
 #include "binCmdParser.h"
 
 #if (BIN_PARSER == 1U)
-
-#if(HELPER_ASSERT == 1U)
-#include "../helper/ezmAssert/ezmAssert.h"
-#else
-#error HELPER_ASSERT must be activated
-#endif
-
-REGISTER_ASSERT(BIN_PARSER_MOD_ID)
+#include "string.h"
 
 #if (MODULE_DEBUG == 1U) && (PARSER_DEBUG == 1U)
     #define PARSERPRINT1(a)             PRINT_DEBUG1(a)               

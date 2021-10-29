@@ -32,10 +32,16 @@
 /******************************************************************************
 * Includes
 *******************************************************************************/
-#include "ring_buffer.h"
+#include "../../app/app_config.h"
+
 
 #if (RING_BUFFER == 1U)
 #include "string.h"
+#include "ring_buffer.h"
+
+#if (SMALLOC == 1)
+#include "../smalloc/smalloc.h"
+#endif /*SMALLOC*/
 
 /******************************************************************************
 * Module Typedefs
@@ -89,7 +95,7 @@ RingBuff_Status ezmRingBuffer_Init( RingBuffer * pstBuff, uint16_t u16Size)
     pstBuff->u16Capacity = STATIC_MEM_SIZE;
 #else
     pstBuff->u16Capacity = u16Size;
-    pstBuff->pu8Buff = ezmSmalloc_Malloc(u16Size);
+    pstBuff->pu8Buff = (uint8_t *)ezmSmalloc_Malloc(u16Size);
 
     if(NULL == pstBuff->pu8Buff)
     {

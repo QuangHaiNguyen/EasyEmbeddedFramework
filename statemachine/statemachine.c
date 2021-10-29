@@ -22,7 +22,11 @@
 /******************************************************************************
 * Includes
 *******************************************************************************/
+#include "../app/app_config.h"
+
+#if ( STATEMACHINE == 1U )
 #include "statemachine.h"
+#include "stdlib.h"
 
 #if (MODULE_DEBUG == 1U) && (STATEMACHINE_DEBUG == 1U)
     #define SMPRINT1(a)              PRINT_DEBUG1(a)               
@@ -126,4 +130,5 @@ void ezmStateMachine_Init(ezmStateMachine * pstStateMachine,
     pstStateMachine->pstData = pstStatemachineData;
 }
 
+#endif /* STATEMACHINE */
 /* End of file*/

@@ -26,7 +26,8 @@
 
 #if(HELPER_HEXDUMP == 1U)
 #include "hexdump.h"
-
+#include "stdio.h"
+#include "../../ezmDebug/ezmDebug.h"
 
 /******************************************************************************
 * Module Preprocessor Macros

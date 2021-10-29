@@ -3,7 +3,8 @@
 
 extern "C" {
 #include "../statemachine.h"
-#include <stdlib.h>
+
+#if (STATEMACHINE == 1U)
 
 typedef enum
 {
@@ -188,12 +189,14 @@ ezmState StateError = { "state error", &StateErrorEventHandler, NULL, NULL};
 ezmState astState[NUM_OF_STATE] = {StateStart, StateA, StateStop,  StateError};
 ezmStateMachine stStatemachine;
 
+#endif /* STATEMACHINE */
 }
 
 
 
 namespace 
 {
+#if (STATEMACHINE == 1U)
     TEST(StateMachine, TryRun) 
     {
         ezmStateMachine_Init(&stStatemachine,
@@ -212,6 +215,7 @@ namespace
         }
         
     }
+#endif /* STATEMACHINE */
 }
 
 int main(int argc, char** argv)
