@@ -22,14 +22,14 @@
 
 
 #define CLI                     1U
-#define SCHEDULER               0U
-#define SMALLOC                 0U
-#define BIN_PARSER              0U
+#define SCHEDULER               1U
+#define SMALLOC                 1U
+#define BIN_PARSER              1U
 #define HELPER_LINKEDLIST       1U
-#define HELPER_HEXDUMP          0U
+#define HELPER_HEXDUMP          1U
 #define DEBUG                   1U
-#define RING_BUFFER             0U
-#define HELPER_ASSERT           0U
+#define RING_BUFFER             1U
+#define HELPER_ASSERT           1U
 #define STATEMACHINE            1U
 #define IPC                     1U
 
@@ -73,7 +73,7 @@
 #if (BIN_PARSER == 1U)
 
 #if (SMALLOC == 0U)
-#error module HELPER_LINKEDLIST must be activated
+#error module SMALLOC must be activated
 #endif /* SMALLOC */
 
 #define BIN_PARSER_MOD_ID           0x04U
@@ -93,20 +93,17 @@
 /* DEBUG SECTION **************************************************************/
 #if (DEBUG == 1U)
 #define DEBUG_MOD_ID                0x05U
-#include "../ezmDebug/ezmDebug.h"
 #endif /* DEBUG */
 
 /* HELPER_LINKEDLIST SECTION **************************************************/
 #if (HELPER_LINKEDLIST == 1U)
 #define HELPER_LINKEDLIST_MOD_ID    0x06U
-#include "../helper/linked_list/linked_list.h"
 #endif /* HELPER_LINKEDLIST */
 
 
 /* HELPER_HEXDUMP SECTION *****************************************************/
 #if (HELPER_HEXDUMP == 1U)
 #define HELPER_HEXDUMP_MOD_ID       0x07U
-#include "../helper/hexdump/hexdump.h"
 
 #if (DEBUG == 0U)
 #error DEBUG module must be activated
@@ -117,9 +114,8 @@
 /* HELPER_HEXDUMP SECTION *****************************************************/
 #if (RING_BUFFER == 1U)
 #define RING_BUFFER_MOD_ID          0x08U
-#include "../helper/ring_buffer/ring_buffer.h"
 
-#define STATIC_MEM  1
+#define STATIC_MEM  0
 
 #if (STATIC_MEM == 1)
     #define STATIC_MEM_SIZE 512U
@@ -138,16 +134,19 @@
 /* HELPER_ASSERT SECTION *****************************************************/
 #if (HELPER_ASSERT == 1U)
 #define HELPER_ASSERT_MOD_ID        0x09U
-#include "../helper/ezmAssert/ezmAssert.h"
 #endif /* HELPER_ASSERT */
 
+/* STATEMACHINE SECTION *****************************************************/
 #if (STATEMACHINE == 1U)
 #define STATEMACHINE_MOD_ID        0x0AU
-#include "../statemachine/statemachine.h"
-#endif
+#endif /* STATEMACHINE */
 
+/* IPC SECTION ***************************************************************/
 #if (IPC == 1U)
 #define IPC_MOD_ID                  0x0BU
-#endif
+
+#define USING_MODULE_NAME           1U /* future feature */
+/**< turn on/off module name in string*/
+#endif /* IPC */
 
 #endif /* _APP_CONFIG_H */

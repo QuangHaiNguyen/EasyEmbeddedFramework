@@ -37,6 +37,36 @@
 #include "../binCmdParser/binCmdParser.h"
 #endif /* BIN_PARSER */
 
+#if (DEBUG == 1U)
+#include "../ezmDebug/ezmDebug.h"
+#endif /* DEBUG */
+
+#if (HELPER_LINKEDLIST == 1U)
+#include "../helper/linked_list/linked_list.h"
+#endif /* HELPER_LINKEDLIST */
+
+#if (HELPER_HEXDUMP == 1U)
+#include "../helper/hexdump/hexdump.h"
+#endif /* DEBUG */
+
+#if (RING_BUFFER == 1U)
+#include "../helper/ring_buffer/ring_buffer.h"
+#endif /* RING_BUFFER */
+
+#if (HELPER_ASSERT == 1U)
+#include "../helper/ezmAssert/ezmAssert.h"
+#endif /* HELPER_ASSERT */
+
+#if (STATEMACHINE == 1U)
+#include "../statemachine/statemachine.h"
+#endif /* STATEMACHINE */
+
+#if (IPC == 1U)
+#include "../ezmIpc/ezmIpc.h"
+#endif
+
+
+
 #if (MODULE_DEBUG == 1U) && (APP_DEBUG == 1U)
     #define APPPRINT1(a)                    PRINT_DEBUG1(a)               
     #define APPPRINT2(a,b)                  PRINT_DEBUG2(a,b)             
@@ -147,6 +177,22 @@ void ezmApp_SdkInit(void)
     APPPRINT2("Module Id: 0x%02x", HELPER_ASSERT_MOD_ID);
 #endif
 
+#if (STATEMACHINE == 1U)
+    /* DEBUG module has no init function*/
+    APPPRINT1("Initialize state machine module");
+    APPPRINT2("Module Id: 0x%02x", STATEMACHINE_MOD_ID);
+#endif
+
+#if (IPC == 1U)
+    /* DEBUG module has no init function*/
+    APPPRINT1("Initialize IPC module");
+    APPPRINT2("Module Id: 0x%02x", IPC_MOD_ID);
+    if (ezmIpc_Init() != true)
+    {
+        APPPRINT1("No module is register");
+    }
+#endif
+
 }
 
 /******************************************************************************
@@ -219,6 +265,18 @@ static void ezm_AppPrintActiveModule(void)
     APPPRINT1("\t[x] HELPER_ASSERT");
 #else
     APPPRINT1("\t[ ] HELPER_ASSERT");
+#endif
+
+#if (STATEMACHINE == 1U)
+    APPPRINT1("\t[x] STATEMACHINE");
+#else
+    APPPRINT1("\t[ ] STATEMACHINE");
+#endif
+
+#if (IPC == 1U)
+    APPPRINT1("\t[x] IPC");
+#else
+    APPPRINT1("\t[ ] IPC");
 #endif
 
 }

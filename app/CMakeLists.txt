@@ -9,6 +9,8 @@ set( CMAKE_CXX_FLAGS "-Wall -Wextra" )
 set( CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
 set( CMAKE_CXX_FLAGS_RELEASE "-O3" )
 
+set (DEPENDENCIES ${CMAKE_SOURCE_DIR}/ezmIpc/ezmIpc.c ${CMAKE_SOURCE_DIR}/helper/smalloc/smalloc.c ${CMAKE_SOURCE_DIR}/helper/linked_list/linked_list.c)
+
 # The gtest/gtest_main targets carry header search path
 # dependencies automatically when using CMake 2.8.11 or
 # later. Otherwise we have to add them here ourselves.
@@ -22,7 +24,6 @@ endif()
 ## Specify a project name
 project(app_project)
 
-
 ## Set the build type
 if( NOT CMAKE_BUILD_TYPE )
   set( CMAKE_BUILD_TYPE "Release" 
@@ -30,7 +31,7 @@ if( NOT CMAKE_BUILD_TYPE )
        FORCE )
 endif()
 
-add_library(app app.c)
+add_library(app app.c ${DEPENDENCIES})
 
 #add dependency if nedded
 #add_dependencies(main my_math)
