@@ -34,6 +34,9 @@
 *******************************************************************************/
 #include "ring_buffer.h"
 
+#if (RING_BUFFER == 1U)
+#include "string.h"
+
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
@@ -347,5 +350,7 @@ RingBuff_Status ezmRingBuffer_GetAvailableMemory( RingBuffer * pstBuff, uint16_t
     *pu16AvailableMem = pstBuff->u16Capacity - pstBuff->u16Count;
     return BUFF_OK;
 }
+
+#endif /* RING_BUFFER */
 
 /* End of file*****************************************************************/

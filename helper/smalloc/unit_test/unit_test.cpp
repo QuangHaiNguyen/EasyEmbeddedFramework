@@ -1,12 +1,16 @@
 #include <limits.h>
 #include "gtest/gtest.h"
 
+
 extern "C" {
 #include "../smalloc.h"
+#include "../../../app/app_config.h"
 }
+
 
 namespace 
 {
+#if (SMALLOC == 1U)
     TEST(smalloc, main) 
     {
         struct
@@ -98,6 +102,7 @@ namespace
         ezmSmalloc_ReturnMemBlock(&stTestList, pstMemBlock3);
         ASSERT_EQ(stTestList.u16Size, 0);
     }
+#endif /* SMALLOC */
 }
 
 int main(int argc, char** argv)

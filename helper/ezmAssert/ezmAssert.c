@@ -24,7 +24,7 @@
 *******************************************************************************/
 #include "ezmAssert.h"
 
-#include "../../ezmDebug/ezmDebug.h"
+#if (HELPER_ASSERT == 1U)
 
 #if (MODULE_DEBUG == 1U) && (ASSERT_DBG == 1U)
     #define ASSERTPRINT1(a)             PRINT_DEBUG1(a)               
@@ -81,4 +81,5 @@ void ezmAssert_AssertFailHandler(int u32ModuleId, int u32LineNumer)
 
     /*Further action must be adapted to hardware*/
 }
+#endif /* HELPER_ASSERT */
 /* End of file*/

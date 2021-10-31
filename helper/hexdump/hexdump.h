@@ -24,24 +24,22 @@
 * Includes
 *******************************************************************************/
 #include "stdint.h"
-#include "stdbool.h"
-#include "../../app/app_config.h"
 
-#if (DEBUG == 1)
-#include "../../ezmDebug/ezmDebug.h"
-#else
-#error DEBUG module must be activated
-#endif
 
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
-/* None */
 
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
-/* None */
+typedef enum
+{
+    SHOW_ASCII = 0U,
+    /**< hexdump shows ascii value*/
+    NOT_SHOW_ASCII,
+    /**< hexdump does not show ascii value*/
+}ENUM_SHOW_ASCII;
 
 
 /******************************************************************************
@@ -53,8 +51,7 @@
 * Function Prototypes
 *******************************************************************************/
 
-void ezmHexdump( void * pAddress, uint16_t u16Size, bool bIsPrintAscii); /* This function display the data as hex and ascii */
-
+void ezmHexdump( void * pAddress, uint16_t u16Size, ENUM_SHOW_ASCII eShowAscii); /* This function display the data as hex and ascii */
 #endif /* _HEXDUMP_H */
 
 /* End of file*/
