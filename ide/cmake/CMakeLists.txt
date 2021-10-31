@@ -47,7 +47,7 @@ endif()
 # Project section 
 ########################################################################
 ## Specify a project name
-project(ezmSDK)
+project(linux_main)
 
 
 ## Set the build type
@@ -57,16 +57,40 @@ if( NOT CMAKE_BUILD_TYPE )
        FORCE )
 endif()
 
-add_subdirectory(ezmIpc)
-add_subdirectory(app)
-add_subdirectory(statemachine)
-add_subdirectory(scheduler)
-add_subdirectory(helper/ring_buffer)
-add_subdirectory(helper/smalloc)
-add_subdirectory(helper/linked_list)
-add_subdirectory(helper/ezmAssert)
-add_subdirectory(helper/hexdump)
-add_subdirectory(binCmdParser)
+#add_subdirectory(${SDK_PATH}/ezmIpc)
+#add_subdirectory(../../app)
+#add_subdirectory(../../statemachine)
+#add_subdirectory(../../scheduler)
+#add_subdirectory(../../helper/ring_buffer)
+#add_subdirectory(../../helper/smalloc)
+#add_subdirectory(../../helper/linked_list)
+#add_subdirectory(../../helper/ezmAssert)
+#add_subdirectory(../../helper/hexdump)
+#add_subdirectory(../../binCmdParser)
+
+set(SDK_PATH ../../ezmsdk)
+
+message(${SDK_PATH})
+
+set (DEPENDENCIES ${SDK_PATH}/app/app.c /
+${SDK_PATH}/ezmIpc/ezmIpc.c
+${SDK_PATH}/helper/smalloc/smalloc.c
+${SDK_PATH}/helper/linked_list/linked_list.c)
+
+#set (DEPENDENCIES ${SDK_PATH}/helper/smalloc/smalloc.c)
+#set (DEPENDENCIES ${SDK_PATH}/helper/linked_list/linked_list.c)
+
+message(${DEPENDENCIES})
+
+add_executable(main main.c ${DEPENDENCIES})
+
+target_include_directories(main PRIVATE ${CMAKE_SOURCE_DIR})
+
+## Install the executable to <install_directory>/bin
+set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
+
+## Install libraries (if any) to <install_directory>/bin
+set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
 ########################################################################
 # Doxygen 
@@ -79,7 +103,7 @@ if (CMAKE_BUILD_TYPE MATCHES "^[Rr]elease")
     find_package(Doxygen)
     if (DOXYGEN_FOUND)
         # set input and output files
-        set(DOXYGEN_IN ${CMAKE_CURRENT_SOURCE_DIR}/docs/Doxyfile.in)
+        set(DOXYGEN_IN ${CMAKE_CURRENT_SOURCE_DIR}/../../ezmsdk/docs/Doxyfile.in)
         set(DOXYGEN_OUT ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
 
         # request to configure the file

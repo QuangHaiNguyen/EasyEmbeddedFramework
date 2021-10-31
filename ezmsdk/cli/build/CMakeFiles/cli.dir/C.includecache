@@ -1,0 +1,24 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/mnt/f/Nextcloud/My_Work/Modules_c/debug/debug.h
+debug_conf.h
+/mnt/f/Nextcloud/My_Work/Modules_c/debug/debug_conf.h
+
+/mnt/f/Nextcloud/My_Work/Modules_c/debug/debug_conf.h
+stdio.h
+/mnt/f/Nextcloud/My_Work/Modules_c/debug/stdio.h
+
+/mnt/f/Nextcloud/My_Work/Modules_c/helper/ezmAssert/ezmAssert.c
+ezmAssert.h
+/mnt/f/Nextcloud/My_Work/Modules_c/helper/ezmAssert/ezmAssert.h
+../../debug/debug.h
+/mnt/f/Nextcloud/My_Work/Modules_c/debug/debug.h
+
+/mnt/f/Nextcloud/My_Work/Modules_c/helper/ezmAssert/ezmAssert.h
+

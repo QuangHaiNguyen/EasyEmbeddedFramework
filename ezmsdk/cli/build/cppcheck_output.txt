@@ -1,0 +1,8 @@
+cppcheck:/mnt/f/Nextcloud/My_Work/Modules_c/cli/cli.c:45: style:The function '_dummyCLI_MOD_ID' is never used.
+cppcheck:/mnt/f/Nextcloud/My_Work/Modules_c/cli/cli.c:98: style:The function 'ezmCli_Init' is never used.
+cppcheck:/mnt/f/Nextcloud/My_Work/Modules_c/cli/cli.c:111: style:The function 'ezmCli_PrintCommandList' is never used.
+cppcheck:/mnt/f/Nextcloud/My_Work/Modules_c/cli/cli.c:127: style:The function 'ezmCli_RegisterCommand' is never used.
+cppcheck:/mnt/f/Nextcloud/My_Work/Modules_c/cli/cli.c:150: style:The function 'ezmCli_RemoveCommand' is never used.
+cppcheck:/mnt/f/Nextcloud/My_Work/Modules_c/cli/cli.c:164: style:The function 'ezmCli_Run' is never used.
+cppcheck:/mnt/f/Nextcloud/My_Work/Modules_c/cli/cli.c:93: style:The function 'sum' is never used.
+cppcheck:nofile:0: information:Cppcheck cannot find all the include files. Cppcheck can check the code without the include files found. But the results will probably be more accurate if all the include files are found. Please check your project's include directories and add all of them as include directories for Cppcheck. To see what files Cppcheck cannot find use --check-config.

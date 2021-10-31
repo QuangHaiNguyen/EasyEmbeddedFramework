@@ -1,4 +1,6 @@
 .vscode/
-build/
+ide/cmake/build/
+ide/cmake/bin/
+ide/cmake/lib/
 auxiliary/StateMachineGenerator/*.c
 auxiliary/StateMachineGenerator/*.h
