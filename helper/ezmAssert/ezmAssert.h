@@ -29,6 +29,10 @@
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
+#include "../../app/app_config.h"
+
+#if (HELPER_ASSERT == 1U)
+
 #define ASSERT(expr) \
     if (expr) \
         {} \
@@ -39,6 +43,14 @@
 #define REGISTER_ASSERT(module_id) \
     enum { MODULE_ID=module_id }; \
     void _dummy##module_id(void) {}
+
+#else
+
+#define ASSERT(expr)
+#define REGISTER_ASSERT(module_id)
+
+#endif /* HELPER_ASSERT */
+
 /**< register your module id*/
 
 /******************************************************************************

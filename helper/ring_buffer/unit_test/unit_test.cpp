@@ -2,14 +2,16 @@
 #include "gtest/gtest.h"
 
 extern "C" {
-#include "../ring_buffer.h"
+#include "../../../app/app_config.h"
 }
 
 namespace 
 {
+#if (RING_BUFFER == 1U)
     #define BUFF_SIZE 10
     RingBuffer r_buff;
     RingBuff_Status status;
+
 #if (STATIC_MEM == 0)
     TEST(Ring_Buffer, Init) 
     {
@@ -138,7 +140,8 @@ namespace
         ASSERT_EQ(avail_mem, 128 + 128);
 
     }
-#endif
+#endif /* STATIC_MEM */
+#endif /* RING_BUFFER */
 }
 
 int main(int argc, char** argv)

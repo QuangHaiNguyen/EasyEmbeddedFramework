@@ -2,11 +2,12 @@
 #include "gtest/gtest.h"
 
 extern "C" {
-#include "../hexdump.h"
+#include "../../../app/app_config.h"
 }
 
 namespace 
 {
+#if (HELPER_HEXDUMP == 1U)
     TEST(Hexdump, Test_Binary) 
     {
         uint8_t au8Data[100];
@@ -17,7 +18,7 @@ namespace
             au8Data[i + 2] = 0xBE;
             au8Data[i + 3] = 0xEF;
         }
-        ezmHexdump((void *)au8Data, 100, true);
+        ezmHexdump((void *)au8Data, 100, SHOW_ASCII);
 
         struct TestStruture
         {
@@ -28,7 +29,7 @@ namespace
         };
 
         TestStruture stTest;
-        ezmHexdump((void *)&stTest, sizeof(TestStruture), true);
+        ezmHexdump((void *)&stTest, sizeof(TestStruture), SHOW_ASCII);
     }
     
     TEST(Hexdump, Test_Ascii)
@@ -39,7 +40,7 @@ namespace
         {
             au8CapitalLetter[i] = i + 0x41;
         }
-        ezmHexdump((void *)au8CapitalLetter, 24, true);
+        ezmHexdump((void *)au8CapitalLetter, 24, SHOW_ASCII);
 
         uint8_t au8SmallLetter[24];
 
@@ -47,8 +48,9 @@ namespace
         {
             au8SmallLetter[i] = i + 0x61;
         }
-        ezmHexdump((void *)au8SmallLetter, 24, true);
+        ezmHexdump((void *)au8SmallLetter, 24, SHOW_ASCII);
     } 
+#endif /* HELPER_HEXDUMP */
 }
 
 int main(int argc, char** argv)

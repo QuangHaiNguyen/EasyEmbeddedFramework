@@ -24,7 +24,6 @@
 /*******************************************************************************
 * Includes
 *******************************************************************************/
-#include "smalloc_conf.h"
 #include "stdint.h"
 
 /******************************************************************************
@@ -35,14 +34,9 @@
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
-/**
- *
- * @brief   Contain the HAL API to interact with the underlying wireless module. 
- *          User must point these function pointers to the actual implementation
-**/
-
 typedef struct LinkedList ezmMemList;
 typedef struct Node ezmMemoryBlock;
+
 /******************************************************************************
 * Module Variable Definitions
 *******************************************************************************/
@@ -51,9 +45,9 @@ typedef struct Node ezmMemoryBlock;
 /******************************************************************************
 * Function Prototypes
 *******************************************************************************/
-void        ezmSmalloc_Initialize (void);
-void *      ezmSmalloc_Malloc (uint16_t u16Size);
-void        emzSmalloc_Free (void * address);
+void                ezmSmalloc_Initialize (void);
+void *              ezmSmalloc_Malloc (uint16_t u16Size);
+void                emzSmalloc_Free (void * address);
 void                ezmSmalloc_InitMemList (ezmMemList * pstNewList, uint8_t u8ListOwnerModuleId);
 ezmMemoryBlock *    ezmSmalloc_GetMemBlockInList (ezmMemList * pstNewList, uint16_t u16BlockSize);
 void                ezmSmalloc_ReturnMemBlock (ezmMemList * pstNewList, ezmMemoryBlock * pstBlock);
@@ -64,7 +58,6 @@ void                ezmSmalloc_ApendBlockToList (ezmMemoryBlock * pstBlock, ezmM
 void ezmSmalloc_PrintFreeListHead();
 void ezmSmalloc_PrintFreeList();
 void ezmSmalloc_PrintMetadata(Block_t * str_ptrMetaData);
-void ezmSmalloc_Hexdump(int * address, unsigned int size);
 #endif /* SMALLOC_ANALYSIS */
 
 #endif /* _SMALLOC_H */

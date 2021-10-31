@@ -24,19 +24,13 @@
 *******************************************************************************/
 #include "binCmdParser.h"
 
+#if (BIN_PARSER == 1U)
+
 #if(HELPER_ASSERT == 1U)
 #include "../helper/ezmAssert/ezmAssert.h"
 #else
 #error HELPER_ASSERT must be activated
 #endif
-
-#if(SMALLOC == 1U)
-#include "../helper/smalloc/smalloc.h"
-#else
-#error SMALLOC must be activated
-#endif
-
-#if (BIN_PARSER == 1U)
 
 REGISTER_ASSERT(BIN_PARSER_MOD_ID)
 
@@ -59,6 +53,8 @@ REGISTER_ASSERT(BIN_PARSER_MOD_ID)
     #define VERBOSEPRINT2(a,b)           
     #define VERBOSEPRINT3(a,b,c)
 #endif
+
+#define VERBOSE                 0x00U
 
 /******************************************************************************
 * Module Typedefs

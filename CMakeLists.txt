@@ -57,16 +57,17 @@ if( NOT CMAKE_BUILD_TYPE )
        FORCE )
 endif()
 
-add_subdirectory(ezmIpc)
+#add_subdirectory(ezmIpc)
 add_subdirectory(app)
 add_subdirectory(statemachine)
 add_subdirectory(scheduler)
-add_subdirectory(helper/ring_buffer)
+#add_subdirectory(helper/ring_buffer)
 add_subdirectory(helper/smalloc)
 add_subdirectory(helper/linked_list)
 add_subdirectory(helper/ezmAssert)
 add_subdirectory(helper/hexdump)
 add_subdirectory(binCmdParser)
+
 ########################################################################
 # Doxygen 
 ########################################################################

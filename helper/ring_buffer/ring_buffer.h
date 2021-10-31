@@ -25,27 +25,15 @@
 /*******************************************************************************
 * Includes
 *******************************************************************************/
-#include <stdint.h>
 #include "../../app/app_config.h"
-#include "string.h"
+#include <stdint.h>
+
 
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
-#define STATIC_MEM  0
+/* None */
 
-#if (STATIC_MEM == 1)
-    #define STATIC_MEM_SIZE 512U
-    #if STATIC_MEM_SIZE > 0xFFFF
-        #error size is bigger than 16 bits
-    #endif
-#else
-    #if (SMALLOC == 1U)
-        #include "../smalloc/smalloc.h"
-    #else
-        #error SMALLOC module must be activated
-    #endif
-#endif
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
