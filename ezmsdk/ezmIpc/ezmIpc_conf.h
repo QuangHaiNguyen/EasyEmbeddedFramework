@@ -36,6 +36,8 @@
 *******************************************************************************/
 uint8_t au8RegisteredModule[] = 
 {
+    0xFE,   /* ID for unit test */
+    0xFF    /* ID for unit test */
 };
 
 #endif /* _IPC_CONFIG_H */
