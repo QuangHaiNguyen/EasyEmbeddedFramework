@@ -1,2 +1,0 @@
-/usr/bin/ar qc ../lib/libcli.a  CMakeFiles/cli.dir/cli.c.o CMakeFiles/cli.dir/mnt/f/Nextcloud/My_Work/Modules_c/helper/ezmAssert/ezmAssert.c.o
-/usr/bin/ranlib ../lib/libcli.a
