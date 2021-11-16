@@ -1,8 +1,12 @@
 #include <limits.h>
 #include "gtest/gtest.h"
 
+#ifndef UNIT_TEST_HEXDUMP
+#define UNIT_TEST_HEXDUMP
+
 extern "C" {
-#include "../hexdump.h"
+#include "../../ezmsdk/app/app_config.h"
+#include "../../ezmsdk/helper/hexdump/hexdump.h"
 }
 
 namespace 
@@ -53,8 +57,4 @@ namespace
 #endif /* HELPER_HEXDUMP */
 }
 
-int main(int argc, char** argv)
-{
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
-}
+#endif /* UNIT_TEST_HEXDUMPT */

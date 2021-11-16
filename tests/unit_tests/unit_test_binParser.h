@@ -1,12 +1,15 @@
 #include <limits.h>
 #include "gtest/gtest.h"
 
+#ifndef UNIT_TEST_BIN_PARSER
+#define UNIT_TEST_BIN_PARSER
+
 extern "C" {
-#include "../../app/app_config.h"
+#include "../../ezmsdk/app/app_config.h"
 
 #if (BIN_PARSER == 1U)
-#include "../binCmdParser.h"
-#include "../../ezmDebug/ezmDebug.h"
+#include "../../ezmsdk/binCmdParser/binCmdParser.h"
+#include "../../ezmsdk/ezmDebug/ezmDebug.h"
 
 #define UNUSED(x) (void)(x)
 
@@ -147,8 +150,4 @@ namespace
 #endif /* BIN_PARSER */
 }
 
-int main(int argc, char** argv)
-{
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
-}
+#endif /* UNIT_TEST_BIN_PARSER */

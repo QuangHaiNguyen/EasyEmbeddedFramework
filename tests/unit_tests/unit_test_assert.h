@@ -1,12 +1,15 @@
 #include <limits.h>
 #include "gtest/gtest.h"
+#ifndef UNIT_TEST_ASSERT
+#define UNIT_TEST_ASSERT
 
 extern "C" {
+
+#include "../../ezmsdk/app/app_config.h"
+
 #if (HELPER_ASSERT == 1U)
-#include "../../../app/app_config.h"
-
+#include "../../ezmsdk/helper/ezmAssert/ezmAssert.h"
 #define ASSERT_MOD_ID       0x01U
-
 REGISTER_ASSERT(ASSERT_MOD_ID)
 #endif /* HELPER_ASSERT */
 }
@@ -33,8 +36,5 @@ namespace
 #endif /* HELPER_ASSERT */
 }
 
-int main(int argc, char** argv)
-{
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
-}
+
+#endif /* UNIT_TEST_ASSERT */

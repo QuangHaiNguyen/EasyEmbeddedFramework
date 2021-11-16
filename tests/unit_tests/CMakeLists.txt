@@ -57,22 +57,14 @@ if( NOT CMAKE_BUILD_TYPE )
        FORCE )
 endif()
 
-#add_subdirectory(${SDK_PATH}/ezmIpc)
-#add_subdirectory(../../app)
-#add_subdirectory(../../statemachine)
-#add_subdirectory(../../scheduler)
-#add_subdirectory(../../helper/ring_buffer)
-#add_subdirectory(../../helper/smalloc)
-#add_subdirectory(../../helper/linked_list)
-#add_subdirectory(../../helper/ezmAssert)
-#add_subdirectory(../../helper/hexdump)
-#add_subdirectory(../../binCmdParser)
-
 set(SDK_PATH ../../ezmsdk)
 
-set (DEPENDENCIES ${SDK_PATH}/app/app.c /
+set (DEPENDENCIES ${SDK_PATH}/app/app.c
 ${SDK_PATH}/ezmIpc/ezmIpc.c
+${SDK_PATH}/binCmdParser/binCmdParser.c
 ${SDK_PATH}/helper/smalloc/smalloc.c
+${SDK_PATH}/helper/ezmAssert/ezmAssert.c
+${SDK_PATH}/helper/hexdump/hexdump.c
 ${SDK_PATH}/helper/linked_list/linked_list.c)
 
 add_executable(main main.cpp ${DEPENDENCIES})
