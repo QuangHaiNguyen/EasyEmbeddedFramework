@@ -1,0 +1,38 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/mnt/f/Nextcloud/My_Work/Modules_c/app/app_config.h
+
+/mnt/f/Nextcloud/My_Work/Modules_c/cli/cli.c
+cli.h
+/mnt/f/Nextcloud/My_Work/Modules_c/cli/cli.h
+string.h
+-
+../debug/debug.h
+/mnt/f/Nextcloud/My_Work/Modules_c/debug/debug.h
+../helper/ezmAssert/ezmAssert.h
+/mnt/f/Nextcloud/My_Work/Modules_c/helper/ezmAssert/ezmAssert.h
+../app/app_config.h
+/mnt/f/Nextcloud/My_Work/Modules_c/app/app_config.h
+
+/mnt/f/Nextcloud/My_Work/Modules_c/cli/cli.h
+stdint.h
+/mnt/f/Nextcloud/My_Work/Modules_c/cli/stdint.h
+stdbool.h
+/mnt/f/Nextcloud/My_Work/Modules_c/cli/stdbool.h
+
+/mnt/f/Nextcloud/My_Work/Modules_c/debug/debug.h
+debug_conf.h
+/mnt/f/Nextcloud/My_Work/Modules_c/debug/debug_conf.h
+
+/mnt/f/Nextcloud/My_Work/Modules_c/debug/debug_conf.h
+stdio.h
+/mnt/f/Nextcloud/My_Work/Modules_c/debug/stdio.h
+
+/mnt/f/Nextcloud/My_Work/Modules_c/helper/ezmAssert/ezmAssert.h
+
