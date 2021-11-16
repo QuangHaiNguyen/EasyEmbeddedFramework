@@ -62,7 +62,7 @@ set(SDK_PATH ../../ezmsdk)
 
 set (DEPENDENCIES ${SDK_PATH}/app/app.c /
 ${SDK_PATH}/ezmIpc/ezmIpc.c /
-${SDK_PATH}/helper/binCmdParser/binCmdParser.c /
+${SDK_PATH}/binCmdParser/binCmdParser.c /
 ${SDK_PATH}/helper/smalloc/smalloc.c /
 ${SDK_PATH}/helper/linked_list/linked_list.c)
 
