@@ -25,6 +25,10 @@
 #include "app.h"
 #include "app_config.h"
 
+#if (CLI == 1U)
+#include "../cli/cli.h"
+#endif
+
 #if (SCHEDULER == 1U)
 #include "../scheduler/scheduler.h"
 #endif /* SCHEDULER */
@@ -116,6 +120,13 @@ void ezmApp_SdkInit(void)
 {
 #if (APP_DEBUG == 1)
     ezm_AppPrintActiveModule();
+#endif
+
+#if (CLI == 1U)
+    APPPRINT1("Initialize command line interface");
+    APPPRINT2("Module Id: 0x%02x", CLI_MOD_ID);
+    APPPRINT2("Number of supported command: [command = %d]", NUM_OF_CMD);
+    ezmCli_Init();
 #endif
 
 #if (SCHEDULER == 1U)
@@ -218,6 +229,12 @@ void ezmApp_SdkInit(void)
 static void ezm_AppPrintActiveModule(void)
 {
     APPPRINT1("ACTIVE MODULES:");
+
+#if (CLI == 1U)
+    APPPRINT1("\t[x] CLI");
+#else
+    APPPRINT1("\t[ ] CLI");
+#endif
 
 #if (SCHEDULER == 1U)
     APPPRINT1("\t[x] SCHEDULER");

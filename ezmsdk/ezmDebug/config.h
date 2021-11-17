@@ -36,5 +36,6 @@
 #define STATEMACHINE_DEBUG          1U /* debug out for state machine module */
 #define IPC_DEBUG                   1U /* debug out for IPC module */
 #define PARSER_DEBUG                0U /* debug out for parser module */
+#define CLI_DEBUG                   1U /* debug out for cli module */
 
 #endif
