@@ -32,8 +32,9 @@
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
-#define A_MACRO     1
-/**< a macro*/
+#ifndef UNIT_TEST_ENABLE
+#define UNIT_TEST_ENABLE     1U /**< Activate helper function for testing, must be deactivated in production*/
+#endif
 
 /******************************************************************************
 * Module Typedefs
@@ -51,20 +52,29 @@ typedef struct
     /**< an integer */
 }aType;
 
-typedef uint32_t (*CLI_CALLBACK)(void * pArgumentList, void * pValueList);
+typedef uint32_t (*CLI_CALLBACK)(const char * pu8Command, void * pArgumentList, void * pValueList);
 
 /******************************************************************************
 * Module Variable Definitions
 *******************************************************************************/
-
+#if(UNIT_TEST_ENABLE == 1U)
+extern uint8_t  au8CommandBuffer[CLI_BUFF_SIZE];
+#endif /* UNIT_TEST_ENABLE */
 
 /******************************************************************************
 * Function Prototypes
 *******************************************************************************/
-void    ezmCli_Init(void);
-uint8_t ezmCli_RegisterCommand(const char * pu8Command, const char * pu8Description, CLI_CALLBACK pfnCallback);
-bool    ezmCli_AddArgument(const char * pu8LongForm, const char * pu8ShortForm, const char * pu8Description);
+void    ezmCli_Init             (void);
+uint8_t ezmCli_RegisterCommand  (const char * pu8Command, 
+                                    const char *  pu8Description, 
+                                    CLI_CALLBACK pfnCallback);
 
+bool    ezmCli_AddArgument      (uint8_t u8CommandIndex, 
+                                    const char * pu8LongForm, 
+                                    const char * pu8ShortForm, 
+                                    const char * pu8Description);
+
+void    ezmCli_CommandReceivedCallback(uint8_t u8NotifyCode, void * pu32Param1, void * pu32Param2);
 #endif /* CLI */
 #endif /* _CLI_H */
 

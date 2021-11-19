@@ -39,6 +39,8 @@
 #if (CLI == 1U)
 #define CLI_MOD_ID                  0x01U
 #define NUM_OF_CMD                  10U
+#define NUM_OF_ARG                  4U
+#define CLI_BUFF_SIZE               512U
 #endif
 
 /* SCHEDULER SECTION *********************************************************/
