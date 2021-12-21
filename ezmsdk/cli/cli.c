@@ -32,6 +32,8 @@
 #define VERBOSE                 1U
 #define CLI_INDEX_INVALID       0xffU
 
+uint8_t  au8CommandBuffer[CLI_BUFF_SIZE];
+
 #define CLI_BUFF_SIZE       512U
 
 #if (MODULE_DEBUG == 1U) && (CLI_DEBUG == 1U)

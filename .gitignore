@@ -7,3 +7,8 @@ tests/unit_tests/bin/
 tests/unit_tests/lib/
 auxiliary/StateMachineGenerator/*.c
 auxiliary/StateMachineGenerator/*.h
+ide/vs_project/.vs/
+ide/vs_project/Debug/
+ide/vs_project/vs_project.vcxproj.user
+/tests/unit_tests/vs_unittests/Debug/
+/tests/unit_tests/vs_unittests/vs_unittests.vcxproj.user
