@@ -248,7 +248,7 @@ void emzSmalloc_Free(void * address)
     SMALLOCFUNCENTER();
     
     /* Get the address of the soon to be freed block*/
-    pstDeallocBlock = (ezmMemoryBlock *)(address - SIZE_OF_METADATA);
+    pstDeallocBlock = (ezmMemoryBlock *)((uint8_t*)address - SIZE_OF_METADATA);
     SMALLOC_PRINT_BLOCKMETA(pstDeallocBlock);
 
     /* remove it from the allocated list*/
@@ -362,7 +362,7 @@ static void * ezmSmalloc_GetFreeBlockApendToList(uint16_t u16BlockSize, LinkedLi
 
     SMALLOCFUNCENTER();
 
-    if(!stFreeBlockList.pstHead)
+    if(!pstFreeBlock)
     {
         ezmSmalloc_Initialize();
     }
@@ -439,8 +439,8 @@ static void ezmSmalloc_Merge(void)
     SMALLOCFUNCENTER();
 
     /* Check if the next free block is adjacent to merge it*/
-    while((void *)pstCurrentFreeBlock + SIZE_OF_METADATA + pstCurrentFreeBlock->u16BufferSize == pstNextFreeBlock
-            && pstNextFreeBlock != NULL)
+    while((ezmMemoryBlock*)((uint8_t*)pstCurrentFreeBlock + SIZE_OF_METADATA + pstCurrentFreeBlock->u16BufferSize) == pstNextFreeBlock && 
+        pstNextFreeBlock != NULL)
     {
         SMALLOCPRINT1("Next adjacent block is free");
         pstCurrentFreeBlock->u16BufferSize += pstNextFreeBlock->u16BufferSize + SIZE_OF_METADATA;
@@ -462,7 +462,7 @@ ezmMemoryBlock * ezmSmalloc_GetFreeBlock (uint16_t u16BlockSize)
     ezmMemoryBlock * pstFreeBlock = stFreeBlockList.pstHead;
 
     /*Init if not*/
-    if(!stFreeBlockList.pstHead)
+    if(!pstFreeBlock)
     {
         ezmSmalloc_Initialize();
     }
