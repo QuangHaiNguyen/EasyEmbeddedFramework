@@ -11,11 +11,11 @@ extern "C" {
 #if (CLI == 1U)
 #include "../../ezmsdk/cli/cli.h"
 
-uint32_t TestCommand(const char * pu8Command, void * pArgumentList, void * pValueList)
+uint32_t TestCommand(const char * pu8Command, void * pValueList)
 {
     (void)(pu8Command);
-    (void)(pArgumentList);
     (void)(pValueList);
+    printf("call back executed\n");
     return 0;
 }
 
@@ -89,7 +89,7 @@ namespace
 
     }
 
-    TEST(cli, receive_command) 
+    TEST(cli, receive_command_one_arg) 
     {
         uint8_t u8Result;
         bool    bResult;
@@ -102,11 +102,53 @@ namespace
         ASSERT_EQ(bResult, true);
 
         memcpy(au8CommandBuffer, "Test_Command --arg1 1234\n", sizeof("Test_Command --arg1 1234\n"));
-        ezmCli_CommandReceivedCallback(0, au8CommandBuffer, NULL);
+        bResult = ezmCli_CommandReceivedCallback(0, au8CommandBuffer, NULL);
+        ASSERT_EQ(bResult, false);
 
         memset(au8CommandBuffer, 0, CLI_BUFF_SIZE);
         memcpy(au8CommandBuffer, "Test_Command1 --arg1 1234\n", sizeof("Test_Command1 --arg1 1234\n"));
-        ezmCli_CommandReceivedCallback(0, au8CommandBuffer, NULL);
+        bResult = ezmCli_CommandReceivedCallback(0, au8CommandBuffer, NULL);
+        ASSERT_EQ(bResult, true);
+
+        memset(au8CommandBuffer, 0, CLI_BUFF_SIZE);
+        memcpy(au8CommandBuffer, "Test_Command1 -a1 1234\n", sizeof("Test_Command1 -a1 1234\n"));
+        bResult = ezmCli_CommandReceivedCallback(0, au8CommandBuffer, NULL);
+        ASSERT_EQ(bResult, true);
+
+        memset(au8CommandBuffer, 0, CLI_BUFF_SIZE);
+        memcpy(au8CommandBuffer, "Test_Command1 wrong_arg 1234\n", sizeof("Test_Command1 wrong_arg 1234\n"));
+        bResult = ezmCli_CommandReceivedCallback(0, au8CommandBuffer, NULL);
+        ASSERT_EQ(bResult, false);
+
+        memset(au8CommandBuffer, 0, CLI_BUFF_SIZE);
+        memcpy(au8CommandBuffer, "Test_Command1 -arg1 1234\n", sizeof("Test_Command1 -arg1 1234\n"));
+        bResult = ezmCli_CommandReceivedCallback(0, au8CommandBuffer, NULL);
+        ASSERT_EQ(bResult, false);
+        
+        memset(au8CommandBuffer, 0, CLI_BUFF_SIZE);
+        memcpy(au8CommandBuffer, "Test_Command1 --a1 1234\n", sizeof("Test_Command1 --a1 1234\n"));
+        bResult = ezmCli_CommandReceivedCallback(0, au8CommandBuffer, NULL);
+        ASSERT_EQ(bResult, false);
+
+        memset(au8CommandBuffer, 0, CLI_BUFF_SIZE);
+        memcpy(au8CommandBuffer, "Test_Command1 --arg1\n", sizeof("Test_Command1 --arg1\n"));
+        bResult = ezmCli_CommandReceivedCallback(0, au8CommandBuffer, NULL);
+        ASSERT_EQ(bResult, false);
+
+        memset(au8CommandBuffer, 0, CLI_BUFF_SIZE);
+        memcpy(au8CommandBuffer, "Test_Command1\n", sizeof("Test_Command1\n"));
+        bResult = ezmCli_CommandReceivedCallback(0, au8CommandBuffer, NULL);
+        ASSERT_EQ(bResult, false);
+
+        memset(au8CommandBuffer, 0, CLI_BUFF_SIZE);
+        memcpy(au8CommandBuffer, "\n", sizeof("n"));
+        bResult = ezmCli_CommandReceivedCallback(0, au8CommandBuffer, NULL);
+        ASSERT_EQ(bResult, false);
+        
+        memset(au8CommandBuffer, 0, CLI_BUFF_SIZE);
+        memcpy(au8CommandBuffer, "       Test_Command1   -a1    1234\n", sizeof("       Test_Command1   -a1    1234\n"));
+        bResult = ezmCli_CommandReceivedCallback(0, au8CommandBuffer, NULL);
+        ASSERT_EQ(bResult, true);
     }
 #endif /* HELPER_ASSERT */
 }

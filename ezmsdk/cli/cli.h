@@ -52,7 +52,7 @@ typedef struct
     /**< an integer */
 }aType;
 
-typedef uint32_t (*CLI_CALLBACK)(const char * pu8Command, void * pArgumentList, void * pValueList);
+typedef uint32_t (*CLI_CALLBACK)(const char * pu8Command, void * pValueList);
 
 /******************************************************************************
 * Module Variable Definitions
@@ -74,7 +74,7 @@ bool    ezmCli_AddArgument      (uint8_t u8CommandIndex,
                                     const char * pu8ShortForm, 
                                     const char * pu8Description);
 
-void    ezmCli_CommandReceivedCallback(uint8_t u8NotifyCode, void * pu32Param1, void * pu32Param2);
+bool    ezmCli_CommandReceivedCallback(uint8_t u8NotifyCode, void * pu32Param1, void * pu32Param2);
 #endif /* CLI */
 #endif /* _CLI_H */
 
