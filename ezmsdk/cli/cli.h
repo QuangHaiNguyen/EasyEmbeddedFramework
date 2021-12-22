@@ -64,9 +64,6 @@ typedef CLI_NOTIFY_CODE(*CLI_CALLBACK)(const char * pu8Command, void * pValueLis
 /******************************************************************************
 * Module Variable Definitions
 *******************************************************************************/
-#if(UNIT_TEST_ENABLE == 1U)
-extern uint8_t  au8CommandBuffer[CLI_BUFF_SIZE];
-#endif /* UNIT_TEST_ENABLE */
 
 /******************************************************************************
 * Function Prototypes
@@ -81,7 +78,7 @@ bool    ezmCli_AddArgument      (uint8_t u8CommandIndex,
                                     const char * pu8ShortForm, 
                                     const char * pu8Description);
 
-bool    ezmCli_CommandReceivedCallback(uint8_t u8NotifyCode, void * pu32Param1, void * pu32Param2);
+bool    ezmCli_CommandReceivedCallback(uint8_t u8NotifyCode, char* pu8CommandBuffer, uint16_t u16CommandBufferSize);
 #endif /* CLI */
 #endif /* _CLI_H */
 

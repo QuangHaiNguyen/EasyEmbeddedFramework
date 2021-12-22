@@ -32,10 +32,6 @@
 #define VERBOSE                 0U
 #define CLI_INDEX_INVALID       0xffU
 
-uint8_t  au8CommandBuffer[CLI_BUFF_SIZE];
-
-#define CLI_BUFF_SIZE       512U
-
 #if (MODULE_DEBUG == 1U) && (CLI_DEBUG == 1U)
     #define CLIPRINT1(a)                    PRINT_DEBUG1(a)               
     #define CLIPRINT2(a,b)                  PRINT_DEBUG2(a,b)             
@@ -291,21 +287,20 @@ bool ezmCli_AddArgument ( uint8_t u8CommandIndex,
 * @return   None
 *
 *******************************************************************************/
-bool ezmCli_CommandReceivedCallback(uint8_t u8NotifyCode, void * pu32Param1, void * pu32Param2)
+bool ezmCli_CommandReceivedCallback(uint8_t u8NotifyCode, char * pu8CommandBuffer, uint16_t u16CommandBufferSize)
 {
-    char * pu8Buffer = (char *)pu32Param1;
+    bool bResult = true;
+    char * pu8Buffer = (char *)pu8CommandBuffer;
     char * pu8Helper = pu8Buffer;
     uint8_t u8CommandIndex = CLI_INDEX_INVALID;
     uint8_t u8ValueIndex = CLI_INDEX_INVALID;
     uint16_t u16Count = 0;
-    bool bResult = true;
-    CLI_NOTIFY_CODE eNofityCode = CLI_NC_OK;
 
     eState = STATE_COMMAND;
 
     CLIPRINT2("Receive data: [data = %s]", pu8Buffer);
 
-    for(uint16_t i = 0; i < CLI_BUFF_SIZE - 1; i++)
+    for(uint16_t i = 0; i < u16CommandBufferSize - 1; i++)
     {
         if(*(pu8Buffer + i) == ' ')
         {
@@ -319,7 +314,7 @@ bool ezmCli_CommandReceivedCallback(uint8_t u8NotifyCode, void * pu32Param1, voi
     pu8Helper = pu8Buffer + u16Count;
 
     /* Search command */
-    for(uint16_t i = u16Count; i < CLI_BUFF_SIZE; i++)
+    for(uint16_t i = u16Count; i < u16CommandBufferSize; i++)
     {
         if(bResult == false)
         {
@@ -340,7 +335,7 @@ bool ezmCli_CommandReceivedCallback(uint8_t u8NotifyCode, void * pu32Param1, voi
                     pu8Helper = (pu8Buffer + i + 1);
 
                     /* remove next white space*/
-                    while(i < CLI_BUFF_SIZE - 1 && *(pu8Buffer + i + 1) == ' ')
+                    while(i < u16CommandBufferSize - 1 && *(pu8Buffer + i + 1) == ' ')
                     {
                         i = i + 1;
                     }
@@ -409,7 +404,7 @@ bool ezmCli_CommandReceivedCallback(uint8_t u8NotifyCode, void * pu32Param1, voi
                 }
 
                 /* remove white space*/
-                while(i < CLI_BUFF_SIZE - 1 && *(pu8Buffer + i + 1) == ' ')
+                while(i < u16CommandBufferSize - 1 && *(pu8Buffer + i + 1) == ' ')
                 {
                     i = i + 1;
                 }
@@ -438,7 +433,7 @@ bool ezmCli_CommandReceivedCallback(uint8_t u8NotifyCode, void * pu32Param1, voi
                 eState = STATE_ARGUMENT;
 
                 /* remove white space*/
-                while (i < CLI_BUFF_SIZE - 1 && *(pu8Buffer + i + 1) == ' ')
+                while (i < u16CommandBufferSize - 1 && *(pu8Buffer + i + 1) == ' ')
                 {
                     i = i + 1;
                 }
@@ -452,14 +447,13 @@ bool ezmCli_CommandReceivedCallback(uint8_t u8NotifyCode, void * pu32Param1, voi
                 astMetaData[u8CommandIndex].au8ValueList[u8ValueIndex] = pu8Helper;
                 
                 /* Execute the callback */
-                eNofityCode = astMetaData[u8CommandIndex].pfnCallback(astMetaData[u8CommandIndex].pu8Command, astMetaData[u8CommandIndex].au8ValueList);
-                if (eNofityCode != CLI_NC_OK)
+                if (CLI_NC_OK != astMetaData[u8CommandIndex].pfnCallback(astMetaData[u8CommandIndex].pu8Command, astMetaData[u8CommandIndex].au8ValueList))
                 {
                     bResult = false;
                 }
                 ezmCli_ResetValueList(u8CommandIndex);
                 /* End of command, use next line to terminate the loop*/
-                i = CLI_BUFF_SIZE; 
+                i = u16CommandBufferSize;
             }
             else
             {
@@ -474,7 +468,6 @@ bool ezmCli_CommandReceivedCallback(uint8_t u8NotifyCode, void * pu32Param1, voi
         }
     }
 
-    (void)(pu32Param2);
     (void)(u8NotifyCode);
 
     return bResult;
