@@ -178,6 +178,11 @@
     <ClInclude Include="..\..\ezmsdk\helper\smalloc\smalloc.h" />
     <ClInclude Include="..\..\ezmsdk\scheduler\scheduler.h" />
     <ClInclude Include="..\..\ezmsdk\statemachine\statemachine.h" />
+    <ClInclude Include="..\..\tests\unit_tests\unit_test_assert.h" />
+    <ClInclude Include="..\..\tests\unit_tests\unit_test_binParser.h" />
+    <ClInclude Include="..\..\tests\unit_tests\unit_test_cli.h" />
+    <ClInclude Include="..\..\tests\unit_tests\unit_test_hexdump.h" />
+    <ClInclude Include="..\..\tests\unit_tests\unit_test_ipc.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -40,6 +40,13 @@
 * Module Typedefs
 *******************************************************************************/
 
+typedef enum
+{
+    CLI_NC_OK,
+    CLI_NC_ERR,
+    CLI_NC_BAD_ARG,
+}CLI_NOTIFY_CODE;
+
 /** @brief definition of a new type
  *  
  */
@@ -52,7 +59,7 @@ typedef struct
     /**< an integer */
 }aType;
 
-typedef uint32_t (*CLI_CALLBACK)(const char * pu8Command, void * pValueList);
+typedef CLI_NOTIFY_CODE(*CLI_CALLBACK)(const char * pu8Command, void * pValueList);
 
 /******************************************************************************
 * Module Variable Definitions

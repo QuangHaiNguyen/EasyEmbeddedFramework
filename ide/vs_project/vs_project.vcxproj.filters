@@ -44,6 +44,9 @@
     <Filter Include="Source Files\helper\smalloc">
       <UniqueIdentifier>{bb18918c-82ff-4448-915b-5b73219450c4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="tests">
+      <UniqueIdentifier>{8c7d0818-5e99-41bf-861d-6531f637d7e8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ezmsdk\app\app.c">
@@ -128,6 +131,21 @@
     </ClInclude>
     <ClInclude Include="..\..\ezmsdk\helper\ring_buffer\ring_buffer.h">
       <Filter>Source Files\helper\ring_buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\tests\unit_tests\unit_test_assert.h">
+      <Filter>tests</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\tests\unit_tests\unit_test_binParser.h">
+      <Filter>tests</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\tests\unit_tests\unit_test_cli.h">
+      <Filter>tests</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\tests\unit_tests\unit_test_hexdump.h">
+      <Filter>tests</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\tests\unit_tests\unit_test_ipc.h">
+      <Filter>tests</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
