@@ -273,6 +273,13 @@ namespace
         ASSERT_EQ(bResult, true);
         bStringCompareResult = strcmp(pu8TestString, "hello world\0");
         ASSERT_EQ(bStringCompareResult, 0);
+
+        memset(au8CommandBuffer, 0, CLI_BUFF_SIZE);
+        memcpy(au8CommandBuffer, "string -str     \n", sizeof("string -str     \n"));
+        bResult = ezmCli_CommandReceivedCallback(0, au8CommandBuffer, NULL);
+        ASSERT_EQ(bResult, true);
+        bStringCompareResult = strcmp(pu8TestString, "\0");
+        ASSERT_EQ(bStringCompareResult, 0);
     }
 
 #endif /* CLI */

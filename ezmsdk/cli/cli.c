@@ -29,7 +29,7 @@
 
 #if (CLI == 1U)
 
-#define VERBOSE                 1U
+#define VERBOSE                 0U
 #define CLI_INDEX_INVALID       0xffU
 
 uint8_t  au8CommandBuffer[CLI_BUFF_SIZE];
@@ -430,7 +430,7 @@ bool ezmCli_CommandReceivedCallback(uint8_t u8NotifyCode, void * pu32Param1, voi
             break;
 
         case STATE_VALUE:
-            if(*(pu8Buffer + i) == ' ')
+            if(*(pu8Buffer + i) == ' ' && *(pu8Buffer + i + 1) == '-')
             {
                 *(pu8Buffer + i) = '\0';
                 CLIPRINT2("Receive value: [value = %s]", pu8Helper);
