@@ -48,16 +48,28 @@
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
-/* None */
+
+/** @brief
+ *
+ */
+typedef struct
+{
+    bool bIsAvailable;  /**< */
+    Node stNode;        /**< */
+}NodeMetadata;
 
 /******************************************************************************
 * Module Variable Definitions
 *******************************************************************************/
-/* None */
+NodeMetadata astMetadata[NUM_OF_NODE];
 
 /******************************************************************************
 * Function Definitions
 *******************************************************************************/
+static void LinkedList_ResetMetadata(uint16_t u16Index);
+static void LinkedList_ResetMetadataArray(void);
+static bool LinkedList_IsNodeFree(uint16_t u16NodeIndex);
+
 #if HELPER_LINKEDLIST_DEBUG == 1U
 void LinkedList_PrintLinkedListMetaData(LinkedList * pstList);      /*Print linked list's metadata*/
 void LinkedList_PrintNodeMetaData(Node * pstNode);                  /*Print node's metadata*/
@@ -77,7 +89,53 @@ void LinkedList_PrintListBackward(LinkedList * pstList);            /*Print List
     #define PRINT_LIST_BACKWARD(x)
 #endif
 
+void LinkedList_Init(void)
+{
+    LinkedList_ResetMetadataArray();
+    LLPRINT1("init completed");
+}
 
+
+Node* LinkedLits_GetFreeNode(void)
+{
+    Node* pstNode = NULL;
+    for (uint16_t i = 0; i < NUM_OF_NODE; i++)
+    {
+        if (LinkedList_IsNodeFree(i))
+        {
+            astMetadata[i].bIsAvailable = false;
+            pstNode = &astMetadata[i].stNode;
+            break;
+        }
+    }
+    return pstNode;
+}
+
+bool LinkedList_ReleaseNode(Node* pstNode)
+{
+    bool bReturn = false;
+    if (pstNode->u16NodeIndex < NUM_OF_NODE && !LinkedList_IsNodeFree(pstNode->u16NodeIndex))
+    {
+        LinkedList_ResetMetadata(pstNode->u16NodeIndex);
+        bReturn = true;
+    }
+
+    return bReturn;
+}
+
+uint16_t LinkedList_GetNumOfFreeNode(void)
+{
+    uint16_t u16NumOfFreeNode = 0U;
+    for (uint16_t i = 0; i < NUM_OF_NODE; i++)
+    {
+        if (LinkedList_IsNodeFree(i))
+        {
+            u16NumOfFreeNode++;
+        }
+    }
+
+    return u16NumOfFreeNode;
+}
 /******************************************************************************
 * Function : LinkedList_AddToHead
 *//** 
@@ -408,6 +466,34 @@ bool LinkedList_RemoveNode(LinkedList * pstList, Node * pstRemovedNode)
     return bSuccess;
 }
 
+static void LinkedList_ResetMetadata(uint16_t u16Index)
+{
+    if (u16Index < NUM_OF_NODE)
+    {
+        astMetadata[u16Index].bIsAvailable = true;
+    }
+}
+
+static void LinkedList_ResetMetadataArray(void)
+{
+    for (uint16_t i = 0; i < NUM_OF_NODE; i++)
+    {
+        LinkedList_ResetMetadata(i);
+        astMetadata[i].stNode.u16NodeIndex = i;
+    }
+    LLPRINT1("reset completed");
+}
+
+static bool LinkedList_IsNodeFree(uint16_t u16NodeIndex)
+{
+    bool bIsFree = false;
+
+    if (u16NodeIndex < NUM_OF_NODE && astMetadata[u16NodeIndex].bIsAvailable)
+    {
+        bIsFree = true;
+    }
+    return bIsFree;
+}
 #if HELPER_LINKEDLIST_DEBUG == 1U
 void LinkedList_PrintLinkedListMetaData(LinkedList * pstList)
 {
@@ -424,7 +510,7 @@ void LinkedList_PrintNodeMetaData(Node * pstNode)
     if(pstNode != NULL)
     {
         PRINT2("node @: %p", (void*)pstNode);
-        PRINT2("node Id: %u", pstNode->u8NodeId);
+        PRINT2("node Id: %u", pstNode->u16NodeIndex);
         PRINT2("next node: %p", (void*)pstNode->pstNextNode);
         PRINT2("prev node: %p", (void*)pstNode->pstPrevNode);
     }

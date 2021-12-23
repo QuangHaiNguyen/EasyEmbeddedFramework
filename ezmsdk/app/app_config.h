@@ -21,17 +21,17 @@
 #define _APP_CONFIG_H
 
 
-#define CLI                     1U
-#define SCHEDULER               1U
+#define CLI                     0U
+#define SCHEDULER               0U
 #define SMALLOC                 1U
-#define BIN_PARSER              1U
+#define BIN_PARSER              0U
 #define HELPER_LINKEDLIST       1U
 #define HELPER_HEXDUMP          1U
 #define DEBUG                   1U
-#define RING_BUFFER             1U
-#define HELPER_ASSERT           1U
-#define STATEMACHINE            1U
-#define IPC                     1U
+#define RING_BUFFER             0U
+#define HELPER_ASSERT           0U
+#define STATEMACHINE            0U
+#define IPC                     0U
 
 /*Module ID section*/
 
@@ -100,6 +100,7 @@
 /* HELPER_LINKEDLIST SECTION **************************************************/
 #if (HELPER_LINKEDLIST == 1U)
 #define HELPER_LINKEDLIST_MOD_ID    0x06U
+#define NUM_OF_NODE                 256U
 #endif /* HELPER_LINKEDLIST */
 
 

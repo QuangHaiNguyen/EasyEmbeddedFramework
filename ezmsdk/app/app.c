@@ -159,7 +159,7 @@ void ezmApp_SdkInit(void)
 #endif
 
 #if (HELPER_LINKEDLIST == 1U)
-    /* DEBUG module has no init function*/
+    LinkedList_Init();
     APPPRINT1("Initialize linked list module");
     APPPRINT2("Module Id: 0x%02x", HELPER_LINKEDLIST_MOD_ID);
 #endif
