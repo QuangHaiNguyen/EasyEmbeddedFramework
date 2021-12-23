@@ -303,19 +303,18 @@ bool ezmCli_AddArgument ( uint8_t u8CommandIndex,
 bool ezmCli_CommandReceivedCallback(uint8_t u8NotifyCode, char * pu8CommandBuffer, uint16_t u16CommandBufferSize)
 {
     bool bResult = true;
-    char * pu8Buffer = (char *)pu8CommandBuffer;
-    char * pu8Helper = pu8Buffer;
+    char * pu8Helper = pu8CommandBuffer;
     uint8_t u8CommandIndex = CLI_INDEX_INVALID;
     uint8_t u8ValueIndex = CLI_INDEX_INVALID;
     uint16_t u16Count = 0;
 
     eState = STATE_COMMAND;
 
-    CLIPRINT2("Receive data: [data = %s]", pu8Buffer);
+    CLIPRINT2("Receive data: [data = %s]", pu8CommandBuffer);
 
     for(uint16_t i = 0; i < u16CommandBufferSize - 1; i++)
     {
-        if(*(pu8Buffer + i) == ' ')
+        if(*(pu8CommandBuffer + i) == ' ')
         {
             u16Count = u16Count + 1;
         }
@@ -324,7 +323,7 @@ bool ezmCli_CommandReceivedCallback(uint8_t u8NotifyCode, char * pu8CommandBuffe
             break;
         }
     }
-    pu8Helper = pu8Buffer + u16Count;
+    pu8Helper = pu8CommandBuffer + u16Count;
 
     /* Search command */
     for(uint16_t i = u16Count; i < u16CommandBufferSize; i++)
@@ -337,22 +336,22 @@ bool ezmCli_CommandReceivedCallback(uint8_t u8NotifyCode, char * pu8CommandBuffe
         switch (eState)
         {
         case STATE_COMMAND:
-            if(*(pu8Buffer + i) == ' ')
+            if(*(pu8CommandBuffer + i) == ' ')
             {
-                *(pu8Buffer + i) = '\0';
+                *(pu8CommandBuffer + i) = '\0';
                 CLIPRINT2("Receive command: [command = %s]", pu8Helper);
 
                 if(ezmCli_IsCommandExist((char *)pu8Helper, &u8CommandIndex))
                 {
                     eState = STATE_ARGUMENT;
-                    pu8Helper = (pu8Buffer + i + 1);
+                    pu8Helper = (pu8CommandBuffer + i + 1);
 
                     /* remove next white space*/
-                    while(i < u16CommandBufferSize - 1 && *(pu8Buffer + i + 1) == ' ')
+                    while(i < u16CommandBufferSize - 1 && *(pu8CommandBuffer + i + 1) == ' ')
                     {
                         i = i + 1;
                     }
-                    pu8Helper = (pu8Buffer + i + 1);
+                    pu8Helper = (pu8CommandBuffer + i + 1);
                 }
                 else
                 {
@@ -361,7 +360,7 @@ bool ezmCli_CommandReceivedCallback(uint8_t u8NotifyCode, char * pu8CommandBuffe
                     bResult = false; 
                 }
             }
-            else if (*(pu8Buffer + i) == '\r' || *(pu8Buffer + i) == '\n')
+            else if (*(pu8CommandBuffer + i) == '\r' || *(pu8CommandBuffer + i) == '\n')
             {
                 bResult = false;
                 if(i == u16Count)
@@ -385,9 +384,9 @@ bool ezmCli_CommandReceivedCallback(uint8_t u8NotifyCode, char * pu8CommandBuffe
             break;
         
         case STATE_ARGUMENT:
-            if(*(pu8Buffer + i) == ' ')
+            if(*(pu8CommandBuffer + i) == ' ')
             {
-                *(pu8Buffer + i) = '\0';
+                *(pu8CommandBuffer + i) = '\0';
                 CLIPRINT2("Receive argument: [argument = %s]", pu8Helper);
 
                 if(ezmCli_IsArgumentLongForm(pu8Helper))
@@ -417,13 +416,13 @@ bool ezmCli_CommandReceivedCallback(uint8_t u8NotifyCode, char * pu8CommandBuffe
                 }
 
                 /* remove white space*/
-                while(i < u16CommandBufferSize - 1 && *(pu8Buffer + i + 1) == ' ')
+                while(i < u16CommandBufferSize - 1 && *(pu8CommandBuffer + i + 1) == ' ')
                 {
                     i = i + 1;
                 }
-                pu8Helper = (pu8Buffer + i + 1);
+                pu8Helper = (pu8CommandBuffer + i + 1);
             }
-            else if (*(pu8Buffer + i) == '\r' || *(pu8Buffer + i) == '\n')
+            else if (*(pu8CommandBuffer + i) == '\r' || *(pu8CommandBuffer + i) == '\n')
             {
                 /* missing value*/
                 CLIPRINT1("Missing value");
@@ -438,24 +437,24 @@ bool ezmCli_CommandReceivedCallback(uint8_t u8NotifyCode, char * pu8CommandBuffe
             break;
 
         case STATE_VALUE:
-            if(*(pu8Buffer + i) == ' ' && *(pu8Buffer + i + 1) == '-')
+            if(*(pu8CommandBuffer + i) == ' ' && *(pu8CommandBuffer + i + 1) == '-')
             {
-                *(pu8Buffer + i) = '\0';
+                *(pu8CommandBuffer + i) = '\0';
                 CLIPRINT2("Receive value: [value = %s]", pu8Helper);
                 astMetaData[u8CommandIndex].au8ValueList[u8ValueIndex] = pu8Helper;
                 eState = STATE_ARGUMENT;
 
                 /* remove white space*/
-                while (i < u16CommandBufferSize - 1 && *(pu8Buffer + i + 1) == ' ')
+                while (i < u16CommandBufferSize - 1 && *(pu8CommandBuffer + i + 1) == ' ')
                 {
                     i = i + 1;
                 }
-                pu8Helper = (pu8Buffer + i + 1);
+                pu8Helper = (pu8CommandBuffer + i + 1);
 
             }
-            else if (*(pu8Buffer + i) == '\r' || *(pu8Buffer + i) == '\n')
+            else if (*(pu8CommandBuffer + i) == '\r' || *(pu8CommandBuffer + i) == '\n')
             {
-                *(pu8Buffer + i) = '\0';
+                *(pu8CommandBuffer + i) = '\0';
                 CLIPRINT2("Receive value: [value = %s]", pu8Helper);
                 astMetaData[u8CommandIndex].au8ValueList[u8ValueIndex] = pu8Helper;
                 
