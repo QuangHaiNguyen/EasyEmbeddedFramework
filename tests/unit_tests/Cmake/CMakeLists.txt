@@ -47,7 +47,7 @@ endif()
 # Project section 
 ########################################################################
 ## Specify a project name
-project(linux_main)
+project(unit_test)
 
 
 ## Set the build type
@@ -59,25 +59,23 @@ endif()
 
 set(SDK_PATH ../../ezmsdk)
 
-
-set (DEPENDENCIES ${SDK_PATH}/app/app.c /
-${SDK_PATH}/cli/cli.c /
-${SDK_PATH}/ezmIpc/ezmIpc.c /
-${SDK_PATH}/binCmdParser/binCmdParser.c /
-${SDK_PATH}/helper/smalloc/smalloc.c /
+set (DEPENDENCIES ${SDK_PATH}/app/app.c
+${SDK_PATH}/ezmIpc/ezmIpc.c
+${SDK_PATH}/cli/cli.c
+${SDK_PATH}/binCmdParser/binCmdParser.c
+${SDK_PATH}/helper/smalloc/smalloc.c
+${SDK_PATH}/helper/ezmAssert/ezmAssert.c
+${SDK_PATH}/helper/hexdump/hexdump.c
 ${SDK_PATH}/helper/linked_list/linked_list.c)
 
-message(${DEPENDENCIES})
-
-add_executable(main main.c ${DEPENDENCIES})
+add_executable(main main.cpp ${DEPENDENCIES})
 
 target_include_directories(main PRIVATE ${CMAKE_SOURCE_DIR})
 
+target_link_libraries(main gtest_main gtest )
+
 ## Install the executable to <install_directory>/bin
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
-
-## Install libraries (if any) to <install_directory>/bin
-set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
 ########################################################################
 # Doxygen 

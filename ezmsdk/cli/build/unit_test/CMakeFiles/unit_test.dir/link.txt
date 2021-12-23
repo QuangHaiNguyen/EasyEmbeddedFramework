@@ -1,1 +1,0 @@
-/usr/bin/c++  -Wall -Wextra -O3  -rdynamic CMakeFiles/unit_test.dir/unit_test.cpp.o CMakeFiles/unit_test.dir/__/cli.c.o  -o ../../bin/unit_test  ../../lib/libcli.a ../lib/libgtest_main.a ../lib/libgtest.a -lpthread 

@@ -38,6 +38,8 @@
 /* CLI SECTION ***************************************************************/
 #if (CLI == 1U)
 #define CLI_MOD_ID                  0x01U
+#define NUM_OF_CMD                  10U
+#define NUM_OF_ARG                  4U
 #endif
 
 /* SCHEDULER SECTION *********************************************************/

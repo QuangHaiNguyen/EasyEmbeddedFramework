@@ -77,13 +77,13 @@ void ezmHexdump( void * pAddress, uint16_t u16Size, ENUM_SHOW_ASCII eShowAscii)
 
     printf("\n\nAddress: %p - size: %d\n", pAddress, u16Size);
     printf("00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F\n");
-    while(ulStartingAddress < pAddress + u16Size)
+    while((uint8_t*)ulStartingAddress < (uint8_t*)pAddress + u16Size)
     {
         for(uint8_t i = 0; i < 16; i = i + 1)
         {
-            if((uint8_t *)(ulStartingAddress + i) - (uint8_t *) pAddress <= u16Size)
+            if((uint8_t *)((uint8_t*)ulStartingAddress + i) - (uint8_t *) pAddress <= u16Size)
             {
-                PRINTF_NO_NL("%02x ", *(uint8_t *)(ulStartingAddress + i));
+                PRINTF_NO_NL("%02x ", *((uint8_t*)ulStartingAddress + i));
             }
             else
             {
@@ -97,9 +97,9 @@ void ezmHexdump( void * pAddress, uint16_t u16Size, ENUM_SHOW_ASCII eShowAscii)
             for(uint8_t i = 0; i < 16; i = i + 1)
             {
                 /* Only print readable ascii character */
-                if( (*(uint8_t *)(ulStartingAddress + i) >= 33U && *(uint8_t *)(ulStartingAddress + i) <= 126U) )
+                if( (*((uint8_t*)ulStartingAddress + i) >= 33U && *((uint8_t*)ulStartingAddress + i) <= 126U) )
                 {
-                    PRINTF_NO_NL("%c", *(char *)(ulStartingAddress + i));
+                    PRINTF_NO_NL("%c", *(char *)((uint32_t*)ulStartingAddress + i));
                 }
                 else
                 {
@@ -112,7 +112,7 @@ void ezmHexdump( void * pAddress, uint16_t u16Size, ENUM_SHOW_ASCII eShowAscii)
             /* Do nothing */
         }
         PRINT1("");
-        ulStartingAddress = ulStartingAddress + 16;
+        (uint32_t*)ulStartingAddress = (uint32_t*)ulStartingAddress + 16;
     }
     PRINT1("");
 }

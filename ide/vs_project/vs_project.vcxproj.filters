@@ -1,0 +1,133 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Source Files\app">
+      <UniqueIdentifier>{4f3e93c8-8460-4e70-b19e-967a214163ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\binCmdParser">
+      <UniqueIdentifier>{b671200d-6457-4320-be29-27a802cb0904}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\cli">
+      <UniqueIdentifier>{28109014-e781-4852-883d-e0a124b191f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ezmDebug">
+      <UniqueIdentifier>{5fe250a0-6390-47bb-b91e-d576d18c0edb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ezmIpc">
+      <UniqueIdentifier>{7bf95d2e-9715-4c28-a03b-fe3d39a7914f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\helper">
+      <UniqueIdentifier>{6ff18ae1-66ea-408f-a12b-e06976d889af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\scheduler">
+      <UniqueIdentifier>{6ae0099d-2518-4e7d-9e81-aa9e2c78689c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\statemachine">
+      <UniqueIdentifier>{9b624c5e-cbb2-46c3-af8e-9ca5d22c4235}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\helper\ezmAssert">
+      <UniqueIdentifier>{8607bce4-30a1-4650-99e7-18893553967f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\helper\hexdump">
+      <UniqueIdentifier>{5b36ecd0-de44-425b-944c-a04fd9d1d396}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\helper\linked_list">
+      <UniqueIdentifier>{d1f9805a-a55a-4874-8d02-3412c9b14378}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\helper\ring_buffer">
+      <UniqueIdentifier>{f4bfc553-45c3-4819-9790-df6548e52788}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\helper\smalloc">
+      <UniqueIdentifier>{bb18918c-82ff-4448-915b-5b73219450c4}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\ezmsdk\app\app.c">
+      <Filter>Source Files\app</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\binCmdParser\binCmdParser.c">
+      <Filter>Source Files\binCmdParser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\cli\cli.c">
+      <Filter>Source Files\cli</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\ezmIpc\ezmIpc.c">
+      <Filter>Source Files\ezmIpc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\statemachine\statemachine.c">
+      <Filter>Source Files\statemachine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\scheduler\scheduler.c">
+      <Filter>Source Files\scheduler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\helper\ezmAssert\ezmAssert.c">
+      <Filter>Source Files\helper\ezmAssert</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\helper\hexdump\hexdump.c">
+      <Filter>Source Files\helper\hexdump</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\helper\linked_list\linked_list.c">
+      <Filter>Source Files\helper\linked_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\helper\smalloc\smalloc.c">
+      <Filter>Source Files\helper\smalloc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\helper\ring_buffer\ring_buffer.c">
+      <Filter>Source Files\helper\ring_buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="main.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\ezmsdk\app\app.h">
+      <Filter>Source Files\app</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ezmsdk\app\app_config.h">
+      <Filter>Source Files\app</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ezmsdk\binCmdParser\binCmdParser.h">
+      <Filter>Source Files\binCmdParser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ezmsdk\cli\cli.h">
+      <Filter>Source Files\cli</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ezmsdk\ezmDebug\config.h">
+      <Filter>Source Files\ezmDebug</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ezmsdk\ezmDebug\ezmDebug.h">
+      <Filter>Source Files\ezmDebug</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ezmsdk\ezmIpc\ezmIpc.h">
+      <Filter>Source Files\ezmIpc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ezmsdk\ezmIpc\ezmIpc_conf.h">
+      <Filter>Source Files\ezmIpc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ezmsdk\statemachine\statemachine.h">
+      <Filter>Source Files\statemachine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ezmsdk\scheduler\scheduler.h">
+      <Filter>Source Files\scheduler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ezmsdk\helper\ezmAssert\ezmAssert.h">
+      <Filter>Source Files\helper\ezmAssert</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ezmsdk\helper\hexdump\hexdump.h">
+      <Filter>Source Files\helper\hexdump</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ezmsdk\helper\linked_list\linked_list.h">
+      <Filter>Source Files\helper\linked_list</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ezmsdk\helper\smalloc\smalloc.h">
+      <Filter>Source Files\helper\smalloc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ezmsdk\helper\ring_buffer\ring_buffer.h">
+      <Filter>Source Files\helper\ring_buffer</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
