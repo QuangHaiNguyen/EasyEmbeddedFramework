@@ -8,7 +8,7 @@
 *******************************************************************************/
 
 /** @file  cli.c
- *  @brief This is the source template for a cli
+ *  @brief This is the source code for a cli
  */
 
 /******************************************************************************
@@ -42,35 +42,35 @@
 * Module Typedefs
 *******************************************************************************/
 
-/** @brief definition of a new type
+/** @brief Metadata of a command
  *  
  */
 typedef struct 
 {
-    const char *    pu8Command;                         /**< */
-    const char *    pu8Description;                     /**< */
-    CLI_CALLBACK    pfnCallback;                        /**< */
-    uint32_t *      au32LongArgumenList[NUM_OF_ARG];    /**< */
-    uint32_t *      au32ShordArgumenList[NUM_OF_ARG];   /**< */
-    uint32_t *      au32DescriptionList[NUM_OF_ARG];    /**< */
-    char *          au8ValueList[NUM_OF_ARG];           /**< */
+    const char *    pu8Command;                         /**< Pointer to the command */
+    const char *    pu8Description;                     /**< Pointer to the command description */
+    CLI_CALLBACK    pfnCallback;                        /**< Pointer to the command callback function */
+    uint32_t *      au32LongArgumenList[NUM_OF_ARG];    /**< Pointer to the list of argument in long form */
+    uint32_t *      au32ShordArgumenList[NUM_OF_ARG];   /**< Pointer to the list of argument in short form */
+    uint32_t *      au32DescriptionList[NUM_OF_ARG];    /**< Pointer to the command description */
+    char *          au8ValueList[NUM_OF_ARG];           /**< Pointer to the list of values */
 }CommandMetadata;
 
-/** @brief definition of a new type
+/** @brief state of the command parser
  *
  */
 typedef enum 
 {
-    STATE_COMMAND,  /**< */
-    STATE_ARGUMENT, /**< */
-    STATE_VALUE,    /**< */
+    STATE_COMMAND,  /**< State parsing the command */
+    STATE_ARGUMENT, /**< State parsing the argument */
+    STATE_VALUE,    /**< State parsing the value */
 }ENUM_CLI_STATE;
 
 /******************************************************************************
 * Module Variable Definitions
 *******************************************************************************/
-static CommandMetadata astMetaData[NUM_OF_CMD];     /**< */
-static ENUM_CLI_STATE  eState = STATE_COMMAND;      /**< */
+static CommandMetadata astMetaData[NUM_OF_CMD];     /**< Array holding commands metadata */
+static ENUM_CLI_STATE  eState = STATE_COMMAND;      /**< Holding the current state of the parser*/
 
 /******************************************************************************
 * Function Definitions
@@ -227,6 +227,12 @@ bool ezmCli_AddArgument ( uint8_t u8CommandIndex,
 {
     bool bResult = true;
 
+
+    if (pu8LongForm == NULL || pu8ShortForm == NULL || pu8Description == NULL)
+    {
+        bResult = false;
+    }
+
     if (bResult)
     {
         if(!ezmCli_IsIndexExist(u8CommandIndex))
@@ -235,12 +241,6 @@ bool ezmCli_AddArgument ( uint8_t u8CommandIndex,
         }
     }
 
-    if(pu8LongForm == NULL || pu8ShortForm == NULL || pu8Description == NULL)
-    {
-        bResult = false;
-    }
-    
-    
     if(bResult)
     {
         if(ezmCli_IsLongFormArgumentExist(u8CommandIndex, pu8LongForm) != CLI_INDEX_INVALID || 
@@ -312,6 +312,7 @@ bool ezmCli_CommandReceivedCallback(uint8_t u8NotifyCode, char * pu8CommandBuffe
 
     CLIPRINT2("Receive data: [data = %s]", pu8CommandBuffer);
 
+    /* Skip white space at the beginning of the command */
     for(uint16_t i = 0; i < u16CommandBufferSize - 1; i++)
     {
         if(*(pu8CommandBuffer + i) == ' ')
@@ -328,6 +329,7 @@ bool ezmCli_CommandReceivedCallback(uint8_t u8NotifyCode, char * pu8CommandBuffe
     /* Search command */
     for(uint16_t i = u16Count; i < u16CommandBufferSize; i++)
     {
+        /* Verify the result of the last iteration */
         if(bResult == false)
         {
             break;
@@ -346,7 +348,7 @@ bool ezmCli_CommandReceivedCallback(uint8_t u8NotifyCode, char * pu8CommandBuffe
                     eState = STATE_ARGUMENT;
                     pu8Helper = (pu8CommandBuffer + i + 1);
 
-                    /* remove next white space*/
+                    /* Skip  next white space */
                     while(i < u16CommandBufferSize - 1 && *(pu8CommandBuffer + i + 1) == ' ')
                     {
                         i = i + 1;
@@ -355,7 +357,7 @@ bool ezmCli_CommandReceivedCallback(uint8_t u8NotifyCode, char * pu8CommandBuffe
                 }
                 else
                 {
-                    /* command is not exist, print help*/
+                    /* Command does not exist, print help */
                     ezmCli_PrintMenu();
                     bResult = false; 
                 }
@@ -366,13 +368,13 @@ bool ezmCli_CommandReceivedCallback(uint8_t u8NotifyCode, char * pu8CommandBuffe
                 if(i == u16Count)
                 {
                     /* missing command*/
-                    CLIPRINT1("seriously, where is your command???");
+                    PRINT_ERR1("Missing command");
                     ezmCli_PrintMenu();
                 }
                 else
                 {
                     /* missing argument*/
-                    CLIPRINT1("Missing argument");
+                    PRINT_ERR1("Missing argument");
                     ezmCli_PrintCommandHelp(u8CommandIndex);
                 }
             }
@@ -415,7 +417,7 @@ bool ezmCli_CommandReceivedCallback(uint8_t u8NotifyCode, char * pu8CommandBuffe
                     bResult = false;  
                 }
 
-                /* remove white space*/
+                /* Skip white space */
                 while(i < u16CommandBufferSize - 1 && *(pu8CommandBuffer + i + 1) == ' ')
                 {
                     i = i + 1;
@@ -441,10 +443,11 @@ bool ezmCli_CommandReceivedCallback(uint8_t u8NotifyCode, char * pu8CommandBuffe
             {
                 *(pu8CommandBuffer + i) = '\0';
                 CLIPRINT2("Receive value: [value = %s]", pu8Helper);
+
                 astMetaData[u8CommandIndex].au8ValueList[u8ValueIndex] = pu8Helper;
                 eState = STATE_ARGUMENT;
 
-                /* remove white space*/
+                /* Skip white space*/
                 while (i < u16CommandBufferSize - 1 && *(pu8CommandBuffer + i + 1) == ' ')
                 {
                     i = i + 1;
@@ -456,6 +459,7 @@ bool ezmCli_CommandReceivedCallback(uint8_t u8NotifyCode, char * pu8CommandBuffe
             {
                 *(pu8CommandBuffer + i) = '\0';
                 CLIPRINT2("Receive value: [value = %s]", pu8Helper);
+
                 astMetaData[u8CommandIndex].au8ValueList[u8ValueIndex] = pu8Helper;
                 
                 /* Execute the callback */
@@ -463,7 +467,9 @@ bool ezmCli_CommandReceivedCallback(uint8_t u8NotifyCode, char * pu8CommandBuffe
                 {
                     bResult = false;
                 }
+
                 ezmCli_ResetValueList(u8CommandIndex);
+
                 /* End of command, use next line to terminate the loop*/
                 i = u16CommandBufferSize;
             }
@@ -524,8 +530,7 @@ static bool ezmCli_ResetMetaData (uint8_t u8Index)
             astMetaData[u8Index].au32ShordArgumenList[i] = NULL;
             astMetaData[u8Index].au8ValueList[i] =NULL;
         }
-        bResult = true;
-        CLIPRINT2("Reset metadata: [index = %d]", u8Index); 
+        bResult = true; 
     }
 
     return bResult;
