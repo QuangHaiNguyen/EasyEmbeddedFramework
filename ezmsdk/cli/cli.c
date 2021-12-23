@@ -2,16 +2,8 @@
 * Title                 :   cli 
 * Filename              :   cli.c
 * Author                :   Quang Hai Nguyen
-* Origin Date           :   21.02.2021
+* Origin Date           :   21.12.2021
 * Version               :   1.0.0
-*
-* <br><b> - HISTORY OF CHANGES - </b>
-*  
-* <table align="left" style="width:800px">
-* <tr><td> Date       </td><td> Software Version </td><td> Initials         </td><td> Description </td></tr>
-* <tr><td> 21.02.2021 </td><td> 1.0.0            </td><td> Quang Hai Nguyen </td><td> Interface Created </td></tr>
-* </table><br><br>
-* <hr>
 *
 *******************************************************************************/
 
@@ -23,11 +15,11 @@
 * Includes
 *******************************************************************************/
 #include "cli.h"
-#include "../ezmDebug/ezmDebug.h"
-#include "../helper/smalloc/smalloc.h"
-#include "string.h"
 
 #if (CLI == 1U)
+
+#include "../ezmDebug/ezmDebug.h"
+#include "string.h"
 
 #define VERBOSE                 0U
 #define CLI_INDEX_INVALID       0xffU
@@ -64,33 +56,38 @@ typedef struct
     char *          au8ValueList[NUM_OF_ARG];           /**< */
 }CommandMetadata;
 
+/** @brief definition of a new type
+ *
+ */
 typedef enum 
 {
-    STATE_COMMAND,
-    STATE_ARGUMENT,
-    STATE_VALUE,
+    STATE_COMMAND,  /**< */
+    STATE_ARGUMENT, /**< */
+    STATE_VALUE,    /**< */
 }ENUM_CLI_STATE;
+
 /******************************************************************************
 * Module Variable Definitions
 *******************************************************************************/
-static CommandMetadata astMetaData[NUM_OF_CMD];
-static ENUM_CLI_STATE  eState = STATE_COMMAND;
+static CommandMetadata astMetaData[NUM_OF_CMD];     /**< */
+static ENUM_CLI_STATE  eState = STATE_COMMAND;      /**< */
 
 /******************************************************************************
 * Function Definitions
 *******************************************************************************/
-uint8_t     ezmCli_GetFreeInstance          (void);
-bool        ezmCli_ResetMetaData            (uint8_t u8Index);
-bool        ezmCli_IsIndexExist             (uint8_t u8Index);
-bool        ezmCli_IsCommandExist           (const char * pu8Command, uint8_t * pu8Index);
-uint8_t     ezmCli_IsLongFormArgumentExist  (uint8_t u8CommandIndex, const char * pu8LongForm);
-uint8_t     ezmCli_IsShortFormArgumentExist (uint8_t u8CommandIndex,const char * pu8ShortForm);
-void        ezmCli_PrintCommandHelp         (uint8_t u8Index);
-static void ezmCli_PrintMenu                (void);
-static bool ezmCli_IsArgumentShortForm      (char * pu8ShortFormArg);
-static bool ezmCli_IsArgumentLongForm       (char * pu8LongFormArg);
-static void ezmCli_ResetValueList           (uint8_t u8Index);
-/* Public function ***********************************************************/
+static uint8_t  ezmCli_GetFreeInstance          (void);
+static bool     ezmCli_ResetMetaData            (uint8_t u8Index);
+static bool     ezmCli_IsIndexExist             (uint8_t u8Index);
+static bool     ezmCli_IsCommandExist           (const char * pu8Command, uint8_t * pu8Index);
+static uint8_t  ezmCli_IsLongFormArgumentExist  (uint8_t u8CommandIndex, const char * pu8LongForm);
+static uint8_t  ezmCli_IsShortFormArgumentExist (uint8_t u8CommandIndex,const char * pu8ShortForm);
+static void     ezmCli_PrintCommandHelp         (uint8_t u8Index);
+static void     ezmCli_PrintMenu                (void);
+static bool     ezmCli_IsArgumentShortForm      (char * pu8ShortFormArg);
+static bool     ezmCli_IsArgumentLongForm       (char * pu8LongFormArg);
+static void     ezmCli_ResetValueList           (uint8_t u8Index);
+
+/************************** Public function **********************************/
 
 /******************************************************************************
 * Function : ezmCli_Init
@@ -135,17 +132,19 @@ void ezmCli_Init(void)
 *
 * This function register a new command 
 *
-* PRE-CONDITION: None
+* PRE-CONDITION: ezmCli_Init() must be called before
 *
 * POST-CONDITION: None
 * 
-* @param    a: (IN)pointer to the ring buffer
-* @param    b: (IN)size of the ring buffer
-* @return   None
+* @param    pu8Command:     (IN)pointer to the command buffer
+* @param    pu8Description: (IN)pointer to the description buffer
+* @param    pfnCallback:    (IN)pointer to the callback function, where the command is executed
+* @return   index of the command, or 0xff of fail
 *
 * \b Example Example:
 * @code
-* sum(a, b);
+* uint8_t u8Index;
+* u8Index = ezmCli_RegisterCommand("Test_Command", "this is a test command", &TestCommand);
 * @endcode
 *
 * @see sum
@@ -194,23 +193,28 @@ uint8_t ezmCli_RegisterCommand(const char * pu8Command, const char *  pu8Descrip
 
 
 /******************************************************************************
-* Function : sum
+* Function : ezmCli_AddArgument
 *//** 
 * \b Description:
 *
 * This function initializes the ring buffer
 *
-* PRE-CONDITION: None
+* PRE-CONDITION: ezmCli_Init() and ezmCli_RegisterCommand() must be called before
 *
 * POST-CONDITION: None
 * 
-* @param    a: (IN)pointer to the ring buffer
-* @param    b: (IN)size of the ring buffer
-* @return   None
+* @param    u8CommandIndex: (IN)index of the command, which the argument will be added
+* @param    *pu8LongForm:   (IN)argument in long form, starting with --
+* @param    *pu8ShortForm:  (IN)argument in short form, starting with -
+* @param    *pu8Description:(IN)argument description
+*
+* @return   True if success, else false
 *
 * \b Example Example:
 * @code
-* sum(a, b);
+* uint8_t u8Index;
+* u8Index = ezmCli_RegisterCommand("Test_Command", "this is a test command", &TestCommand);
+* ezmCli_AddArgument(u8Index, "--arg1", "-a1", "argument 1");
 * @endcode
 *
 * @see sum
@@ -270,21 +274,30 @@ bool ezmCli_AddArgument ( uint8_t u8CommandIndex,
 }
 
 /******************************************************************************
-* Function : ezmCli_ResetMetaData
+* Function : ezmCli_CommandReceivedCallback
 *//** 
 * \b Description:
 *
 * This function resets the contents of the metadata at a specific index
 *
-* PRE-CONDITION: None
+* PRE-CONDITION: ezmCli_Init() and ezmCli_RegisterCommand() 
+*                ezmCli_AddArgument() must be called before
 *
 * POST-CONDITION: None
 * 
-* @param    u8NotifyCode:   (IN) notification code
-* @param    *pu32Param1:    (IN) pointer to the parameter 1
-* @param    *pu32Param2:    (IN) pointer to the parameter 2
+* @param    u8NotifyCode:           (IN) notification code
+* @param    *pu8CommandBuffer:      (IN) pointer to the buffer storing the command
+* @param    u16CommandBufferSize:   (IN) size of the buffer storing the command
 *
-* @return   None
+* @return   True if success, else false
+*
+* \b Example Example:
+* @code
+* uint8_t u8Index;
+* u8Index = ezmCli_RegisterCommand("Test_Command", "this is a test command", &TestCommand);
+* ezmCli_AddArgument(u8Index, "--arg1", "-a1", "argument 1");
+* ezmCli_CommandReceivedCallback(u8NotifyCode, pu8CommandBuffer,u16Size);
+* @endcode
 *
 *******************************************************************************/
 bool ezmCli_CommandReceivedCallback(uint8_t u8NotifyCode, char * pu8CommandBuffer, uint16_t u16CommandBufferSize)
@@ -473,7 +486,7 @@ bool ezmCli_CommandReceivedCallback(uint8_t u8NotifyCode, char * pu8CommandBuffe
     return bResult;
 }
 
-/* Private function **********************************************************/
+/*********************** Private function ************************************/
 
 /******************************************************************************
 * Function : ezmCli_ResetMetaData
@@ -496,7 +509,7 @@ bool ezmCli_CommandReceivedCallback(uint8_t u8NotifyCode, char * pu8CommandBuffe
 * @endcode
 *
 *******************************************************************************/
-bool ezmCli_ResetMetaData (uint8_t u8Index)
+static bool ezmCli_ResetMetaData (uint8_t u8Index)
 {
     bool bResult = false;
 
@@ -543,7 +556,7 @@ bool ezmCli_ResetMetaData (uint8_t u8Index)
 * @endcode
 *
 *******************************************************************************/
-bool ezmCli_IsIndexExist (uint8_t u8Index)
+static bool ezmCli_IsIndexExist (uint8_t u8Index)
 {
     bool bResult = false;
 
@@ -580,7 +593,7 @@ bool ezmCli_IsIndexExist (uint8_t u8Index)
 * @endcode
 *
 *******************************************************************************/
-uint8_t ezmCli_GetFreeInstance (void)
+static uint8_t ezmCli_GetFreeInstance (void)
 {
     uint8_t u8FreeInstanceIndex = CLI_INDEX_INVALID;
 
@@ -621,7 +634,7 @@ uint8_t ezmCli_GetFreeInstance (void)
 * @endcode
 *
 *******************************************************************************/
-bool ezmCli_IsCommandExist   (const char * pu8Command, uint8_t * pu8Index)
+static bool ezmCli_IsCommandExist   (const char * pu8Command, uint8_t * pu8Index)
 {
     bool bIsExist = false;
 
@@ -644,7 +657,22 @@ bool ezmCli_IsCommandExist   (const char * pu8Command, uint8_t * pu8Index)
 }
 
 
-void ezmCli_PrintCommandHelp (uint8_t u8Index)
+/******************************************************************************
+* Function : ezmCli_PrintCommandHelp
+*//**
+* \b Description:
+*
+* This function prints the help of a specific command
+*
+* PRE-CONDITION: None
+*
+* POST-CONDITION: None
+*
+* @param    u8Index:(IN) index of the command
+* @return   None
+*
+*******************************************************************************/
+static void ezmCli_PrintCommandHelp (uint8_t u8Index)
 {
     if(u8Index < NUM_OF_CMD && astMetaData[u8Index].pu8Command != NULL)
     {
@@ -673,6 +701,21 @@ void ezmCli_PrintCommandHelp (uint8_t u8Index)
     }
 }
 
+/******************************************************************************
+* Function : ezmCli_PrintMenu
+*//**
+* \b Description:
+*
+* This function checks prints the complete help
+*
+* PRE-CONDITION: None
+*
+* POST-CONDITION: None
+*
+* @param    None
+* @return   None
+*
+*******************************************************************************/
 static void ezmCli_PrintMenu (void)
 {
     PRINT1("\nList of commands:");
@@ -683,6 +726,23 @@ static void ezmCli_PrintMenu (void)
     PRINT1("\n");
 }
 
+/******************************************************************************
+* Function : ezmCli_IsArgumentShortForm
+*//**
+* \b Description:
+*
+* This function checks if the arguments are in short form
+*
+* PRE-CONDITION: None
+*
+* POST-CONDITION: None
+*
+* @param    *pu8ShortFormArg:    (IN) pointer to the argument
+*
+* @return   True:       Argument is in short form
+*           False:      Argument is not in short form 
+*
+*******************************************************************************/
 static bool ezmCli_IsArgumentShortForm(char * pu8ShortFormArg)
 {
     bool bResult = false;
@@ -696,6 +756,24 @@ static bool ezmCli_IsArgumentShortForm(char * pu8ShortFormArg)
     } 
     return  bResult;
 }
+
+/******************************************************************************
+* Function : ezmCli_IsArgumentLongForm
+*//**
+* \b Description:
+*
+* This function checks if the arguments are in long form
+*
+* PRE-CONDITION: None
+*
+* POST-CONDITION: None
+*
+* @param    *pu8LongFormArg:    (IN) pointer to the argument
+*
+* @return   True:       Argument is in long form
+*           False:      Argument is not in long form
+*
+*******************************************************************************/
 static bool ezmCli_IsArgumentLongForm(char * pu8LongFormArg)
 {
     bool bResult = false;
@@ -710,6 +788,23 @@ static bool ezmCli_IsArgumentLongForm(char * pu8LongFormArg)
     return  bResult;
 }
 
+/******************************************************************************
+* Function : ezmCli_IsLongFormArgumentExist
+*//**
+* \b Description:
+*
+* This function checks if the long form argument is existing and return its index
+*
+* PRE-CONDITION: None
+*
+* POST-CONDITION: None
+*
+* @param    u8CommandIndex: (IN) Index of the command metadata
+* @param    *pu8LongForm:   (IN) Pointer to the buffer storing the argument
+*
+* @return   Index of the argument
+*
+*******************************************************************************/
 uint8_t ezmCli_IsLongFormArgumentExist  (uint8_t u8CommandIndex, const char * pu8LongForm)
 {
     uint8_t u8Index = CLI_INDEX_INVALID;
@@ -726,6 +821,23 @@ uint8_t ezmCli_IsLongFormArgumentExist  (uint8_t u8CommandIndex, const char * pu
     return u8Index;
 }
 
+/******************************************************************************
+* Function : ezmCli_IsShortFormArgumentExist
+*//**
+* \b Description:
+*
+* This function checks if the short form argument is existing and return its index
+*
+* PRE-CONDITION: None
+*
+* POST-CONDITION: None
+*
+* @param    u8CommandIndex: (IN) Index of the command metadata
+* @param    *pu8LongForm:   (IN) Pointer to the buffer storing the argument
+*
+* @return   Index of the argument
+*
+*******************************************************************************/
 uint8_t ezmCli_IsShortFormArgumentExist  (uint8_t u8CommandIndex,const char * pu8ShortForm)
 {
     uint8_t u8Index = CLI_INDEX_INVALID;
@@ -742,6 +854,22 @@ uint8_t ezmCli_IsShortFormArgumentExist  (uint8_t u8CommandIndex,const char * pu
     return u8Index;
 }
 
+/******************************************************************************
+* Function : ezmCli_ResetValueList
+*//**
+* \b Description:
+*
+* This function resets the list storing the pointer the the values.
+* It is called after the callback function is executed
+*
+* PRE-CONDITION: None
+*
+* POST-CONDITION: None
+*
+* @param    u8Index:    (IN) Index of the command metadata
+* @return   None
+*
+*******************************************************************************/
 static void ezmCli_ResetValueList(uint8_t u8Index)
 {
     if(u8Index < NUM_OF_CMD)

@@ -36,6 +36,11 @@
     <IncludePath>F:\Nextcloud\My_Work\ezmSDK\ezmsdk;F:\Nextcloud\My_Work\ezmSDK\tests\unit_tests;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemGroup>
+    <ClInclude Include="..\unit_test_assert.h" />
+    <ClInclude Include="..\unit_test_binParser.h" />
+    <ClInclude Include="..\unit_test_cli.h" />
+    <ClInclude Include="..\unit_test_hexdump.h" />
+    <ClInclude Include="..\unit_test_ipc.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>

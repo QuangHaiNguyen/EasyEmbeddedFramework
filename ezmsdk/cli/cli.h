@@ -25,6 +25,7 @@
 * Includes
 *******************************************************************************/
 #include "../app/app_config.h"
+
 #if (CLI == 1U)
 #include "stdint.h"
 #include "stdbool.h"
@@ -32,33 +33,26 @@
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
-#ifndef UNIT_TEST_ENABLE
-#define UNIT_TEST_ENABLE     1U /**< Activate helper function for testing, must be deactivated in production*/
-#endif
+/* None */
 
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
 
+/** @brief CLI notification code
+ *
+ */
 typedef enum
 {
-    CLI_NC_OK,
-    CLI_NC_ERR,
-    CLI_NC_BAD_ARG,
+    CLI_NC_OK,      /**< Ok code */
+    CLI_NC_ERR,     /**< generic error code */
+    CLI_NC_BAD_ARG, /**< input argument is wrong */
 }CLI_NOTIFY_CODE;
 
-/** @brief definition of a new type
- *  
+
+/** @brief command callback function
+ *
  */
-
-typedef struct
-{
-    int a;
-    /**< an integer */
-    int b;
-    /**< an integer */
-}aType;
-
 typedef CLI_NOTIFY_CODE(*CLI_CALLBACK)(const char * pu8Command, void * pValueList);
 
 /******************************************************************************
