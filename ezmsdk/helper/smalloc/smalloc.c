@@ -10,27 +10,25 @@
 *
 *  Date         Version     Author              Description 
 *  24.01.2021   1.0.0       Quang Hai Nguyen    Initial Release.
+*  24.12.2021   1.0.1       Quang Hai Nguyen    Refactor and add code document
 *
 *******************************************************************************/
 /** @file  smalloc.c
- *  @brief This is the source file for network component. Containing the init 
- *  function which point to the hardware implementation and the de-init function, 
- *  which frees the resource
+ *  @brief This is the source file for static memory allocation. It is basically,
+ *          works as the normal malloc, but the memory is allocated from a static
+ *          memory buffer
  */
 
 /******************************************************************************
 * Includes
-*******************************************************************************/
+******************************************************************************/
 #include "../../app/app_config.h"
 
 #if (SMALLOC == 1U)
 
 #include "../linked_list/linked_list.h"
-
 #include "smalloc.h"
 #include "stdbool.h"
-#include <stddef.h>
-#include <stdio.h>
 #include <string.h>
 
 /******************************************************************************
@@ -82,8 +80,9 @@
     #define PRINTSTATS()
 #endif
 
-#define SIZE_OF_METADATA        sizeof(ezmMemoryBlock)
-#define END_OF_MEMORY           ((void*)au8StaticMemory + STATIC_MEMORY_SIZE)
+#define SIZE_OF_METADATA        sizeof(ezmMemoryBlock)                          /**< size of the metadata */
+#define END_OF_MEMORY           ((void*)au8StaticMemory + STATIC_MEMORY_SIZE)   /**< address of the end of the memory buffer*/
+
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
@@ -103,56 +102,41 @@ static emzSmalloc_Statistic stStats = {0, 0, 0, STATIC_MEM_SIZE};
 /******************************************************************************
 * Module Variable Definitions
 *******************************************************************************/
-static uint8_t au8StaticMemory[STATIC_MEMORY_SIZE];
-static LinkedList stFreeBlockList;
-static LinkedList stAllocBlockList;
+static uint8_t      au8StaticMemory[STATIC_MEMORY_SIZE];    /**< array for statically allocate memory */
+static LinkedList   stFreeBlockList;                        /**< list to manage the free block */
+static LinkedList   stAllocBlockList;                       /**< list to manage the allocated block */
 /******************************************************************************
 * Function Definitions
 *******************************************************************************/
-static void     ezmSmalloc_Merge(void);
-static bool     ezmSmalloc_SplitBlock(ezmMemoryBlock * SplitBlock, uint16_t u16SplitedSize);
-static void *   ezmSmalloc_GetFreeBlockApendToList(uint16_t u16BlockSize, LinkedList * pstApendList);
-static void     ezmSmalloc_ReturnBlockToFreeList(ezmMemoryBlock * pstBlock);
+static void     ezmSmalloc_Merge                    (void);
+static bool     ezmSmalloc_SplitBlock               (ezmMemoryBlock * SplitBlock, uint16_t u16SplitedSize);
+static void *   ezmSmalloc_GetFreeBlockApendToList  (uint16_t u16BlockSize, LinkedList * pstApendList);
+static void     ezmSmalloc_ReturnBlockToFreeList    (ezmMemoryBlock * pstBlock);
 
 #if (SMALLOC_DEBUG == 1U)
-void ezmSmalloc_PrintListMetadata(LinkedList * pstList);
-void ezmSmalloc_PrintBlockMetadata(ezmMemoryBlock * pstMemBlock);
-void ezmSmalloc_PrintList(LinkedList * pstList);
+void ezmSmalloc_PrintListMetadata   (LinkedList * pstList);
+void ezmSmalloc_PrintBlockMetadata  (ezmMemoryBlock * pstMemBlock);
+void ezmSmalloc_PrintList           (LinkedList * pstList);
 #endif
 
 #if (ENABLE_STATS == 1U)
 void ezmSmalloc_PrintStats(void);
 #endif
 
+/**************************** Public function ********************************/
+
 /******************************************************************************
-* Function : sum
+* Function : ezmSmalloc_Initialize
 *//** 
 * \b Description:
 *
-* This function initializes the ring buffer
+* This function initializes the the static memory allocation module
 *
 * PRE-CONDITION: None
 *
 * POST-CONDITION: None
-* 
-* @param    a: (IN)pointer to the ring buffer
-* @param    b: (IN)size of the ring buffer
+*
 * @return   None
-*
-* \b Example Example:
-* @code
-* sum(a, b);
-* @endcode
-*
-* @see sum
-*
-* <br><b> - HISTORY OF CHANGES - </b>
-*  
-* <table align="left" style="width:800px">
-* <tr><td> Date       </td><td> Software Version </td><td> Initials         </td><td> Description </td></tr>
-* <tr><td> 24.01.2021 </td><td> 1.0.0            </td><td> Quang Hai Nguyen </td><td> Interface Created </td></tr>
-* </table><br><br>
-* <hr>
 *
 *******************************************************************************/
 void ezmSmalloc_Initialize(void)
@@ -184,7 +168,21 @@ void ezmSmalloc_Initialize(void)
     SMALLOCFUNCLEAVE();
 }
 
-
+/******************************************************************************
+* Function : ezmSmalloc_Malloc
+*//**
+* \b Description:
+*
+* This function allocates a block of memory
+*
+* PRE-CONDITION: ezmSmalloc_Initialize() must be called first
+*
+* POST-CONDITION: None
+*
+* @param    u16Size: (IN)number of byte to be allocated
+* @return   address of the memory block
+*
+*******************************************************************************/
 void* ezmSmalloc_Malloc(uint16_t u16Size)
 {
     ezmMemoryBlock * pstFreeBlock;
@@ -205,11 +203,270 @@ void* ezmSmalloc_Malloc(uint16_t u16Size)
         pFreeBlockAddress = (void *)pstFreeBlock->pBuffer;
     }
 
-    
     SMALLOCFUNCLEAVE();
     return pFreeBlockAddress;
 }
 
+/******************************************************************************
+* Function : emzSmalloc_Free
+*//**
+* \b Description:
+*
+* This function initializes the the static memory allocation module
+*
+* PRE-CONDITION: ezmSmalloc_Initialize() must be called first
+*
+* POST-CONDITION: None
+*
+* @param    *address: (IN)pointer to the deallocated block
+*
+* @return   None
+*
+*******************************************************************************/
+void emzSmalloc_Free(void* address)
+{
+    ezmMemoryBlock* pstDeallocBlock;
+    bool bSuccess = false;
+
+    SMALLOCFUNCENTER();
+
+    /* Get the address of the soon to be freed block*/
+    pstDeallocBlock = (ezmMemoryBlock*)((uint8_t*)address - SIZE_OF_METADATA);
+    SMALLOC_PRINT_BLOCKMETA(pstDeallocBlock);
+
+    /* remove it from the allocated list*/
+    bSuccess = LinkedList_RemoveNode(&stAllocBlockList, pstDeallocBlock);
+
+    if (bSuccess)
+    {
+        ezmSmalloc_ReturnBlockToFreeList(pstDeallocBlock);
+    }
+
+    SMALLOCFUNCLEAVE();
+}
+
+/******************************************************************************
+* Function : ezmSmalloc_InitMemList
+*//**
+* \b Description:
+*
+* This function initializes a new memory list to mange the memory block
+*
+* PRE-CONDITION: ezmSmalloc_Initialize() must be called first
+*
+* POST-CONDITION: None
+*
+* @param    *pstNewList:        (IN)pointer to the new list
+* @param    u8ListOwnerModuleId:(IN)id of the module who owns this list
+*
+* @return   None
+*
+*******************************************************************************/
+void ezmSmalloc_InitMemList(ezmMemList* pstNewList, uint8_t u8ListOwnerModuleId)
+{
+    SMALLOCFUNCENTER();
+
+    if (!stFreeBlockList.pstHead)
+    {
+        ezmSmalloc_Initialize();
+    }
+    SMALLOCPRINT2("Init a list for module: 0x%02x", u8ListOwnerModuleId);
+    pstNewList->pstHead = NULL;
+    pstNewList->pstTail = NULL;
+    pstNewList->u16Size = 0;
+    pstNewList->u8ModuleId = u8ListOwnerModuleId;
+    SMALLOC_PRINT_LISTMETA(pstNewList);
+
+    SMALLOCFUNCLEAVE();
+}
+
+/******************************************************************************
+* Function : ezmSmalloc_GetMemBlockInList
+*//**
+* \b Description:
+*
+* This function get a free block and puts into a memory list - Legacy, keep for
+* compatiple only
+*
+* PRE-CONDITION: ezmSmalloc_Initialize() must be called first and memory list
+* is initialized
+*
+* POST-CONDITION: None
+*
+* @param    *pstNewList:    (IN)list where new block will be appended
+* @param    u16BlockSize:   (IN)size of the block
+*
+* @return   pointer to the new block
+*
+*******************************************************************************/
+ezmMemoryBlock* ezmSmalloc_GetMemBlockInList(ezmMemList* pstNewList, uint16_t u16BlockSize)
+{
+    ezmMemoryBlock* pstFreeMemBlock;
+
+    SMALLOCFUNCENTER();
+
+    pstFreeMemBlock = (ezmMemoryBlock*)ezmSmalloc_GetFreeBlockApendToList(u16BlockSize, pstNewList);
+
+    SMALLOC_PRINT_LISTMETA(pstNewList);
+    SMALLOC_PRINT_BLOCKMETA((ezmMemoryBlock*)pstFreeMemBlock);
+#if (ENABLE_STATS == 1U)
+    stStats.u32NumOfAllocBlock++;
+    PRINTSTATS();
+#endif
+    SMALLOCFUNCLEAVE();
+    return pstFreeMemBlock;
+}
+
+/******************************************************************************
+* Function : ezmSmalloc_ReturnMemBlock
+*//**
+* \b Description:
+*
+* This function returns a block to the free list
+*
+* PRE-CONDITION: ezmSmalloc_Initialize() must be called first and memory list
+* is initialized
+*
+* POST-CONDITION: None
+*
+* @param    *pstNewList:    (IN)list owns the block
+* @param    *pstBlock:      (IN)point to the deallocated block
+*
+* @return   None
+*
+*******************************************************************************/
+void ezmSmalloc_ReturnMemBlock(ezmMemList* pstNewList, ezmMemoryBlock* pstBlock)
+{
+    ezmMemoryBlock* pstReturnedBlock = (ezmMemoryBlock*)pstBlock;
+
+    SMALLOCFUNCENTER();
+
+    if (LinkedList_RemoveNode(pstNewList, pstReturnedBlock) == true)
+    {
+        ezmSmalloc_ReturnBlockToFreeList(pstReturnedBlock);
+        SMALLOCPRINT2("Return %u byte to the free list", (uint32_t)(SIZE_OF_METADATA + pstReturnedBlock->u16BufferSize));
+#if (ENABLE_STATS == 1U)
+        stStats.u32NumOfAllocBlock--;
+        PRINTSTATS();
+#endif
+    }
+    SMALLOCFUNCLEAVE();
+}
+
+/******************************************************************************
+* Function : ezmSmalloc_GetFreeBlock
+*//**
+* \b Description:
+*
+* This function get a free block from the free list
+*
+* PRE-CONDITION: ezmSmalloc_Initialize() must be called
+*
+* POST-CONDITION: None
+*
+* @param    u16BlockSize: (IN)size of the block
+*
+* @return   address of the block, NULL if cannot allocate memory
+*
+*******************************************************************************/
+ezmMemoryBlock* ezmSmalloc_GetFreeBlock(uint16_t u16BlockSize)
+{
+    ezmMemoryBlock* pstFreeBlock = stFreeBlockList.pstHead;
+
+    /*Init if not*/
+    if (!pstFreeBlock)
+    {
+        ezmSmalloc_Initialize();
+    }
+
+    if (pstFreeBlock)
+    {
+        /* Searching for suitable block */
+        while ((pstFreeBlock->u16BufferSize < u16BlockSize + SIZE_OF_METADATA) &&
+            (pstFreeBlock->pstNextNode != NULL))
+        {
+            /**Current block does not have enough space
+             * move to the next block if applied
+             * and increase block index
+             */
+            pstFreeBlock = pstFreeBlock->pstNextNode;
+        }
+
+        /* Found suitable block*/
+        if (pstFreeBlock->u16BufferSize >= u16BlockSize + SIZE_OF_METADATA)
+        {
+            if (ezmSmalloc_SplitBlock(pstFreeBlock, u16BlockSize) == true)
+            {
+                if (LinkedList_RemoveNode(&stFreeBlockList, pstFreeBlock) != true)
+                {
+                    /*something wrong, we cannot move the block so we merge it back to the free list*/
+                    ezmSmalloc_Merge();
+                    pstFreeBlock = NULL;
+                    SMALLOCPRINT1("LinkedList_RemoveNode error");
+                }
+            }
+            else
+            {
+                /*unalble to split, return NULL*/
+                pstFreeBlock = NULL;
+            }
+        }
+        /* No block is available */
+        else
+        {
+            SMALLOCPRINT1("Found no block");
+
+            /* Try to merge blocks for the next call*/
+            ezmSmalloc_Merge();
+
+            pstFreeBlock = NULL;
+        }
+    }
+    return (void*)pstFreeBlock;
+}
+
+/******************************************************************************
+* Function : ezmSmalloc_ApendBlockToList
+*//**
+* \b Description:
+*
+* This function appends the block to a list
+*
+* PRE-CONDITION: ezmSmalloc_Initialize() must be called first and memory list
+* is initialized
+*
+* POST-CONDITION: None
+*
+* @param    *pstBlock:  (IN)appended block
+* @param    *pstNewList:(IN)memory list
+* @return   None
+*
+*
+*******************************************************************************/
+void ezmSmalloc_ApendBlockToList(ezmMemoryBlock* pstBlock, ezmMemList* pstNewList)
+{
+    LinkedList_InsertToTail(pstNewList, pstBlock);
+}
+
+/*************************** Private function ********************************/
+
+/******************************************************************************
+* Function : ezmSmalloc_SplitBlock
+*//**
+* \b Description:
+*
+* This function splits the block into 2 smaller blocks
+*
+* PRE-CONDITION: ezmSmalloc_Initialize() must be called
+*
+* POST-CONDITION: None
+*
+* @param    *SplitBlock:    (IN)block to be splited
+* @param    u16SplitedSize: (IN)size will be splited
+*
+* @return   True if block is splited, else false
+*
+*******************************************************************************/
 static bool ezmSmalloc_SplitBlock(ezmMemoryBlock * SplitBlock, uint16_t u16SplitedSize)
 {
     bool bSuccess = false;
@@ -240,83 +497,22 @@ static bool ezmSmalloc_SplitBlock(ezmMemoryBlock * SplitBlock, uint16_t u16Split
 }
 
 
-void emzSmalloc_Free(void * address)
-{
-    ezmMemoryBlock * pstDeallocBlock;
-    bool bSuccess = false;
-
-    SMALLOCFUNCENTER();
-    
-    /* Get the address of the soon to be freed block*/
-    pstDeallocBlock = (ezmMemoryBlock *)((uint8_t*)address - SIZE_OF_METADATA);
-    SMALLOC_PRINT_BLOCKMETA(pstDeallocBlock);
-
-    /* remove it from the allocated list*/
-    bSuccess = LinkedList_RemoveNode(&stAllocBlockList, pstDeallocBlock);
-
-    if(bSuccess)
-    {
-       ezmSmalloc_ReturnBlockToFreeList(pstDeallocBlock);
-    }
-
-    SMALLOCFUNCLEAVE();
-}
-
-void ezmSmalloc_InitMemList(ezmMemList * pstNewList, uint8_t u8ListOwnerModuleId)
-{
-    SMALLOCFUNCENTER();
-
-    if(!stFreeBlockList.pstHead)
-    {
-        ezmSmalloc_Initialize();
-    }
-
-    SMALLOCPRINT2("Init a list for module: 0x%02x", u8ListOwnerModuleId);
-    pstNewList->pstHead = NULL;
-    pstNewList->pstTail = NULL;
-    pstNewList->u16Size = 0;
-    pstNewList->u8ModuleId = u8ListOwnerModuleId;
-    SMALLOC_PRINT_LISTMETA(pstNewList);
-
-    SMALLOCFUNCLEAVE();
-}
-
-ezmMemoryBlock * ezmSmalloc_GetMemBlockInList(ezmMemList * pstNewList, uint16_t u16BlockSize)
-{
-    ezmMemoryBlock * pstFreeMemBlock; 
-    
-    SMALLOCFUNCENTER();
-
-    pstFreeMemBlock = (ezmMemoryBlock *)ezmSmalloc_GetFreeBlockApendToList(u16BlockSize, pstNewList);
-
-    SMALLOC_PRINT_LISTMETA(pstNewList);
-    SMALLOC_PRINT_BLOCKMETA((ezmMemoryBlock *)pstFreeMemBlock);
-#if (ENABLE_STATS == 1U)
-        stStats.u32NumOfAllocBlock++;
-        PRINTSTATS();
-#endif
-    SMALLOCFUNCLEAVE();
-    return pstFreeMemBlock;
-}
-
-void ezmSmalloc_ReturnMemBlock(ezmMemList * pstNewList, ezmMemoryBlock * pstBlock)
-{
-    ezmMemoryBlock * pstReturnedBlock = (ezmMemoryBlock*)pstBlock;
-
-    SMALLOCFUNCENTER();
-
-    if(LinkedList_RemoveNode(pstNewList, pstReturnedBlock) == true)
-    {
-        ezmSmalloc_ReturnBlockToFreeList(pstReturnedBlock);
-        SMALLOCPRINT2("Return %u byte to the free list", (uint32_t)(SIZE_OF_METADATA + pstReturnedBlock->u16BufferSize));
-#if (ENABLE_STATS == 1U)
-        stStats.u32NumOfAllocBlock--;
-        PRINTSTATS();
-#endif
-    }
-    SMALLOCFUNCLEAVE();
-}
-
+/******************************************************************************
+* Function : ezmSmalloc_ReturnBlockToFreeList
+*//**
+* \b Description:
+*
+* This function returns the block to a free list
+*
+* PRE-CONDITION: ezmSmalloc_Initialize() must be called
+*
+* POST-CONDITION: None
+*
+* @param    *pstBlock: (IN)pointer to deallocated block
+*
+* @return   None
+*
+*******************************************************************************/
 static void ezmSmalloc_ReturnBlockToFreeList(ezmMemoryBlock * pstBlock)
 {
     SMALLOCFUNCENTER();   
@@ -356,73 +552,88 @@ static void ezmSmalloc_ReturnBlockToFreeList(ezmMemoryBlock * pstBlock)
     SMALLOCFUNCLEAVE();
 }
 
+/******************************************************************************
+* Function : ezmSmalloc_GetFreeBlockApendToList
+*//**
+* \b Description:
+*
+* This function gets a free block and append it into a list
+*
+* PRE-CONDITION: ezmSmalloc_Initialize() must be called
+*
+* POST-CONDITION: None
+*
+* @param    u16BlockSize:   (IN)size of the free block
+* @param    *pstApendList:  (IN)list that block will be appended
+* @return   None
+*
+*
+*******************************************************************************/
 static void * ezmSmalloc_GetFreeBlockApendToList(uint16_t u16BlockSize, LinkedList * pstApendList)
 {
     ezmMemoryBlock * pstFreeBlock = stFreeBlockList.pstHead;
 
     SMALLOCFUNCENTER();
 
-    if(!pstFreeBlock)
+    if (pstFreeBlock)
     {
-        ezmSmalloc_Initialize();
-    }
-
-    /* Searching for suitable block */
-    while((pstFreeBlock->u16BufferSize < u16BlockSize + SIZE_OF_METADATA)  && 
-        (pstFreeBlock->pstNextNode != NULL))
-    {
-        /**Current block does not have enough space
-         * move to the next block if applied
-         * and increase block index
-         */
-        pstFreeBlock = pstFreeBlock->pstNextNode;
-    }
-
-    /* Found suitable block*/
-    if(pstFreeBlock->u16BufferSize >= u16BlockSize + SIZE_OF_METADATA)
-    {
-        /* Split the block, and move it to allocated list */
-        SMALLOCPRINT2("Suitable block @: %p", (void *)pstFreeBlock);
-        SMALLOC_PRINT_BLOCKMETA(pstFreeBlock);
-
-        if( ezmSmalloc_SplitBlock(pstFreeBlock, u16BlockSize) == true)
+        /* Searching for suitable block */
+        while ((pstFreeBlock->u16BufferSize < u16BlockSize + SIZE_OF_METADATA) &&
+            (pstFreeBlock->pstNextNode != NULL))
         {
+            /**Current block does not have enough space
+             * move to the next block if applied
+             * and increase block index
+             */
+            pstFreeBlock = pstFreeBlock->pstNextNode;
+        }
+
+        /* Found suitable block*/
+        if (pstFreeBlock->u16BufferSize >= u16BlockSize + SIZE_OF_METADATA)
+        {
+            /* Split the block, and move it to allocated list */
+            SMALLOCPRINT2("Suitable block @: %p", (void*)pstFreeBlock);
             SMALLOC_PRINT_BLOCKMETA(pstFreeBlock);
 
-            if( LinkedList_RemoveNode(&stFreeBlockList, pstFreeBlock) == true)
+            if (ezmSmalloc_SplitBlock(pstFreeBlock, u16BlockSize) == true)
             {
-                LinkedList_InsertToTail(pstApendList, pstFreeBlock);
+                SMALLOC_PRINT_BLOCKMETA(pstFreeBlock);
+
+                if (LinkedList_RemoveNode(&stFreeBlockList, pstFreeBlock) == true)
+                {
+                    LinkedList_InsertToTail(pstApendList, pstFreeBlock);
 
 #if (ENABLE_STATS == 1U)
-                stStats.u32NumOfFreeByte -= SIZE_OF_METADATA + u16BlockSize;
-                stStats.u32NumOfAlloc++;
-                PRINTSTATS();
+                    stStats.u32NumOfFreeByte -= SIZE_OF_METADATA + u16BlockSize;
+                    stStats.u32NumOfAlloc++;
+                    PRINTSTATS();
 #endif
+                }
+                else
+                {
+                    /*something wrong, we cannot move the block so we merge it back to the free list*/
+                    ezmSmalloc_Merge();
+                    pstFreeBlock = NULL;
+                    SMALLOCPRINT1("LinkedList_RemoveNode error");
+                }
             }
             else
             {
-                /*something wrong, we cannot move the block so we merge it back to the free list*/
-                ezmSmalloc_Merge();   
+                SMALLOCPRINT1("unable to split block");
                 pstFreeBlock = NULL;
-                SMALLOCPRINT1("LinkedList_RemoveNode error");
             }
+
         }
+        /* No block is available */
         else
         {
-            SMALLOCPRINT1("unable to split block");
+            SMALLOCPRINT1("Found no block");
+
+            /* Try to merge blocks for the next call*/
+            ezmSmalloc_Merge();
+
             pstFreeBlock = NULL;
         }
-        
-    }
-    /* No block is available */
-    else
-    {
-        SMALLOCPRINT1("Found no block");
-        
-        /* Try to merge blocks for the next call*/
-        ezmSmalloc_Merge();   
-        
-        pstFreeBlock = NULL;
     }
 
     SMALLOC_PRINT_LISTMETA(&stFreeBlockList);
@@ -432,6 +643,23 @@ static void * ezmSmalloc_GetFreeBlockApendToList(uint16_t u16BlockSize, LinkedLi
     return (void *)pstFreeBlock;
 }
 
+/******************************************************************************
+* Function : ezmSmalloc_Initialize
+*//**
+* \b Description:
+*
+* This function initializes the the static memory allocation module
+*
+* PRE-CONDITION: None
+*
+* POST-CONDITION: None
+*
+* @param    a: (IN)pointer to the ring buffer
+* @param    b: (IN)size of the ring buffer
+* @return   None
+*
+*
+*******************************************************************************/
 static void ezmSmalloc_Merge(void)
 {
     ezmMemoryBlock * pstCurrentFreeBlock = stFreeBlockList.pstHead;
@@ -457,66 +685,25 @@ static void ezmSmalloc_Merge(void)
     SMALLOCFUNCLEAVE();
 }
 
-ezmMemoryBlock * ezmSmalloc_GetFreeBlock (uint16_t u16BlockSize)
-{
-    ezmMemoryBlock * pstFreeBlock = stFreeBlockList.pstHead;
-
-    /*Init if not*/
-    if(!pstFreeBlock)
-    {
-        ezmSmalloc_Initialize();
-    }
-
-    /* Searching for suitable block */
-    while((pstFreeBlock->u16BufferSize < u16BlockSize + SIZE_OF_METADATA)  && 
-        (pstFreeBlock->pstNextNode != NULL))
-    {
-        /**Current block does not have enough space
-         * move to the next block if applied
-         * and increase block index
-         */
-        pstFreeBlock = pstFreeBlock->pstNextNode;
-    }
-
-    /* Found suitable block*/
-    if(pstFreeBlock->u16BufferSize >= u16BlockSize + SIZE_OF_METADATA)
-    {
-        if( ezmSmalloc_SplitBlock(pstFreeBlock, u16BlockSize) == true)
-        {
-            if( LinkedList_RemoveNode(&stFreeBlockList, pstFreeBlock) != true)
-            {
-                /*something wrong, we cannot move the block so we merge it back to the free list*/
-                ezmSmalloc_Merge();   
-                pstFreeBlock = NULL;
-                SMALLOCPRINT1("LinkedList_RemoveNode error");
-            }
-        }
-        else
-        {
-            /*unalble to split, return NULL*/
-            pstFreeBlock = NULL;
-        }
-    }
-    /* No block is available */
-    else
-    {
-        SMALLOCPRINT1("Found no block");
-        
-        /* Try to merge blocks for the next call*/
-        ezmSmalloc_Merge();   
-        
-        pstFreeBlock = NULL;
-    }
-    
-    return (void *)pstFreeBlock;
-}
-
-void ezmSmalloc_ApendBlockToList (ezmMemoryBlock * pstBlock, ezmMemList * pstNewList)
-{
-    LinkedList_InsertToTail(pstNewList, pstBlock);
-}
-
 #if (SMALLOC_DEBUG == 1)
+
+/******************************************************************************
+* Function : ezmSmalloc_Initialize
+*//**
+* \b Description:
+*
+* This function initializes the the static memory allocation module
+*
+* PRE-CONDITION: None
+*
+* POST-CONDITION: None
+*
+* @param    a: (IN)pointer to the ring buffer
+* @param    b: (IN)size of the ring buffer
+* @return   None
+*
+*
+*******************************************************************************/
 void ezmSmalloc_PrintListMetadata(LinkedList * pstList)
 {
     PRINT1("*List metadata*****************************************************");
@@ -527,6 +714,23 @@ void ezmSmalloc_PrintListMetadata(LinkedList * pstList)
     PRINT1("*List metadata end*************************************************");
 }
 
+/******************************************************************************
+* Function : ezmSmalloc_Initialize
+*//**
+* \b Description:
+*
+* This function initializes the the static memory allocation module
+*
+* PRE-CONDITION: None
+*
+* POST-CONDITION: None
+*
+* @param    a: (IN)pointer to the ring buffer
+* @param    b: (IN)size of the ring buffer
+* @return   None
+*
+*
+*******************************************************************************/
 void ezmSmalloc_PrintList(LinkedList * pstList)
 {
     ezmMemoryBlock * pstBlock;
@@ -541,6 +745,23 @@ void ezmSmalloc_PrintList(LinkedList * pstList)
     PRINT1("*Block detail end**************************************************");  
 }
 
+/******************************************************************************
+* Function : ezmSmalloc_Initialize
+*//**
+* \b Description:
+*
+* This function initializes the the static memory allocation module
+*
+* PRE-CONDITION: None
+*
+* POST-CONDITION: None
+*
+* @param    a: (IN)pointer to the ring buffer
+* @param    b: (IN)size of the ring buffer
+* @return   None
+*
+*
+*******************************************************************************/
 void ezmSmalloc_PrintBlockMetadata(ezmMemoryBlock * pstMemBlock)
 {
     PRINT1("*Block metadata****************************************************");
@@ -554,6 +775,24 @@ void ezmSmalloc_PrintBlockMetadata(ezmMemoryBlock * pstMemBlock)
 }
 
 #if (ENABLE_STATS == 1U)
+
+/******************************************************************************
+* Function : ezmSmalloc_Initialize
+*//**
+* \b Description:
+*
+* This function initializes the the static memory allocation module
+*
+* PRE-CONDITION: None
+*
+* POST-CONDITION: None
+*
+* @param    a: (IN)pointer to the ring buffer
+* @param    b: (IN)size of the ring buffer
+* @return   None
+*
+*
+*******************************************************************************/
 void ezmSmalloc_PrintStats(void)
 {
     PRINT1("*Block statistic***************************************************");

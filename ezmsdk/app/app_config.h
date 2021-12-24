@@ -59,7 +59,6 @@
 #if (HELPER_LINKEDLIST == 0U)
 #error module HELPER_LINKEDLIST must be activated
 #endif
-
 #define SMALLOC_MOD_ID              0x03U
 /**< ID of smaloc module*/
 

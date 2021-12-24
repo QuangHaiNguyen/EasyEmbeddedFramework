@@ -34,8 +34,16 @@
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
-typedef struct LinkedList ezmMemList;
-typedef struct Node ezmMemoryBlock;
+
+/**@brief List to manage the memory block
+ *
+ */
+typedef LinkedList ezmMemList;
+
+/**@brief Memory block description
+ *
+ */
+typedef Node ezmMemoryBlock;
 
 /******************************************************************************
 * Module Variable Definitions
@@ -53,12 +61,6 @@ ezmMemoryBlock *    ezmSmalloc_GetMemBlockInList (ezmMemList * pstNewList, uint1
 void                ezmSmalloc_ReturnMemBlock (ezmMemList * pstNewList, ezmMemoryBlock * pstBlock);
 ezmMemoryBlock *    ezmSmalloc_GetFreeBlock (uint16_t u16BlockSize);
 void                ezmSmalloc_ApendBlockToList (ezmMemoryBlock * pstBlock, ezmMemList * pstNewList);
-
-#if (SMALLOC_ANALYSIS == 1U)
-void ezmSmalloc_PrintFreeListHead();
-void ezmSmalloc_PrintFreeList();
-void ezmSmalloc_PrintMetadata(Block_t * str_ptrMetaData);
-#endif /* SMALLOC_ANALYSIS */
 
 #endif /* _SMALLOC_H */
 
