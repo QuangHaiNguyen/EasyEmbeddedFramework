@@ -26,7 +26,7 @@
 * Includes
 *******************************************************************************/
 #include <stdint.h>
-
+#include <stdbool.h>
 
 /******************************************************************************
 * Module Preprocessor Macros
@@ -43,11 +43,7 @@
 **/
 typedef struct
 {
-#if (STATIC_MEM == 0)
     uint8_t *pu8Buff;
-#else
-    uint8_t pu8Buff[STATIC_MEM_SIZE];
-#endif
     /**< pointer to the data buffer*/
     uint16_t u16Capacity;
     /**< size of the buffer*/
@@ -60,25 +56,6 @@ typedef struct
 }RingBuffer;
 
 
-/**
- *
- * @brief   Status of the ring buffer
-**/
-typedef enum
-{
-    BUFF_OK = 0,
-    /**< Buffer OK*/
-    BUFF_NO_MEMORY,
-    /**<Buffer does not have enough memory */
-	BUFF_ERROR,
-    /**< buffer error */
-	BUFF_FULL,
-    /**< buffer is full */
-	BUFF_EMPTY
-    /**< buffer is empty */
-}RingBuff_Status;
-
-
 /******************************************************************************
 * Module Variable Definitions
 *******************************************************************************/
@@ -87,14 +64,13 @@ typedef enum
 /******************************************************************************
 * Function Prototypes
 *******************************************************************************/
-RingBuff_Status ezmRingBuffer_IsEmpty(RingBuffer * pstBuff);
-RingBuff_Status ezmRingBuffer_IsFull(RingBuffer * pstBuff);
-RingBuff_Status ezmRingBuffer_Push(RingBuffer * pstBuff, uint8_t * pu8Data, uint16_t u16Size);
-RingBuff_Status ezmRingBuffer_Pop(RingBuffer * pstBuff, uint8_t * pu8Data, uint16_t u16Size);
-RingBuff_Status ezmRingBuffer_Deinit(RingBuffer * pstBuff);
-RingBuff_Status ezmRingBuffer_Reset(RingBuffer * pstBuff);
-RingBuff_Status ezmRingBuffer_Init( RingBuffer * pstBuff, uint16_t u16Size );
-RingBuff_Status ezmRingBuffer_GetAvailableMemory( RingBuffer * pstBuff, uint16_t * pu16AvailableMem);
+bool        ezmRingBuffer_Init(RingBuffer* pstBuff, uint8_t * pu8Buff, uint16_t u16Size);
+bool        ezmRingBuffer_IsEmpty(RingBuffer * pstBuff);
+bool        ezmRingBuffer_IsFull(RingBuffer * pstBuff);
+uint16_t    ezmRingBuffer_Push(RingBuffer * pstBuff, uint8_t * pu8Data, uint16_t u16Size);
+uint16_t    ezmRingBuffer_Pop(RingBuffer * pstBuff, uint8_t * pu8Data, uint16_t u16Size);
+void        ezmRingBuffer_Reset(RingBuffer * pstBuff);
+uint16_t    ezmRingBuffer_GetAvailableMemory( RingBuffer * pstBuff);
 
 #endif	/* RING_BUFFER_H */
 
