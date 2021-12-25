@@ -39,9 +39,6 @@
 #include "string.h"
 #include "ring_buffer.h"
 
-#if (SMALLOC == 1)
-#include "../smalloc/smalloc.h"
-#endif /*SMALLOC*/
 
 /******************************************************************************
 * Module Typedefs
@@ -71,7 +68,7 @@
 * 
 * @param    pstBuff:  (OUT)pointer to the ring buffer
 * @param    u16Size:   (IN)size of the ring buffer
-* @return   None
+* @return   True if success, else false
 *
 * \b Example Example:
 * @code
@@ -83,28 +80,26 @@
 *
 *
 *******************************************************************************/
-RingBuff_Status ezmRingBuffer_Init( RingBuffer * pstBuff, uint16_t u16Size)
+bool ezmRingBuffer_Init(RingBuffer* pstBuff, uint8_t* pu8Buff, uint16_t u16Size)
 {
-    RingBuff_Status eResult = BUFF_OK;
+    bool bResult = true;
 
     pstBuff->u16Head = 0;
     pstBuff->u16Tail = 0;
     pstBuff->u16Count = 0;
 
-#if (STATIC_MEM == 1)
-    pstBuff->u16Capacity = STATIC_MEM_SIZE;
-#else
-    pstBuff->u16Capacity = u16Size;
-    pstBuff->pu8Buff = (uint8_t *)ezmSmalloc_Malloc(u16Size);
-
-    if(NULL == pstBuff->pu8Buff)
+    if(pu8Buff == NULL && u16Size == 0)
     {
-        eResult = BUFF_NO_MEMORY;
+        bResult = false;
     }
-#endif
+    else
+    {
+        pstBuff->pu8Buff = pu8Buff;
+        pstBuff->u16Capacity = u16Size;
+    }
 
     memset(pstBuff->pu8Buff, 0, pstBuff->u16Capacity);
-    return eResult;
+    return bResult;
 }
 
 
@@ -120,9 +115,7 @@ RingBuff_Status ezmRingBuffer_Init( RingBuffer * pstBuff, uint16_t u16Size)
 * POST-CONDITION: None
 * 
 * @param    pstBuff:  (IN)pointer to the ring buffer
-* @return   Status of buffer
-*           + OK (not empty)
-*           + EMPTY
+* @return   True if empty, else false
 *
 * \b Example Example:
 * @code
@@ -135,9 +128,9 @@ RingBuff_Status ezmRingBuffer_Init( RingBuffer * pstBuff, uint16_t u16Size)
 * @see RingBuffer_Init
 *
 *******************************************************************************/
-RingBuff_Status ezmRingBuffer_IsEmpty(RingBuffer * pstBuff)
+bool ezmRingBuffer_IsEmpty(RingBuffer * pstBuff)
 {
-    return (0 == pstBuff->u16Count) ? BUFF_EMPTY : BUFF_OK;
+    return (0 == pstBuff->u16Count);
 }
 
 
@@ -153,9 +146,7 @@ RingBuff_Status ezmRingBuffer_IsEmpty(RingBuffer * pstBuff)
 * POST-CONDITION: None
 * 
 * @param    pstBuff:  (IN)pointer to the ring buffer
-* @return   Status of buffer
-*           + OK (not empty)
-*           + FULL
+* @return   True of full, else false
 *
 * \b Example Example:
 * @code
@@ -168,9 +159,9 @@ RingBuff_Status ezmRingBuffer_IsEmpty(RingBuffer * pstBuff)
 * @see RingBuffer_Init
 *
 *******************************************************************************/
-RingBuff_Status ezmRingBuffer_IsFull(RingBuffer * pstBuff)
+bool ezmRingBuffer_IsFull(RingBuffer * pstBuff)
 {
-    return (pstBuff->u16Count == pstBuff->u16Capacity) ? BUFF_FULL : BUFF_OK;
+    return (pstBuff->u16Count == pstBuff->u16Capacity);
 }
 
 /******************************************************************************
@@ -190,7 +181,7 @@ RingBuff_Status ezmRingBuffer_IsFull(RingBuffer * pstBuff)
 * @return   Status of buffer
 *           + BUFF_OK
 *           + BUFF_NO_MEMORY
-*
+* 
 * \b Example Example:
 * @code
 * RingBuffer buffer;
@@ -202,17 +193,38 @@ RingBuff_Status ezmRingBuffer_IsFull(RingBuffer * pstBuff)
 * @see RingBuffer_Init
 *
 *******************************************************************************/
-RingBuff_Status ezmRingBuffer_Push(RingBuffer * pstBuff, uint8_t * pu8Data, uint16_t u16Size)
+uint16_t ezmRingBuffer_Push(RingBuffer * pstBuff, uint8_t * pu8Data, uint16_t u16Size)
 {
-    if(pstBuff->u16Capacity - pstBuff->u16Count < u16Size){
-        return BUFF_NO_MEMORY;
+    uint16_t u16RemainByte = 0U;
+    uint16_t u16NumPushedData = pstBuff->u16Capacity - pstBuff->u16Count;
+
+    if(u16NumPushedData >= u16Size)
+    {
+        u16NumPushedData = u16Size;
     }
-    else{
-        memcpy(&pstBuff->pu8Buff[pstBuff->u16Head], pu8Data, u16Size);
-        pstBuff->u16Head = (pstBuff->u16Head + u16Size <  pstBuff->u16Capacity) ? (pstBuff->u16Head + u16Size) : 0U;
-        pstBuff->u16Count = (pstBuff->u16Count + u16Size <  pstBuff->u16Capacity) ? (pstBuff->u16Count + u16Size) :  pstBuff->u16Capacity;
-        return BUFF_OK;
+
+    if (pstBuff->u16Capacity - pstBuff->u16Head >= u16NumPushedData)
+    {
+        memcpy(&pstBuff->pu8Buff[pstBuff->u16Head], pu8Data, u16NumPushedData);
+        pstBuff->u16Head = pstBuff->u16Head + u16NumPushedData;
+        pstBuff->u16Count = pstBuff->u16Count + u16NumPushedData;
     }
+    else
+    {
+        /* Handle warpping */
+        u16RemainByte = pstBuff->u16Capacity - pstBuff->u16Head;
+        memcpy(&pstBuff->pu8Buff[pstBuff->u16Head], pu8Data, u16RemainByte);
+        pstBuff->u16Head = 0;
+        pstBuff->u16Count = pstBuff->u16Count + u16RemainByte;
+        pu8Data = pu8Data + u16RemainByte;
+
+        u16RemainByte = u16NumPushedData - u16RemainByte;
+        memcpy(&pstBuff->pu8Buff[pstBuff->u16Head], pu8Data, u16RemainByte);
+        pstBuff->u16Head = pstBuff->u16Head + u16RemainByte;
+        pstBuff->u16Count = pstBuff->u16Count + u16RemainByte;
+    }
+
+    return u16NumPushedData;
 }
 
 /******************************************************************************
@@ -244,52 +256,40 @@ RingBuff_Status ezmRingBuffer_Push(RingBuffer * pstBuff, uint8_t * pu8Data, uint
 * @see RingBuffer_Init
 *
 *******************************************************************************/
-RingBuff_Status ezmRingBuffer_Pop(RingBuffer * pstBuff, uint8_t * pu8Data, uint16_t u16Size)
+uint16_t ezmRingBuffer_Pop(RingBuffer * pstBuff, uint8_t * pu8Data, uint16_t u16Size)
 {
-    if(pstBuff->u16Count < u16Size)
+
+    uint16_t u16NumPoppedData = u16Size;
+    uint16_t u16RemainByte = 0U;
+
+    if(pstBuff->u16Count < u16NumPoppedData)
     {
-        return BUFF_NO_MEMORY;
+        u16NumPoppedData = pstBuff->u16Count;
+    }
+
+    if (pstBuff->u16Capacity - pstBuff->u16Tail >= u16NumPoppedData)
+    {
+        memcpy(pu8Data, &pstBuff->pu8Buff[pstBuff->u16Tail], u16NumPoppedData);
+        pstBuff->u16Tail = pstBuff->u16Tail + u16NumPoppedData;
+        pstBuff->u16Count = pstBuff->u16Count - u16NumPoppedData;
     }
     else
     {
-        memcpy(pu8Data, &pstBuff->pu8Buff[pstBuff->u16Tail], u16Size);
-        pstBuff->u16Tail = (pstBuff->u16Tail + u16Size < pstBuff->u16Capacity) ? (pstBuff->u16Tail + u16Size) : 0U;
-        pstBuff->u16Count = (pstBuff->u16Count - u16Size > 0) ? (pstBuff->u16Count - u16Size) : 0U;
-        return BUFF_OK;
-        
-    }
-}
+        /* Handle warpping */
+        u16RemainByte = pstBuff->u16Capacity - pstBuff->u16Tail;
+        memcpy(pu8Data, &pstBuff->pu8Buff[pstBuff->u16Tail], u16RemainByte);
+        pstBuff->u16Tail = 0;
+        pstBuff->u16Count = pstBuff->u16Count - u16RemainByte;
 
-/******************************************************************************
-* Function : RingBuffer_Deinit
-*//** 
-* \b Description:
-*
-* Deinit the ring buffer
-*
-* PRE-CONDITION: a RingBuffer is exsiting
-*
-* POST-CONDITION: None
-* 
-* @param    pstBuff:  (IN)pointer to the ring buffer
-* @return   Status of buffer
-*           + BUFF_OK
-*
-* \b Example Example:
-* @code
-* RingBuffer_Deinit(&buffer);
-* @endcode
-*
-* @see RingBuffer_Init
-*
-*******************************************************************************/
-RingBuff_Status ezmRingBuffer_Deinit(RingBuffer * pstBuff)
-{
-    if(pstBuff->pu8Buff != NULL)
-    {
-        emzSmalloc_Free(pstBuff->pu8Buff);
+        pu8Data = pu8Data + u16RemainByte;
+
+        u16RemainByte = u16NumPoppedData - u16RemainByte;
+        memcpy(pu8Data, &pstBuff->pu8Buff[pstBuff->u16Tail], u16RemainByte);
+        pstBuff->u16Tail = pstBuff->u16Tail + u16RemainByte;
+        pstBuff->u16Count = pstBuff->u16Count - u16RemainByte;
     }
-    return BUFF_OK;
+
+    return u16NumPoppedData;
 }
 
 /******************************************************************************
@@ -315,13 +315,12 @@ RingBuff_Status ezmRingBuffer_Deinit(RingBuffer * pstBuff)
 * @see RingBuffer_Init
 *
 *******************************************************************************/
-RingBuff_Status ezmRingBuffer_Reset(RingBuffer * pstBuff)
+void ezmRingBuffer_Reset(RingBuffer * pstBuff)
 {
     pstBuff->u16Head = 0;
     pstBuff->u16Tail = 0;
     pstBuff->u16Count = 0;
     memset(pstBuff->pu8Buff, 0, pstBuff->u16Capacity);
-    return BUFF_OK;
 }
 
 /******************************************************************************
@@ -351,10 +350,9 @@ RingBuff_Status ezmRingBuffer_Reset(RingBuffer * pstBuff)
 * @see RingBuffer_Init
 *
 *******************************************************************************/
-RingBuff_Status ezmRingBuffer_GetAvailableMemory( RingBuffer * pstBuff, uint16_t * pu16AvailableMem)
+uint16_t ezmRingBuffer_GetAvailableMemory( RingBuffer * pstBuff)
 {
-    *pu16AvailableMem = pstBuff->u16Capacity - pstBuff->u16Count;
-    return BUFF_OK;
+    return pstBuff->u16Capacity - pstBuff->u16Count;
 }
 
 #endif /* RING_BUFFER */

@@ -1,16 +1,20 @@
 #include <limits.h>
 #include "gtest/gtest.h"
 
+#ifndef UNIT_TEST_LINKEDLIST
+#define UNIT_TEST_LINKEDLIST
+
 extern "C" {
-#include "../linked_list.h"
+#include "../../ezmsdk/app/app_config.h"
+#include "../../ezmsdk/helper/linked_list/linked_list.h"
 }
 
 #define NUM_OF_NODE 10U
 
-namespace 
+namespace
 {
 #if (HELPER_LINKEDLIST == 1U)
-    TEST(Linked_List, Add_Node_To_Head) 
+    TEST(Linked_List, Add_Node_To_Head)
     {
         LinkedList stMyList;
         Node astNode[NUM_OF_NODE];
@@ -21,16 +25,16 @@ namespace
 
         LinkedList_InsertToHead(NULL, NULL);
         LinkedList_InsertToHead(NULL, NULL);
-        LinkedList_InsertToHead(&stMyList, NULL );
-        LinkedList_InsertToHead(&stMyList, NULL );
+        LinkedList_InsertToHead(&stMyList, NULL);
+        LinkedList_InsertToHead(&stMyList, NULL);
 
-        for(uint8_t i = 0; i < NUM_OF_NODE; i++)
+        for (uint8_t i = 0; i < NUM_OF_NODE; i++)
         {
             astNode[i].pstNextNode = NULL;
             astNode[i].pstPrevNode = NULL;
         }
 
-        for(uint8_t i = 0; i < NUM_OF_NODE; i++)
+        for (uint8_t i = 0; i < NUM_OF_NODE; i++)
         {
             LinkedList_InsertToHead(NULL, &astNode[i]);
             LinkedList_InsertToHead(&stMyList, &astNode[i]);
@@ -41,27 +45,27 @@ namespace
         ASSERT_EQ((void*)(astNode + NUM_OF_NODE - 1), stMyList.pstHead);
     }
 
-    TEST(Linked_List, Remove_Node_From_Head) 
+    TEST(Linked_List, Remove_Node_From_Head)
     {
         LinkedList stMyList;
         Node astNode[NUM_OF_NODE];
 
         stMyList.pstHead = NULL;
         stMyList.pstTail = NULL;
-        stMyList.u16Size = 0U; 
+        stMyList.u16Size = 0U;
 
-        for(uint8_t i = 0; i < NUM_OF_NODE; i++)
+        for (uint8_t i = 0; i < NUM_OF_NODE; i++)
         {
             astNode[i].pstNextNode = NULL;
             astNode[i].pstPrevNode = NULL;
         }
 
-        for(uint8_t i = 0; i < NUM_OF_NODE; i++)
+        for (uint8_t i = 0; i < NUM_OF_NODE; i++)
         {
             LinkedList_InsertToHead(&stMyList, &astNode[i]);
         }
 
-        for(uint8_t i = 0; i < NUM_OF_NODE - 1; i++)
+        for (uint8_t i = 0; i < NUM_OF_NODE - 1; i++)
         {
             LinkedList_RemoveFromHead(&stMyList);
             ASSERT_EQ((void*)stMyList.pstHead, (void*)astNode[NUM_OF_NODE - 1 - i].pstNextNode);
@@ -75,7 +79,7 @@ namespace
         EXPECT_TRUE((void*)stMyList.pstTail == nullptr);
     }
 
-    TEST(Linked_List, Add_Node_To_Tail) 
+    TEST(Linked_List, Add_Node_To_Tail)
     {
         LinkedList stMyList;
         Node astNode[NUM_OF_NODE];
@@ -85,16 +89,16 @@ namespace
 
         LinkedList_InsertToTail(NULL, NULL);
         LinkedList_InsertToTail(NULL, NULL);
-        LinkedList_InsertToTail(&stMyList, NULL );
-        LinkedList_InsertToTail(&stMyList, NULL );
+        LinkedList_InsertToTail(&stMyList, NULL);
+        LinkedList_InsertToTail(&stMyList, NULL);
 
-        for(uint8_t i = 0; i < NUM_OF_NODE; i++)
+        for (uint8_t i = 0; i < NUM_OF_NODE; i++)
         {
             astNode[i].pstNextNode = NULL;
             astNode[i].pstPrevNode = NULL;
         }
 
-        for(uint8_t i = 0; i < NUM_OF_NODE; i++)
+        for (uint8_t i = 0; i < NUM_OF_NODE; i++)
         {
             LinkedList_InsertToTail(NULL, &astNode[i]);
             LinkedList_InsertToTail(&stMyList, &astNode[i]);
@@ -105,27 +109,27 @@ namespace
         ASSERT_EQ((void*)(astNode + NUM_OF_NODE - 1), stMyList.pstTail);
     }
 
-    TEST(Linked_List, Remove_Node_From_Tail) 
+    TEST(Linked_List, Remove_Node_From_Tail)
     {
         LinkedList stMyList;
         Node astNode[NUM_OF_NODE];
 
         stMyList.pstHead = NULL;
         stMyList.pstTail = NULL;
-        stMyList.u16Size = 0U; 
+        stMyList.u16Size = 0U;
 
-        for(uint8_t i = 0; i < NUM_OF_NODE; i++)
+        for (uint8_t i = 0; i < NUM_OF_NODE; i++)
         {
             astNode[i].pstNextNode = NULL;
             astNode[i].pstPrevNode = NULL;
         }
 
-        for(uint8_t i = 0; i < NUM_OF_NODE; i++)
+        for (uint8_t i = 0; i < NUM_OF_NODE; i++)
         {
             LinkedList_InsertToTail(&stMyList, &astNode[i]);
         }
 
-        for(uint8_t i = 0; i < NUM_OF_NODE - 1; i++)
+        for (uint8_t i = 0; i < NUM_OF_NODE - 1; i++)
         {
             LinkedList_RemoveFromTail(&stMyList);
             ASSERT_EQ((void*)stMyList.pstTail, (void*)astNode[NUM_OF_NODE - 1 - i].pstPrevNode);
@@ -139,33 +143,33 @@ namespace
         EXPECT_TRUE((void*)stMyList.pstTail == nullptr);
     }
 
-    TEST(Linked_List, Search_Node_By_Index) 
+    TEST(Linked_List, Search_Node_By_Index)
     {
         LinkedList stMyList;
         Node astNode[NUM_OF_NODE];
 
         stMyList.pstHead = NULL;
         stMyList.pstTail = NULL;
-        stMyList.u16Size = 0U; 
+        stMyList.u16Size = 0U;
 
-        for(uint8_t i = 0; i < NUM_OF_NODE; i++)
+        for (uint8_t i = 0; i < NUM_OF_NODE; i++)
         {
             astNode[i].pstNextNode = NULL;
             astNode[i].pstPrevNode = NULL;
         }
 
-        for(uint8_t i = 0; i < NUM_OF_NODE; i++)
+        for (uint8_t i = 0; i < NUM_OF_NODE; i++)
         {
             LinkedList_InsertToTail(&stMyList, &astNode[i]);
         }
 
-        Node * pstFoundNode = NULL;
+        Node* pstFoundNode = NULL;
 
         pstFoundNode = LinkedList_FindNodeAtIndex(&stMyList, 10U);
-        EXPECT_TRUE(pstFoundNode== nullptr);
+        EXPECT_TRUE(pstFoundNode == nullptr);
 
         pstFoundNode = LinkedList_FindNodeAtIndex(&stMyList, 30U);
-        EXPECT_TRUE(pstFoundNode== nullptr);
+        EXPECT_TRUE(pstFoundNode == nullptr);
 
         pstFoundNode = LinkedList_FindNodeAtIndex(&stMyList, 0U);
         ASSERT_EQ((void*)stMyList.pstHead, pstFoundNode);
@@ -183,30 +187,30 @@ namespace
 
         pstFoundNode = LinkedList_FindNodeAtIndex(&stMyList, 7U);
         ASSERT_EQ((void*)(astNode + 7U), pstFoundNode);
-    
-        for(uint8_t i = 0; i < NUM_OF_NODE; i++)
+
+        for (uint8_t i = 0; i < NUM_OF_NODE; i++)
         {
             pstFoundNode = LinkedList_FindNodeAtIndex(&stMyList, i);
             ASSERT_EQ((void*)(astNode + i), pstFoundNode);
         }
     }
 
-    TEST(Linked_List, Insert_Node_By_Index) 
+    TEST(Linked_List, Insert_Node_By_Index)
     {
         LinkedList stMyList;
         Node astNode[NUM_OF_NODE];
 
         stMyList.pstHead = NULL;
         stMyList.pstTail = NULL;
-        stMyList.u16Size = 0U; 
+        stMyList.u16Size = 0U;
 
-        for(uint8_t i = 0; i < NUM_OF_NODE; i++)
+        for (uint8_t i = 0; i < NUM_OF_NODE; i++)
         {
             astNode[i].pstNextNode = NULL;
             astNode[i].pstPrevNode = NULL;
         }
 
-        for(uint8_t i = 0; i < NUM_OF_NODE; i++)
+        for (uint8_t i = 0; i < NUM_OF_NODE; i++)
         {
             LinkedList_InsertToTail(&stMyList, &astNode[i]);
         }
@@ -218,7 +222,7 @@ namespace
         Node stNodeidx7;
         Node stNodeidx9;
 
-        Node * pstFoundNode = NULL;
+        Node* pstFoundNode = NULL;
 
         LinkedList_InsertNodeAtIndex(&stMyList, &stHeadNode, 0U);
         pstFoundNode = LinkedList_FindNodeAtIndex(&stMyList, 0U);
@@ -229,12 +233,12 @@ namespace
         pstFoundNode = LinkedList_FindNodeAtIndex(&stMyList, 11U);
         ASSERT_EQ((void*)pstFoundNode, &stTailNode);
         ASSERT_EQ(stMyList.u16Size, 12U);
-        
+
         LinkedList_InsertNodeAtIndex(&stMyList, &stNodeidx3, 3U);
         pstFoundNode = LinkedList_FindNodeAtIndex(&stMyList, 3U);
         ASSERT_EQ((void*)pstFoundNode, &stNodeidx3);
         ASSERT_EQ(stMyList.u16Size, 13U);
-        
+
         LinkedList_InsertNodeAtIndex(&stMyList, &stNodeidx5, 5U);
         pstFoundNode = LinkedList_FindNodeAtIndex(&stMyList, 5U);
         ASSERT_EQ((void*)pstFoundNode, &stNodeidx5);
@@ -256,152 +260,152 @@ namespace
 
         LinkedList_InsertNodeAtIndex(&stMyList, &stOutOfBoundNode1, 19U);
         pstFoundNode = LinkedList_FindNodeAtIndex(&stMyList, 19U);
-        EXPECT_TRUE(pstFoundNode== nullptr);
+        EXPECT_TRUE(pstFoundNode == nullptr);
         ASSERT_EQ(stMyList.u16Size, 16U);
 
         LinkedList_InsertNodeAtIndex(&stMyList, &stOutOfBoundNode2, 29U);
         pstFoundNode = LinkedList_FindNodeAtIndex(&stMyList, 29U);
-        EXPECT_TRUE(pstFoundNode== nullptr);
+        EXPECT_TRUE(pstFoundNode == nullptr);
         ASSERT_EQ(stMyList.u16Size, 16U);
 
         LinkedList_InsertNodeAtIndex(&stMyList, &stOutOfBoundNode3, 39U);
         pstFoundNode = LinkedList_FindNodeAtIndex(&stMyList, 39U);
-        EXPECT_TRUE(pstFoundNode== nullptr);
+        EXPECT_TRUE(pstFoundNode == nullptr);
         ASSERT_EQ(stMyList.u16Size, 16U);
     }
 
-    TEST(Linked_List, Remove_Node_By_Index) 
+    TEST(Linked_List, Remove_Node_By_Index)
     {
         LinkedList stMyList;
         Node astNode[NUM_OF_NODE];
 
         stMyList.pstHead = NULL;
         stMyList.pstTail = NULL;
-        stMyList.u16Size = 0U; 
+        stMyList.u16Size = 0U;
 
-        for(uint8_t i = 0; i < NUM_OF_NODE; i++)
+        for (uint8_t i = 0; i < NUM_OF_NODE; i++)
         {
             astNode[i].pstNextNode = NULL;
             astNode[i].pstPrevNode = NULL;
         }
 
-        for(uint8_t i = 0; i < NUM_OF_NODE; i++)
+        for (uint8_t i = 0; i < NUM_OF_NODE; i++)
         {
             LinkedList_InsertToTail(&stMyList, &astNode[i]);
         }
 
 
-        Node * pstRemoveNode;
+        Node* pstRemoveNode;
 
         pstRemoveNode = LinkedList_RemoveNodeAtIndex(&stMyList, 0);
         ASSERT_EQ((void*)pstRemoveNode, &astNode[0U]);
         ASSERT_EQ(stMyList.u16Size, 9U);
-        
+
         pstRemoveNode = LinkedList_RemoveNodeAtIndex(&stMyList, stMyList.u16Size - 1U);
         ASSERT_EQ((void*)pstRemoveNode, &astNode[NUM_OF_NODE - 1U]);
-        ASSERT_EQ(stMyList.u16Size,8U);
+        ASSERT_EQ(stMyList.u16Size, 8U);
 
         pstRemoveNode = LinkedList_RemoveNodeAtIndex(&stMyList, 2U);
         ASSERT_EQ((void*)pstRemoveNode, &astNode[3U]);
-        ASSERT_EQ(stMyList.u16Size,7U);
+        ASSERT_EQ(stMyList.u16Size, 7U);
 
         pstRemoveNode = LinkedList_RemoveNodeAtIndex(&stMyList, 5U);
         ASSERT_EQ((void*)pstRemoveNode, &astNode[7U]);
         ASSERT_EQ(stMyList.u16Size, 6U);
 
-        for(uint8_t i = 0; i < 6U; i++)
+        for (uint8_t i = 0; i < 6U; i++)
         {
             pstRemoveNode = LinkedList_RemoveNodeAtIndex(&stMyList, 0U);
         }
-        
+
         pstRemoveNode = LinkedList_RemoveNodeAtIndex(&stMyList, 0U);
 
-        EXPECT_TRUE(pstRemoveNode== nullptr);
+        EXPECT_TRUE(pstRemoveNode == nullptr);
         ASSERT_EQ(stMyList.u16Size, 0U);
     }
 
-    TEST(Linked_List, Search_Node) 
+    TEST(Linked_List, Search_Node)
     {
         LinkedList stMyList;
         Node astNode[NUM_OF_NODE];
 
         stMyList.pstHead = NULL;
         stMyList.pstTail = NULL;
-        stMyList.u16Size = 0U; 
+        stMyList.u16Size = 0U;
 
-        for(uint8_t i = 0; i < NUM_OF_NODE; i++)
+        for (uint8_t i = 0; i < NUM_OF_NODE; i++)
         {
             astNode[i].pstNextNode = NULL;
             astNode[i].pstPrevNode = NULL;
         }
 
-        for(uint8_t i = 0; i < NUM_OF_NODE; i++)
+        for (uint8_t i = 0; i < NUM_OF_NODE; i++)
         {
             LinkedList_InsertToTail(&stMyList, &astNode[i]);
         }
-        
-        for(uint8_t i = 0; i < NUM_OF_NODE; i++)
+
+        for (uint8_t i = 0; i < NUM_OF_NODE; i++)
         {
-            Node * pstResultNode = LinkedList_SearchNode(&stMyList, &astNode[i]);
+            Node* pstResultNode = LinkedList_SearchNode(&stMyList, &astNode[i]);
             EXPECT_TRUE(pstResultNode != nullptr);
             ASSERT_EQ((void*)pstResultNode, &astNode[i]);
         }
 
         Node anotherNode;
-        Node * pstResultNode = LinkedList_SearchNode(&stMyList, &anotherNode);
+        Node* pstResultNode = LinkedList_SearchNode(&stMyList, &anotherNode);
         EXPECT_TRUE(pstResultNode == nullptr);
     }
 
-    TEST(Linked_List, Insert_Node_After) 
+    TEST(Linked_List, Insert_Node_After)
     {
         LinkedList stMyList;
         Node astNode[NUM_OF_NODE];
 
         stMyList.pstHead = NULL;
         stMyList.pstTail = NULL;
-        stMyList.u16Size = 0U; 
+        stMyList.u16Size = 0U;
 
-        for(uint8_t i = 0; i < NUM_OF_NODE; i++)
+        for (uint8_t i = 0; i < NUM_OF_NODE; i++)
         {
             astNode[i].pstNextNode = NULL;
             astNode[i].pstPrevNode = NULL;
         }
 
-        for(uint8_t i = 0; i < NUM_OF_NODE; i++)
+        for (uint8_t i = 0; i < NUM_OF_NODE; i++)
         {
             LinkedList_InsertToTail(&stMyList, &astNode[i]);
         }
- 
+
         Node anotherNode1;
-        Node * pstTestNode;
-        LinkedList_InsertNewNodeAfterANode(&stMyList,  &astNode[0], &anotherNode1);
-        pstTestNode = LinkedList_FindNodeAtIndex(&stMyList, 1);  
+        Node* pstTestNode;
+        LinkedList_InsertNewNodeAfterANode(&stMyList, &astNode[0], &anotherNode1);
+        pstTestNode = LinkedList_FindNodeAtIndex(&stMyList, 1);
         ASSERT_EQ(&anotherNode1, pstTestNode);
         ASSERT_EQ(NUM_OF_NODE + 1U, stMyList.u16Size);
 
         Node anotherNode2;
-        LinkedList_InsertNewNodeAfterANode(&stMyList,  &astNode[9], &anotherNode2);
-        pstTestNode = LinkedList_FindNodeAtIndex(&stMyList, 11);  
+        LinkedList_InsertNewNodeAfterANode(&stMyList, &astNode[9], &anotherNode2);
+        pstTestNode = LinkedList_FindNodeAtIndex(&stMyList, 11);
         ASSERT_EQ(&anotherNode2, pstTestNode);
         ASSERT_EQ(NUM_OF_NODE + 2U, stMyList.u16Size);
     }
 
-     TEST(Linked_List, Remove_Node) 
+    TEST(Linked_List, Remove_Node)
     {
         LinkedList stMyList;
         Node astNode[NUM_OF_NODE];
 
         stMyList.pstHead = NULL;
         stMyList.pstTail = NULL;
-        stMyList.u16Size = 0U; 
+        stMyList.u16Size = 0U;
 
-        for(uint8_t i = 0; i < NUM_OF_NODE; i++)
+        for (uint8_t i = 0; i < NUM_OF_NODE; i++)
         {
             astNode[i].pstNextNode = NULL;
             astNode[i].pstPrevNode = NULL;
         }
 
-        for(uint8_t i = 0; i < NUM_OF_NODE; i++)
+        for (uint8_t i = 0; i < NUM_OF_NODE; i++)
         {
             LinkedList_InsertToTail(&stMyList, &astNode[i]);
         }
@@ -415,7 +419,7 @@ namespace
         ASSERT_EQ(bSuccess, true);
         ASSERT_EQ(NUM_OF_NODE - 2U, stMyList.u16Size);
 
-        for(uint8_t i = 1; i < NUM_OF_NODE - 1U; i++)
+        for (uint8_t i = 1; i < NUM_OF_NODE - 1U; i++)
         {
             bSuccess = LinkedList_RemoveNode(&stMyList, &astNode[i]);
             ASSERT_EQ(bSuccess, true);
@@ -436,10 +440,5 @@ namespace
 
     }
 #endif /* HELPER_LINKEDLIST */
-}
-
-int main(int argc, char** argv)
-{
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
+#endif /* UNIT_TEST_LINKEDLIST */
 }

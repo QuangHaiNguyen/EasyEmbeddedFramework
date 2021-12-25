@@ -21,6 +21,15 @@
     <ClInclude Include="..\unit_test_ipc.h">
       <Filter>test_cases</Filter>
     </ClInclude>
+    <ClInclude Include="..\unit_test_linked_list.h">
+      <Filter>test_cases</Filter>
+    </ClInclude>
+    <ClInclude Include="..\unit_test_smalloc.h">
+      <Filter>test_cases</Filter>
+    </ClInclude>
+    <ClInclude Include="..\unit_test_ring_buffer.h">
+      <Filter>test_cases</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
