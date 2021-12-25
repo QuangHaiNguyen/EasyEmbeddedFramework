@@ -88,9 +88,14 @@ bool ezmRingBuffer_Init(RingBuffer* pstBuff, uint8_t* pu8Buff, uint16_t u16Size)
     pstBuff->u16Tail = 0;
     pstBuff->u16Count = 0;
 
-    if(NULL == pstBuff->pu8Buff)
+    if(pu8Buff == NULL && u16Size == 0)
     {
         bResult = false;
+    }
+    else
+    {
+        pstBuff->pu8Buff = pu8Buff;
+        pstBuff->u16Capacity = u16Size;
     }
 
     memset(pstBuff->pu8Buff, 0, pstBuff->u16Capacity);
@@ -213,7 +218,7 @@ uint16_t ezmRingBuffer_Push(RingBuffer * pstBuff, uint8_t * pu8Data, uint16_t u1
         pstBuff->u16Count = pstBuff->u16Count + u16RemainByte;
         pu8Data = pu8Data + u16RemainByte;
 
-        u16RemainByte = u16NumPushedData - (pstBuff->u16Capacity - pstBuff->u16Head);
+        u16RemainByte = u16NumPushedData - u16RemainByte;
         memcpy(&pstBuff->pu8Buff[pstBuff->u16Head], pu8Data, u16RemainByte);
         pstBuff->u16Head = pstBuff->u16Head + u16RemainByte;
         pstBuff->u16Count = pstBuff->u16Count + u16RemainByte;
@@ -264,27 +269,27 @@ uint16_t ezmRingBuffer_Pop(RingBuffer * pstBuff, uint8_t * pu8Data, uint16_t u16
 
     if (pstBuff->u16Capacity - pstBuff->u16Tail >= u16NumPoppedData)
     {
-        memcpy(&pstBuff->pu8Buff[pstBuff->u16Head], pu8Data, u16NumPoppedData);
-        pstBuff->u16Head = pstBuff->u16Head + u16NumPoppedData;
-        pstBuff->u16Count = pstBuff->u16Count + u16NumPoppedData;
+        memcpy(pu8Data, &pstBuff->pu8Buff[pstBuff->u16Tail], u16NumPoppedData);
+        pstBuff->u16Tail = pstBuff->u16Tail + u16NumPoppedData;
+        pstBuff->u16Count = pstBuff->u16Count - u16NumPoppedData;
     }
     else
     {
         /* Handle warpping */
         u16RemainByte = pstBuff->u16Capacity - pstBuff->u16Tail;
-        memcpy(&pstBuff->pu8Buff[pstBuff->u16Tail], pu8Data, u16RemainByte);
+        memcpy(pu8Data, &pstBuff->pu8Buff[pstBuff->u16Tail], u16RemainByte);
         pstBuff->u16Tail = 0;
         pstBuff->u16Count = pstBuff->u16Count - u16RemainByte;
 
         pu8Data = pu8Data + u16RemainByte;
 
-        u16RemainByte = u16NumPoppedData - (pstBuff->u16Capacity - pstBuff->u16Tail);
-        memcpy(&pstBuff->pu8Buff[pstBuff->u16Tail], pu8Data, u16RemainByte);
+        u16RemainByte = u16NumPoppedData - u16RemainByte;
+        memcpy(pu8Data, &pstBuff->pu8Buff[pstBuff->u16Tail], u16RemainByte);
         pstBuff->u16Tail = pstBuff->u16Tail + u16RemainByte;
         pstBuff->u16Count = pstBuff->u16Count - u16RemainByte;
     }
 
-    return u16RemainByte;
+    return u16NumPoppedData;
 }
 
 /******************************************************************************

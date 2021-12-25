@@ -28,7 +28,7 @@
 #define HELPER_LINKEDLIST       1U
 #define HELPER_HEXDUMP          1U
 #define DEBUG                   1U
-#define RING_BUFFER             0U
+#define RING_BUFFER             1U
 #define HELPER_ASSERT           0U
 #define STATEMACHINE            0U
 #define IPC                     0U
