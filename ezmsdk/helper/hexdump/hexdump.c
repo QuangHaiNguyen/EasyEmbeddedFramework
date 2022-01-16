@@ -112,7 +112,7 @@ void ezmHexdump( void * pAddress, uint16_t u16Size, ENUM_SHOW_ASCII eShowAscii)
             /* Do nothing */
         }
         PRINT1("");
-        (uint32_t*)ulStartingAddress = (uint32_t*)ulStartingAddress + 16;
+        ulStartingAddress = (void *)((uint32_t)(uint32_t*)ulStartingAddress + 16);
     }
     PRINT1("");
 }

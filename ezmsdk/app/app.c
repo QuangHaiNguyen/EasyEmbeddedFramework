@@ -69,7 +69,9 @@
 #include "../ezmIpc/ezmIpc.h"
 #endif
 
-
+#if (NUM_OF_SUPPORTED_UART)
+#include "../hal/uart/uart.h"
+#endif /* NUM_OF_SUPPORTED_UART */
 
 #if (MODULE_DEBUG == 1U) && (APP_DEBUG == 1U)
     #define APPPRINT1(a)                    PRINT_DEBUG1(a)               
@@ -95,6 +97,7 @@
 * Function Definitions
 *******************************************************************************/
 static void ezm_AppPrintActiveModule(void);
+static void ezmApp_PrintHeader(void);
 
 /******************************************************************************
 * Function : ezmApp_SdkInit
@@ -118,6 +121,7 @@ static void ezm_AppPrintActiveModule(void);
 *******************************************************************************/
 void ezmApp_SdkInit(void)
 {
+    ezmApp_PrintHeader();
 #if (APP_DEBUG == 1)
     ezm_AppPrintActiveModule();
 #endif
@@ -203,6 +207,15 @@ void ezmApp_SdkInit(void)
         APPPRINT1("No module is register");
     }
 #endif
+
+#if (NUM_OF_SUPPORTED_UART)
+    APPPRINT1("Initialize UART Driver");
+    APPPRINT2("Module Id: 0x%02x", UART_MOD_ID);
+    if(ezmUart_Init() != true)
+    {
+        APPPRINT1("Initialize UART Driver failed");
+    }
+#endif /* NUM_OF_SUPPORTED_UART */
 
 }
 
@@ -296,5 +309,29 @@ static void ezm_AppPrintActiveModule(void)
     APPPRINT1("\t[ ] IPC");
 #endif
 
+#if (NUM_OF_SUPPORTED_UART)
+    APPPRINT1("\t[x] UART");
+#else
+    APPPRINT1("\t[ ] UART");
+#endif /* NUM_OF_SUPPORTED_UART */
+
+}
+
+static void ezmApp_PrintHeader(void)
+{
+    PRINT_INFO1("******************************************************************************");
+    PRINT_INFO1("* EASY EMBEDDED SOFTWARE DEVELOPMENT KIT");
+    PRINT_INFO1("* Author: Quang Hai Nguyen");
+    PRINT_INFO1("* Version: 1.0.0");
+    PRINT_INFO1("* Build date: 16.01.2022");
+#if(SUPPORTED_CHIP == ESP32)
+    PRINT_INFO1("* Platform: ESP32");
+#elif (SUPPORTED_CHIP == STM32)
+    PRINT_INFO1("* Platform: STM32");
+#else
+    PRINT_INFO1("* Platform: PC");
+#endif
+    PRINT_INFO1("* Contact: hainguyen.ezm@gmail.com");
+    PRINT_INFO1("******************************************************************************");
 }
 /* End of file*/

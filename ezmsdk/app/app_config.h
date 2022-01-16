@@ -1,20 +1,14 @@
 /*******************************************************************************
-* Title                 :   module
-* Filename              :   module.h
+* Title                 :   app_config
+* Filename              :   app_config.h
 * Author                :   Quang Hai Nguyen
-* Origin Date           :   21.02.2021
+* Origin Date           :   15.01.2022
 * Version               :   1.0.0
 *
 *******************************************************************************/
 
-/*************** INTERFACE CHANGE LIST *****************************************
-*
-*  Date         Version     Author              Description 
-*  21.02.2021   1.0.0       Quang Hai Nguyen    Interface Created.
-*
-*******************************************************************************/
-/** @file   module.h
- *  @brief  Header template for a module
+/** @file   app_config.h
+ *  @brief  Header for complete application configuration
  */
 
 #ifndef _APP_CONFIG_H
@@ -32,6 +26,7 @@
 #define HELPER_ASSERT           0U
 #define STATEMACHINE            0U
 #define IPC                     0U
+#define HAL_UART                1U
 
 /*Module ID section*/
 
@@ -150,5 +145,32 @@
 #define USING_MODULE_NAME           1U /* future feature */
 /**< turn on/off module name in string*/
 #endif /* IPC */
+
+
+/*****************************************************************************/
+/* DRIVER SECTION                                                            */
+/*****************************************************************************/
+
+/* MICROCONTROLER SECTION ****************************************************/
+#define NO_CHIP             1U
+#define WIN32               2U
+#define LINUX               3U
+#define ESP32               4U
+#define STM32               5U
+
+#define SUPPORTED_CHIP      ESP32
+
+/* UART SECTION **************************************************************/
+#if HAL_UART == 1U
+#define NUM_OF_SUPPORTED_UART   1U    /**< Number of supported Uart*/
+#define HAL_UART0               0U
+
+#define UART_MOD_ID             0x30U
+
+/* Alias name, easy to use */
+#define CLI_UART                HAL_UART0
+
+
+#endif /* HAL_UART */
 
 #endif /* _APP_CONFIG_H */

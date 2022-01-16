@@ -37,5 +37,6 @@
 #define IPC_DEBUG                   1U /* debug out for IPC module */
 #define PARSER_DEBUG                0U /* debug out for parser module */
 #define CLI_DEBUG                   0U /* debug out for cli module */
+#define UART_DEBUG                  1U /* debug out for hal uart */
 
 #endif

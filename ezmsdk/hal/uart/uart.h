@@ -28,39 +28,61 @@
 #include "stdbool.h"
 #include "../../app/app_config.h"
 
+#if (NUM_OF_SUPPORTED_UART > 0U)
+
+
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
-#define A_MACRO     1
-/**< a macro*/
+/* None */
+
 
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
 
-/** @brief definition of a new type
+/** @brief definition of the notification code
  *  
  */
+typedef enum
+{
+    UART_TX_COMPLT,     /**< UART transmit completed */
+    UART_RX_COMPLT,     /**< UART receive completed */
+    UART_BUFF_FULL,     /**< UART buffer is full */
+    UART_UNSUPPORTED,   /**< UART unsupported callback */
+}UART_NOTIFY_CODE;
 
+/** @brief definition the callback function pointer 
+ *  
+ */
+typedef bool (*UART_CALLBACK)(UART_NOTIFY_CODE eCode, void * pParam);
+
+/** @brief definition of api set for UART
+ *  
+ */
 typedef struct
 {
-    int a;
-    /**< an integer */
-    int b;
-    /**< an integer */
-}aType;
+    uint16_t(*ezmUart_Send)(uint8_t * au8Buffer, uint16_t u16Size);
+    uint16_t(*ezmUart_Receive)(uint8_t * au8Buffer, uint16_t u16Size);
+    void(*ezmUart_RegisterCallback)(UART_CALLBACK pfnCallback);      
+    void(*ezmUart_UnregisterCallback)(void); /* TBD */
+}ezmUart;
 
 
 /******************************************************************************
 * Module Variable Definitions
 *******************************************************************************/
-
+/* None */
 
 /******************************************************************************
 * Function Prototypes
 *******************************************************************************/
-int sum(int a, int b); /*Short description of function*/
+bool        ezmUart_Init                    (void);
+void        ezmUart_Deinit                  (void);
+ezmUart*    ezmUart_GetInstance             (uint8_t u8OwnerId, uint8_t u8UartIndex);
+void        ezmUart_ReleaseInstace          (uint8_t u8UartIndex);
 
+#endif /* NUM_OF_SUPPORTED_UART > 0U */
 #endif /* _HAL_UART_H */
 
 /* End of file*/

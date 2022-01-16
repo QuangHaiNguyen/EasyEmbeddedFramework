@@ -44,6 +44,12 @@
     <Filter Include="Source Files\helper\smalloc">
       <UniqueIdentifier>{bb18918c-82ff-4448-915b-5b73219450c4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\hal">
+      <UniqueIdentifier>{3ad76244-b414-4c89-bd1f-d34589c6ce26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\hal\uart">
+      <UniqueIdentifier>{b30949af-1e11-4e7a-afb4-2545d1d27014}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ezmsdk\app\app.c">
@@ -81,6 +87,9 @@
     </ClCompile>
     <ClCompile Include="main.c">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\hal\uart\uart.c">
+      <Filter>Source Files\hal\uart</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -128,6 +137,9 @@
     </ClInclude>
     <ClInclude Include="..\..\ezmsdk\helper\ring_buffer\ring_buffer.h">
       <Filter>Source Files\helper\ring_buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ezmsdk\hal\uart\uart.h">
+      <Filter>Source Files\hal\uart</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
