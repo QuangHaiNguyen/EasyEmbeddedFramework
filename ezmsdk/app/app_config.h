@@ -26,7 +26,8 @@
 #define HELPER_ASSERT           0U
 #define STATEMACHINE            0U
 #define IPC                     0U
-#define HAL_UART                1U
+#define HAL_UART                0U
+#define STCMEM                  1U
 
 /*Module ID section*/
 
@@ -146,6 +147,17 @@
 /**< turn on/off module name in string*/
 #endif /* IPC */
 
+/* STCMEM SECTION ***************************************************************/
+#if (STCMEM == 1U)
+#define STCMEM_MOD_ID               0x0CU
+#define NUM_OF_MEMHDR               100
+
+#if (HELPER_LINKEDLIST == 0U)
+#error module HELPER_LINKEDLIST must be activated
+#endif
+
+/**< turn on/off module name in string*/
+#endif /* STCMEM */
 
 /*****************************************************************************/
 /* DRIVER SECTION                                                            */
@@ -153,12 +165,12 @@
 
 /* MICROCONTROLER SECTION ****************************************************/
 #define NO_CHIP             1U
-#define WIN32               2U
+#define WIN                 2U
 #define LINUX               3U
 #define ESP32               4U
 #define STM32               5U
 
-#define SUPPORTED_CHIP      ESP32
+#define SUPPORTED_CHIP      WIN
 
 /* UART SECTION **************************************************************/
 #if HAL_UART == 1U

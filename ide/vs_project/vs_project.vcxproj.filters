@@ -50,6 +50,9 @@
     <Filter Include="Source Files\hal\uart">
       <UniqueIdentifier>{b30949af-1e11-4e7a-afb4-2545d1d27014}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\helper\stcmem">
+      <UniqueIdentifier>{a0cb07a6-a579-449b-9957-d5c24d1feeb2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ezmsdk\app\app.c">
@@ -90,6 +93,9 @@
     </ClCompile>
     <ClCompile Include="..\..\ezmsdk\hal\uart\uart.c">
       <Filter>Source Files\hal\uart</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\helper\stcmem\stcmem.c">
+      <Filter>Source Files\helper\stcmem</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -140,6 +146,9 @@
     </ClInclude>
     <ClInclude Include="..\..\ezmsdk\hal\uart\uart.h">
       <Filter>Source Files\hal\uart</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ezmsdk\helper\stcmem\stcmem.h">
+      <Filter>Source Files\helper\stcmem</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

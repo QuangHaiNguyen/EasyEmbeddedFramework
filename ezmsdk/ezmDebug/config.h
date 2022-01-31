@@ -27,7 +27,7 @@
 /******************************************************************************
 * debug output switch for each module
 *******************************************************************************/
-#define HELPER_LINKEDLIST_DEBUG     1U /* debug out for helper module linkedlist */
+#define HELPER_LINKEDLIST_DEBUG     0U /* debug out for helper module linkedlist */
 #define SMALLOC_DEBUG               0U /* debug out for smalloc module */
 #define HEXDUMP_DEBUG               0U /* debug out for hexdump module */
 #define SCHEDULER_DBG               0U /* debug out for scheduler module */
@@ -37,6 +37,7 @@
 #define IPC_DEBUG                   1U /* debug out for IPC module */
 #define PARSER_DEBUG                0U /* debug out for parser module */
 #define CLI_DEBUG                   0U /* debug out for cli module */
+#define STCMEM_DEBUG                1U /* debug out for StcMem module */
 #define UART_DEBUG                  1U /* debug out for hal uart */
 
 #endif

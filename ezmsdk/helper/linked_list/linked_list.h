@@ -45,7 +45,7 @@ typedef struct Node
     struct Node * pstPrevNode;  /**< pointer to the previous node in a linked list*/
     uint8_t * pBuffer;          /**< pointer to the buffer storing data*/
     uint16_t u16BufferSize;     /**< size of buffer*/
-    uint16_t u16NodeIndex;          /**< Store the node ID, only for debug mode*/
+    uint16_t u16NodeIndex;      /**< Store the node ID, only for debug mode*/
 }Node;
 
 /** @brief Meta data of the linked list
