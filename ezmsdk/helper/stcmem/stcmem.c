@@ -35,7 +35,7 @@
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
-#define VERBOSE         1U
+#define VERBOSE         0U
 
 #if STATIC_MEMORY_SIZE == 0U
 #error memory size must be bigger than 0
@@ -178,15 +178,14 @@ void* ezmStcMem_Malloc(ezmMemList* pstList, uint16_t u16Size)
             /* wrap around point */
             if (pstNextFreeHeader->u16BufferSize == 0)
             {
-                pstNextFreeHeader->pBuffer = pstList->pau8Buffer;
-                STCMEMPRINT2("buffer reach the end, set [pointer = %p]", pstNextFreeHeader->pBuffer);
+                ezmStcMem_ResetHeader(pstNextFreeHeader->u16NodeIndex);
+                STCMEMPRINT1("buffer reach the end");
             }
             else
             {
                 pstNextFreeHeader->pBuffer = (uint8_t*)(pstHeader->pBuffer + u16Size);
+                LinkedList_InsertToTail(&pstList->stFreeList, pstNextFreeHeader);
             }
-
-            LinkedList_InsertToTail(&pstList->stFreeList, pstNextFreeHeader);
 
             pstHeader->u16BufferSize = u16Size;
             bSuccess = bSuccess & LinkedList_RemoveNode(&pstList->stFreeList ,pstHeader);
@@ -232,7 +231,6 @@ bool ezmStcMem_Free (ezmMemList* pstList, void* pAddress)
                 /* Do something */
                 bSuccess = bSuccess & LinkedList_RemoveNode(pstAllocList, pstNext);
                 ezmStcMem_ReturnHeaderToFreeList(pstFreeList, pstNext);
-                ezmSmalloc_Merge(pstFreeList);
                 ezmSmalloc_Merge(pstFreeList);
                 STCMEMPRINT1("Free OK");
                 break;
@@ -340,16 +338,33 @@ static void ezmStcMem_ReturnHeaderToFreeList(LinkedList * pstFreeList, MemHdr* p
     memset(pstHeader->pBuffer, 0, pstHeader->u16BufferSize);
     MemHdr* pstNextHeader = pstFreeList->pstHead;
 
-    while (pstNextHeader != NULL)
+    if (pstNextHeader == NULL)
     {
-        if ((uint8_t*)pstNextHeader->pBuffer <= (uint8_t*)pstHeader->pBuffer)
+        /* Free list is empty so we just add it the free header to the list and finish*/
+        LinkedList_InsertToHead(pstFreeList, pstHeader);
+    }
+    else
+    {
+        /* tranverse the list to add the header */
+        while (pstNextHeader != NULL)
         {
-            LinkedList_InsertNewNodeAfterANode(pstFreeList, pstNextHeader, pstHeader);
-            break;
-        }
-        else
-        {
-            pstNextHeader = pstNextHeader->pstNextNode;
+            if ((uint8_t*)pstNextHeader->pBuffer < (uint8_t*)pstHeader->pBuffer)
+            {
+                LinkedList_InsertNewNodeAfterANode(pstFreeList, pstNextHeader, pstHeader);
+                break;
+            }
+            else if ((uint8_t*)pstNextHeader->pBuffer > (uint8_t*)pstHeader->pBuffer)
+            {
+                /* yeah swap, must be modifed later*/
+                LinkedList_InsertNewNodeAfterANode(pstFreeList, pstNextHeader, pstHeader);
+                LinkedList_RemoveNode(pstFreeList, pstNextHeader);
+                LinkedList_InsertNewNodeAfterANode(pstFreeList, pstHeader, pstNextHeader);
+                break;
+            }
+            else
+            {
+                pstNextHeader = pstNextHeader->pstNextNode;
+            }
         }
     }
 }
