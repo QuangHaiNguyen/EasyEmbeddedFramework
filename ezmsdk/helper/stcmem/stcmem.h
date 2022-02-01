@@ -1,22 +1,15 @@
 /*******************************************************************************
-* Title                 :   my_math component
-* Filename              :   my_math.h
+* Title                 :   Static memory component
+* Filename              :   stcmem.h
 * Author                :   Quang Hai Nguyen
-* Origin Date           :   24.01.2021
+* Origin Date           :   01.02.2022
 * Version               :   1.0.0
 *
 *******************************************************************************/
 
-/*************** INTERFACE CHANGE LIST *****************************************
-*
-*  Date         Version     Author              Description 
-*  24.01.2021   1.0.0       Quang Hai Nguyen    Interface Created.
-*
-*******************************************************************************/
-/** @file   my_math.h
- *  @brief  Header file for the ring buffer
+/** @file   stcmem.h
+ *  @brief  Header file for the static memory module
  */
-
 
 #ifndef _STCMEM_H
 #define _STCMEM_H
@@ -26,10 +19,10 @@
 *******************************************************************************/
 #include "stdint.h"
 #include "../linked_list/linked_list.h"
+
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
-
 #define MEMHDR_INVALID_ID     0xFFFF
 
 /******************************************************************************
@@ -41,13 +34,13 @@
  */
 typedef struct
 {
-    LinkedList  stFreeList;
-    LinkedList  stAllocList;
-    uint8_t*    pau8Buffer;
-    uint16_t    u16BufferSize;
+    LinkedList  free_list;      /**< list to manage the free memory blocks */
+    LinkedList  alloc_list;     /**< list to manage the allocated blocks*/
+    uint8_t     *buffer;        /**< pointer to the memory */
+    uint16_t    buffer_size;    /**< size of the buffer */
 }ezmMemList;
 
-/**@brief Memory block description
+/**@brief Header to manage a memory block
  *
  */
 typedef Node MemHdr;
@@ -55,18 +48,18 @@ typedef Node MemHdr;
 /******************************************************************************
 * Module Variable Definitions
 *******************************************************************************/
-void        ezmStcMem_Initialization    (void);
-bool        ezmStcMem_InitMemList       (ezmMemList* pstList, uint8_t* pu8Buffer, uint16_t u16BufferSize);
-void*       ezmStcMem_Malloc            (ezmMemList* pstList, uint16_t u16Size);
-bool        ezmStcMem_Free              (ezmMemList* pstList, void * pAddress);
+/* None */
 
-void        ezmStcMem_HexdumpBuffer     (ezmMemList* pstList);
-void        ezmStcMem_PrintFreeList     (ezmMemList* pstList);
-void        ezmStcMem_PrintAllocList    (ezmMemList* pstList);
 /******************************************************************************
 * Function Prototypes
 *******************************************************************************/
-
+void        ezmStcMem_Initialization(void);
+bool        ezmStcMem_InitMemList   (ezmMemList* mem_list, uint8_t* buffer, uint16_t buffer_size);
+void        *ezmStcMem_Malloc       (ezmMemList* mem_list, uint16_t alloc_size);
+bool        ezmStcMem_Free          (ezmMemList* mem_list, void* alloc_addr);
+void        ezmStcMem_HexdumpBuffer (ezmMemList* mem_list);
+void        ezmStcMem_PrintFreeList (ezmMemList* mem_list);
+void        ezmStcMem_PrintAllocList(ezmMemList* mem_list);
 
 #endif /* _STCMEM_H */
 
