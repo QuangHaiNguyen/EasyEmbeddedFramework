@@ -68,10 +68,6 @@ typedef struct LinkedList
 /******************************************************************************
 * Function Prototypes
 *******************************************************************************/
-void        LinkedList_Init                     (void);
-Node*       LinkedLits_GetFreeNode              (void);
-bool        LinkedList_ReleaseNode              (Node* pstNode);
-uint16_t    LinkedList_GetNumOfFreeNode         (void);
 void        LinkedList_InsertToHead             (LinkedList * pstList, Node * pstNewNode);                          /*Add a node to the head*/
 Node*       LinkedList_RemoveFromHead           (LinkedList * pstList);                                             /*Remove the head node*/
 void        LinkedList_InsertToTail             (LinkedList * pstList, Node * pstNewNode);                          /*Add a node to the tail*/
