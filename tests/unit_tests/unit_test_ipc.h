@@ -4,8 +4,18 @@
 #ifndef EZMIPC_UNIT_TEST
 #define EZMIPC_UNIT_TEST
 
-extern "C" {
+extern "C"
+{
 #include "../../ezmsdk/ezmIpc/ezmIpc.h"
+#include "../../ezmsdk/helper/stcmem/stcmem.h"
+
+    uint8_t ipc_buffer[32U] = { 0 };
+    uint8_t callback_count = 0;
+    uint32_t MessageRcvCallback(void)
+    {
+        callback_count++;
+        return 0;
+    }
 }
 
 namespace 
@@ -13,51 +23,75 @@ namespace
 #if (IPC == 1U)
     TEST(Ipc, main) 
     {
-        ezmIpc_Init();
-        uint8_t au8Payload1[3] = {0x01, 0x02, 0x03};
-        uint8_t au8Payload2[5] = {0x01, 0x02, 0x03, 0x04, 0x05};
-        ezmMemoryBlock * pstMsg;
-        bool bResult;
+        ezmStcMem_Initialization();
+        ezmIpc_InitModule();
 
-        bResult = ezmIpc_RegisterModule(0xFE);
-        ASSERT_EQ(bResult, true);
+        bool is_success;
+        uint8_t compare;
 
-        bResult = ezmIpc_RegisterModule(0xFF);
-        ASSERT_EQ(bResult, true);
+        is_success = ezmIpc_GetInstance(0x22, ipc_buffer, 32, &MessageRcvCallback);
+        ASSERT_EQ(true, is_success);
 
-        pstMsg = ezmIpc_InitMsg(0x03);
-        ASSERT_TRUE(pstMsg != nullptr);
-        ASSERT_EQ(pstMsg->u16BufferSize, 0x03);
-        
-        memcpy(pstMsg->pBuffer, au8Payload1, 0x03);
-        ASSERT_EQ(memcmp(pstMsg->pBuffer, au8Payload1, 0x03), 0);
-        bResult = ezmIpc_SendMsg(0xFE, 0xFF, pstMsg);
-        ASSERT_EQ(bResult, true);
+        uint8_t* buffer = (uint8_t*)ezmIpc_InitMessage(0x22, 16);
+        EXPECT_NE(buffer, nullptr);
 
-        pstMsg = ezmIpc_InitMsg(0x05);
-        ASSERT_TRUE(pstMsg != nullptr);
-        ASSERT_EQ(pstMsg->u16BufferSize, 0x05);
-        
-        
-        memcpy(pstMsg->pBuffer, au8Payload2, 0x05);
-        ASSERT_EQ(memcmp(pstMsg->pBuffer, au8Payload2, 0x05), 0);
-        bResult = ezmIpc_SendMsg(0xFE, 0xFF, pstMsg);
-        ASSERT_EQ(bResult, true);
+        memset(buffer, 1, 16);
+        compare = memcmp(buffer, &ipc_buffer[0], 16);
+        ASSERT_EQ(0, compare);
 
-        pstMsg = ezmIpc_ReceiveMsg(0xFF);
-        ASSERT_TRUE(pstMsg != nullptr);
-        ASSERT_EQ(pstMsg->u16BufferSize, 0x03);
-        ASSERT_EQ(memcmp(pstMsg->pBuffer, au8Payload1, 0x03), 0);
-        bResult = ezmIpc_DeInitMsg(0xFF, pstMsg);
+        is_success = ezmIpc_SendMessage(0x22, buffer);
+        ASSERT_EQ(true, is_success);
+        ASSERT_EQ(1, callback_count);
 
-        pstMsg = ezmIpc_ReceiveMsg(0xFF);
-        ASSERT_TRUE(pstMsg != nullptr);
-        ASSERT_EQ(pstMsg->u16BufferSize, 0x05);
-        ASSERT_EQ(memcmp(pstMsg->pBuffer, au8Payload2, 0x05), 0);
-        bResult = ezmIpc_DeInitMsg(0xFF, pstMsg);
+        buffer = (uint8_t*)ezmIpc_InitMessage(0x22, 8);
+        EXPECT_NE(buffer, nullptr);
 
-        pstMsg = ezmIpc_ReceiveMsg(0xFF);
-        ASSERT_TRUE(pstMsg == nullptr);
+        memset(buffer, 2, 8);
+        compare = memcmp(buffer, &ipc_buffer[16], 8);
+        ASSERT_EQ(0, compare);
+
+        is_success = ezmIpc_SendMessage(0x22, buffer);
+        ASSERT_EQ(true, is_success);
+        ASSERT_EQ(2, callback_count);
+
+        buffer = (uint8_t*)ezmIpc_InitMessage(0x22, 8);
+        EXPECT_NE(buffer, nullptr);
+
+        memset(buffer, 3, 8);
+        compare = memcmp(buffer, &ipc_buffer[24], 8);
+        ASSERT_EQ(0, compare);
+
+        is_success = ezmIpc_SendMessage(0x22, buffer);
+        ASSERT_EQ(true, is_success);
+        ASSERT_EQ(3, callback_count);
+
+        uint16_t message_size;
+        buffer = (uint8_t*)ezmIpc_ReceiveMessage(0x22, &message_size);
+        compare = memcmp(buffer, &ipc_buffer[0], message_size);
+        ASSERT_EQ(0, compare);
+        EXPECT_NE(buffer, nullptr);
+        ASSERT_EQ(16, message_size);
+
+        is_success = ezmIpc_ReleaseMessage(0x22, buffer);
+        ASSERT_EQ(true, is_success);
+
+        buffer = (uint8_t*)ezmIpc_ReceiveMessage(0x22, &message_size);
+        compare = memcmp(buffer, &ipc_buffer[16], message_size);
+        ASSERT_EQ(0, compare);
+        EXPECT_NE(buffer, nullptr);
+        ASSERT_EQ(8, message_size);
+
+        is_success = ezmIpc_ReleaseMessage(0x22, buffer);
+        ASSERT_EQ(true, is_success);
+
+        buffer = (uint8_t*)ezmIpc_ReceiveMessage(0x22, &message_size);
+        compare = memcmp(buffer, &ipc_buffer[24], message_size);
+        ASSERT_EQ(0, compare);
+        EXPECT_NE(buffer, nullptr);
+        ASSERT_EQ(8, message_size);
+
+        is_success = ezmIpc_ReleaseMessage(0x22, buffer);
+        ASSERT_EQ(true, is_success);
     }
 #endif
 }

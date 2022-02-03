@@ -68,16 +68,16 @@ typedef struct LinkedList
 /******************************************************************************
 * Function Prototypes
 *******************************************************************************/
-void        LinkedList_InsertToHead             (LinkedList * pstList, Node * pstNewNode);                          /*Add a node to the head*/
-Node*       LinkedList_RemoveFromHead           (LinkedList * pstList);                                             /*Remove the head node*/
-void        LinkedList_InsertToTail             (LinkedList * pstList, Node * pstNewNode);                          /*Add a node to the tail*/
-Node*       LinkedList_RemoveFromTail           (LinkedList * pstList);                                             /*Remove the tail node*/
-Node*       LinkedList_FindNodeAtIndex          (LinkedList * pstList, uint16_t u16Index);                          /*Find node at given index*/
-void        LinkedList_InsertNodeAtIndex        (LinkedList * pstList, Node * pstInsertedNode, uint16_t u16Index);  /*Insert node at given index*/
-Node*       LinkedList_RemoveNodeAtIndex        (LinkedList * pstList, uint16_t u16Index);
-bool        LinkedList_InsertNewNodeAfterANode  (LinkedList * pstList, Node * pstCurrentNode, Node * pstNewNode);
-Node*       LinkedList_SearchNode               (LinkedList * pstList, Node * pstSearchNode);
-bool        LinkedList_RemoveNode               (LinkedList * pstList, Node * pstRemovedNode);
+void        LinkedList_InsertToHead             (LinkedList *pstList, Node *pstNewNode);                          /*Add a node to the head*/
+Node       *LinkedList_RemoveFromHead           (LinkedList *pstList);                                             /*Remove the head node*/
+void        LinkedList_InsertToTail             (LinkedList *pstList, Node *pstNewNode);                          /*Add a node to the tail*/
+Node       *LinkedList_RemoveFromTail           (LinkedList *pstList);                                             /*Remove the tail node*/
+Node       *LinkedList_FindNodeAtIndex          (LinkedList *pstList, uint16_t u16Index);                          /*Find node at given index*/
+void        LinkedList_InsertNodeAtIndex        (LinkedList *pstList, Node *pstInsertedNode, uint16_t u16Index);  /*Insert node at given index*/
+Node       *LinkedList_RemoveNodeAtIndex        (LinkedList *pstList, uint16_t u16Index);
+bool        LinkedList_InsertNewNodeAfterANode  (LinkedList *pstList, Node *pstCurrentNode, Node *pstNewNode);
+Node       *LinkedList_SearchNode               (LinkedList *pstList, Node *pstSearchNode);
+bool        LinkedList_RemoveNode               (LinkedList *pstList, Node *pstRemovedNode);
 
 #endif /* _LINKEDLIST_H */
 

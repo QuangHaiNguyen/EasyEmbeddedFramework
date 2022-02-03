@@ -69,18 +69,28 @@
 #include "../ezmIpc/ezmIpc.h"
 #endif
 
+#if (STCMEM==1U)
+#include "../helper/stcmem/stcmem.h"
+#endif
+
 #if (NUM_OF_SUPPORTED_UART)
 #include "../hal/uart/uart.h"
 #endif /* NUM_OF_SUPPORTED_UART */
 
+#define MOD_NAME "APPL"
+
 #if (MODULE_DEBUG == 1U) && (APP_DEBUG == 1U)
-    #define APPPRINT1(a)                    PRINT_DEBUG1(a)               
-    #define APPPRINT2(a,b)                  PRINT_DEBUG2(a,b)             
-    #define APPPRINT3(a,b,c)                PRINT_DEBUG3(a,b,c) 
+    #define APPPRINT(a)                     PRINT_DEBUG(MOD_NAME, a)
+    #define APPPRINT1(a,b)                  PRINT_DEBUG1(MOD_NAME,a,b)
+    #define APPPRINT2(a,b,c)                PRINT_DEBUG2(MOD_NAME,a,b,c)
+    #define APPPRINT3(a,b,c,d)              PRINT_DEBUG3(MOD_NAME,a,b,c,d)
+    #define APPPRINT4(a,b,c,d,e)            PRINT_DEBUG3(MOD_NAME,a,b,c,d,e)
 #else 
-    #define APPPRINT1(a)           
-    #define APPPRINT2(a,b)           
-    #define APPPRINT3(a,b,c)
+    #define APPPRINT(a)
+    #define APPPRINT1(a,b)
+    #define APPPRINT2(a,b,c)
+    #define APPPRINT3(a,b,c,d)
+    #define APPPRINT4(a,b,c,d,e)
 #endif
 
 /******************************************************************************
@@ -127,9 +137,9 @@ void ezmApp_SdkInit(void)
 #endif
 
 #if (CLI == 1U)
-    APPPRINT1("Initialize command line interface");
-    APPPRINT2("Module Id: 0x%02x", CLI_MOD_ID);
-    APPPRINT2("Number of supported command: [command = %d]", NUM_OF_CMD);
+    APPPRINT("Initialize command line interface");
+    APPPRINT1("Module Id: 0x%02x", CLI_MOD_ID);
+    APPPRINT1("Number of supported command: [command = %d]", NUM_OF_CMD);
     ezmCli_Init();
 #endif
 
@@ -142,9 +152,9 @@ void ezmApp_SdkInit(void)
 
 #if (SMALLOC == 1U)
     /* SMALLOC module has no init function*/
-    APPPRINT1("Initialize smalloc");
-    APPPRINT2("Module Id: 0x%02x", SMALLOC_MOD_ID);
-    APPPRINT2("Availalbe memory: %d bytes", STATIC_MEMORY_SIZE);
+    APPPRINT("Initialize smalloc");
+    APPPRINT1("Module Id: 0x%02x", SMALLOC_MOD_ID);
+    APPPRINT1("Availalbe memory: %d bytes", STATIC_MEMORY_SIZE);
 #endif
 
 #if (BIN_PARSER == 1U)
@@ -158,31 +168,25 @@ void ezmApp_SdkInit(void)
 
 #if (DEBUG == 1U)
     /* DEBUG module has no init function*/
-    APPPRINT1("Initialize debug module");
-    APPPRINT2("Module Id: 0x%02x", DEBUG_MOD_ID);
+    APPPRINT("Initialize debug module");
+    APPPRINT1("Module Id: 0x%02x", DEBUG_MOD_ID);
 #endif
 
 #if (HELPER_LINKEDLIST == 1U)
-    APPPRINT1("Initialize linked list module");
-    APPPRINT2("Module Id: 0x%02x", HELPER_LINKEDLIST_MOD_ID);
+    APPPRINT("Initialize linked list module");
+    APPPRINT1("Module Id: 0x%02x", HELPER_LINKEDLIST_MOD_ID);
 #endif
 
 #if (HELPER_HEXDUMP == 1U)
     /* DEBUG module has no init function*/
-    APPPRINT1("Initialize hexdump module");
-    APPPRINT2("Module Id: 0x%02x", HELPER_HEXDUMP_MOD_ID);
+    APPPRINT("Initialize hexdump module");
+    APPPRINT1("Module Id: 0x%02x", HELPER_HEXDUMP_MOD_ID);
 #endif
 
 #if (RING_BUFFER == 1U)
     /* DEBUG module has no init function*/
-    APPPRINT1("Initialize ring buffer module");
-    APPPRINT2("Module Id: 0x%02x", RING_BUFFER_MOD_ID);
-
-#if (STATIC_MEM == 1)
-    APPPRINT2("Using static memory, buffer size of each ring %d bytes", STATIC_MEM_SIZE);
-#else
-    APPPRINT1("Using dynamic memory allocation with SMALLOC module");
-#endif /*STATIC_MEM*/
+    APPPRINT("Initialize ring buffer module");
+    APPPRINT1("Module Id: 0x%02x", RING_BUFFER_MOD_ID);
 #endif /* RING_BUFFER */
 
 #if (HELPER_ASSERT == 1U)
@@ -198,13 +202,16 @@ void ezmApp_SdkInit(void)
 #endif
 
 #if (IPC == 1U)
-    /* DEBUG module has no init function*/
-    APPPRINT1("Initialize IPC module");
-    APPPRINT2("Module Id: 0x%02x", IPC_MOD_ID);
-    if (ezmIpc_Init() != true)
-    {
-        APPPRINT1("No module is register");
-    }
+    ezmIpc_InitModule();
+    APPPRINT("Initialize IPC module");
+    APPPRINT1("Module Id: 0x%02x", IPC_MOD_ID);
+    
+#endif
+
+#if (STCMEM==1U)
+    ezmStcMem_Initialization();
+    APPPRINT("Initialize STCMEM module");
+    APPPRINT1("Module Id: 0x%02x", STCMEM_MOD_ID);
 #endif
 
 #if (NUM_OF_SUPPORTED_UART)
@@ -240,97 +247,102 @@ void ezmApp_SdkInit(void)
 *******************************************************************************/
 static void ezm_AppPrintActiveModule(void)
 {
-    APPPRINT1("ACTIVE MODULES:");
+    APPPRINT("ACTIVE MODULES:");
 
 #if (CLI == 1U)
-    APPPRINT1("\t[x] CLI");
+    APPPRINT("\t[x] CLI");
 #else
-    APPPRINT1("\t[ ] CLI");
+    APPPRINT("\t[ ] CLI");
 #endif
 
 #if (SCHEDULER == 1U)
-    APPPRINT1("\t[x] SCHEDULER");
+    APPPRINT("\t[x] SCHEDULER");
 #else
-    APPPRINT1("\t[ ] SCHEDULER");
+    APPPRINT("\t[ ] SCHEDULER");
 #endif
 
 #if (SMALLOC == 1U)
-    APPPRINT1("\t[x] SMALLOC");
+    APPPRINT("\t[x] SMALLOC");
 #else
-    APPPRINT1("\t[ ] SMALLOC");
+    APPPRINT("\t[ ] SMALLOC");
 #endif
 
 #if (BIN_PARSER == 1U)
-    APPPRINT1("\t[x] BIN_PARSER");
+    APPPRINT("\t[x] BIN_PARSER");
 #else
-    APPPRINT1("\t[ ] BIN_PARSER");
+    APPPRINT("\t[ ] BIN_PARSER");
 #endif
 
 #if (DEBUG == 1U)
-    APPPRINT1("\t[x] DEBUG");
+    APPPRINT("\t[x] DEBUG");
 #else
-    APPPRINT1("\t[ ] DEBUG");
+    APPPRINT("\t[ ] DEBUG");
 #endif
 
 #if (HELPER_LINKEDLIST == 1U)
-    APPPRINT1("\t[x] HELPER_LINKEDLIST");    
+    APPPRINT("\t[x] HELPER_LINKEDLIST");
 #else
-    APPPRINT1("\t[ ] HELPER_LINKEDLIST");
+    APPPRINT("\t[ ] HELPER_LINKEDLIST");
 #endif
 
 #if (HELPER_HEXDUMP == 1U)
-    APPPRINT1("\t[x] HELPER_HEXDUMP");
+    APPPRINT("\t[x] HELPER_HEXDUMP");
 #else
-    APPPRINT1("\t[ ] HELPER_HEXDUMP");
+    APPPRINT("\t[ ] HELPER_HEXDUMP");
 #endif
 
 #if (RING_BUFFER == 1U)
-    APPPRINT1("\t[x] RING_BUFFER");
+    APPPRINT("\t[x] RING_BUFFER");
 #else
-    APPPRINT1("\t[ ] RING_BUFFER");
+    APPPRINT("\t[ ] RING_BUFFER");
 #endif
 
 #if (HELPER_ASSERT == 1U)
-    APPPRINT1("\t[x] HELPER_ASSERT");
+    APPPRINT("\t[x] HELPER_ASSERT");
 #else
-    APPPRINT1("\t[ ] HELPER_ASSERT");
+    APPPRINT("\t[ ] HELPER_ASSERT");
 #endif
 
 #if (STATEMACHINE == 1U)
-    APPPRINT1("\t[x] STATEMACHINE");
+    APPPRINT("\t[x] STATEMACHINE");
 #else
-    APPPRINT1("\t[ ] STATEMACHINE");
+    APPPRINT("\t[ ] STATEMACHINE");
 #endif
 
 #if (IPC == 1U)
-    APPPRINT1("\t[x] IPC");
+    APPPRINT("\t[x] IPC");
 #else
-    APPPRINT1("\t[ ] IPC");
+    APPPRINT("\t[ ] IPC");
 #endif
 
-#if (NUM_OF_SUPPORTED_UART)
-    APPPRINT1("\t[x] UART");
+#if (STCMEM==1U)
+    APPPRINT("\t[x] STCMEM");
 #else
-    APPPRINT1("\t[ ] UART");
+    APPPRINT("\t[ ] STCMEM");
+#endif
+#if (NUM_OF_SUPPORTED_UART)
+    APPPRINT("\t[x] UART");
+#else
+    APPPRINT("\t[ ] UART");
 #endif /* NUM_OF_SUPPORTED_UART */
 
 }
 
 static void ezmApp_PrintHeader(void)
 {
-    PRINT_INFO1("******************************************************************************");
-    PRINT_INFO1("* EASY EMBEDDED SOFTWARE DEVELOPMENT KIT");
-    PRINT_INFO1("* Author: Quang Hai Nguyen");
-    PRINT_INFO1("* Version: 1.0.0");
-    PRINT_INFO1("* Build date: 16.01.2022");
+    PRINT_INFO("******************************************************************************");
+    PRINT_INFO("* EASY EMBEDDED SOFTWARE DEVELOPMENT KIT");
+    PRINT_INFO("* Author: Quang Hai Nguyen");
+    PRINT_INFO("* Version: 1.0.0");
+    PRINT_INFO("* Build date: 16.01.2022");
 #if(SUPPORTED_CHIP == ESP32)
-    PRINT_INFO1("* Platform: ESP32");
+    PRINT_INFO("* Platform: ESP32");
 #elif (SUPPORTED_CHIP == STM32)
-    PRINT_INFO1("* Platform: STM32");
+    PRINT_INFO("* Platform: STM32");
 #else
-    PRINT_INFO1("* Platform: PC");
+    PRINT_INFO("* Platform: PC");
 #endif
-    PRINT_INFO1("* Contact: hainguyen.ezm@gmail.com");
-    PRINT_INFO1("******************************************************************************");
+    PRINT_INFO("* Contact: hainguyen.ezm@gmail.com");
+    PRINT_INFO("******************************************************************************\n\n");
 }
 /* End of file*/

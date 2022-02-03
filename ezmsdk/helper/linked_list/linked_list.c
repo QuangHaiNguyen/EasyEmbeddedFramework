@@ -34,14 +34,20 @@
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
+#define MOD_NAME        "LL"
+
 #if (MODULE_DEBUG == 1U) && (HELPER_LINKEDLIST_DEBUG == 1U)
-    #define LLPRINT1(a)                 PRINT_DEBUG1(a)               
-    #define LLPRINT2(a,b)               PRINT_DEBUG2(a,b)             
-    #define LLPRINT3(a,b,c)             PRINT_DEBUG3(a,b,c) 
+    #define LLPRINT(a)                  PRINT_DEBUG(MOD_NAME,a)
+    #define LLPRINT1(a,b)               PRINT_DEBUG1(MOD_NAME,a,b)
+    #define LLPRINT2(a,b,c)             PRINT_DEBUG2(MOD_NAME,a,b,c)
+    #define LLPRINT3(a,b,c,d)           PRINT_DEBUG3(MOD_NAME,a,b,c,d)
+    #define LLPRINT4(a,b,c,d,e)         PRINT_DEBUG4(MOD_NAME,a,b,c,d,e)
 #else 
-    #define LLPRINT1(a)           
-    #define LLPRINT2(a,b)           
-    #define LLPRINT3(a,b,c)
+    #define LLPRINT(a)
+    #define LLPRINT1(a,b)
+    #define LLPRINT2(a,b,c)
+    #define LLPRINT3(a,b,c,d)
+    #define LLPRINT4(a,b,c,d,e)
 #endif
 
 
@@ -104,7 +110,7 @@ void LinkedList_PrintListBackward(LinkedList * pstList);            /*Print List
 *******************************************************************************/
 void LinkedList_InsertToHead(LinkedList * pstList, Node * pstNewNode)
 {
-    LLPRINT1("LinkedList_InsertToHead");
+    LLPRINT("LinkedList_InsertToHead");
     if(pstList != NULL && pstNewNode != NULL)
     {
         if(pstList->pstHead == NULL)
@@ -135,7 +141,7 @@ void LinkedList_InsertToHead(LinkedList * pstList, Node * pstNewNode)
 
 Node * LinkedList_RemoveFromHead(LinkedList * pstList)
 {
-    LLPRINT1("LinkedList_RemoveFromHead");
+    LLPRINT("LinkedList_RemoveFromHead");
     Node * pstRemovedNode;
     pstRemovedNode = pstList->pstHead;
 
@@ -166,7 +172,7 @@ Node * LinkedList_RemoveFromHead(LinkedList * pstList)
 
 void LinkedList_InsertToTail(LinkedList * pstList, Node * pstNewNode)
 {
-    LLPRINT1("LinkedList_InsertToTail");
+    LLPRINT("LinkedList_InsertToTail");
     /*Only perform action when list and node are not Null*/
     if(pstList != NULL && pstNewNode != NULL)
     {
@@ -198,7 +204,7 @@ void LinkedList_InsertToTail(LinkedList * pstList, Node * pstNewNode)
 
 Node * LinkedList_RemoveFromTail(LinkedList * pstList)
 {
-    LLPRINT1("LinkedList_RemoveFromTail");
+    LLPRINT("LinkedList_RemoveFromTail");
     Node * pstRemovedNode;
     pstRemovedNode = pstList->pstTail;
 
@@ -229,7 +235,7 @@ Node * LinkedList_RemoveFromTail(LinkedList * pstList)
 
 Node * LinkedList_FindNodeAtIndex(LinkedList * pstList, uint16_t u16Index)
 {
-    LLPRINT1("LinkedList_FindNodeAtIndex");
+    LLPRINT("LinkedList_FindNodeAtIndex");
     Node * pstFoundNode = NULL;
 
     if(pstList != NULL)
@@ -271,7 +277,7 @@ Node * LinkedList_FindNodeAtIndex(LinkedList * pstList, uint16_t u16Index)
 
 void LinkedList_InsertNodeAtIndex(LinkedList * pstList, Node * pstInsertedNode, uint16_t u16Index)
 {
-    LLPRINT1("LinkedList_InsertNodeAtIndex");
+    LLPRINT("LinkedList_InsertNodeAtIndex");
     Node * pstFoundNode;
 
     if(u16Index == 0U)
@@ -305,7 +311,7 @@ void LinkedList_InsertNodeAtIndex(LinkedList * pstList, Node * pstInsertedNode, 
 
 Node * LinkedList_RemoveNodeAtIndex(LinkedList * pstList, uint16_t u16Index)
 {
-    LLPRINT1("LinkedList_RemoveNodeAtIndex");
+    LLPRINT("LinkedList_RemoveNodeAtIndex");
     Node * pstRemovedNode = NULL;
 
     if(u16Index == 0U)

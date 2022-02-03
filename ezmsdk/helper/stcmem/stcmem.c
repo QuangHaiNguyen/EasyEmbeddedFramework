@@ -29,18 +29,23 @@
 /******************************************************************************
  Module Preprocessor Macros
 *******************************************************************************/
-#define VERBOSE         0U
+#define VERBOSE         1U
 
+#define MOD_NAME        "STCMEM"
 #if (MODULE_DEBUG == 1U) && (STCMEM_DEBUG == 1U)
-    #define STCMEMPRINT1(a)             PRINT_DEBUG1(a)
-    #define STCMEMPRINT2(a,b)           PRINT_DEBUG2(a,b)
-    #define STCMEMPRINT3(a,b,c)         PRINT_DEBUG3(a,b,c)
+    #define STCMEMPRINT(a)            PRINT_DEBUG(MOD_NAME,a)
+    #define STCMEMPRINT1(a,b)         PRINT_DEBUG1(MOD_NAME,a,b)
+    #define STCMEMPRINT2(a,b,c)       PRINT_DEBUG2(MOD_NAME,a,b,c)
+    #define STCMEMPRINT3(a,b,c,d)     PRINT_DEBUG3(MOD_NAME,a,b,c,d)
+    #define STCMEMPRINT4(a,b,c,d,e)   PRINT_DEBUG4(MOD_NAME,a,b,c,d,e)
     #define STCMEMHEXDUMP(a,b)        ezmHexdump(a,b)
 #else 
-    #define STCMEMPRINT1(a)
-    #define STCMEMPRINT2(a,b)
-    #define STCMEMPRINT3(a,b,c)
-    #define STCMEMHEXDUMP(a,b,c)
+    #define STCMEMPRINT(a)
+    #define STCMEMPRINT1(a,b)
+    #define STCMEMPRINT2(a,b,c)
+    #define STCMEMPRINT3(a,b,c,d)
+    #define STCMEMPRINT4(a,b,c,d,e)
+    #define STCMEMHEXDUMP(a,b)
 #endif
 
 
@@ -57,6 +62,8 @@ static MemHdr   header_pool[NUM_OF_MEMHDR] = { 0 };
 /******************************************************************************
  Function Definitions
 *******************************************************************************/
+MemHdr          *ezmStcMem_ReserveMemoryBlock   (LinkedList* free_list, uint16_t block_size_byte);
+bool            ezmStcMem_MoveHeader            (MemHdr* header, LinkedList* from_list, LinkedList* to_list);
 static void     ezmStcMem_ResetHeader           (uint16_t header_index);
 static MemHdr   *ezmStcMem_GetFreeHeader        (void);
 static void     ezmStcMem_ReturnHeaderToFreeList(LinkedList *free_list, MemHdr *free_header);
@@ -81,7 +88,7 @@ static void     ezmSmalloc_Merge                (LinkedList *free_list);
 *******************************************************************************/
 void ezmStcMem_Initialization(void)
 {
-    STCMEMPRINT1("ezmStcMem_Initialization()");
+    STCMEMPRINT("ezmStcMem_Initialization()");
 
     /* Reset the list of memory header*/
     for (uint16_t i = 0; i < NUM_OF_MEMHDR; i++)
@@ -115,7 +122,7 @@ bool ezmStcMem_InitMemList(ezmMemList *mem_list, uint8_t *buffer, uint16_t buffe
     bool    is_success = true;
     MemHdr  *free_mem_header = NULL;
 
-    STCMEMPRINT1("ezmStcMem_InitMemList()");
+    STCMEMPRINT("ezmStcMem_InitMemList()");
 
     if (mem_list == NULL || buffer == NULL || buffer_size == 0)
     {
@@ -171,10 +178,9 @@ void *ezmStcMem_Malloc(ezmMemList *mem_list, uint16_t alloc_size)
 {
     void    *alloc_addr = NULL;
     bool    is_success = true;
-    MemHdr  *next_header = NULL;
-    MemHdr  *free_header = NULL;
+    MemHdr  *reserve_header = NULL;
 
-    STCMEMPRINT1("ezmStcMem_Malloc()");
+    STCMEMPRINT("ezmStcMem_Malloc()");
 
     if (NULL == mem_list || 0U == alloc_size)
     {
@@ -183,51 +189,17 @@ void *ezmStcMem_Malloc(ezmMemList *mem_list, uint16_t alloc_size)
 
     if (is_success)
     {
-        free_header = ezmStcMem_GetFreeHeader();
-
-        if (free_header == NULL)
-        {
-            is_success = false;
-        }
+        reserve_header = ezmStcMem_ReserveMemoryBlock(&mem_list->free_list, alloc_size);
     }
 
-    if (is_success)
+    if (NULL != reserve_header)
     {
-        next_header = mem_list->free_list.pstHead;
-        while (next_header->u16BufferSize < alloc_size && next_header->pstNextNode != NULL)
+        is_success = is_success & ezmStcMem_MoveHeader(reserve_header, &mem_list->free_list, &mem_list->alloc_list);
+
+        if (is_success)
         {
-            next_header = next_header->pstNextNode;
+            alloc_addr = reserve_header->pBuffer;
         }
-
-        if (next_header->u16BufferSize >= alloc_size)
-        {
-            free_header->u16BufferSize = next_header->u16BufferSize - alloc_size;
-
-            /* wrap around point */
-            if (free_header->u16BufferSize == 0)
-            {
-                ezmStcMem_ResetHeader(free_header->u16NodeIndex);
-                STCMEMPRINT1("buffer reach the end");
-            }
-            else
-            {
-                free_header->pBuffer = (uint8_t*)(next_header->pBuffer + alloc_size);
-                LinkedList_InsertToTail(&mem_list->free_list, free_header);
-            }
-
-            next_header->u16BufferSize = alloc_size;
-            is_success = is_success & LinkedList_RemoveNode(&mem_list->free_list, next_header);
-            LinkedList_InsertToTail(&mem_list->alloc_list, next_header);
-        }
-        else
-        {
-            is_success = false;
-        }
-    }
-
-    if (is_success)
-    {
-        alloc_addr = (void*)next_header->pBuffer;
     }
 
     ezmStcMem_PrintFreeList(mem_list);
@@ -260,7 +232,7 @@ bool ezmStcMem_Free(ezmMemList *mem_list, void *alloc_addr)
     LinkedList  *free_list = &mem_list->free_list;
     MemHdr      *next_header = alloc_list->pstHead;
 
-    STCMEMPRINT2("ezmStcMem_Free() - [address = %p]", alloc_addr);
+    STCMEMPRINT1("ezmStcMem_Free() - [address = %p]", alloc_addr);
 
     if (mem_list == NULL || alloc_addr == NULL)
     {
@@ -277,7 +249,7 @@ bool ezmStcMem_Free(ezmMemList *mem_list, void *alloc_addr)
                 is_success = is_success & LinkedList_RemoveNode(alloc_list, next_header);
                 ezmStcMem_ReturnHeaderToFreeList(free_list, next_header);
                 ezmSmalloc_Merge(free_list);
-                STCMEMPRINT1("Free OK");
+                STCMEMPRINT("Free OK");
                 break;
             }
             else
@@ -340,20 +312,20 @@ void ezmStcMem_PrintFreeList(ezmMemList *mem_list)
 #if (VERBOSE == 1U)
     MemHdr *next_header = mem_list->free_list.pstHead;
 
-    STCMEMPRINT1("*****************************************");
+    STCMEMPRINT("*****************************************");
     while (next_header)
     {
-        STCMEMPRINT2("[addr = %p]", next_header);
-        STCMEMPRINT2("[next = %p]", next_header->pstNextNode);
-        STCMEMPRINT2("[prev = %p]", next_header->pstPrevNode);
-        STCMEMPRINT2("[buff = %p]", next_header->pBuffer);
-        STCMEMPRINT2("[size = %d]", next_header->u16BufferSize);
-        STCMEMPRINT2("[index = %d]", next_header->u16NodeIndex);
-        STCMEMPRINT1("<======>");
+        STCMEMPRINT1("[addr = %p]", next_header);
+        STCMEMPRINT1("[next = %p]", next_header->pstNextNode);
+        STCMEMPRINT1("[prev = %p]", next_header->pstPrevNode);
+        STCMEMPRINT1("[buff = %p]", next_header->pBuffer);
+        STCMEMPRINT1("[size = %d]", next_header->u16BufferSize);
+        STCMEMPRINT1("[index = %d]", next_header->u16NodeIndex);
+        STCMEMPRINT("<======>");
 
         next_header = next_header->pstNextNode;
     }
-    STCMEMPRINT1("*****************************************\n");
+    STCMEMPRINT("*****************************************\n");
 #endif
 }
 
@@ -378,23 +350,93 @@ void ezmStcMem_PrintAllocList(ezmMemList * mem_list)
 #if (VERBOSE == 1U)
     MemHdr *next_header = mem_list->alloc_list.pstHead;
 
-    STCMEMPRINT1("*****************************************");
+    STCMEMPRINT("*****************************************");
     while (next_header)
     {
-        STCMEMPRINT2("[addr = %p]", next_header);
-        STCMEMPRINT2("[next = %p]", next_header->pstNextNode);
-        STCMEMPRINT2("[prev = %p]", next_header->pstPrevNode);
-        STCMEMPRINT2("[buff = %p]", next_header->pBuffer);
-        STCMEMPRINT2("[size = %d]", next_header->u16BufferSize);
-        STCMEMPRINT2("[index = %d]", next_header->u16NodeIndex);
-        STCMEMPRINT1("<======>");
+        STCMEMPRINT1("[addr = %p]", next_header);
+        STCMEMPRINT1("[next = %p]", next_header->pstNextNode);
+        STCMEMPRINT1("[prev = %p]", next_header->pstPrevNode);
+        STCMEMPRINT1("[buff = %p]", next_header->pBuffer);
+        STCMEMPRINT1("[size = %d]", next_header->u16BufferSize);
+        STCMEMPRINT1("[index = %d]", next_header->u16NodeIndex);
+        STCMEMPRINT("<======>");
 
         next_header = next_header->pstNextNode;
     }
-    STCMEMPRINT1("*****************************************\n");
+    STCMEMPRINT("*****************************************\n");
 #endif
 }
 
+MemHdr* ezmStcMem_ReserveMemoryBlock(LinkedList* free_list, uint16_t block_size_byte)
+{
+    bool    is_success = true;
+    MemHdr* next_header = NULL;
+    MemHdr* free_header = NULL;
+
+    STCMEMPRINT("ezmStcMem_Malloc()");
+
+    if (NULL == free_list || 0U == block_size_byte)
+    {
+        is_success = false;
+    }
+
+    if (is_success)
+    {
+        free_header = ezmStcMem_GetFreeHeader();
+
+        if (free_header == NULL)
+        {
+            is_success = false;
+        }
+    }
+
+    if (is_success)
+    {
+        next_header = free_list->pstHead;
+        while (next_header->u16BufferSize < block_size_byte && next_header->pstNextNode != NULL)
+        {
+            next_header = next_header->pstNextNode;
+        }
+
+        if (next_header->u16BufferSize >= block_size_byte)
+        {
+            free_header->u16BufferSize = next_header->u16BufferSize - block_size_byte;
+
+            /* wrap around point */
+            if (free_header->u16BufferSize == 0)
+            {
+                ezmStcMem_ResetHeader(free_header->u16NodeIndex);
+                STCMEMPRINT("buffer reach the end");
+            }
+            else
+            {
+                free_header->pBuffer = (uint8_t*)(next_header->pBuffer + block_size_byte);
+                LinkedList_InsertToTail(free_list, free_header);
+            }
+
+            next_header->u16BufferSize = block_size_byte;
+        }
+    }
+    return next_header;
+}
+
+bool  ezmStcMem_MoveHeader(MemHdr* header, LinkedList* from_list, LinkedList* to_list)
+{
+    bool is_success = true;
+
+    if (NULL == header || NULL == from_list || NULL == to_list)
+    {
+        is_success = false;
+    }
+
+    if (is_success)
+    {
+        is_success = LinkedList_RemoveNode(from_list, header);
+        LinkedList_InsertToTail(to_list, header);
+    }
+
+    return is_success;
+}
 /**************************** Private function *******************************/
 
 /******************************************************************************
@@ -443,7 +485,7 @@ static void ezmStcMem_ResetHeader(uint16_t header_index)
 *******************************************************************************/
 static MemHdr *ezmStcMem_GetFreeHeader(void)
 {
-    STCMEMPRINT1("ezmStcMem_GetFreeHeader()");
+    STCMEMPRINT("ezmStcMem_GetFreeHeader()");
     MemHdr *free_header = NULL;
 
     for (uint16_t i = 0; i < NUM_OF_MEMHDR; i++)
@@ -455,7 +497,7 @@ static MemHdr *ezmStcMem_GetFreeHeader(void)
 
             free_header = &header_pool[i];
 
-            STCMEMPRINT2("Found free instance [inst = %d]", i);
+            STCMEMPRINT1("Found free instance [inst = %d]", i);
             break;
         }
     }
@@ -539,7 +581,7 @@ static void ezmSmalloc_Merge(LinkedList *free_list)
 
     while (NULL != next && ((uint8_t*)head->pBuffer + head->u16BufferSize) == next->pBuffer)
     {
-        STCMEMPRINT1("Next adjacent block is free");
+        STCMEMPRINT("Next adjacent block is free");
         head->u16BufferSize += next->u16BufferSize;
         LinkedList_RemoveNode(free_list, next);
         ezmStcMem_ResetHeader(next->u16NodeIndex);

@@ -40,12 +40,16 @@
 #error memory size must be bigger than 0
 #endif /* STATIC_MEMORY_SIZE */
 
+#define MOD_NAME    "SMALLOC"
+
 #if (MODULE_DEBUG == 1U) && (SMALLOC_DEBUG == 1U)
-    #define SMALLOCPRINT1(a)                PRINT_DEBUG1(a)               
-    #define SMALLOCPRINT2(a,b)              PRINT_DEBUG2(a,b)             
-    #define SMALLOCPRINT3(a,b,c)            PRINT_DEBUG3(a,b,c)
-    #define SMALLOCFUNCENTER()              SMALLOCPRINT1("<--")
-    #define SMALLOCFUNCLEAVE()              SMALLOCPRINT1("-->")
+    #define SMALLOCPRINT(a)                 PRINT_DEBUG(MOD_NAME,a)
+    #define SMALLOCPRINT1(a,b)              PRINT_DEBUG1(MOD_NAME,a,b)
+    #define SMALLOCPRINT2(a,b,c)            PRINT_DEBUG2(MOD_NAME,a,b,c)
+    #define SMALLOCPRINT3(a,b,c,d)          PRINT_DEBUG2(MOD_NAME,a,b,c,d)
+    #define SMALLOCPRINT4(a,b,c,d,e)        PRINT_DEBUG2(MOD_NAME,a,b,c,d,e)
+    #define SMALLOCFUNCENTER()              SMALLOCPRINT("<--")
+    #define SMALLOCFUNCLEAVE()              SMALLOCPRINT("-->")
 #else 
     #define SMALLOCPRINT1(a)           
     #define SMALLOCPRINT2(a,b)           
@@ -189,7 +193,7 @@ void* ezmSmalloc_Malloc(uint16_t u16Size)
     void * pFreeBlockAddress = NULL;
 
     SMALLOCFUNCENTER(); 
-    SMALLOCPRINT2("allocate: %u bytes", u16Size);
+    SMALLOCPRINT1("allocate: %u bytes", u16Size);
 
     if(!stFreeBlockList.pstHead)
     {
@@ -270,7 +274,7 @@ void ezmSmalloc_InitMemList(ezmMemList* pstNewList, uint8_t u8ListOwnerModuleId)
     {
         ezmSmalloc_Initialize();
     }
-    SMALLOCPRINT2("Init a list for module: 0x%02x", u8ListOwnerModuleId);
+    SMALLOCPRINT1("Init a list for module: 0x%02x", u8ListOwnerModuleId);
     pstNewList->pstHead = NULL;
     pstNewList->pstTail = NULL;
     pstNewList->u16Size = 0;
@@ -344,7 +348,7 @@ void ezmSmalloc_ReturnMemBlock(ezmMemList* pstNewList, ezmMemoryBlock* pstBlock)
     if (LinkedList_RemoveNode(pstNewList, pstReturnedBlock) == true)
     {
         ezmSmalloc_ReturnBlockToFreeList(pstReturnedBlock);
-        SMALLOCPRINT2("Return %u byte to the free list", (uint32_t)(SIZE_OF_METADATA + pstReturnedBlock->u16BufferSize));
+        SMALLOCPRINT1("Return %u byte to the free list", (uint32_t)(SIZE_OF_METADATA + pstReturnedBlock->u16BufferSize));
 #if (ENABLE_STATS == 1U)
         stStats.u32NumOfAllocBlock--;
         PRINTSTATS();
@@ -402,7 +406,7 @@ ezmMemoryBlock* ezmSmalloc_GetFreeBlock(uint16_t u16BlockSize)
                     /*something wrong, we cannot move the block so we merge it back to the free list*/
                     ezmSmalloc_Merge();
                     pstFreeBlock = NULL;
-                    SMALLOCPRINT1("LinkedList_RemoveNode error");
+                    SMALLOCPRINT("LinkedList_RemoveNode error");
                 }
             }
             else
@@ -414,7 +418,7 @@ ezmMemoryBlock* ezmSmalloc_GetFreeBlock(uint16_t u16BlockSize)
         /* No block is available */
         else
         {
-            SMALLOCPRINT1("Found no block");
+            SMALLOCPRINT("Found no block");
 
             /* Try to merge blocks for the next call*/
             ezmSmalloc_Merge();
@@ -592,7 +596,7 @@ static void * ezmSmalloc_GetFreeBlockApendToList(uint16_t u16BlockSize, LinkedLi
         if (pstFreeBlock->u16BufferSize >= u16BlockSize + SIZE_OF_METADATA)
         {
             /* Split the block, and move it to allocated list */
-            SMALLOCPRINT2("Suitable block @: %p", (void*)pstFreeBlock);
+            SMALLOCPRINT1("Suitable block @: %p", (void*)pstFreeBlock);
             SMALLOC_PRINT_BLOCKMETA(pstFreeBlock);
 
             if (ezmSmalloc_SplitBlock(pstFreeBlock, u16BlockSize) == true)
@@ -614,12 +618,12 @@ static void * ezmSmalloc_GetFreeBlockApendToList(uint16_t u16BlockSize, LinkedLi
                     /*something wrong, we cannot move the block so we merge it back to the free list*/
                     ezmSmalloc_Merge();
                     pstFreeBlock = NULL;
-                    SMALLOCPRINT1("LinkedList_RemoveNode error");
+                    SMALLOCPRINT("LinkedList_RemoveNode error");
                 }
             }
             else
             {
-                SMALLOCPRINT1("unable to split block");
+                SMALLOCPRINT("unable to split block");
                 pstFreeBlock = NULL;
             }
 
@@ -627,7 +631,7 @@ static void * ezmSmalloc_GetFreeBlockApendToList(uint16_t u16BlockSize, LinkedLi
         /* No block is available */
         else
         {
-            SMALLOCPRINT1("Found no block");
+            SMALLOCPRINT("Found no block");
 
             /* Try to merge blocks for the next call*/
             ezmSmalloc_Merge();
@@ -670,7 +674,7 @@ static void ezmSmalloc_Merge(void)
     while((ezmMemoryBlock*)((uint8_t*)pstCurrentFreeBlock + SIZE_OF_METADATA + pstCurrentFreeBlock->u16BufferSize) == pstNextFreeBlock && 
         pstNextFreeBlock != NULL)
     {
-        SMALLOCPRINT1("Next adjacent block is free");
+        SMALLOCPRINT("Next adjacent block is free");
         pstCurrentFreeBlock->u16BufferSize += pstNextFreeBlock->u16BufferSize + SIZE_OF_METADATA;
 
         LinkedList_RemoveNode(&stFreeBlockList, pstNextFreeBlock);

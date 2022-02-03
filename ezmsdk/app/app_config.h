@@ -17,7 +17,7 @@
 
 #define CLI                     0U
 #define SCHEDULER               0U
-#define SMALLOC                 1U
+#define SMALLOC                 0U
 #define BIN_PARSER              0U
 #define HELPER_LINKEDLIST       1U
 #define HELPER_HEXDUMP          1U
@@ -25,7 +25,7 @@
 #define RING_BUFFER             1U
 #define HELPER_ASSERT           0U
 #define STATEMACHINE            0U
-#define IPC                     0U
+#define IPC                     1U
 #define HAL_UART                0U
 #define STCMEM                  1U
 
@@ -112,20 +112,6 @@
 /* HELPER_HEXDUMP SECTION *****************************************************/
 #if (RING_BUFFER == 1U)
 #define RING_BUFFER_MOD_ID          0x08U
-
-#define STATIC_MEM  0
-
-#if (STATIC_MEM == 1)
-    #define STATIC_MEM_SIZE 512U
-    #if STATIC_MEM_SIZE > 0xFFFF
-        #error size is bigger than 16 bits
-    #endif /* STATIC_MEM_SIZE */
-#else
-    #if (SMALLOC == 0U)
-        #error SMALLOC module must be activated
-    #endif /* SMALLOC */
-#endif /*STATIC_MEM*/
-
 #endif /* RING_BUFFER */
 
 
@@ -142,6 +128,7 @@
 /* IPC SECTION ***************************************************************/
 #if (IPC == 1U)
 #define IPC_MOD_ID                  0x0BU
+#define NUM_OF_IPC_INSTANCE         5U
 
 #define USING_MODULE_NAME           1U /* future feature */
 /**< turn on/off module name in string*/

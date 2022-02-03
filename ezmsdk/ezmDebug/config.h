@@ -33,11 +33,11 @@
 #define SCHEDULER_DBG               0U /* debug out for scheduler module */
 #define ASSERT_DBG                  1U /* debug out for scheduler module */
 #define APP_DEBUG                   1U /* debug out for main module */
-#define STATEMACHINE_DEBUG          1U /* debug out for state machine module */
+#define STATEMACHINE_DEBUG          0U /* debug out for state machine module */
 #define IPC_DEBUG                   1U /* debug out for IPC module */
 #define PARSER_DEBUG                0U /* debug out for parser module */
 #define CLI_DEBUG                   0U /* debug out for cli module */
 #define STCMEM_DEBUG                1U /* debug out for StcMem module */
-#define UART_DEBUG                  1U /* debug out for hal uart */
+#define UART_DEBUG                  0U /* debug out for hal uart */
 
 #endif

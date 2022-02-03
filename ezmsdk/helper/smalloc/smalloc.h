@@ -24,6 +24,8 @@
 /*******************************************************************************
 * Includes
 *******************************************************************************/
+#include "../../app/app_config.h"
+#if(SMALLOC == 1U)
 #include "stdint.h"
 #include "../linked_list/linked_list.h"
 /******************************************************************************
@@ -61,6 +63,7 @@ ezmMemoryBlock *    ezmSmalloc_GetMemBlockInList (ezmMemList * pstNewList, uint1
 void                ezmSmalloc_ReturnMemBlock (ezmMemList * pstNewList, ezmMemoryBlock * pstBlock);
 ezmMemoryBlock *    ezmSmalloc_GetFreeBlock (uint16_t u16BlockSize);
 void                ezmSmalloc_ApendBlockToList (ezmMemoryBlock * pstBlock, ezmMemList * pstNewList);
+#endif
 
 #endif /* _SMALLOC_H */
 

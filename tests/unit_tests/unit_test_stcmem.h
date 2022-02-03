@@ -1,8 +1,8 @@
 #include <limits.h>
 #include "gtest/gtest.h"
 
-#ifndef UNIT_TEST_SMALLOC
-#define UNIT_TEST_SMALLOC
+#ifndef UNIT_TEST_STCMEM
+#define UNIT_TEST_STCMEM
 
 extern "C" {
 #include "../../ezmsdk/app/app_config.h"
@@ -14,7 +14,7 @@ extern "C" {
 
 namespace
 {
-#if (SMALLOC == 1U)
+#if (STCMEM == 1U)
     TEST(stcmem, u8_var)
     {
         ezmStcMem_Initialization();
@@ -325,5 +325,5 @@ namespace
 
     }
 #endif /* SMALLOC */
-#endif /* UNIT_TEST_SMALLOC */
+#endif /* UNIT_TEST_STCMEM */
 }

@@ -27,13 +27,8 @@
 #include "../app/app_config.h"
 
 #if (IPC == 1U)
-
-#if (SMALLOC == 1U)
-#include "../helper/smalloc/smalloc.h"
-#else
-#error SMALLOC module must be activated
-#endif /* SMALLOC */
-
+#include "stdint.h"
+#include "stdbool.h"
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
@@ -42,7 +37,7 @@
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
-/* None */
+typedef uint32_t(*ezmIpc_MessageCallback)(void);
 
 /******************************************************************************
 * Module Variable Definitions
@@ -52,12 +47,12 @@
 /******************************************************************************
 * Function Prototypes
 *******************************************************************************/
-bool                ezmIpc_Init             (void);
-bool                ezmIpc_RegisterModule   (uint8_t u8ModuleId);
-ezmMemoryBlock *    ezmIpc_InitMsg          (uint8_t u8MsgSize);
-bool                ezmIpc_DeInitMsg        (uint8_t u8ModuleId, ezmMemoryBlock* pstMsg);
-bool                ezmIpc_SendMsg          (uint8_t u8FromModuleId, uint8_t u8ToModuleId, ezmMemoryBlock* pstMsg);
-ezmMemoryBlock *    ezmIpc_ReceiveMsg       (uint8_t u8ModuleId);
+void    ezmIpc_InitModule       (void);
+bool    ezmIpc_GetInstance      (uint8_t owner_id, uint8_t* ipc_buffer, uint16_t buffer_size, ezmIpc_MessageCallback fnCallback);
+void*   ezmIpc_InitMessage      (uint8_t send_to_id, uint16_t size_in_byte);
+bool    ezmIpc_SendMessage      (uint8_t send_to_id, void *message);
+void*   ezmIpc_ReceiveMessage   (uint8_t owner_id, uint16_t *message_size);
+bool    ezmIpc_ReleaseMessage   (uint8_t owner_id, void *message);
 
 #endif /* IPC */
 #endif /* _IPC_H */

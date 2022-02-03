@@ -2,40 +2,42 @@
 * Title                 :   ezmIpc 
 * Filename              :   ezmIpc.c
 * Author                :   Quang Hai Nguyen
-* Origin Date           :   21.02.2021
+* Origin Date           :   03.02.2022
 * Version               :   1.0.0
-*
-* <br><b> - HISTORY OF CHANGES - </b>
-*  
-* <table align="left" style="width:800px">
-* <tr><td> Date       </td><td> Software Version </td><td> Initials         </td><td> Description </td></tr>
-* <tr><td> 09.08.2021 </td><td> 1.0.0            </td><td> Quang Hai Nguyen </td><td> Interface Created </td></tr>
-* </table><br><br>
-* <hr>
 *
 *******************************************************************************/
 
 /** @file  ezmIpc.c
- *  @brief This is the source template for a ezmIpc
+ *  @brief This is the source for the ezmIpc module
  */
 
 /******************************************************************************
 * Includes
 *******************************************************************************/
 #include "ezmIpc.h"
-#include "ezmIpc_conf.h"
 
 #if (IPC == 1U)
+#include "../helper/stcmem/stcmem.h"
+#include "ezmIpc_conf.h"
+#include "string.h"
+
+#define MOD_NAME        "IPC"
 
 #if (MODULE_DEBUG == 1U) && (IPC_DEBUG == 1U)
-    #define IPCPRINT1(a)                    PRINT_DEBUG1(a)               
-    #define IPCPRINT2(a,b)                  PRINT_DEBUG2(a,b)             
-    #define IPCPRINT3(a,b,c)                PRINT_DEBUG3(a,b,c) 
+    #define IPCPRINT(a)                     PRINT_DEBUG(MOD_NAME,a)
+    #define IPCPRINT1(a,b)                  PRINT_DEBUG1(MOD_NAME,a,b)
+    #define IPCPRINT2(a,b,c)                PRINT_DEBUG2(MOD_NAME,a,b,c)
+    #define IPCPRINT3(a,b,c,d)              PRINT_DEBUG3(MOD_NAME,a,b,c,d)
+    #define IPCPRINT4(a,b,c,d,e)            PRINT_DEBUG4(MOD_NAME,a,b,c,d,e)
 #else 
-    #define IPCPRINT1(a)           
-    #define IPCPRINT2(a,b)           
-    #define IPCPRINT3(a,b,c)
+    #define IPCPRINT(a)
+    #define IPCPRINT1(a,b)
+    #define IPCPRINT2(a,b,c)
+    #define IPCPRINT3(a,b,c,d)
+    #define IPCPRINT4(a,b,c,d,e)
 #endif
+
+#define FREE_INSTANCE       0xFFU
 
 #define NUM_OF_MODULE       sizeof(au8RegisteredModule)
 
@@ -43,26 +45,44 @@
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
-/* None */
+
+/**@brief structure define an IPC instance
+ *
+ */
+typedef struct
+{
+    uint8_t instance_owner_id;          /**< Store the id of the owner of the instance */
+    ezmIpc_MessageCallback fnCallback;  /**< Callback function */
+    ezmMemList memory_list;             /**< Memory list to manage the buffer of the ipc instance*/
+}IpcInstance;
 
 /******************************************************************************
 * Module Variable Definitions
 *******************************************************************************/
-static ezmMemList astRegisteredMemList[NUM_OF_MODULE];
-/**< Store list of memory lists*/
+
+static IpcInstance instance_pool[NUM_OF_IPC_INSTANCE] = {0};    /**< pool of ipc intance*/
 
 /******************************************************************************
 * Function Definitions
 *******************************************************************************/
-static bool ezmIsModuleRegistered(uint8_t u8ModuleId);
-static uint8_t ezmSearchModule(uint8_t u8ModuleId);
+
+/**Function to manipulate the buffer of the ipc extern is used because these 
+ * functions are not meant to be shared with the user
+ */
+extern MemHdr*  ezmStcMem_ReserveMemoryBlock(LinkedList* free_list, uint16_t block_size_byte);
+extern bool     ezmStcMem_MoveHeader        (MemHdr* header, LinkedList* from_list, LinkedList* to_list);
+
+static void         ezmIpc_ResetInstance    (uint8_t instance_index);
+static IpcInstance  *ezmIpc_GetFreeInstance (void);
+static IpcInstance  *ezmIpc_SearchInstance  (uint8_t owner_id);
+static bool         ezmIpc_IsInstanceExist  (uint8_t owner_id);
 
 /******************************************************************************
-* Function : ezmIpc_Init
+* Function : ezmIpc_InitModule
 *//** 
 * \b Description:
 *
-* This function initializes the memory list of each registered moduled.
+* This function initializes the IPC module. It reset all of ipc instances in the pools
 *
 * PRE-CONDITION: None
 *
@@ -71,318 +91,377 @@ static uint8_t ezmSearchModule(uint8_t u8ModuleId);
 * @param    None
 * @return   None
 *
-* \b Example Example:
-* @code
-* ezmIpc_Init()
-* @endcode
+*******************************************************************************/
+void ezmIpc_InitModule(void)
+{
+    for (uint8_t i = 0; i < NUM_OF_IPC_INSTANCE; i++)
+    {
+        ezmIpc_ResetInstance(i);
+    }
+}
+
+/******************************************************************************
+* Function : ezmIpc_GetInstance
+*//**
+* \b Description:
 *
-* @see sum
+* Get a free instance from the Ipc pool and init it according to the parameters
+*
+* PRE-CONDITION: IPC module must be init
+*
+* POST-CONDITION: None
+*
+* @param    owner_id:       id of the owner of this IPC instance. MUST BE UNIQUE
+* @param    *ipc_buffer:    pointer to the providing buffer for the instance
+* @param    buffer_size:    size of the buffer in byte
+* @param    fnCallback:     callback function, tell the owner that it receives a message
+*
+* @return   true: success
+*           false: fail
 *
 *******************************************************************************/
-bool ezmIpc_Init(void)
+bool ezmIpc_GetInstance(uint8_t owner_id, uint8_t *ipc_buffer, uint16_t buffer_size, ezmIpc_MessageCallback fnCallback)
 {
-    bool bIsInit = false;
-    if(NUM_OF_MODULE > 0)
+    bool is_success = true;
+    IpcInstance *new_instance = NULL;
+
+    if (FREE_INSTANCE == owner_id || NULL == ipc_buffer || 0 == buffer_size)
     {
-        for(uint8_t i = 0; i < NUM_OF_MODULE; i++)
+        is_success = false;
+    }
+
+    if (ezmIpc_IsInstanceExist(owner_id))
+    {
+        is_success = false;
+    }
+
+    if (is_success)
+    {
+        new_instance = ezmIpc_GetFreeInstance();
+        if (NULL == new_instance)
         {
-            /* Parse module id into the mem list*/
-            IPCPRINT2("Init module: %x", au8RegisteredModule[i]);
-            ezmSmalloc_InitMemList(&astRegisteredMemList[i], au8RegisteredModule[i]);
+            is_success = false;
+            PRINT_ERR("Dont have enough instance!!!");
         }
-        bIsInit = true;
+    }
+
+    if (is_success)
+    {
+        new_instance->instance_owner_id = owner_id;
+        new_instance->fnCallback = fnCallback;
+        is_success = is_success & ezmStcMem_InitMemList(&new_instance->memory_list, ipc_buffer, buffer_size);
+    }
+
+    return is_success;
+}
+
+/******************************************************************************
+* Function : ezmIpc_InitMessage
+*//**
+* \b Description:
+*
+* Init a message and return the address of the buffer for usage. it reseves a memory
+* block in the buffer of the ipc instance and return it to the users so they can write
+* data into the block.
+*
+* PRE-CONDITION: IPC instance must be exsisting
+*
+* POST-CONDITION: None
+*
+* @param    send_to_id:     the id of the module which we want to send the message to
+* @param    size_in_byte    size of the message in byte
+*
+* @return   address of the buffer
+*           NULL error
+*
+*******************************************************************************/
+void* ezmIpc_InitMessage(uint8_t send_to_id, uint16_t size_in_byte)
+{
+    bool        is_success = true;
+    void        *buffer_address = NULL;
+    IpcInstance *send_to_instance = NULL;
+    MemHdr      *reserved_header = NULL;
+
+    if (0U == size_in_byte)
+    {
+        is_success = false;
+    }
+
+    if (is_success)
+    {
+        send_to_instance = ezmIpc_SearchInstance(send_to_id);
+
+        if (NULL == send_to_instance)
+        {
+            is_success = false;
+            PRINT_ERR1("[module = %x] does not exist", send_to_id);
+        }
+    }
+
+    if (is_success)
+    {
+        reserved_header = ezmStcMem_ReserveMemoryBlock(&send_to_instance->memory_list.free_list, size_in_byte);
+        if (NULL != reserved_header)
+        {
+            buffer_address = reserved_header->pBuffer;
+        }
+    }
+
+    return buffer_address;
+}
+
+/******************************************************************************
+* Function : ezmIpc_SendMessage
+*//**
+* \b Description:
+*
+* "Send" the message to the module. Send action means in move the memory header from
+* free list to the allocated list. If a callback is set, it will trigger the owner that
+* a message is sent.
+*
+* PRE-CONDITION: None
+*
+* POST-CONDITION: None
+*
+* @param    send_to_id: id of the module which a message is sent to
+* @param    *message:   pointer the message
+*
+* @return   true: success
+*           false: fail
+*
+*******************************************************************************/
+bool ezmIpc_SendMessage(uint8_t send_to_id, void *message)
+{
+    bool        is_success = true;
+    IpcInstance *send_to_instance = NULL;
+    MemHdr      *next_header = NULL;
+
+    if (NULL == message)
+    {
+        is_success = false;
+    }
+
+    if (is_success)
+    {
+        send_to_instance = ezmIpc_SearchInstance(send_to_id);
+
+        if (NULL == send_to_instance)
+        {
+            is_success = false;
+        }
+    }
+
+    if (is_success)
+    {
+        next_header = send_to_instance->memory_list.free_list.pstHead;
+        while (NULL != next_header)
+        {
+            if (next_header->pBuffer == message)
+            {
+                ezmStcMem_MoveHeader(next_header, &send_to_instance->memory_list.free_list, &send_to_instance->memory_list.alloc_list);
+                IPCPRINT("message sent");
+                break;
+            }
+            else
+            {
+                next_header = next_header->pstNextNode;
+            }
+        }
+    }
+
+    if (NULL == next_header)
+    {
+        is_success = false;
+        PRINT_ERR("Cannot find message");
     }
     else
     {
-        /* Do nothing, return false*/
-    }
-    return bIsInit;
-}
-
-/******************************************************************************
-* Function : ezmIpc_RegisterModule
-*//** 
-* \b Description:
-*
-* Register a module into IPC service. Actually, the module is registered in
-* compiled time,so it just checks if the module is registered-
-*
-* PRE-CONDITION: ezmIpc_Init() must be called first
-*
-* POST-CONDITION: None
-* 
-* @param    u8ModuleId: (IN)module id
-* @return   true if module is registered
-*
-* \b Example Example:
-* @code
-* ezmIpc_Init();
-* bool bResult = ezmIpc_RegisterModule(0x01U);
-* @endcode
-*
-* @see sum
-*
-*******************************************************************************/
-bool ezmIpc_RegisterModule(uint8_t u8ModuleId)
-{
-    bool bReturn = false;
-
-    for(uint8_t i = 0; i < NUM_OF_MODULE; i++)
-    {
-        if(ezmIsModuleRegistered(u8ModuleId))
+        if (NULL != send_to_instance->fnCallback)
         {
-            bReturn = true;
-            break;
+            send_to_instance->fnCallback();
         }
     }
 
-    return bReturn;
+    return is_success;
 }
 
 /******************************************************************************
-* Function : ezmIpc_InitMsg
-*//** 
+* Function : ezmIpc_ReceiveMessage
+*//**
 * \b Description:
 *
-* Get a message with size
+* This function check the buffer and return the message if there is one. Note calling
+* this function only return the message. After working with the message, ezmIpc_ReleaseMessage must
+* be called to actually free the message from the buffer
 *
-* PRE-CONDITION: IPC module is initialized and the module is registered
-*
-* POST-CONDITION: None
-* 
-* @param    u8MsgSize: (IN)size of the payload in byte
-* @return   pointer to the memory block, which stores the message
-*
-* \b Example Example:
-* @code
-* ezmIpc_Init();
-* bool bResult = ezmIpc_RegisterModule(0x01U);
-* ezmMemoryBlock * pstMsg = ezmIpc_InitMsg(2);
-* pstMsg->pBuffer[0] = 0x00;
-* pstMsg->pBuffer[1] = 0x01;
-* @endcode
-*
-* @see sum
-*
-*******************************************************************************/
-ezmMemoryBlock * ezmIpc_InitMsg(uint8_t u8MsgSize)
-{
-    ezmMemoryBlock * pstMsg;
-    pstMsg = ezmSmalloc_GetFreeBlock(u8MsgSize);
-    IPCPRINT1(" Init a message");
-    return pstMsg;
-}
-
-/******************************************************************************
-* Function : ezmIpc_DeInitMsg
-*//** 
-* \b Description:
-*
-* This function free a message which is not used by the module
-*
-* PRE-CONDITION: IPC module is initialized and the module is registered
+* PRE-CONDITION: instance must be exist
 *
 * POST-CONDITION: None
-* 
-* @param    u8ModuleId: (IN)module id
-* @param    pstMsg: (IN)pointer to the message
-* @return   true if success, else false
 *
-* \b Example Example:
-* @code
-* ezmIpc_Init();
-* bool bResult = ezmIpc_RegisterModule(0x02U);
-* ezmMemoryBlock * pstMsg = ezmIpc_ReceiveMsg(0x02U);
-* if(pstMsg != NULL)
-* {
-*     printf("Yay have a message!");
-*     ezmIpc_DeInitMsg(0x02U, pstMsg);   
-* }
-* @endcode
+* @param    owner_id:       id of the owner of the instance
+* @param    *message_size:  size of the message
 *
-* @see sum
+* @return   address of the message if there is one
 *
 *******************************************************************************/
-bool ezmIpc_DeInitMsg(uint8_t u8ModuleId, ezmMemoryBlock* pstMsg)
+void* ezmIpc_ReceiveMessage(uint8_t owner_id, uint16_t *message_size)
 {
-    bool bReturn = false;
-    uint8_t u8ModuleIndex = ezmSearchModule(u8ModuleId);
+    bool        is_success = true;
+    void        *buffer_address = NULL;
+    IpcInstance *instance = NULL;
 
-    if(u8ModuleIndex != 0xFF)
+    instance = ezmIpc_SearchInstance(owner_id);
+
+    if (NULL == instance)
     {
-        ezmSmalloc_ReturnMemBlock(&astRegisteredMemList[u8ModuleIndex], pstMsg);
-        bReturn = true;
+        is_success = false;
     }
 
-    return bReturn;
+    if (is_success)
+    {
+        buffer_address = instance->memory_list.alloc_list.pstHead->pBuffer;
+        *message_size = instance->memory_list.alloc_list.pstHead->u16BufferSize;
+    }
+
+    return buffer_address;
 }
 
-
 /******************************************************************************
-* Function : ezmIpc_SendMsg
-*//** 
+* Function : ezmIpc_ReleaseMessage
+*//**
 * \b Description:
 *
-* This function send the message from one module to another
+* Free the message in the buffer
 *
-* PRE-CONDITION: IPC module is initialized, the module is registered, and a 
-*                message is ready to send
+* PRE-CONDITION: None
 *
 * POST-CONDITION: None
-* 
-* @param    u8FromModuleId: (IN)send module id
-* @param    u8ToModuleId:   (IN)receive module id
-* @param    pstMsg:         (IN)pointer to the message
+*
+* @param    owner_id: owner id of the ipc instance
+* @param    *message:   message to be free
+*
+* @return   true: success
+*           false: fail
+*
+*******************************************************************************/
+bool ezmIpc_ReleaseMessage(uint8_t owner_id, void* message)
+{
+    bool        is_success = true;
+    void        *buffer_address = NULL;
+    IpcInstance *instance = NULL;
+
+    instance = ezmIpc_SearchInstance(owner_id);
+
+    if (NULL == instance || NULL == message )
+    {
+        is_success = false;
+    }
+
+    if (is_success)
+    {
+        is_success = is_success & ezmStcMem_Free(&instance->memory_list, message);
+    }
+
+    return is_success;
+}
+
+/******************************************************************************
+* Function : ezmIpc_ResetInstance
+*//**
+* \b Description:
+*
+* Reset a ipc instance to init state
+*
+* PRE-CONDITION: None
+*
+* POST-CONDITION: None
+*
+* @param    instance_index; index of the instance
 * @return   None
 *
-* \b Example Example:
-* @code
-* ezmIpc_Init();
-* bool bResult = ezmIpc_RegisterModule(0x01U);
-* ezmMemoryBlock * pstMsg = ezmIpc_InitMsg(2);
-* pstMsg->pBuffer[0] = 0x00;
-* pstMsg->pBuffer[1] = 0x01;
-* ezmIpc_SendMsg(0x01, 0x02, pstMsg);
-* @endcode
-*
-* @see sum
-*
 *******************************************************************************/
-bool ezmIpc_SendMsg (uint8_t u8FromModuleId, uint8_t u8ToModuleId, ezmMemoryBlock* pstMsg)
+static void ezmIpc_ResetInstance(uint8_t instance_index)
 {
-    bool bReturn = false;
-    uint8_t u8IndexFrom = ezmSearchModule(u8FromModuleId);
-    uint8_t u8IndexTo = ezmSearchModule(u8ToModuleId);
-
-    if(u8IndexFrom != 0xFF && u8IndexTo != 0xFF)
+    if (instance_index < NUM_OF_IPC_INSTANCE)
     {
-        ezmSmalloc_ApendBlockToList(pstMsg, &astRegisteredMemList[u8IndexTo]);
-        IPCPRINT3("Send message from %x to %x", u8FromModuleId, u8ToModuleId);
-        bReturn = true;
+        instance_pool[instance_index].instance_owner_id = FREE_INSTANCE;
+        instance_pool[instance_index].fnCallback = NULL;
+        memset(&instance_pool[instance_index].memory_list, 0, sizeof(instance_pool[instance_index].memory_list));
     }
-    return bReturn;    
 }
 
-
 /******************************************************************************
-* Function : ezmIpc_ReceiveMsg
-*//** 
+* Function : ezmIpc_GetFreeInstance
+*//**
 * \b Description:
 *
-* This function receives the message sent by other module
-*
-* PRE-CONDITION:  IPC module is initialized, the module is registered
-*
-* POST-CONDITION: None
-* 
-* @param    u8ModuleId: (IN)pointer to the ring buffer
-* @return   pointer to the message
-*
-* \b Example Example:
-* @code
-* ezmIpc_Init();
-* bool bResult = ezmIpc_RegisterModule(0x02U);
-* ezmMemoryBlock * pstMsg = ezmIpc_ReceiveMsg(0x02U);
-* if(pstMsg != NULL)
-* {
-*     printf("Yay have a message!");
-*     ezmIpc_DeInitMsg(0x02U, pstMsg);   
-* }
-* @endcode
-*
-* @see sum
-*
-*******************************************************************************/
-ezmMemoryBlock * ezmIpc_ReceiveMsg (uint8_t u8ModuleId)
-{
-    ezmMemoryBlock * pstMsg = NULL;
-    uint8_t u8ModuleIndex = ezmSearchModule(u8ModuleId);
-
-    if(u8ModuleIndex != 0xFF)
-    {
-        IPCPRINT1("Get a message!");
-        pstMsg = astRegisteredMemList[u8ModuleIndex].pstHead;
-    }
-    return pstMsg;
-}
-
-
-/******************************************************************************
-* Function : ezmIsModuleRegistered
-*//** 
-* \b Description:
-*
-* Check if a module is registered
+* Return a free instance from the pool
 *
 * PRE-CONDITION: None
 *
 * POST-CONDITION: None
-* 
-* @param    u8ModuleId: (IN)module id
-* @return   true if registered, otherwise false
 *
-* \b Example Example:
-* @code
-* sum(a, b);
-* @endcode
-*
-* @see sum
+* @param    None
+* @return   pointer to free instance or NULL
 *
 *******************************************************************************/
-static bool ezmIsModuleRegistered(uint8_t u8ModuleId)
+static IpcInstance *ezmIpc_GetFreeInstance(void)
 {
-    bool bReturn = false;
-
-    for(uint8_t i = 0; i < NUM_OF_MODULE; i++)
+    IpcInstance *free_instance = NULL;
+    for (uint8_t i = 0; i < NUM_OF_IPC_INSTANCE; i++)
     {
-        if(u8ModuleId == au8RegisteredModule[i])
+        if (FREE_INSTANCE == instance_pool[i].instance_owner_id)
         {
-            IPCPRINT1("module found! Registered!");
-            bReturn = true;
+            free_instance = &instance_pool[i];
             break;
         }
     }
-    return bReturn;
+    return free_instance;
 }
 
-
 /******************************************************************************
-* Function : ezmSearchModule
-*//** 
+* Function : ezmIpc_SearchInstance
+*//**
 * \b Description:
 *
-* This function searches for the index of the mem list of a module id
+* Search a intance in the pool according to the owner id
 *
 * PRE-CONDITION: None
 *
 * POST-CONDITION: None
-* 
-* @param    u8ModuleId: (IN)module id
-* @return   module id if found otherwise oxff
 *
-* \b Example Example:
-* @code
-* sum(a, b);
-* @endcode
-*
-* @see sum
+* @param    owner_id: owner id of the instance
+* @return   pointer to the instance or null
 *
 *******************************************************************************/
-static uint8_t ezmSearchModule(uint8_t u8ModuleId)
+static IpcInstance* ezmIpc_SearchInstance(uint8_t owner_id)
 {
-    uint8_t u8Index = 0xFF;
-
-    for(uint8_t i = 0; i < NUM_OF_MODULE; i++)
+    IpcInstance *searched_instance = NULL;
+    for (uint8_t i = 0; i < NUM_OF_IPC_INSTANCE; i++)
     {
-        if(astRegisteredMemList[i].u8ModuleId == u8ModuleId)
+        if (instance_pool[i].instance_owner_id == owner_id)
         {
-            u8Index = i;
-            IPCPRINT2("module found at index: %d", u8Index);
+            searched_instance = &instance_pool[i];
             break;
         }
     }
-    return u8Index;
+    return searched_instance;
 }
 
+static bool ezmIpc_IsInstanceExist(uint8_t owner_id)
+{
+    bool is_existing = false;
+    for (uint8_t i = 0; i < NUM_OF_IPC_INSTANCE; i++)
+    {
+        if (instance_pool[i].instance_owner_id == owner_id)
+        {
+            is_existing = true;
+            break;
+        }
+    }
+
+    return is_existing;
+}
 #endif /* IPC */
+
 /* End of file*/
