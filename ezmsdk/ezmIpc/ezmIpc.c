@@ -54,6 +54,7 @@ typedef struct
     uint8_t instance_owner_id;          /**< Store the id of the owner of the instance */
     ezmIpc_MessageCallback fnCallback;  /**< Callback function */
     ezmMemList memory_list;             /**< Memory list to manage the buffer of the ipc instance*/
+    LinkedList pending_list;            /**< list contains message pending to be sent*/
 }IpcInstance;
 
 /******************************************************************************
@@ -205,6 +206,9 @@ void* ezmIpc_InitMessage(uint8_t send_to_id, uint16_t size_in_byte)
         {
             buffer_address = reserved_header->pBuffer;
         }
+
+        LinkedList_RemoveNode(&send_to_instance->memory_list.free_list, reserved_header);
+        LinkedList_InsertToTail(&send_to_instance->pending_list, reserved_header);
     }
 
     return buffer_address;
@@ -253,12 +257,12 @@ bool ezmIpc_SendMessage(uint8_t send_to_id, void *message)
 
     if (is_success)
     {
-        next_header = send_to_instance->memory_list.free_list.pstHead;
+        next_header = send_to_instance->pending_list.pstHead;
         while (NULL != next_header)
         {
             if (next_header->pBuffer == message)
             {
-                ezmStcMem_MoveHeader(next_header, &send_to_instance->memory_list.free_list, &send_to_instance->memory_list.alloc_list);
+                ezmStcMem_MoveHeader(next_header, &send_to_instance->pending_list, &send_to_instance->memory_list.alloc_list);
                 IPCPRINT("message sent");
                 break;
             }
@@ -386,6 +390,11 @@ static void ezmIpc_ResetInstance(uint8_t instance_index)
     {
         instance_pool[instance_index].instance_owner_id = FREE_INSTANCE;
         instance_pool[instance_index].fnCallback = NULL;
+ 
+        instance_pool[instance_index].pending_list.pstHead = NULL;
+        instance_pool[instance_index].pending_list.pstTail = NULL;
+        instance_pool[instance_index].pending_list.u16Size = 0U;
+
         memset(&instance_pool[instance_index].memory_list, 0, sizeof(instance_pool[instance_index].memory_list));
     }
 }

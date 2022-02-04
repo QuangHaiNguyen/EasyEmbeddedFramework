@@ -163,7 +163,6 @@ void ezmApp_SdkInit(void)
     APPPRINT1("Module Id: 0x%02x", BIN_PARSER_MOD_ID);
     APPPRINT1("payload size: %d bytes", PAYLOAD_MAX_SIZE);
     APPPRINT1("CRC size: %d bytes", CRC_SIZE);
-    APPPRINT1("Start of frame: 0x%02x ", SOF);
 #endif /* BIN_PARSER */
 
 #if (DEBUG == 1U)

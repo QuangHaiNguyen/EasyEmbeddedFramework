@@ -79,9 +79,6 @@
 #define PAYLOAD_MAX_SIZE            32U
 /**< maximum size of the payload, in binary*/
 
-#define SOF                         0x00U
-/**< start of frame value*/
-
 #define CRC_SIZE                    0x02U
 /**< size of the crc, in byte*/
 
