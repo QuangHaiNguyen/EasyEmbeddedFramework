@@ -18,14 +18,14 @@
 #define CLI                     0U
 #define SCHEDULER               0U
 #define SMALLOC                 0U
-#define BIN_PARSER              0U
+#define BIN_PARSER              1U
 #define HELPER_LINKEDLIST       1U
 #define HELPER_HEXDUMP          1U
 #define DEBUG                   1U
-#define RING_BUFFER             1U
+#define RING_BUFFER             0U
 #define HELPER_ASSERT           0U
 #define STATEMACHINE            0U
-#define IPC                     1U
+#define IPC                     0U
 #define HAL_UART                0U
 #define STCMEM                  1U
 
@@ -69,9 +69,9 @@
 /* BIN_PARSER SECTION ********************************************************/
 #if (BIN_PARSER == 1U)
 
-#if (SMALLOC == 0U)
-#error module SMALLOC must be activated
-#endif /* SMALLOC */
+#if (STCMEM == 0U)
+#error module STCMEM must be activated
+#endif /* STCMEM */
 
 #define BIN_PARSER_MOD_ID           0x04U
 /**< ID of bin cmd parser module*/

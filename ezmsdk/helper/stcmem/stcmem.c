@@ -31,7 +31,7 @@
 *******************************************************************************/
 #define VERBOSE         1U
 
-#define MOD_NAME        "STCMEM"
+#define MOD_NAME        "STATIC_MEM"
 #if (MODULE_DEBUG == 1U) && (STCMEM_DEBUG == 1U)
     #define STCMEMPRINT(a)            PRINT_DEBUG(MOD_NAME,a)
     #define STCMEMPRINT1(a,b)         PRINT_DEBUG1(MOD_NAME,a,b)

@@ -28,11 +28,11 @@
 #include "stdint.h"
 #include "stdbool.h"
 
-#if(SMALLOC == 1U)
-#include "../helper/smalloc/smalloc.h"
+#if(STCMEM == 1U)
+#include "../helper/stcmem/stcmem.h"
 #else
-#error SMALLOC must be activated
-#endif
+#error STCMEM must be activated
+#endif /* STCMEM */
 
 /******************************************************************************
 * Module Preprocessor Macros
@@ -90,28 +90,30 @@ typedef enum
     /**< Status no command found */
 }BIN_PARSER_STATUS;
 
-typedef struct 
-{
-    uint8_t u8Sof;
-    /**< Start of frame */
-    uint8_t u8OpCode;
-    /**< Opcode */
-    uint8_t u8PayloadSize;
-    /**< Size of the payload */
-    uint8_t au8Payload[PAYLOAD_MAX_SIZE];
-    /**< The payload itself */
-    uint8_t au8Checksum[CRC_SIZE];
-    /**< The checksum */
-}BinFrame;
+typedef void(*CommandHandler)(void* payload, uint16_t payload_size_byte);
 
 typedef struct
 {
-   uint8_t u8CmdCode;                                   
-   /**< Stores the command code*/
-   void (*CommandHandler)(uint8_t * pu8Data, uint8_t size);      
-   /**< pointer to function handling that command */
+    uint8_t sof;
+    uint8_t opcode;
+    uint8_t encrypt_info;
+    uint16_t payload_size_byte;
+}BinaryFrameHeader;
+
+typedef struct
+{
+    BinaryFrameHeader header;
+    uint8_t *payload;
+    uint8_t checksum[CRC_SIZE]
+}BinaryFrame;
+
+typedef struct
+{
+   uint8_t opcode;              /**< Stores the command code*/
+   CommandHandler pfnHandler;   /**< pointer to function handling that command */
 }Command;
 
+#if 0
 typedef struct
 {
     bool bUseSof;
@@ -135,6 +137,8 @@ typedef struct
     BIN_PARSER_STATUS eStatus;
     /**< Stateus of the parser */
 }BinCmdParser;
+#endif
+
 
 /******************************************************************************
 * Module Variable Definitions
@@ -144,10 +148,11 @@ typedef struct
 /******************************************************************************
 * Function Prototypes
 *******************************************************************************/
+#if 0
 void ezmParser_Init(BinCmdParser * pstParser, uint8_t u8ModuleId);
 void ezmParser_RunBinParser(BinCmdParser * pstParser, uint8_t u8Byte);
 void ezmParser_RunCmdParser(BinCmdParser * pstParser);
-
+#endif
 #endif /* BIN_PARSER */
 #endif /* _BIN_PARSER_H */
 /* End of file*/

@@ -159,11 +159,11 @@ void ezmApp_SdkInit(void)
 
 #if (BIN_PARSER == 1U)
     /* BIN_PARSER module has no init function*/
-    APPPRINT1("Initialize binary command parser module");
-    APPPRINT2("Module Id: 0x%02x", BIN_PARSER_MOD_ID);
-    APPPRINT2("payload size: %d bytes", PAYLOAD_MAX_SIZE);
-    APPPRINT2("CRC size: %d bytes", CRC_SIZE);
-    APPPRINT2("Start of frame: 0x%02x ", SOF);
+    APPPRINT("Initialize binary command parser module");
+    APPPRINT1("Module Id: 0x%02x", BIN_PARSER_MOD_ID);
+    APPPRINT1("payload size: %d bytes", PAYLOAD_MAX_SIZE);
+    APPPRINT1("CRC size: %d bytes", CRC_SIZE);
+    APPPRINT1("Start of frame: 0x%02x ", SOF);
 #endif /* BIN_PARSER */
 
 #if (DEBUG == 1U)

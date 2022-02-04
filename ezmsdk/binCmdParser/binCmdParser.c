@@ -5,14 +5,6 @@
 * Origin Date           :   21.02.2021
 * Version               :   1.0.0
 *
-* <br><b> - HISTORY OF CHANGES - </b>
-*  
-* <table align="left" style="width:800px">
-* <tr><td> Date       </td><td> Software Version </td><td> Initials         </td><td> Description </td></tr>
-* <tr><td> 21.02.2021 </td><td> 1.0.0            </td><td> Quang Hai Nguyen </td><td> Interface Created </td></tr>
-* </table><br><br>
-* <hr>
-*
 *******************************************************************************/
 
 /** @file  binCmdParser.c
@@ -26,25 +18,35 @@
 
 #if (BIN_PARSER == 1U)
 #include "string.h"
+#include "../ezmDebug/ezmDebug.h"
 
+#define MOD_ID      "BIN PARSER"
 #if (MODULE_DEBUG == 1U) && (PARSER_DEBUG == 1U)
-    #define PARSERPRINT1(a)             PRINT_DEBUG1(a)               
-    #define PARSERPRINT2(a,b)           PRINT_DEBUG2(a,b)             
-    #define PARSERPRINT3(a,b,c)         PRINT_DEBUG3(a,b,c) 
+    #define PARSERPRINT(a)              PRINT_DEBUG(MOD_ID,a)
+    #define PARSERPRINT1(a,b)           PRINT_DEBUG1(MOD_ID,a,b)
+    #define PARSERPRINT2(a,b,c)         PRINT_DEBUG2(MOD_ID,a,b,c)
+    #define PARSERPRINT3(a,b,c,d)       PRINT_DEBUG3(MOD_ID,a,b,c,d)
+    #define PARSERPRINT4(a,b,c,d,e)     PRINT_DEBUG4(MOD_ID,a,b,c,d,e)
 #else 
-    #define PARSERPRINT1(a)           
-    #define PARSERPRINT2(a,b)           
-    #define PARSERPRINT3(a,b,c)
+    #define PARSERPRINT(a)
+    #define PARSERPRINT1(a,b)
+    #define PARSERPRINT2(a,b,c)
+    #define PARSERPRINT3(a,b,c,d)
+    #define PARSERPRINT4(a,b,c,d,e)
 #endif
 
 #if (MODULE_DEBUG == 1U) && (VERBOSE == 1U)
-    #define VERBOSEPRINT1(a)            PRINT_DEBUG1(a)               
-    #define VERBOSEPRINT2(a,b)          PRINT_DEBUG2(a,b)             
-    #define VERBOSEPRINT3(a,b,c)        PRINT_DEBUG3(a,b,c) 
+    #define VERBOSEPRINT(a)            PARSERPRINT(a)
+    #define VERBOSEPRINT1(a,b)         PARSERPRINT1(a,b)
+    #define VERBOSEPRINT2(a,b,c)       PARSERPRINT2(a,b,c)
+    #define VERBOSEPRINT3(a,b,c,d)     PARSERPRINT3(a,b,c,d)
+    #define VERBOSEPRINT4(a,b,c,d,e)   PARSERPRINT4(a,b,c,d,e)
 #else 
-    #define VERBOSEPRINT1(a)           
-    #define VERBOSEPRINT2(a,b)           
-    #define VERBOSEPRINT3(a,b,c)
+    #define VERBOSEPRINT(a)
+    #define VERBOSEPRINT1(a,b)
+    #define VERBOSEPRINT2(a,b,c)
+    #define VERBOSEPRINT3(a,b,c,d)
+    #define VERBOSEPRINT4(a,b,c,d,e)
 #endif
 
 #define VERBOSE                 0x00U
@@ -64,6 +66,7 @@
 *******************************************************************************/
 /* None */
 
+#if 0
 /******************************************************************************
 * Function : ezmParser_Init
 *//** 
@@ -97,7 +100,7 @@
 *******************************************************************************/
 void ezmParser_Init(BinCmdParser * pstParser, uint8_t u8ModuleId)
 {
-    PARSERPRINT2("Init bin parser for module 0x%02x", u8ModuleId);
+    PARSERPRINT1("Init bin parser for module 0x%02x", u8ModuleId);
     ezmSmalloc_InitMemList(&pstParser->stMemList, u8ModuleId);
     pstParser->eBinState = START_OF_FRAME;
     pstParser->eStatus = PARSER_OK;
@@ -143,7 +146,7 @@ void ezmParser_RunCmdParser(BinCmdParser * pstParser)
     BinFrame * pstFrame;
     pstBlock = pstParser->stMemList.pstHead;
     
-    PARSERPRINT2("Num of command: %d", pstParser->stMemList.u16Size);
+    PARSERPRINT1("Num of command: %d", pstParser->stMemList.u16Size);
 
     if(pstBlock != NULL)
     {
@@ -152,7 +155,7 @@ void ezmParser_RunCmdParser(BinCmdParser * pstParser)
         {
             if(pstFrame->u8OpCode == pstParser->pstCommandTable[i].u8CmdCode)
             {
-                PARSERPRINT2("Command found, opcode: 0x%02x", pstFrame->u8OpCode);
+                PARSERPRINT1("Command found, opcode: 0x%02x", pstFrame->u8OpCode);
                 pstParser->pstCommandTable[i].CommandHandler(pstFrame->au8Payload, pstFrame->u8PayloadSize);
                 pstParser->eStatus = PARSER_OK;
                 break;
@@ -162,7 +165,7 @@ void ezmParser_RunCmdParser(BinCmdParser * pstParser)
                 if(i == pstParser->CommandTableSize - 1U)
                 {
                     /* End of table */
-                    PARSERPRINT1("No command found");
+                    PARSERPRINT("No command found");
                     pstParser->eStatus = PARSER_NO_COMMAND;
                 }
             }
@@ -247,29 +250,29 @@ void ezmParser_RunBinParser(BinCmdParser * pstParser, uint8_t u8Byte)
     }
     case OP_CODE:
     {
-        VERBOSEPRINT1("OP_CODE");
-        VERBOSEPRINT2("byte: 0x%02x", u8Byte);
+        VERBOSEPRINT("OP_CODE");
+        VERBOSEPRINT1("byte: 0x%02x", u8Byte);
         stFrame.u8OpCode = u8Byte;
         pstParser->eBinState = DATA_LENGTH;
         break;
     }
     case DATA_LENGTH:
     {
-        VERBOSEPRINT1("DATA_LENGTH");
-        VERBOSEPRINT2("byte: 0x%02x", u8Byte);
+        VERBOSEPRINT("DATA_LENGTH");
+        VERBOSEPRINT1("byte: 0x%02x", u8Byte);
         if(u8Byte < 1)
         {
             pstParser->eBinState = START_OF_FRAME;
             pstParser->eStatus = PARSER_NO_LEN;
-            PARSERPRINT1("Data length 0U");
+            PARSERPRINT("Data length 0U");
         }
         else if (u8Byte > PAYLOAD_MAX_SIZE)
         {
             pstParser->eBinState = START_OF_FRAME;
             pstParser->eStatus = PARSER_DATA_OVERFLOW;
-            PARSERPRINT1("Data overflow");
-            PARSERPRINT2("Expected: %d", PAYLOAD_MAX_SIZE);
-            PARSERPRINT2("Got: %d", u8Byte);
+            PARSERPRINT("Data overflow");
+            PARSERPRINT1("Expected: %d", PAYLOAD_MAX_SIZE);
+            PARSERPRINT1("Got: %d", u8Byte);
         }
         else
         {
@@ -281,8 +284,8 @@ void ezmParser_RunBinParser(BinCmdParser * pstParser, uint8_t u8Byte)
     }
     case DATA:
     {
-        VERBOSEPRINT1("DATA");
-        VERBOSEPRINT2("byte: 0x%02x", u8Byte);
+        VERBOSEPRINT("DATA");
+        VERBOSEPRINT1("byte: 0x%02x", u8Byte);
         stFrame.au8Payload[u8BuffCount] = u8Byte;
         u8BuffCount++;
         if(u8BuffCount >= stFrame.u8PayloadSize)
@@ -294,8 +297,8 @@ void ezmParser_RunBinParser(BinCmdParser * pstParser, uint8_t u8Byte)
     }
     case CHECKSUM:
     {
-        VERBOSEPRINT1("CHECKSUM");
-        VERBOSEPRINT2("byte: 0x%02x", u8Byte);
+        VERBOSEPRINT("CHECKSUM");
+        VERBOSEPRINT1("byte: 0x%02x", u8Byte);
         if(pstParser->bUseChecksum)
         {
             stFrame.au8Checksum[u8BuffCount] = u8Byte;
@@ -310,13 +313,13 @@ void ezmParser_RunBinParser(BinCmdParser * pstParser, uint8_t u8Byte)
                     ezmSmalloc_ApendBlockToList(pstBlock, &pstParser->stMemList);
                     pstParser->eStatus = PARSER_OK;
                     pstParser->eBinState = START_OF_FRAME;
-                    PARSERPRINT1("Checksum OK");
+                    PARSERPRINT("Checksum OK");
                 }
                 else
                 {
                     pstParser->eStatus = PARSER_WRONG_CHECKSUM;
                     pstParser->eBinState = START_OF_FRAME;
-                    PARSERPRINT1("Wrong Checksum");
+                    PARSERPRINT("Wrong Checksum");
                 }
             }
         }
@@ -334,6 +337,6 @@ void ezmParser_RunBinParser(BinCmdParser * pstParser, uint8_t u8Byte)
     }
     }
 }
-
+#endif
 #endif /* BIN_PARSER == 1U */
 /* End of file*/
