@@ -53,6 +53,9 @@
     <Filter Include="Source Files\helper\stcmem">
       <UniqueIdentifier>{a0cb07a6-a579-449b-9957-d5c24d1feeb2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\ezmKernel">
+      <UniqueIdentifier>{4a81b923-0631-4fcf-8091-505b57217a1a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ezmsdk\app\app.c">
@@ -96,6 +99,9 @@
     </ClCompile>
     <ClCompile Include="..\..\ezmsdk\helper\stcmem\stcmem.c">
       <Filter>Source Files\helper\stcmem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\ezmKernel\ezmKernel.c">
+      <Filter>Source Files\ezmKernel</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -149,6 +155,9 @@
     </ClInclude>
     <ClInclude Include="..\..\ezmsdk\helper\stcmem\stcmem.h">
       <Filter>Source Files\helper\stcmem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ezmsdk\ezmKernel\ezmKernel.h">
+      <Filter>Source Files\ezmKernel</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

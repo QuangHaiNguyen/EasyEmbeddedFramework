@@ -174,6 +174,7 @@ void ezmApp_SdkInit(void)
 #if (HELPER_LINKEDLIST == 1U)
     APPPRINT("Initialize linked list module");
     APPPRINT1("Module Id: 0x%02x", HELPER_LINKEDLIST_MOD_ID);
+    ezmLL_Initialization();
 #endif
 
 #if (HELPER_HEXDUMP == 1U)

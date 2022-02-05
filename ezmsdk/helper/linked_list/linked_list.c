@@ -50,6 +50,7 @@
     #define LLPRINT4(a,b,c,d,e)
 #endif
 
+#define NODE_INVALID_ID     0xFFFF
 
 /******************************************************************************
 * Module Typedefs
@@ -59,7 +60,7 @@
 /******************************************************************************
 * Module Variable Definitions
 *******************************************************************************/
-/* None */
+static Node node_pool[NUM_OF_NODE] = { 0 };
 
 /******************************************************************************
 * Function Definitions
@@ -84,6 +85,14 @@ void LinkedList_PrintListBackward(LinkedList * pstList);            /*Print List
     #define PRINT_LIST_BACKWARD(x)
 #endif
 
+
+void ezmLL_Initialization(void)
+{
+    for (uint16_t i = 0; i < NUM_OF_NODE; i++)
+    {
+        ezmLL_ResetNode(&node_pool[i]);
+    }
+}
 /******************************************************************************
 * Function : LinkedList_AddToHead
 *//** 
@@ -412,6 +421,37 @@ bool LinkedList_RemoveNode(LinkedList * pstList, Node * pstRemovedNode)
     }
 
     return bSuccess;
+}
+
+Node* ezmLL_GetFreeNode(void)
+{
+    Node *free_node = NULL;
+
+    for (uint16_t i = 0; i < NUM_OF_NODE; i++)
+    {
+        if (node_pool[i].u16NodeIndex == NODE_INVALID_ID)
+        {
+            /* store its own index for eaiser look up*/
+            node_pool[i].u16NodeIndex = i;
+
+            free_node = &node_pool[i];
+            break;
+        }
+    }
+
+    return free_node;
+}
+
+void ezmLL_ResetNode(Node * node)
+{
+    if (NULL != node && node->u16NodeIndex < NUM_OF_NODE)
+    {
+        node->pBuffer = NULL;
+        node->pstNextNode = NULL;
+        node->pstPrevNode = NULL;
+        node->u16BufferSize = 0U;
+        node->u16NodeIndex = NODE_INVALID_ID;
+    }
 }
 
 #if HELPER_LINKEDLIST_DEBUG == 1U

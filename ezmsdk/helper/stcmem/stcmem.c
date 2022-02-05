@@ -57,15 +57,12 @@
 /******************************************************************************
  Module Variable Definitions
 *******************************************************************************/
-static MemHdr   header_pool[NUM_OF_MEMHDR] = { 0 };
 
 /******************************************************************************
  Function Definitions
 *******************************************************************************/
 MemHdr          *ezmStcMem_ReserveMemoryBlock   (LinkedList* free_list, uint16_t block_size_byte);
 bool            ezmStcMem_MoveHeader            (MemHdr* header, LinkedList* from_list, LinkedList* to_list);
-static void     ezmStcMem_ResetHeader           (uint16_t header_index);
-static MemHdr   *ezmStcMem_GetFreeHeader        (void);
 static void     ezmStcMem_ReturnHeaderToFreeList(LinkedList *free_list, MemHdr *free_header);
 static void     ezmSmalloc_Merge                (LinkedList *free_list);
 
@@ -89,12 +86,7 @@ static void     ezmSmalloc_Merge                (LinkedList *free_list);
 void ezmStcMem_Initialization(void)
 {
     STCMEMPRINT("ezmStcMem_Initialization()");
-
-    /* Reset the list of memory header*/
-    for (uint16_t i = 0; i < NUM_OF_MEMHDR; i++)
-    {
-        ezmStcMem_ResetHeader(i);
-    }
+    /* Do nothing here ???*/
 }
 
 
@@ -138,7 +130,7 @@ bool ezmStcMem_InitMemList(ezmMemList *mem_list, uint8_t *buffer, uint16_t buffe
         mem_list->alloc_list.pstTail = NULL;
         mem_list->alloc_list.u16Size = 0U;
 
-        free_mem_header = ezmStcMem_GetFreeHeader();
+        free_mem_header = (MemHdr*)ezmLL_GetFreeNode();
         
         if (NULL != free_mem_header)
         {
@@ -382,7 +374,7 @@ MemHdr* ezmStcMem_ReserveMemoryBlock(LinkedList* free_list, uint16_t block_size_
 
     if (is_success)
     {
-        free_header = ezmStcMem_GetFreeHeader();
+        free_header = (MemHdr*)ezmLL_GetFreeNode();
 
         if (free_header == NULL)
         {
@@ -405,7 +397,7 @@ MemHdr* ezmStcMem_ReserveMemoryBlock(LinkedList* free_list, uint16_t block_size_
             /* wrap around point */
             if (free_header->u16BufferSize == 0)
             {
-                ezmStcMem_ResetHeader(free_header->u16NodeIndex);
+                ezmLL_ResetNode((Node*)free_header);
                 STCMEMPRINT("buffer reach the end");
             }
             else
@@ -439,71 +431,6 @@ bool  ezmStcMem_MoveHeader(MemHdr* header, LinkedList* from_list, LinkedList* to
 }
 /**************************** Private function *******************************/
 
-/******************************************************************************
-* Function : ezmStcMem_ResetHeader
-*//**
-* \b Description:
-*
-* This function resets the memory header to the un-init state
-*
-* PRE-CONDITION: None
-*
-* POST-CONDITION: None
-*
-* @param    header_index:  handle to manage memory buffer
-*
-* @return   None
-*
-*******************************************************************************/
-static void ezmStcMem_ResetHeader(uint16_t header_index)
-{
-    if (header_index < NUM_OF_MEMHDR)
-    {
-        header_pool[header_index].pBuffer = NULL;
-        header_pool[header_index].pstNextNode = NULL;
-        header_pool[header_index].pstPrevNode = NULL;
-        header_pool[header_index].u16BufferSize = 0U;
-        header_pool[header_index].u16NodeIndex = MEMHDR_INVALID_ID;
-    }
-}
-
-/******************************************************************************
-* Function : ezmStcMem_GetFreeHeader
-*//**
-* \b Description:
-*
-* This function return a free header from the memory pool
-*
-* PRE-CONDITION: None
-*
-* POST-CONDITION: None
-*
-* @param    None
-*
-* @return   pointer to the free header or NULL if no header is free
-*
-*******************************************************************************/
-static MemHdr *ezmStcMem_GetFreeHeader(void)
-{
-    STCMEMPRINT("ezmStcMem_GetFreeHeader()");
-    MemHdr *free_header = NULL;
-
-    for (uint16_t i = 0; i < NUM_OF_MEMHDR; i++)
-    {
-        if (header_pool[i].u16NodeIndex == MEMHDR_INVALID_ID)
-        {
-            /* store its own index for eaiser look up*/
-            header_pool[i].u16NodeIndex = i;
-
-            free_header = &header_pool[i];
-
-            STCMEMPRINT1("Found free instance [inst = %d]", i);
-            break;
-        }
-    }
-
-    return free_header;
-}
 
 /******************************************************************************
 * Function : ezmStcMem_ReturnHeaderToFreeList
@@ -584,7 +511,7 @@ static void ezmSmalloc_Merge(LinkedList *free_list)
         STCMEMPRINT("Next adjacent block is free");
         head->u16BufferSize += next->u16BufferSize;
         LinkedList_RemoveNode(free_list, next);
-        ezmStcMem_ResetHeader(next->u16NodeIndex);
+        ezmLL_ResetNode((Node*)next);
         next = head->pstNextNode; /* Advance to next node */
     }
 }

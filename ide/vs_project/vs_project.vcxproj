@@ -153,6 +153,7 @@
     <ClCompile Include="..\..\ezmsdk\binCmdParser\binCmdParser.c" />
     <ClCompile Include="..\..\ezmsdk\cli\cli.c" />
     <ClCompile Include="..\..\ezmsdk\ezmIpc\ezmIpc.c" />
+    <ClCompile Include="..\..\ezmsdk\ezmKernel\ezmKernel.c" />
     <ClCompile Include="..\..\ezmsdk\hal\uart\uart.c" />
     <ClCompile Include="..\..\ezmsdk\helper\ezmAssert\ezmAssert.c" />
     <ClCompile Include="..\..\ezmsdk\helper\hexdump\hexdump.c" />
@@ -173,6 +174,7 @@
     <ClInclude Include="..\..\ezmsdk\ezmDebug\ezmDebug.h" />
     <ClInclude Include="..\..\ezmsdk\ezmIpc\ezmIpc.h" />
     <ClInclude Include="..\..\ezmsdk\ezmIpc\ezmIpc_conf.h" />
+    <ClInclude Include="..\..\ezmsdk\ezmKernel\ezmKernel.h" />
     <ClInclude Include="..\..\ezmsdk\hal\uart\uart.h" />
     <ClInclude Include="..\..\ezmsdk\helper\ezmAssert\ezmAssert.h" />
     <ClInclude Include="..\..\ezmsdk\helper\hexdump\hexdump.h" />

@@ -68,6 +68,7 @@ typedef struct LinkedList
 /******************************************************************************
 * Function Prototypes
 *******************************************************************************/
+void        ezmLL_Initialization                (void);
 void        LinkedList_InsertToHead             (LinkedList *pstList, Node *pstNewNode);                          /*Add a node to the head*/
 Node       *LinkedList_RemoveFromHead           (LinkedList *pstList);                                             /*Remove the head node*/
 void        LinkedList_InsertToTail             (LinkedList *pstList, Node *pstNewNode);                          /*Add a node to the tail*/
@@ -78,6 +79,8 @@ Node       *LinkedList_RemoveNodeAtIndex        (LinkedList *pstList, uint16_t u
 bool        LinkedList_InsertNewNodeAfterANode  (LinkedList *pstList, Node *pstCurrentNode, Node *pstNewNode);
 Node       *LinkedList_SearchNode               (LinkedList *pstList, Node *pstSearchNode);
 bool        LinkedList_RemoveNode               (LinkedList *pstList, Node *pstRemovedNode);
+Node        *ezmLL_GetFreeNode                  (void);
+void        ezmLL_ResetNode                     (Node *node);
 
 #endif /* _LINKEDLIST_H */
 

@@ -28,6 +28,7 @@
 #define IPC                     0U
 #define HAL_UART                0U
 #define STCMEM                  1U
+#define KERNEL                  1U
 
 /*Module ID section*/
 
@@ -134,14 +135,23 @@
 /* STCMEM SECTION ***************************************************************/
 #if (STCMEM == 1U)
 #define STCMEM_MOD_ID               0x0CU
-#define NUM_OF_MEMHDR               100
 
 #if (HELPER_LINKEDLIST == 0U)
 #error module HELPER_LINKEDLIST must be activated
 #endif
 
-/**< turn on/off module name in string*/
-#endif /* STCMEM */
+#endif /*STCMEM*/
+
+/* KERNEL SECTION ***************************************************************/
+#if (KERNEL == 1U)
+#define KERNEL_MOD_ID               0x0DU
+#define NUM_OF_PROC                 5U
+
+#if (HELPER_LINKEDLIST == 0U)
+#error module HELPER_LINKEDLIST must be activated
+#endif
+
+#endif /* KERNEL */
 
 /*****************************************************************************/
 /* DRIVER SECTION                                                            */
