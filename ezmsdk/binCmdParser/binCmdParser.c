@@ -19,7 +19,9 @@
 #if (BIN_PARSER == 1U)
 #include "string.h"
 #include "../ezmDebug/ezmDebug.h"
+#include "../helper/hexdump/hexdump.h"
 
+#define VERBOSE     1U
 #define MOD_ID      "BIN PARSER"
 #if (MODULE_DEBUG == 1U) && (PARSER_DEBUG == 1U)
     #define PARSERPRINT(a)              PRINT_DEBUG(MOD_ID,a)
@@ -41,20 +43,37 @@
     #define VERBOSEPRINT2(a,b,c)       PARSERPRINT2(a,b,c)
     #define VERBOSEPRINT3(a,b,c,d)     PARSERPRINT3(a,b,c,d)
     #define VERBOSEPRINT4(a,b,c,d,e)   PARSERPRINT4(a,b,c,d,e)
+    #define HEXDUMP(a,b)                ezmHexdump(a,b)
 #else 
     #define VERBOSEPRINT(a)
     #define VERBOSEPRINT1(a,b)
     #define VERBOSEPRINT2(a,b,c)
     #define VERBOSEPRINT3(a,b,c,d)
     #define VERBOSEPRINT4(a,b,c,d,e)
+    #define HEXDUMP(a,b)
 #endif
 
-#define VERBOSE                 0x00U
+#define SOF         0x80U
+
 
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
-/* None */
+
+/**
+ * brief:   Defines the each state required to receive a complete packet
+ */
+typedef enum
+{
+    START_OF_FRAME = 0, /**< This states looks for a sync character */
+    UUID,               /**< This state parses the uuid */
+    OP_CODE,            /**< This state parses the opcode */
+    ENCRYPT_INFO,       /**< This state parses the encryption info*/
+    DATA_LENGTH,        /**< This state receives the size of the data section */
+    DATA,               /**< This state receives the packet data */
+    CHECKSUM,           /**< This state receives the checksum bytes */
+    COMPLETE,           /**< Complete state, execute the command */
+}BinaryParserState;
 
 /******************************************************************************
 * Module Variable Definitions
@@ -64,295 +83,306 @@
 /******************************************************************************
 * Function Definitions
 *******************************************************************************/
-/* None */
+static void ezmParser_RunCommand(BinCmdParser *parser);
+
 
 /******************************************************************************
 * Function : ezmParser_Init
 *
 * This function initializes a parser
 *
-* PRE-CONDITION: None
+* PRE-CONDITION: Static memory module must be initialized first
 *
 * POST-CONDITION: None
 *
-* @param    pstParser: (IN)pointer to the parser
-* @return   None
+* @param    *parser:            (IN)pointer to the parser structure
+* @param    *buffer:            (IN)pointer to the buffer, which parser will use to run
+* @param    buffer_size_byte:   (IN)size of the buffer, in byte
+* @param    handler:            (IN)handler to handle the status of the parser
 *
-*
-*******************************************************************************/
-
-
-#if 0
-/******************************************************************************
-* Function : ezmParser_Init
-*//** 
-*
-* This function initializes a parser
-*
-* PRE-CONDITION: None
-*
-* POST-CONDITION: None
-* 
-* @param    pstParser: (IN)pointer to the parser
-* @param    u8ModuleId: (IN)module id of the owner of the parser
-* @return   None
-*
-* \b Example Example:
-* @code
-* BinCmdParser stParser;
-*
-* stParser.bUseSof = true;
-* stParser.bUseChecksum = true;
-* stParser.bUseEncryption = false;
-* stParser.bUseChecksum = true;
-* stParser.CommandTableSize = 4U;
-* stParser.pstCommandTable = CommandTable;
-* stParser.CrcCalculate = &CrCCalculate;
-* stParser.CrcVeryfy = &CrCVerify;
-*
-* ezmParser_Init(&stParser, 0xFF);
-* @endcode
+* @return   true if initialization success
 *
 *******************************************************************************/
-void ezmParser_Init(BinCmdParser * pstParser, uint8_t u8ModuleId)
+bool ezmParser_Init(BinCmdParser *parser, uint8_t *buffer, uint16_t buffer_size_byte, StatusHandler handler)
 {
-    PARSERPRINT1("Init bin parser for module 0x%02x", u8ModuleId);
-    ezmSmalloc_InitMemList(&pstParser->stMemList, u8ModuleId);
-    pstParser->eBinState = START_OF_FRAME;
-    pstParser->eStatus = PARSER_OK;
-}
+    bool is_success = true;
 
-/******************************************************************************
-* Function : ezmParser_RunCmdParser
-*//** 
-*
-* This function runs the command parser, which checks the command queue and
-* executes any commands pending there 
-*
-* PRE-CONDITION: ezmParser_Init
-*
-* POST-CONDITION: None
-* 
-* @param    pstParser: (IN)pointer to the parser
-* @return   None
-*
-* \b Example Example:
-* @code
-* BinCmdParser stParser;
-*
-* stParser.bUseSof = true;
-* stParser.bUseChecksum = true;
-* stParser.bUseEncryption = false;
-* stParser.bUseChecksum = true;
-* stParser.CommandTableSize = 4U;
-* stParser.pstCommandTable = CommandTable;
-* stParser.CrcCalculate = &CrCCalculate;
-* stParser.CrcVeryfy = &CrCVerify;
-*
-* ezmParser_Init(&stParser, 0xFF);
-* ezmParser_RunCmdParser(&stParser);
-* @endcode
-*
-* @see ezmParser_Init
-*
-*******************************************************************************/
-void ezmParser_RunCmdParser(BinCmdParser * pstParser)
-{
-    ezmMemoryBlock * pstBlock;
-    BinFrame * pstFrame;
-    pstBlock = pstParser->stMemList.pstHead;
-    
-    PARSERPRINT1("Num of command: %d", pstParser->stMemList.u16Size);
-
-    if(pstBlock != NULL)
+    /* sanity check the parser*/
+    if (NULL == parser || NULL == buffer || 0U == buffer_size_byte)
     {
-        pstFrame = (BinFrame *)pstBlock->pBuffer;
-        for(uint8_t i = 0; i < pstParser->CommandTableSize; i++)
+        is_success = false;
+    }
+
+    if (is_success)
+    {
+        if (NULL == parser->command_table || 0U == parser->command_table_size)
         {
-            if(pstFrame->u8OpCode == pstParser->pstCommandTable[i].u8CmdCode)
-            {
-                PARSERPRINT1("Command found, opcode: 0x%02x", pstFrame->u8OpCode);
-                pstParser->pstCommandTable[i].CommandHandler(pstFrame->au8Payload, pstFrame->u8PayloadSize);
-                pstParser->eStatus = PARSER_OK;
-                break;
-            }
-            else
-            {
-                if(i == pstParser->CommandTableSize - 1U)
-                {
-                    /* End of table */
-                    PARSERPRINT("No command found");
-                    pstParser->eStatus = PARSER_NO_COMMAND;
-                }
-            }
+            is_success = false;
         }
-        ezmSmalloc_ReturnMemBlock(&pstParser->stMemList, pstBlock);
     }
-    else
+
+    if (is_success)
     {
-        pstParser->eStatus = PARSER_OK;
+        parser->parser_state = START_OF_FRAME;
+        parser->curr_frame = NULL;
+        parser->StatusHandler = handler;
+        is_success = is_success & ezmStcMem_InitMemList(&parser->memory_list, buffer, buffer_size_byte);
     }
+
+    return is_success;
 }
 
 /******************************************************************************
 * Function : ezmParser_RunBinParser
-*//** 
 *
-* This function runs the binary parser, which packs the byte data into a BinFrame, then 
-* puts BinFrame in a queue for the command parser to process
+* This function initializes a parser
 *
-* PRE-CONDITION: ezmParser_Init
+* PRE-CONDITION: parser must be initialized first
 *
 * POST-CONDITION: None
-* 
-* @param    pstParser: (IN)pointer to the parser
-* @param    u8Byte: (IN)data byte
+*
+* @param    *parser:    (IN)pointer to the parser structure
+* @param    data_byte:  (IN)data byte feed to the parser
+*
 * @return   None
 *
-* \b Example Example:
-* @code
-* BinCmdParser stParser;
-*
-* stParser.bUseSof = true;
-* stParser.bUseChecksum = true;
-* stParser.bUseEncryption = false;
-* stParser.bUseChecksum = true;
-* stParser.CommandTableSize = 4U;
-* stParser.pstCommandTable = CommandTable;
-* stParser.CrcCalculate = &CrCCalculate;
-* stParser.CrcVeryfy = &CrCVerify;
-*
-* ezmParser_Init(&stParser, 0xFF);
-* ezmParser_RunBinParser(&stParser, 0x02);
-* ezmParser_RunBinParser(&stParser, 0x03);
-* ezmParser_RunBinParser(&stParser, 0x04);
-* ezmParser_RunBinParser(&stParser, 0x05);
-* @endcode
-*
-* @see ezmParser_Init
-*
 *******************************************************************************/
-void ezmParser_RunBinParser(BinCmdParser * pstParser, uint8_t u8Byte)
+void ezmParser_RunBinParser(BinCmdParser* parser, uint8_t data_byte)
 {
-    static BinFrame stFrame;
-    static uint8_t u8BuffCount = 0U;
+    static uint8_t buff_index = 0U;
+    BinaryFrameHeader *header;
 
-    switch(pstParser->eBinState)
+    switch ((BinaryParserState)parser->parser_state)
     {
     case START_OF_FRAME:
     {
-        VERBOSEPRINT1("START_OF_FRAME");
-        VERBOSEPRINT2("byte: 0x%02x", u8Byte);
-        if(pstParser->bUseSof)
+        if (SOF == data_byte)
         {
-            if(u8Byte == SOF)
+            VERBOSEPRINT1("[sof = 0x%02x]", data_byte);
+            parser->curr_frame = (BinaryFrame*)ezmStcMem_Malloc(&parser->memory_list, sizeof(BinaryFrame));
+            memset(parser->curr_frame, 0, sizeof(BinaryFrame));
+
+            if (parser->curr_frame)
             {
-                stFrame.u8Sof = u8Byte;
-                pstParser->eBinState = OP_CODE;
-                pstParser->eStatus = PARSER_BUSY;
+                parser->curr_frame->header.sof = data_byte;
+                parser->parser_state = UUID;
             }
             else
             {
-                pstParser->eBinState = START_OF_FRAME;
-                pstParser->eStatus = PARSER_WRONG_SOF;
+                if (parser->StatusHandler)
+                {
+                    parser->StatusHandler(BINPARSER_MEM_ERR);
+                }
+
+                parser->parser_state = START_OF_FRAME;
+                ezmStcMem_Free(&parser->memory_list, parser->curr_frame);
+                parser->curr_frame = NULL;
+                PRINT_ERR("[error = cannot allocate memory]");
             }
         }
         else
         {
-            pstParser->eBinState = OP_CODE;
-            pstParser->eStatus = PARSER_BUSY;
+            if (parser->StatusHandler)
+            {
+                parser->StatusHandler(BINPARSER_FORMAT_ERR);
+            }
+
+            parser->parser_state = START_OF_FRAME;
+            ezmStcMem_Free(&parser->memory_list, parser->curr_frame);
+            parser->curr_frame = NULL;
+            PRINT_ERR("[error = Wwrong opcode]");
+        }
+        break;
+    }
+    case UUID:
+    {
+        header = &parser->curr_frame->header;
+        if (0 == buff_index)
+        {
+            header->uuid = data_byte << 24;
+            buff_index++;
+        }
+        else if (1 == buff_index)
+        {
+            header->uuid = header->uuid | (data_byte << 16);
+            buff_index++;
+        }
+        else if (2 == buff_index)
+        {
+            header->uuid = header->uuid | (data_byte << 8);
+            buff_index++;
+        }
+        else
+        {
+            header->uuid = header->uuid | data_byte;
+            buff_index = 0U;
+
+            VERBOSEPRINT1("[uuid = 0x%02x]", parser->curr_frame->header.uuid);
+            parser->parser_state = OP_CODE;
         }
         break;
     }
     case OP_CODE:
     {
-        VERBOSEPRINT("OP_CODE");
-        VERBOSEPRINT1("byte: 0x%02x", u8Byte);
-        stFrame.u8OpCode = u8Byte;
-        pstParser->eBinState = DATA_LENGTH;
+        header = &parser->curr_frame->header;
+        header->opcode = data_byte;
+        parser->parser_state = ENCRYPT_INFO;
+        VERBOSEPRINT1("[opcode = 0x%02x]", data_byte);
+        break;
+    }
+    case ENCRYPT_INFO:
+    {
+        header = &parser->curr_frame->header;
+        header->encrypt_info = data_byte;
+        parser->parser_state = DATA_LENGTH;
+        VERBOSEPRINT1("[encryption = 0x%02x]", data_byte);
         break;
     }
     case DATA_LENGTH:
     {
-        VERBOSEPRINT("DATA_LENGTH");
-        VERBOSEPRINT1("byte: 0x%02x", u8Byte);
-        if(u8Byte < 1)
+        header = &parser->curr_frame->header;
+        if (0 == buff_index)
         {
-            pstParser->eBinState = START_OF_FRAME;
-            pstParser->eStatus = PARSER_NO_LEN;
-            PARSERPRINT("Data length 0U");
-        }
-        else if (u8Byte > PAYLOAD_MAX_SIZE)
-        {
-            pstParser->eBinState = START_OF_FRAME;
-            pstParser->eStatus = PARSER_DATA_OVERFLOW;
-            PARSERPRINT("Data overflow");
-            PARSERPRINT1("Expected: %d", PAYLOAD_MAX_SIZE);
-            PARSERPRINT1("Got: %d", u8Byte);
+            header->payload_size_byte = data_byte << 8;
+            buff_index++;
         }
         else
         {
-            stFrame.u8PayloadSize = u8Byte;
-            u8BuffCount = 0U;
-            pstParser->eBinState = DATA;
-        }       
+            header->payload_size_byte |= data_byte ;
+            parser->curr_frame->payload = (uint8_t*)ezmStcMem_Malloc(&parser->memory_list, header->payload_size_byte);
+            parser->parser_state = DATA;
+            buff_index = 0;
+            VERBOSEPRINT1("[len = 0x%02x]", header->payload_size_byte);
+        }
         break;
     }
     case DATA:
     {
-        VERBOSEPRINT("DATA");
-        VERBOSEPRINT1("byte: 0x%02x", u8Byte);
-        stFrame.au8Payload[u8BuffCount] = u8Byte;
-        u8BuffCount++;
-        if(u8BuffCount >= stFrame.u8PayloadSize)
+        header = &parser->curr_frame->header;
+
+        parser->curr_frame->payload[buff_index] = data_byte;
+        buff_index++;
+        if (buff_index >= header->payload_size_byte)
         {
-            pstParser->eBinState = CHECKSUM;
-            u8BuffCount = 0U;
+            parser->parser_state = CHECKSUM;
+            buff_index = 0U;
+
+            if (header->encrypt_info > 0U)
+            {
+                /* decrypt frame before moving on */
+            }
+
+            HEXDUMP(parser->curr_frame->payload, header->payload_size_byte);
         }
         break;
     }
     case CHECKSUM:
     {
-        VERBOSEPRINT("CHECKSUM");
-        VERBOSEPRINT1("byte: 0x%02x", u8Byte);
-        if(pstParser->bUseChecksum)
+        if (parser->CrcVerify)
         {
-            stFrame.au8Checksum[u8BuffCount] = u8Byte;
-            u8BuffCount++;
-            if(u8BuffCount >= CRC_SIZE)
+            parser->curr_frame->checksum[buff_index] = buff_index;
+            buff_index++;
+            if (buff_index >= CRC_SIZE)
             {
-                if(pstParser->CrcVeryfy(&stFrame))
+                if (parser->CrcVerify(parser->curr_frame))
                 {
-                    ezmMemoryBlock * pstBlock;
-                    pstBlock = ezmSmalloc_GetFreeBlock(sizeof(BinFrame));
-                    memcpy(pstBlock->pBuffer, &stFrame, sizeof(BinFrame));
-                    ezmSmalloc_ApendBlockToList(pstBlock, &pstParser->stMemList);
-                    pstParser->eStatus = PARSER_OK;
-                    pstParser->eBinState = START_OF_FRAME;
-                    PARSERPRINT("Checksum OK");
+                    parser->parser_state = COMPLETE;
+                    buff_index = 0U;
+                    VERBOSEPRINT("[CRC = OK]");
                 }
                 else
                 {
-                    pstParser->eStatus = PARSER_WRONG_CHECKSUM;
-                    pstParser->eBinState = START_OF_FRAME;
-                    PARSERPRINT("Wrong Checksum");
+                    if (parser->StatusHandler)
+                    {
+                        parser->StatusHandler(BINPARSER_CRC_ERR);
+                    }
+
+                    ezmStcMem_Free(&parser->memory_list, parser->curr_frame->payload);
+                    ezmStcMem_Free(&parser->memory_list, parser->curr_frame);
+                    parser->curr_frame = NULL;
+                    parser->parser_state = START_OF_FRAME;
+                    buff_index = 0U;
+                    PRINT_ERR("[CRC fail]");
                 }
             }
         }
         else
         {
-            pstParser->eStatus = PARSER_OK;
-            pstParser->eBinState = START_OF_FRAME;
+            parser->parser_state = COMPLETE;
         }
+        break;
+    }
+    case COMPLETE:
+    {
+        ezmParser_RunCommand(parser);
+        ezmStcMem_Free(&parser->memory_list, parser->curr_frame->payload);
+        ezmStcMem_Free(&parser->memory_list, parser->curr_frame);
+        parser->curr_frame = NULL;
+        parser->parser_state = START_OF_FRAME;
         break;
     }
     default:
     {
-        pstParser->eBinState = START_OF_FRAME;
         break;
     }
     }
 }
-#endif
+
+/******************************************************************************
+* Function : ezmParser_RunCommand
+*
+* This function check the opcode in the lookup table and execute the command
+*
+* PRE-CONDITION: parser must be initialized first
+*
+* POST-CONDITION: None
+*
+* @param    *parser:    (IN)pointer to the parser structure
+*
+* @return   None
+*
+*******************************************************************************/
+static void ezmParser_RunCommand(BinCmdParser* parser)
+{
+    if (parser->curr_frame && parser->curr_frame->payload)
+    {
+        for (uint8_t i = 0; i < parser->command_table_size; i++)
+        {
+            if (parser->curr_frame->header.opcode == parser->command_table[i].opcode)
+            {
+                PARSERPRINT1("Command found, [opcode = 0x%02x]", parser->command_table[i].opcode);
+                parser->command_table[i].pfnHandler(parser->curr_frame->payload, parser->curr_frame->header.payload_size_byte);
+
+                if (parser->StatusHandler)
+                {
+                    parser->StatusHandler(BINPARSER_OK);
+                }
+                break;
+            }
+            else
+            {
+                if (i == parser->command_table_size - 1U)
+                {
+                    /* End of table */
+                    PRINT_ERR("No command found");
+
+                    if (parser->StatusHandler)
+                    {
+                        parser->StatusHandler(BINPARSER_CMD_NOT_FOUND);
+                    }
+                }
+            }
+        }
+    }
+    else
+    {
+        PRINT_ERR("Frame cannot be found");
+        if (parser->StatusHandler)
+        {
+            parser->StatusHandler(BINPARSER_PAYLOAD_ERR);
+        }
+    }
+}
+
 #endif /* BIN_PARSER == 1U */
 /* End of file*/

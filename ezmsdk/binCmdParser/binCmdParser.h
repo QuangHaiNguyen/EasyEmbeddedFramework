@@ -37,31 +37,10 @@
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
-/*Work around to prevent compile error, the definition locates in app_conf.h*/
-#ifndef PAYLOAD_MAX_SIZE
-#define PAYLOAD_MAX_SIZE        0U
-#endif /* PAYLOAD_MAX_SIZE */
-
-/*Work around to prevent compile error, the definition locates in app_conf.h*/
-#ifndef CRC_SIZE
-#define CRC_SIZE                0U
-#endif /* CRC_SIZE */
 
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
-/**
- * brief:   Defines the each state required to receive a complete packet
- */
-typedef enum
-{
-    START_OF_FRAME = 0, /**< This states looks for a sync character */
-    OP_CODE,            /**< This state receives the op code */
-    ENCRYPT_INFO,       /**< */
-    DATA_LENGTH,        /**< This state receives the size of the data section */
-    DATA,               /**< This state receives the packet data */
-    CHECKSUM,           /**< This state receives the checksum bytes */
-}BinaryParserState;
 
 
 /**
@@ -69,10 +48,11 @@ typedef enum
  */
 typedef struct
 {
-    uint8_t sof;                /**< */
-    uint8_t opcode;             /**< */
-    uint8_t encrypt_info;       /**< */
-    uint16_t payload_size_byte; /**< */
+    uint8_t  sof;               /**< Start of frame, for syncronization */
+    uint32_t uuid;              /**< Unique ID */
+    uint8_t  opcode;            /**< Opcode */
+    uint8_t  encrypt_info;      /**< Store encryption info, future feature*/
+    uint16_t payload_size_byte; /**< size of payload, in byte*/
 }BinaryFrameHeader;
 
 /**
@@ -80,30 +60,46 @@ typedef struct
  */
 typedef struct
 {
-    BinaryFrameHeader   header;             /**< */
-    uint8_t             *payload;           /**< */
-    uint8_t             checksum[CRC_SIZE]; /**< */
+    BinaryFrameHeader   header;             /**< header of the frame */
+    uint8_t             *payload;           /**< pointer to the payload */
+    uint8_t             checksum[CRC_SIZE]; /**< buffer to store checksum */
 }BinaryFrame;
 
-typedef void(*CommandHandler)(void *payload, uint16_t payload_size_byte);
-typedef bool(*CrcVerify) (BinaryFrame *bin_frame);
-typedef void(*CrcCalculate)(BinaryFrame *bin_frame);
+/**
+ * brief:
+ */
+typedef enum
+{
+    BINPARSER_OK,               /**< Command is executed successfully */
+    BINPARSER_FORMAT_ERR,       /**< Frame has wrong format */
+    BINPARSER_CMD_NOT_FOUND,    /**< Commadn not found */
+    BINPARSER_CRC_ERR,          /**< CRC check error */
+    BINPARSER_PAYLOAD_ERR,      /**< Payload error, NULL payload */
+    BINPARSER_MEM_ERR,          /**< Memory error, cannot allocate memory for the new packet */
+}BinParserStatus;
+
+typedef void(*CommandHandler)   (void *payload, uint16_t payload_size_byte);
+typedef bool(*CrcVerify)        (BinaryFrame *frame);
+typedef void(*CrcCalculate)     (BinaryFrame *frame);
+typedef void(*StatusHandler)    (BinParserStatus status);
 
 typedef struct
 {
-   uint8_t opcode;              /**< Stores the command code*/
-   CommandHandler pfnHandler;   /**< pointer to function handling that command */
+   uint8_t          opcode;       /**< Stores the command code*/
+   CommandHandler   pfnHandler;   /**< pointer to function handling that command */
 }Command;
 
 
 typedef struct
 {
     uint8_t             command_table_size; /**< Size of the command table, how many commands are there in total */
-    Command             *ptr_command_table; /**< Poiter to the command table */
-    CrcVerify           pfn_CrcVerify;      /**< Pointer to the CRC verification function */
-    CrcCalculate        pfn_CrcCalculate;   /**< Pointer to the CRC calculation function */
-    ezmMemList          stMemList;          /**< Memory list, which holds command pending to be executed */
-    uint8_t             eBinState;          /**< Store the state of the binary parser statemachine */
+    Command             *command_table;     /**< Poiter to the command table */
+    CrcVerify           CrcVerify;          /**< Pointer to the CRC verification function */
+    CrcCalculate        CrcCalculate;       /**< Pointer to the CRC calculation function */
+    StatusHandler       StatusHandler;      /**< Callback to handle status (BinParserStatus), not required to use */
+    ezmMemList          memory_list;        /**< Memory list, which holds command pending to be executed */
+    uint8_t             parser_state;       /**< Store the state of the binary parser statemachine */
+    BinaryFrame         *curr_frame;        /**< pointer to the current frame that the parser is working*/
 }BinCmdParser;
 
 
@@ -117,11 +113,9 @@ typedef struct
 * Function Prototypes
 *******************************************************************************/
 
-#if 0
-void ezmParser_Init(BinCmdParser * pstParser, uint8_t u8ModuleId);
-void ezmParser_RunBinParser(BinCmdParser * pstParser, uint8_t u8Byte);
-void ezmParser_RunCmdParser(BinCmdParser * pstParser);
-#endif
+bool ezmParser_Init         (BinCmdParser* parser, uint8_t *buffer, uint16_t buffer_size_byte, StatusHandler handler);
+void ezmParser_RunBinParser (BinCmdParser* parser, uint8_t data_byte);
+
 #endif /* BIN_PARSER */
 #endif /* _BIN_PARSER_H */
 /* End of file*/

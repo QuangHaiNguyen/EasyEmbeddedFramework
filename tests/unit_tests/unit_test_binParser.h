@@ -10,15 +10,22 @@ extern "C" {
 #if (BIN_PARSER == 1U)
 #include "../../ezmsdk/binCmdParser/binCmdParser.h"
 #include "../../ezmsdk/ezmDebug/ezmDebug.h"
+#include "../../ezmsdk/helper/hexdump/hexdump.h"
+#include "../../ezmsdk/helper/stcmem/stcmem.h"
 
 #define UNUSED(x) (void)(x)
 
-void Sum(uint8_t * pu8Data, uint8_t size);
-void Minus(uint8_t * pu8Data, uint8_t size);
-void Multiply(uint8_t * pu8Data, uint8_t size);
-void Devide(uint8_t * pu8Data, uint8_t size);
-bool CrCVerify(BinFrame * pstFrame);
-void CrCCalculate(BinFrame * pstFrame);
+#define SUM     5
+#define MINUS   1
+#define MULTI   6
+#define DIVIDE  3
+
+void Sum(void * pu8Data, uint16_t size);
+void Minus(void * pu8Data, uint16_t size);
+void Multiply(void * pu8Data, uint16_t size);
+void Devide(void * pu8Data, uint16_t size);
+bool CrCVerify(BinaryFrame* frame);
+void CrCCalculate(BinaryFrame* frame);
 
 Command CommandTable[4] = 
 {
@@ -28,39 +35,47 @@ Command CommandTable[4] =
     {0x04, Devide},
 };
 
-void Sum(uint8_t * pu8Data, uint8_t size)
+void Sum(void* pu8Data, uint16_t size)
 {
+    uint8_t* payload = (uint8_t*)pu8Data;
     ASSERT_EQ(size, 2);
-    PRINT2("Result: %d", pu8Data[0] + pu8Data[1]);
+    ASSERT_EQ(SUM, payload[0] + payload[1]);
+    PRINT2("Result: %d", payload[0] + payload[1]);
 }
 
-void Minus(uint8_t * pu8Data, uint8_t size)
+void Minus(void* pu8Data, uint16_t size)
 {
+    uint8_t* payload = (uint8_t*)pu8Data;
     ASSERT_EQ(size, 2);
-    PRINT2("Result: %d", pu8Data[0] - pu8Data[1]);
+    ASSERT_EQ(MINUS, payload[0] - payload[1]);
+    PRINT2("Result: %d", payload[0] - payload[1]);
 }
 
-void Multiply(uint8_t * pu8Data, uint8_t size)
+void Multiply(void* pu8Data, uint16_t size)
 {
+    uint8_t* payload = (uint8_t*)pu8Data;
     ASSERT_EQ(size, 2);
-    PRINT2("Result: %d", pu8Data[0] * pu8Data[1]);
+    ASSERT_EQ(MULTI, payload[0] * payload[1]);
+    PRINT2("Result: %d", payload[0] * payload[1]);
 }
 
-void Devide(uint8_t * pu8Data, uint8_t size)
+void Devide(void* pu8Data, uint16_t size)
 {
+    uint8_t* payload = (uint8_t*)pu8Data;
     ASSERT_EQ(size, 2);
-    PRINT2("Result: %d", pu8Data[0] / pu8Data[1]);
+    ASSERT_EQ(DIVIDE, payload[0] / payload[1]);
+    PRINT2("Result: %d", payload[0] / payload[1]);
 }
 
-bool CrCVerify(BinFrame * pstFrame)
+bool CrCVerify(BinaryFrame* frame)
 {
-    UNUSED(pstFrame);
+    UNUSED(frame);
     return true;
 }
 
-void CrCCalculate(BinFrame * pstFrame)
+void CrCCalculate(BinaryFrame* frame)
 {
-    UNUSED(pstFrame);
+    UNUSED(frame);
     return;
 }
 
@@ -72,80 +87,158 @@ namespace
 #if (BIN_PARSER == 1U)
     TEST(Parser, Basic) 
     {
-        BinCmdParser stParser;
+        BinCmdParser test_parser = {0};
+        uint8_t buffer[64] = {0};
+        bool is_success;
+        uint8_t compare;
 
-        stParser.bUseSof = true;
-        stParser.bUseChecksum = true;
-        stParser.bUseEncryption = false;
-        stParser.bUseChecksum = true;
-        stParser.CommandTableSize = 4U;
-        stParser.pstCommandTable = CommandTable;
-        stParser.CrcCalculate = &CrCCalculate;
-        stParser.CrcVeryfy = &CrCVerify;
+        ezmStcMem_Initialization();
 
-        ezmParser_Init(&stParser, 0xFF);
-        ASSERT_EQ(stParser.stMemList.u16Size, 0x00U);
-        ASSERT_EQ(stParser.stMemList.u8ModuleId, 0xFFU);
+        test_parser.command_table_size = 4U;
+        test_parser.command_table = CommandTable;
 
-        ezmParser_RunBinParser(&stParser, 0x00);
-        ezmParser_RunBinParser(&stParser, 0x01);
-        ezmParser_RunBinParser(&stParser, 0x02);
-        ezmParser_RunBinParser(&stParser, 0x02);
-        ezmParser_RunBinParser(&stParser, 0x03);
-        ezmParser_RunBinParser(&stParser, 0xFF);
-        ezmParser_RunBinParser(&stParser, 0xFF);
-        ASSERT_EQ(stParser.stMemList.u16Size, 0x01U);
+        is_success = ezmParser_Init(&test_parser, buffer, 64, NULL);
+        ASSERT_EQ(true, is_success);
 
-        ezmParser_RunBinParser(&stParser, 0x00);
-        ezmParser_RunBinParser(&stParser, 0x02);
-        ezmParser_RunBinParser(&stParser, 0x02);
-        ezmParser_RunBinParser(&stParser, 0x03);
-        ezmParser_RunBinParser(&stParser, 0x02);
-        ezmParser_RunBinParser(&stParser, 0xFF);
-        ezmParser_RunBinParser(&stParser, 0xFF);
-        ASSERT_EQ(stParser.stMemList.u16Size, 0x02U);
+        /* sum command */
+        ezmParser_RunBinParser(&test_parser, 0x80);
+        ASSERT_EQ(0x80, test_parser.curr_frame->header.sof);
 
-        ezmParser_RunBinParser(&stParser, 0x00);
-        ezmParser_RunBinParser(&stParser, 0x03);
-        ezmParser_RunBinParser(&stParser, 0x02);
-        ezmParser_RunBinParser(&stParser, 0x02);
-        ezmParser_RunBinParser(&stParser, 0x03);
-        ezmParser_RunBinParser(&stParser, 0xFF);
-        ezmParser_RunBinParser(&stParser, 0xFF);
-        ASSERT_EQ(stParser.stMemList.u16Size, 0x03U);
+        ezmParser_RunBinParser(&test_parser, 0xbe);
+        ezmParser_RunBinParser(&test_parser, 0xef);
+        ezmParser_RunBinParser(&test_parser, 0xca);
+        ezmParser_RunBinParser(&test_parser, 0xfe);
+        ASSERT_EQ(0xbeefcafe, test_parser.curr_frame->header.uuid);
 
-        ezmParser_RunBinParser(&stParser, 0x00);
-        ezmParser_RunBinParser(&stParser, 0x04);
-        ezmParser_RunBinParser(&stParser, 0x02);
-        ezmParser_RunBinParser(&stParser, 0x03);
-        ezmParser_RunBinParser(&stParser, 0x03);
-        ezmParser_RunBinParser(&stParser, 0xFF);
-        ezmParser_RunBinParser(&stParser, 0xFF);
-        ASSERT_EQ(stParser.stMemList.u16Size, 0x04U);
+        ezmParser_RunBinParser(&test_parser, 0x01);
+        ASSERT_EQ(0x01, test_parser.curr_frame->header.opcode);
 
-        ezmParser_RunCmdParser(&stParser);
-        ASSERT_EQ(stParser.stMemList.u16Size, 0x03U);
+        ezmParser_RunBinParser(&test_parser, 0x00);
+        ASSERT_EQ(0x00, test_parser.curr_frame->header.encrypt_info);
+        
+        ezmParser_RunBinParser(&test_parser, 0x00);
+        ezmParser_RunBinParser(&test_parser, 0x02);
+        ASSERT_EQ(0x0002, test_parser.curr_frame->header.payload_size_byte);
 
-        ezmParser_RunCmdParser(&stParser);
-        ASSERT_EQ(stParser.stMemList.u16Size, 0x02U);
+        ezmParser_RunBinParser(&test_parser, 0x02);
+        ezmParser_RunBinParser(&test_parser, 0x03);
+        compare = memcmp(test_parser.curr_frame->payload, &buffer[sizeof(BinaryFrame)], 2U);
+        ezmHexdump(buffer, 64);
+        ASSERT_EQ(0x00, compare);
 
-        ezmParser_RunCmdParser(&stParser);
-        ASSERT_EQ(stParser.stMemList.u16Size, 0x01U);
+        ezmParser_RunBinParser(&test_parser, 0xFF);
+        ezmParser_RunBinParser(&test_parser, 0xFF);
 
-        ezmParser_RunCmdParser(&stParser);
-        ASSERT_EQ(stParser.stMemList.u16Size, 0x00U);
+        /* minus command */
+        ezmParser_RunBinParser(&test_parser, 0x80);
+        ASSERT_EQ(0x80, test_parser.curr_frame->header.sof);
 
-        ezmParser_RunBinParser(&stParser, 0x00);
-        ezmParser_RunBinParser(&stParser, 0x05);
-        ezmParser_RunBinParser(&stParser, 0x02);
-        ezmParser_RunBinParser(&stParser, 0x03);
-        ezmParser_RunBinParser(&stParser, 0x03);
-        ezmParser_RunBinParser(&stParser, 0xFF);
-        ezmParser_RunBinParser(&stParser, 0xFF);
-        ASSERT_EQ(stParser.stMemList.u16Size, 0x01U);
+        ezmParser_RunBinParser(&test_parser, 0xbe);
+        ezmParser_RunBinParser(&test_parser, 0xef);
+        ezmParser_RunBinParser(&test_parser, 0xca);
+        ezmParser_RunBinParser(&test_parser, 0xfe);
+        ASSERT_EQ(0xbeefcafe, test_parser.curr_frame->header.uuid);
 
-        ezmParser_RunCmdParser(&stParser);
-        ASSERT_EQ(stParser.stMemList.u16Size, 0x00U);
+        ezmParser_RunBinParser(&test_parser, 0x02);
+        ASSERT_EQ(0x02, test_parser.curr_frame->header.opcode);
+
+        ezmParser_RunBinParser(&test_parser, 0x00);
+        ASSERT_EQ(0x00, test_parser.curr_frame->header.encrypt_info);
+
+        ezmParser_RunBinParser(&test_parser, 0x00);
+        ezmParser_RunBinParser(&test_parser, 0x02);
+        ASSERT_EQ(0x0002, test_parser.curr_frame->header.payload_size_byte);
+
+        ezmParser_RunBinParser(&test_parser, 0x03);
+        ezmParser_RunBinParser(&test_parser, 0x02);
+        compare = memcmp(test_parser.curr_frame->payload, &buffer[sizeof(BinaryFrame)], 2U);
+        ASSERT_EQ(0x00, compare);
+
+        ezmParser_RunBinParser(&test_parser, 0xFF);
+        ezmParser_RunBinParser(&test_parser, 0xFF);
+
+        /* multiply command */
+        ezmParser_RunBinParser(&test_parser, 0x80);
+        ASSERT_EQ(0x80, test_parser.curr_frame->header.sof);
+
+        ezmParser_RunBinParser(&test_parser, 0xbe);
+        ezmParser_RunBinParser(&test_parser, 0xef);
+        ezmParser_RunBinParser(&test_parser, 0xca);
+        ezmParser_RunBinParser(&test_parser, 0xfe);
+        ASSERT_EQ(0xbeefcafe, test_parser.curr_frame->header.uuid);
+
+        ezmParser_RunBinParser(&test_parser, 0x03);
+        ASSERT_EQ(0x03, test_parser.curr_frame->header.opcode);
+
+        ezmParser_RunBinParser(&test_parser, 0x00);
+        ASSERT_EQ(0x00, test_parser.curr_frame->header.encrypt_info);
+
+        ezmParser_RunBinParser(&test_parser, 0x00);
+        ezmParser_RunBinParser(&test_parser, 0x02);
+        ASSERT_EQ(0x0002, test_parser.curr_frame->header.payload_size_byte);
+
+        ezmParser_RunBinParser(&test_parser, 0x03);
+        ezmParser_RunBinParser(&test_parser, 0x02);
+        compare = memcmp(test_parser.curr_frame->payload, &buffer[sizeof(BinaryFrame)], 2U);
+        ASSERT_EQ(0x00, compare);
+
+        ezmParser_RunBinParser(&test_parser, 0xFF);
+        ezmParser_RunBinParser(&test_parser, 0xFF);
+
+        /* divide command */
+        ezmParser_RunBinParser(&test_parser, 0x80);
+        ASSERT_EQ(0x80, test_parser.curr_frame->header.sof);
+
+        ezmParser_RunBinParser(&test_parser, 0xbe);
+        ezmParser_RunBinParser(&test_parser, 0xef);
+        ezmParser_RunBinParser(&test_parser, 0xca);
+        ezmParser_RunBinParser(&test_parser, 0xfe);
+        ASSERT_EQ(0xbeefcafe, test_parser.curr_frame->header.uuid);
+
+        ezmParser_RunBinParser(&test_parser, 0x04);
+        ASSERT_EQ(0x04, test_parser.curr_frame->header.opcode);
+
+        ezmParser_RunBinParser(&test_parser, 0x00);
+        ASSERT_EQ(0x00, test_parser.curr_frame->header.encrypt_info);
+
+        ezmParser_RunBinParser(&test_parser, 0x00);
+        ezmParser_RunBinParser(&test_parser, 0x02);
+        ASSERT_EQ(0x0002, test_parser.curr_frame->header.payload_size_byte);
+
+        ezmParser_RunBinParser(&test_parser, 0x06);
+        ezmParser_RunBinParser(&test_parser, 0x02);
+        compare = memcmp(test_parser.curr_frame->payload, &buffer[sizeof(BinaryFrame)], 2U);
+        ASSERT_EQ(0x00, compare);
+
+        ezmParser_RunBinParser(&test_parser, 0xFF);
+        ezmParser_RunBinParser(&test_parser, 0xFF);
+
+        /* wrong command */
+        ezmParser_RunBinParser(&test_parser, 0x80);
+        ASSERT_EQ(0x80, test_parser.curr_frame->header.sof);
+
+        ezmParser_RunBinParser(&test_parser, 0xbe);
+        ezmParser_RunBinParser(&test_parser, 0xef);
+        ezmParser_RunBinParser(&test_parser, 0xca);
+        ezmParser_RunBinParser(&test_parser, 0xfe);
+        ASSERT_EQ(0xbeefcafe, test_parser.curr_frame->header.uuid);
+
+        ezmParser_RunBinParser(&test_parser, 0x05);
+        ASSERT_EQ(0x05, test_parser.curr_frame->header.opcode);
+
+        ezmParser_RunBinParser(&test_parser, 0x00);
+        ASSERT_EQ(0x00, test_parser.curr_frame->header.encrypt_info);
+
+        ezmParser_RunBinParser(&test_parser, 0x00);
+        ezmParser_RunBinParser(&test_parser, 0x02);
+        ASSERT_EQ(0x0002, test_parser.curr_frame->header.payload_size_byte);
+
+        ezmParser_RunBinParser(&test_parser, 0x06);
+        ezmParser_RunBinParser(&test_parser, 0x02);
+
+        ezmParser_RunBinParser(&test_parser, 0xFF);
+        ezmParser_RunBinParser(&test_parser, 0xFF);
+
     }
 #endif /* BIN_PARSER */
 }
