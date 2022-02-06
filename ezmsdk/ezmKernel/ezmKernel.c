@@ -24,6 +24,7 @@
 
 #define MOD_NAME        "KERNEL"
 
+
 #if (MODULE_DEBUG == 1U) && (KERNEL_DEBUG == 1U)
 #define KERNELPRINT(a)                     PRINT_DEBUG(MOD_NAME,a)
 #define KERNELPRINT1(a,b)                  PRINT_DEBUG1(MOD_NAME,a,b)
@@ -41,18 +42,26 @@
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
-
+#define SAMPLING_TIME_MS    10000U
 
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
-
+typedef struct
+{
+    uint32_t sampling_time;
+    uint32_t proc_run_time;
+    uint32_t before;
+    uint32_t after;
+    uint8_t load;
+}ProcLoad;
 
 /******************************************************************************
 * Module Variable Definitions
 *******************************************************************************/
 static LinkedList proccess_list = { 0 };
 static uint32_t uuid = 0U;
+static ProcLoad kernel_load = {0};
 /******************************************************************************
 * Function Prototypes
 *******************************************************************************/
@@ -138,7 +147,10 @@ void ezmKernel_Run(void)
         {
             if (proc1->exec_cnt_down <= 0)
             {
+                kernel_load.before = kernel_load.sampling_time;
                 proc1->handler();
+                kernel_load.after = kernel_load.sampling_time;
+                kernel_load.proc_run_time = kernel_load.proc_run_time + (kernel_load.after - kernel_load.before);
 
                 switch (proc1->proc_type)
                 {
@@ -156,12 +168,22 @@ void ezmKernel_Run(void)
             
         }
     }
+
+    if (SAMPLING_TIME_MS == kernel_load.sampling_time)
+    {
+        kernel_load.load = kernel_load.proc_run_time / kernel_load.sampling_time;
+        KERNELPRINT1("[ load = %d ]", kernel_load.load);
+        kernel_load.proc_run_time = 0;
+        kernel_load.sampling_time = 0;
+    }
 }
 
 void ezmKernel_Clock(void)
 {
     Node* next_node = proccess_list.pstHead;
     process* proc = NULL;
+
+    /*Update clock on each process*/
     while (next_node)
     {
         proc = (process*)next_node->pBuffer;
@@ -171,6 +193,9 @@ void ezmKernel_Clock(void)
         }
         next_node = next_node->pstNextNode;
     }
+
+    /*Update clock of the kernel load*/
+    kernel_load.sampling_time++;
 }
 #endif /* CLI */
 
