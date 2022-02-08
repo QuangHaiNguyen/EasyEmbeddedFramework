@@ -56,6 +56,9 @@
     <Filter Include="Source Files\ezmKernel">
       <UniqueIdentifier>{4a81b923-0631-4fcf-8091-505b57217a1a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\ezmDriver">
+      <UniqueIdentifier>{25879416-665b-4b27-801c-db85fd8e2b27}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ezmsdk\app\app.c">
@@ -102,6 +105,12 @@
     </ClCompile>
     <ClCompile Include="..\..\ezmsdk\ezmKernel\ezmKernel.c">
       <Filter>Source Files\ezmKernel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\ezmDriver\ezmDriver.c">
+      <Filter>Source Files\ezmDriver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\ezmDriver\dummy_driver.c">
+      <Filter>Source Files\ezmDriver</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -158,6 +167,12 @@
     </ClInclude>
     <ClInclude Include="..\..\ezmsdk\ezmKernel\ezmKernel.h">
       <Filter>Source Files\ezmKernel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ezmsdk\ezmDriver\ezmDriver.h">
+      <Filter>Source Files\ezmDriver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ezmsdk\ezmDriver\dummy_driver.h">
+      <Filter>Source Files\ezmDriver</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

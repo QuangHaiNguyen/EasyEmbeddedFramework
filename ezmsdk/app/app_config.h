@@ -29,6 +29,7 @@
 #define HAL_UART                0U
 #define STCMEM                  1U
 #define KERNEL                  1U
+#define DRIVERINF               1U
 
 /*Module ID section*/
 
@@ -152,6 +153,17 @@
 #endif
 
 #endif /* KERNEL */
+
+/* DRIVERINF SECTION ***************************************************************/
+#if (DRIVERINF == 1U)
+#define DRIVERINF_MOD_ID            0x0EU
+#define NUM_OF_DRIVERINF            5U
+
+#if (HELPER_LINKEDLIST == 0U)
+#error module HELPER_LINKEDLIST must be activated
+#endif
+
+#endif /* DRIVERINF */
 
 /*****************************************************************************/
 /* DRIVER SECTION                                                            */

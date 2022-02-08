@@ -152,6 +152,8 @@
     <ClCompile Include="..\..\ezmsdk\app\app.c" />
     <ClCompile Include="..\..\ezmsdk\binCmdParser\binCmdParser.c" />
     <ClCompile Include="..\..\ezmsdk\cli\cli.c" />
+    <ClCompile Include="..\..\ezmsdk\ezmDriver\dummy_driver.c" />
+    <ClCompile Include="..\..\ezmsdk\ezmDriver\ezmDriver.c" />
     <ClCompile Include="..\..\ezmsdk\ezmIpc\ezmIpc.c" />
     <ClCompile Include="..\..\ezmsdk\ezmKernel\ezmKernel.c" />
     <ClCompile Include="..\..\ezmsdk\hal\uart\uart.c" />
@@ -172,6 +174,8 @@
     <ClInclude Include="..\..\ezmsdk\cli\cli.h" />
     <ClInclude Include="..\..\ezmsdk\ezmDebug\config.h" />
     <ClInclude Include="..\..\ezmsdk\ezmDebug\ezmDebug.h" />
+    <ClInclude Include="..\..\ezmsdk\ezmDriver\dummy_driver.h" />
+    <ClInclude Include="..\..\ezmsdk\ezmDriver\ezmDriver.h" />
     <ClInclude Include="..\..\ezmsdk\ezmIpc\ezmIpc.h" />
     <ClInclude Include="..\..\ezmsdk\ezmIpc\ezmIpc_conf.h" />
     <ClInclude Include="..\..\ezmsdk\ezmKernel\ezmKernel.h" />
