@@ -26,8 +26,9 @@
 *******************************************************************************/
 #include "../app/app_config.h"
 
+
 #if (DRIVERINF == 1U)
-#include "ezmDriver.h"
+
 #include "stdint.h"
 #include "stdbool.h"
 
@@ -39,12 +40,13 @@
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
+
 typedef struct
 {
-    void(*dummy_open)(void);
-    void(*dummy_close)(void);
-    void(*dummy_write)(void);
-    void(*dummy_read)(void);
+    void (*dummy_open)(void);
+    void (*dummy_close)(void);
+    void (*dummy_write)(void);
+    void (*dummy_read)(void);
 }DummyApi;
 
 /******************************************************************************
@@ -55,7 +57,7 @@ typedef struct
 /******************************************************************************
 * Function Prototypes
 *******************************************************************************/
-Driver* DummyDriver_GetDriver(void);
+void * DummyDriver_GetDriver(void);
 
 #endif /* DRIVERINF */
 #endif /* _DUMMY_DRIVER_H */

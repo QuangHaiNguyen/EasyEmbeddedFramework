@@ -53,7 +53,7 @@ typedef Driver* (*GetDriverFunction)    (void);
 /******************************************************************************
 * Module Variable Definitions
 *******************************************************************************/
-bool ezmDriver_AddDriver            (DriverId id, DriverInitFunction init_function, void   *driver_api);
+bool ezmDriver_Init                 (void);
 bool ezmDriver_GetDriverInstance    (DriverId id, void * driver_api);
 bool ezmDriver_ReleaseDriverInstance(DriverId id);
 bool ezmDriver_IsDriverBusy         (DriverId id);

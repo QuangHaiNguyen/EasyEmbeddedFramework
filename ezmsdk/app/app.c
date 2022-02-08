@@ -73,6 +73,10 @@
 #include "../helper/stcmem/stcmem.h"
 #endif
 
+#if(DRIVERINF == 1U)
+#include "../ezmDriver/ezmDriver.h"
+#endif
+
 #if (NUM_OF_SUPPORTED_UART)
 #include "../hal/uart/uart.h"
 #endif /* NUM_OF_SUPPORTED_UART */
@@ -214,6 +218,17 @@ void ezmApp_SdkInit(void)
     APPPRINT1("Module Id: 0x%02x", STCMEM_MOD_ID);
 #endif
 
+#if(DRIVERINF == 1U)
+    if (ezmDriver_Init())
+    {
+        APPPRINT("Initialize DRIVERINF module");
+        APPPRINT1("Module Id: 0x%02x", DRIVERINF_MOD_ID);
+    }
+    else
+    {
+        APPPRINT("Initialize DRIVERINF module error");
+    }
+#endif
 #if (NUM_OF_SUPPORTED_UART)
     APPPRINT1("Initialize UART Driver");
     APPPRINT2("Module Id: 0x%02x", UART_MOD_ID);
@@ -320,6 +335,13 @@ static void ezm_AppPrintActiveModule(void)
 #else
     APPPRINT("\t[ ] STCMEM");
 #endif
+
+#if(DRIVERINF == 1U)
+    APPPRINT("\t[x] DRIVERINF");
+#else
+    APPPRINT("\t[ ] DRIVERINF");
+#endif
+
 #if (NUM_OF_SUPPORTED_UART)
     APPPRINT("\t[x] UART");
 #else

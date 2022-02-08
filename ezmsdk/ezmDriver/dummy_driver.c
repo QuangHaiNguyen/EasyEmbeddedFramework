@@ -17,6 +17,7 @@
 #include "dummy_driver.h"
 
 #if (DRIVERINF == 1U)
+#include "ezmDriver.h"
 #include "string.h"
 #include "../helper/hexdump/hexdump.h"
 #include "../helper/linked_list/linked_list.h"
@@ -63,7 +64,7 @@ static void close(void);
 static void write(void);
 static void read(void);
 
-Driver* DummyDriver_GetDriver(void)
+void* DummyDriver_GetDriver(void)
 {
     api.dummy_open = open;
     api.dummy_close = close;

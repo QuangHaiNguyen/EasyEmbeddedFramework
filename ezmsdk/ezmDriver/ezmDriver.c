@@ -17,6 +17,7 @@
 #include "ezmDriver.h"
 
 #if (DRIVERINF == 1U)
+#include "dummy_driver.h"
 #include "string.h"
 #include "../helper/hexdump/hexdump.h"
 #include "../helper/linked_list/linked_list.h"
@@ -48,37 +49,29 @@
 * Module Typedefs
 *******************************************************************************/
 
+GetDriverFunction get_driver[NUM_OF_DRIVER] =
+{
+    (GetDriverFunction)DummyDriver_GetDriver,
+};
 
 /******************************************************************************
 * Module Variable Definitions
 *******************************************************************************/
-static Driver   driver_list[NUM_OF_DRIVER] = { 0 };
+static Driver   *driver_list[NUM_OF_DRIVER] = { 0 };
 
 /******************************************************************************
 * Function Prototypes
 *******************************************************************************/
 
-bool ezmDriver_AddDriver(DriverId id, DriverInitFunction init_function, void* driver_api)
+bool ezmDriver_Init(void)
 {
     bool is_success = true;
-    Driver *driver;
 
-    if (NULL == init_function || NULL == driver_api || id >= NUM_OF_DRIVER)
+    for (uint16_t i = 0; i < NUM_OF_DRIVER; i++)
     {
-        is_success = false;
-    }
+        driver_list[i] = get_driver[i]();
 
-    if (is_success)
-    {
-        driver = &driver_list[id];
-
-        driver->driver_api = driver_api;
-        driver->init_function = init_function;
-        driver->is_busy = false;
-
-        DRIVERPRINT1("add driver [id = %x] successfully", id);
-
-        if (false == driver->init_function())
+        if (false == driver_list[i]->init_function())
         {
             is_success = false;
         }
@@ -100,14 +93,10 @@ bool ezmDriver_GetDriverInstance(DriverId id, void* driver_api)
     {
         is_success = false;
     }
-    else
-    {
-        driver = &driver_list[id];
-    }
 
-    if (is_success && false == driver->is_busy)
+    if (is_success && false == driver_list[id]->is_busy)
     {
-        driver_api = driver->driver_api;
+        driver_api = driver_list[id]->driver_api;
     }
     else
     {
@@ -123,7 +112,7 @@ bool ezmDriver_ReleaseDriverInstance(DriverId id)
 
     if (id < NUM_OF_DRIVER)
     {
-        driver_list[id].is_busy = false;
+        driver_list[id]->is_busy = false;
         is_success = true;
     }
 
@@ -136,7 +125,7 @@ bool ezmDriver_IsDriverBusy(DriverId id)
 
     if (id < NUM_OF_DRIVER)
     {
-        is_busy = driver_list[id].is_busy;
+        is_busy = driver_list[id]->is_busy;
     }
 
     return is_busy;
