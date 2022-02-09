@@ -73,6 +73,7 @@ bool    ezmCli_AddArgument      (uint8_t u8CommandIndex,
                                     const char * pu8Description);
 
 bool    ezmCli_CommandReceivedCallback(uint8_t u8NotifyCode, char* pu8CommandBuffer, uint16_t u16CommandBufferSize);
+void    ezmCli_PrintMenu(void);
 #endif /* CLI */
 #endif /* _CLI_H */
 
