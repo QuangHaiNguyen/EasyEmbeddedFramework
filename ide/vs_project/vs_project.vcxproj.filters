@@ -112,6 +112,9 @@
     <ClCompile Include="..\..\ezmsdk\ezmDriver\dummy_driver.c">
       <Filter>Source Files\ezmDriver</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\app\app_cli.c">
+      <Filter>Source Files\app</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\ezmsdk\app\app.h">
@@ -173,6 +176,9 @@
     </ClInclude>
     <ClInclude Include="..\..\ezmsdk\ezmDriver\dummy_driver.h">
       <Filter>Source Files\ezmDriver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ezmsdk\app\app_cli.h">
+      <Filter>Source Files\app</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

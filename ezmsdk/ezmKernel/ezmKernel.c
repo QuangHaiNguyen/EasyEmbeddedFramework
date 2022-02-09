@@ -172,7 +172,6 @@ void ezmKernel_Run(void)
     if (SAMPLING_TIME_MS == kernel_load.sampling_time)
     {
         kernel_load.load = kernel_load.proc_run_time / kernel_load.sampling_time;
-        KERNELPRINT1("[ load = %d ]", kernel_load.load);
         kernel_load.proc_run_time = 0;
         kernel_load.sampling_time = 0;
     }
@@ -196,6 +195,11 @@ void ezmKernel_Clock(void)
 
     /*Update clock of the kernel load*/
     kernel_load.sampling_time++;
+}
+
+uint8_t ezmKernel_GetLoad(void)
+{
+    return kernel_load.load;
 }
 #endif /* CLI */
 

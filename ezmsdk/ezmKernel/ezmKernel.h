@@ -69,6 +69,7 @@ void ezmKernel_Initialization(void);
 bool ezmKernel_AddProcess(process * proc, PROCESS_TYPE proc_type, uint32_t period_ms, process_handler handler);
 void ezmKernel_Clock(void);
 void ezmKernel_Run(void);
+uint8_t ezmKernel_GetLoad(void);
 
 #endif /* CLI */
 #endif /* _EZM_KERNEL_H */
