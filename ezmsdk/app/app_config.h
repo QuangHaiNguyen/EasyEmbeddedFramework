@@ -15,7 +15,7 @@
 #define _APP_CONFIG_H
 
 
-#define CLI                     0U
+#define CLI                     1U
 #define SCHEDULER               0U
 #define SMALLOC                 0U
 #define BIN_PARSER              1U
@@ -26,10 +26,10 @@
 #define HELPER_ASSERT           0U
 #define STATEMACHINE            0U
 #define IPC                     0U
-#define HAL_UART                0U
 #define STCMEM                  1U
 #define KERNEL                  1U
 #define DRIVERINF               1U
+#define HAL_UART                0U
 
 /*Module ID section*/
 

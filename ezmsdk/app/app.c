@@ -24,6 +24,7 @@
 *******************************************************************************/
 #include "app.h"
 #include "app_config.h"
+#include <time.h>
 
 #if (CLI == 1U)
 #include "../cli/cli.h"
@@ -77,9 +78,15 @@
 #include "../ezmDriver/ezmDriver.h"
 #endif
 
+#if(KERNEL == 1U)
+#include "../ezmKernel/ezmKernel.h"
+#endif
+
 #if (NUM_OF_SUPPORTED_UART)
 #include "../hal/uart/uart.h"
 #endif /* NUM_OF_SUPPORTED_UART */
+
+#include "app_cli.h"
 
 #define MOD_NAME "APPL"
 
@@ -110,9 +117,9 @@
 /******************************************************************************
 * Function Definitions
 *******************************************************************************/
-static void ezm_AppPrintActiveModule(void);
-static void ezmApp_PrintHeader(void);
-
+static void     ezm_AppPrintActiveModule(void);
+static void     ezmApp_PrintHeader(void);
+static uint32_t ezmApp_ReturnTimestampMillisvoid(void);
 /******************************************************************************
 * Function : ezmApp_SdkInit
 *//** 
@@ -229,6 +236,7 @@ void ezmApp_SdkInit(void)
         APPPRINT("Initialize DRIVERINF module error");
     }
 #endif
+
 #if (NUM_OF_SUPPORTED_UART)
     APPPRINT1("Initialize UART Driver");
     APPPRINT2("Module Id: 0x%02x", UART_MOD_ID);
@@ -238,6 +246,18 @@ void ezmApp_SdkInit(void)
     }
 #endif /* NUM_OF_SUPPORTED_UART */
 
+    AppCli_Init();
+
+    uint64_t execute_time_stamp = ezmApp_ReturnTimestampMillisvoid();
+    do
+    {
+        if (ezmApp_ReturnTimestampMillisvoid() - execute_time_stamp > 1)
+        {
+            ezmKernel_Clock();
+            ezmKernel_Run();
+            execute_time_stamp = ezmApp_ReturnTimestampMillisvoid();
+        }
+    }while (execute_time_stamp);
 }
 
 /******************************************************************************
@@ -347,7 +367,6 @@ static void ezm_AppPrintActiveModule(void)
 #else
     APPPRINT("\t[ ] UART");
 #endif /* NUM_OF_SUPPORTED_UART */
-
 }
 
 static void ezmApp_PrintHeader(void)
@@ -366,5 +385,15 @@ static void ezmApp_PrintHeader(void)
 #endif
     PRINT_INFO("* Contact: hainguyen.ezm@gmail.com");
     PRINT_INFO("******************************************************************************\n\n");
+}
+
+static uint32_t ezmApp_ReturnTimestampMillisvoid(void)
+{
+    uint32_t tick_milli;
+    clock_t tick;
+    tick = clock();
+    tick_milli = tick / (CLOCKS_PER_SEC / 1000);
+
+    return tick_milli;
 }
 /* End of file*/
