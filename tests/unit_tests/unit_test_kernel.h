@@ -7,7 +7,7 @@
 extern "C" {
 #include "../../ezmsdk/app/app_config.h"
 #include "../../ezmsdk/ezmKernel/ezmKernel.h"
-#include "../../ezmsdk/app/app.h"
+#include "../../ezmsdk/helper/linked_list/linked_list.h"
 #include "../../ezmsdk/ezmDebug/ezmDebug.h"
 #include <time.h>
 
@@ -59,7 +59,7 @@ namespace
 #if (KERNEL == 1U)
     TEST(kernel, basic)
     {
-        ezmApp_SdkInit();
+        ezmLL_Initialization();
         ezmKernel_Initialization();
 
         process proc_1000_ms;

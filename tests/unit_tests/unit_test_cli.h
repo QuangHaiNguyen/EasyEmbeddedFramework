@@ -71,7 +71,7 @@ CLI_NOTIFY_CODE CopyString(const char* pu8Command, void* pValueList)
         pu8TestString = ((char*)(*pu32Params));
     }
     else
-    {
+    { 
         eReturn = CLI_NC_BAD_ARG;
     }
 

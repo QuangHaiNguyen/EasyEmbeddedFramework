@@ -11,4 +11,4 @@
 //#include "../unit_test_smalloc.h"
 //#include "../unit_test_ring_buffer.h"
 //#include "../unit_test_stcmem.h"
-#include "../unit_test_kernel.h"
+//#include "../unit_test_kernel.h"
