@@ -53,9 +53,7 @@
 GetDriverFunction get_driver[NUM_OF_DRIVER] =
 {
     (GetDriverFunction)DummyDriver_GetDriver,
-#if(SUPPORTED_CHIP == WIN)
     (GetDriverFunction)GetUart0Driver,
-#endif
 };
 
 /******************************************************************************
@@ -91,7 +89,6 @@ bool ezmDriver_Init(void)
 bool ezmDriver_GetDriverInstance(DriverId id, void** driver_api)
 {
     bool is_success = true;
-    Driver* driver = NULL;
 
     if (id >= NUM_OF_DRIVER)
     {

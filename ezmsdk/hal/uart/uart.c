@@ -24,6 +24,8 @@
 
 #if (SUPPORTED_CHIP == ESP32)
 #include "esp_uart/esp_uart.h"
+#elif (SUPPORTED_CHIP == STM32)
+#include "../../Core/target_driver/stm32_uart.h"
 #elif (SUPPORTED_CHIP == WIN)
 #include "uart_sim.h"
 #endif /* SUPPORTED_CHIP == ESP32 */
@@ -67,6 +69,12 @@ void* GetUart0Driver(void)
     Driver* ret_driver = NULL;
 #if (SUPPORTED_CHIP == ESP32)
     bResult = bResult & espUart_Init(CLI_UART, &aszSupportedUart[CLI_UART].stPublicApi);
+#elif(SUPPORTED_CHIP == STM32)
+    aszSupportedUart[CLI_UART].is_busy = false;
+    aszSupportedUart[CLI_UART].init_function = stmUart1_Init;
+    aszSupportedUart[CLI_UART].driver_api = stmUart_GetApi(CLI_UART);
+    ret_driver = &aszSupportedUart[CLI_UART];
+    UARTPRINT("UART0 init complete");
 #elif(SUPPORTED_CHIP == WIN)
 
     aszSupportedUart[CLI_UART].is_busy = false;
@@ -74,9 +82,8 @@ void* GetUart0Driver(void)
     aszSupportedUart[CLI_UART].driver_api = simUart_GetApi(CLI_UART);
     ret_driver = &aszSupportedUart[CLI_UART];
     UARTPRINT("UART0 init complete");
-
-    return (void*)ret_driver;
 #endif /* SUPPORTED_CHIP */
+    return (void*)ret_driver;
 }
 
 

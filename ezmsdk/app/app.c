@@ -120,7 +120,10 @@
 *******************************************************************************/
 static void     ezm_AppPrintActiveModule(void);
 static void     ezmApp_PrintHeader(void);
+
+#if(SUPPORTED_CHIP == WIN)
 static uint32_t ezmApp_ReturnTimestampMillisvoid(void);
+#endif
 /******************************************************************************
 * Function : ezmApp_SdkInit
 *//** 
@@ -251,6 +254,7 @@ void ezmApp_SdkInit(void)
 
     AppCli_Init();
 
+#if(SUPPORTED_CHIP == WIN)
     uint64_t execute_time_stamp = ezmApp_ReturnTimestampMillisvoid();
     do
     {
@@ -261,6 +265,7 @@ void ezmApp_SdkInit(void)
             execute_time_stamp = ezmApp_ReturnTimestampMillisvoid();
         }
     }while (execute_time_stamp);
+#endif
 }
 
 /******************************************************************************
@@ -311,7 +316,7 @@ static void ezm_AppPrintActiveModule(void)
     APPPRINT("[ ] BIN_PARSER");
 #endif
 
-#if (DEBUG == 1U)
+#if (EZM_DEBUG == 1U)
     APPPRINT("[x] DEBUG");
 #else
     APPPRINT("[ ] DEBUG");
@@ -390,6 +395,7 @@ static void ezmApp_PrintHeader(void)
     PRINT_INFO("******************************************************************************\n\n");
 }
 
+#if(SUPPORTED_CHIP == WIN)
 static uint32_t ezmApp_ReturnTimestampMillisvoid(void)
 {
     uint32_t tick_milli;
@@ -399,4 +405,5 @@ static uint32_t ezmApp_ReturnTimestampMillisvoid(void)
 
     return tick_milli;
 }
+#endif
 /* End of file*/

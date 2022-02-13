@@ -29,31 +29,34 @@
 #include "../hal/uart/uart.h"
 #include "../ezmDebug/ezmDebug.h"
 #include "../cli/cli.h"
-#include <conio.h>
+
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
 typedef enum
 {
     GET_BYTE,
+	WAIT,
     PROC_CMD,
 }CLT_STATE;
 
 /******************************************************************************
 * Module Variable Definitions
 *******************************************************************************/
-static uint8_t cli_buffer[1000U] = {0U};
-static uint8_t cli_inst_num = 0xFF;
-static UartDrvApi* uart_driver = NULL;
-static uint8_t CLI_Proccess(void);
-static process cli_process;
-static CLT_STATE state;
-static uint16_t index = 0U;
+static uint8_t 		cli_buffer[256] = {0U};
+static uint8_t 		cli_inst_num = 0xFF;
+static uint8_t 		one_byte;
+static uint16_t 	buff_index = 0U;
+static UartDrvApi* 	uart_driver = NULL;
+static process 		cli_process;
+static CLT_STATE 	state;
+
 /******************************************************************************
 * Function Definitions
 *******************************************************************************/
-static CLI_NOTIFY_CODE CommandHandle(const char* pu8Command, void* pValueList);
-static uint8_t UartCallbackHandle(uint8_t notify_code, void* param1, void* param2);
+static uint8_t 			CLI_Proccess(void);
+static CLI_NOTIFY_CODE 	CommandHandle(const char* pu8Command, void* pValueList);
+static uint8_t 			UartCallbackHandle(uint8_t notify_code, void* param1, void* param2);
 
 void AppCli_Init(void)
 {
@@ -68,7 +71,7 @@ void AppCli_Init(void)
 
     if (is_success)
     {
-        is_success = is_success && ezmDriver_GetDriverInstance(UART0_DRIVER, &uart_driver);
+        is_success = is_success && ezmDriver_GetDriverInstance(UART0_DRIVER, (void*)&uart_driver);
     }
 
     if (is_success)
@@ -103,17 +106,18 @@ void AppCli_Init(void)
 
 static uint8_t CLI_Proccess(void)
 {
-    static uint8_t ch;
-
     switch (state)
     {
     case GET_BYTE:
-        (void)uart_driver->ezmUart_Receive(&ch, 1U);
+        (void)uart_driver->ezmUart_Receive(&one_byte, 1U);
+        state = WAIT;
         break;
+    case WAIT:
+    	break;
     case PROC_CMD:
-        (void)ezmCli_CommandReceivedCallback(0, cli_buffer, sizeof(cli_buffer));
+        (void)ezmCli_CommandReceivedCallback(0, (char*)cli_buffer, sizeof(cli_buffer));
         memset(cli_buffer, 0, sizeof(cli_buffer));
-        index = 0U;
+        buff_index = 0U;
         state = GET_BYTE;
         break;
     default:
@@ -150,22 +154,22 @@ static CLI_NOTIFY_CODE CommandHandle(const char* pu8Command, void* pValueList)
 
 static uint8_t UartCallbackHandle(uint8_t notify_code, void* param1, void* param2)
 {
-    char* ch;
+
     switch ((UART_NOTIFY_CODE)notify_code)
     {
     case UART_TX_COMPLT:
         break;
     case UART_RX_COMPLT:
-        ch = (char*)param1;
-        if (ch)
+    	cli_buffer[buff_index] = one_byte;
+    	if (cli_buffer[buff_index] == '\n' || buff_index == sizeof(cli_buffer) || cli_buffer[buff_index] == '\r')
+		{
+			state = PROC_CMD;
+		}
+        else
         {
-            cli_buffer[index] = *ch;
-            if (cli_buffer[index] == '\n' || index == sizeof(cli_buffer) || cli_buffer[index] == '\r')
-            {
-                state = PROC_CMD;
-            }
-            index++;
+        	(void)uart_driver->ezmUart_Receive(&one_byte, 1U);
         }
+    	buff_index++;
         break;
     case UART_BUFF_FULL:
         break;

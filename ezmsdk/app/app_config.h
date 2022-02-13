@@ -21,7 +21,7 @@
 #define BIN_PARSER              1U
 #define HELPER_LINKEDLIST       1U
 #define HELPER_HEXDUMP          1U
-#define DEBUG                   1U
+#define EZM_DEBUG               1U
 #define RING_BUFFER             0U
 #define HELPER_ASSERT           0U
 #define STATEMACHINE            0U
@@ -87,7 +87,7 @@
 #endif /* BIN_PARSER */
 
 /* DEBUG SECTION **************************************************************/
-#if (DEBUG == 1U)
+#if (EZM_DEBUG == 1U)
 #define DEBUG_MOD_ID                0x05U
 #endif /* DEBUG */
 
@@ -102,7 +102,7 @@
 #if (HELPER_HEXDUMP == 1U)
 #define HELPER_HEXDUMP_MOD_ID       0x07U
 
-#if (DEBUG == 0U)
+#if (EZM_DEBUG == 0U)
 #error DEBUG module must be activated
 #endif /* DEBUG */
 
@@ -176,7 +176,7 @@
 #define ESP32               4U
 #define STM32               5U
 
-#define SUPPORTED_CHIP      WIN
+#define SUPPORTED_CHIP      STM32
 
 /* UART SECTION **************************************************************/
 #if HAL_UART == 1U
