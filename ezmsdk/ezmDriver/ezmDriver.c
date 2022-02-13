@@ -17,6 +17,7 @@
 #include "ezmDriver.h"
 
 #if (DRIVERINF == 1U)
+#include "../hal/uart/uart.h"
 #include "dummy_driver.h"
 #include "string.h"
 #include "../helper/hexdump/hexdump.h"
@@ -52,6 +53,9 @@
 GetDriverFunction get_driver[NUM_OF_DRIVER] =
 {
     (GetDriverFunction)DummyDriver_GetDriver,
+#if(SUPPORTED_CHIP == WIN)
+    (GetDriverFunction)GetUart0Driver,
+#endif
 };
 
 /******************************************************************************
@@ -84,19 +88,19 @@ bool ezmDriver_Init(void)
     return is_success;
 }
 
-bool ezmDriver_GetDriverInstance(DriverId id, void* driver_api)
+bool ezmDriver_GetDriverInstance(DriverId id, void** driver_api)
 {
     bool is_success = true;
     Driver* driver = NULL;
 
-    if (id >= NUM_OF_DRIVER || driver_api == NULL)
+    if (id >= NUM_OF_DRIVER)
     {
         is_success = false;
     }
 
     if (is_success && false == driver_list[id]->is_busy)
     {
-        driver_api = driver_list[id]->driver_api;
+        *driver_api = driver_list[id]->driver_api;
     }
     else
     {

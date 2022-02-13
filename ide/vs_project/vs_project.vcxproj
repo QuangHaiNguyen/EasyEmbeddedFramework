@@ -158,6 +158,7 @@
     <ClCompile Include="..\..\ezmsdk\ezmIpc\ezmIpc.c" />
     <ClCompile Include="..\..\ezmsdk\ezmKernel\ezmKernel.c" />
     <ClCompile Include="..\..\ezmsdk\hal\uart\uart.c" />
+    <ClCompile Include="..\..\ezmsdk\hal\uart\uart_sim.c" />
     <ClCompile Include="..\..\ezmsdk\helper\ezmAssert\ezmAssert.c" />
     <ClCompile Include="..\..\ezmsdk\helper\hexdump\hexdump.c" />
     <ClCompile Include="..\..\ezmsdk\helper\linked_list\linked_list.c" />
@@ -182,6 +183,7 @@
     <ClInclude Include="..\..\ezmsdk\ezmIpc\ezmIpc_conf.h" />
     <ClInclude Include="..\..\ezmsdk\ezmKernel\ezmKernel.h" />
     <ClInclude Include="..\..\ezmsdk\hal\uart\uart.h" />
+    <ClInclude Include="..\..\ezmsdk\hal\uart\uart_sim.h" />
     <ClInclude Include="..\..\ezmsdk\helper\ezmAssert\ezmAssert.h" />
     <ClInclude Include="..\..\ezmsdk\helper\hexdump\hexdump.h" />
     <ClInclude Include="..\..\ezmsdk\helper\linked_list\linked_list.h" />

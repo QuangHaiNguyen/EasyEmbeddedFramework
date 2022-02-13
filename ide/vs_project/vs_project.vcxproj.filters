@@ -115,6 +115,9 @@
     <ClCompile Include="..\..\ezmsdk\app\app_cli.c">
       <Filter>Source Files\app</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\hal\uart\uart_sim.c">
+      <Filter>Source Files\hal\uart</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\ezmsdk\app\app.h">
@@ -179,6 +182,9 @@
     </ClInclude>
     <ClInclude Include="..\..\ezmsdk\app\app_cli.h">
       <Filter>Source Files\app</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ezmsdk\hal\uart\uart_sim.h">
+      <Filter>Source Files\hal\uart</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -39,6 +39,6 @@
 #define CLI_DEBUG                   0U /* debug out for cli module */
 #define STCMEM_DEBUG                0U /* debug out for StcMem module */
 #define KERNEL_DEBUG                1U /* debug out for kernel module*/
-#define UART_DEBUG                  0U /* debug out for hal uart */
+#define UART_DEBUG                  1U /* debug out for hal uart */
 
 #endif

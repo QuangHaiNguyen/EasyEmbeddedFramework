@@ -25,6 +25,8 @@
 #include "app_cli.h"
 #include "string.h"
 #include "../ezmKernel/ezmKernel.h"
+#include "../ezmDriver/ezmDriver.h"
+#include "../hal/uart/uart.h"
 #include "../ezmDebug/ezmDebug.h"
 #include "../cli/cli.h"
 #include <conio.h>
@@ -45,6 +47,7 @@ static uint8_t CLI_Proccess(void);
 static process cli_process;
 static CLI_NOTIFY_CODE CommandHandle(const char* pu8Command, void* pValueList);
 static uint8_t cli_inst_num = 0xFF;
+static ezmUart *uart_driver;
 
 void AppCli_Init(void)
 {
@@ -54,6 +57,11 @@ void AppCli_Init(void)
     if (!is_success)
     {
         PRINT_DEBUG("APPCLI", "add cli process error");
+    }
+
+    if (is_success)
+    {
+        is_success = is_success && ezmDriver_GetDriverInstance(UART0_DRIVER, &uart_driver);
     }
 
     if (is_success)
@@ -87,12 +95,13 @@ void AppCli_Init(void)
 static uint8_t CLI_Proccess(void)
 {
     static uint16_t index = 0U;
+    static uint8_t ch;
 
-    cli_buffer[index] = _getchar_nolock();
-
+    (void)uart_driver->ezmUart_Receive(CLI_UART, &ch, 1U);
+    cli_buffer[index] = ch;
     if (cli_buffer[index] == '\n' || index == sizeof(cli_buffer) || cli_buffer[index] == '\r')
     {
-        getchar();
+        //(void)getchar();
         (void)ezmCli_CommandReceivedCallback(0, cli_buffer, sizeof(cli_buffer));
         memset(cli_buffer, 0, sizeof(cli_buffer));
         index = 0U;

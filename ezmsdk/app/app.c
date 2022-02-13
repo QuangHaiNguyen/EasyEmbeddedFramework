@@ -74,9 +74,6 @@
 #include "../helper/stcmem/stcmem.h"
 #endif
 
-#if(DRIVERINF == 1U)
-#include "../ezmDriver/ezmDriver.h"
-#endif
 
 #if(KERNEL == 1U)
 #include "../ezmKernel/ezmKernel.h"
@@ -85,6 +82,10 @@
 #if (NUM_OF_SUPPORTED_UART)
 #include "../hal/uart/uart.h"
 #endif /* NUM_OF_SUPPORTED_UART */
+
+#if(DRIVERINF == 1U)
+#include "../ezmDriver/ezmDriver.h"
+#endif
 
 #include "app_cli.h"
 
@@ -238,12 +239,14 @@ void ezmApp_SdkInit(void)
 #endif
 
 #if (NUM_OF_SUPPORTED_UART)
-    APPPRINT1("Initialize UART Driver");
-    APPPRINT2("Module Id: 0x%02x", UART_MOD_ID);
+    APPPRINT("Initialize UART Driver");
+    APPPRINT1("Module Id: 0x%02x", UART_MOD_ID);
+#if 0
     if(ezmUart_Init() != true)
     {
         APPPRINT1("Initialize UART Driver failed");
     }
+#endif
 #endif /* NUM_OF_SUPPORTED_UART */
 
     AppCli_Init();

@@ -18,69 +18,48 @@
  */
 
 
-#ifndef _HAL_UART_H
-#define _HAL_UART_H
+#ifndef _UART_SIM_H
+#define _UART_SIM_H
 
 /*******************************************************************************
 * Includes
 *******************************************************************************/
-#include "stdint.h"
-#include "stdbool.h"
-#include "../../app/app_config.h"
-
-#if (NUM_OF_SUPPORTED_UART > 0U)
-
+#include "uart.h"
 
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
-/* None */
-
+#define A_MACRO     1
+/**< a macro*/
 
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
 
-/** @brief definition of the notification code
+/** @brief definition of a new type
  *  
  */
-typedef enum
-{
-    UART_TX_COMPLT,     /**< UART transmit completed */
-    UART_RX_COMPLT,     /**< UART receive completed */
-    UART_BUFF_FULL,     /**< UART buffer is full */
-    UART_UNSUPPORTED,   /**< UART unsupported callback */
-}UART_NOTIFY_CODE;
 
-/** @brief definition the callback function pointer 
- *  
- */
-typedef uint8_t (*UART_CALLBACK)(uint8_t eCode, void * pParam);
-
-/** @brief definition of api set for UART
- *  
- */
 typedef struct
 {
-    uint16_t(*ezmUart_Send)         (uint8_t uart_drv_id, uint8_t *au8Buffer, uint16_t u16Size);
-    uint16_t(*ezmUart_Receive)      (uint8_t uart_drv_id, uint8_t * au8Buffer, uint16_t u16Size);
-    void(*ezmUart_RegisterCallback) (uint8_t uart_drv_id, UART_CALLBACK pfnCallback);
-    void(*ezmUart_UnregisterCallback)(uint8_t uart_drv_id); /* TBD */
-}ezmUart;
+    int a;
+    /**< an integer */
+    int b;
+    /**< an integer */
+}aType;
 
 
 /******************************************************************************
 * Module Variable Definitions
 *******************************************************************************/
-/* None */
+bool simUart_Init(void);
+ezmUart *simUart_GetApi(uint8_t hw_uart_index);
 
 /******************************************************************************
 * Function Prototypes
 *******************************************************************************/
-void* GetUart0Driver(void);
 
 
-#endif /* NUM_OF_SUPPORTED_UART > 0U */
-#endif /* _HAL_UART_H */
+#endif /* _UART_SIM_H */
 
 /* End of file*/
