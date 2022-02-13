@@ -35,7 +35,7 @@
 #define PRINT2(a,b)                         PRINTF(a, b)
 #define PRINT3(a,b,c)                       PRINTF(a, b, c)
 
-#define PRINTF_MOD(MOD_NAME, format, ...)   printf("[%s] " format "\n", MOD_NAME, __VA_ARGS__ )
+#define PRINTF_MOD(MOD_NAME, format, ...)   printf("[%s]::" format "\n", MOD_NAME, __VA_ARGS__ )
 
 /*print, dependent on debug level*/
 #if DEBUG_LEVEL >= 3

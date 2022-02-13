@@ -34,7 +34,6 @@
 *******************************************************************************/
 typedef bool    (*DriverInitFunction)   (void);
 
-
 typedef enum
 {
     DUMMY_DRIVER,

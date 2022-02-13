@@ -33,25 +33,32 @@
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
-/* None */
+typedef enum
+{
+    GET_BYTE,
+    PROC_CMD,
+}CLT_STATE;
 
 /******************************************************************************
 * Module Variable Definitions
 *******************************************************************************/
 static uint8_t cli_buffer[1000U] = {0U};
-
+static uint8_t cli_inst_num = 0xFF;
+static UartDrvApi* uart_driver = NULL;
+static uint8_t CLI_Proccess(void);
+static process cli_process;
+static CLT_STATE state;
+static uint16_t index = 0U;
 /******************************************************************************
 * Function Definitions
 *******************************************************************************/
-static uint8_t CLI_Proccess(void);
-static process cli_process;
 static CLI_NOTIFY_CODE CommandHandle(const char* pu8Command, void* pValueList);
-static uint8_t cli_inst_num = 0xFF;
-static ezmUart *uart_driver;
+static uint8_t UartCallbackHandle(uint8_t notify_code, void* param1, void* param2);
 
 void AppCli_Init(void)
 {
     bool is_success = true;
+    state = GET_BYTE;
     is_success = ezmKernel_AddProcess(&cli_process, PROC_REPEATED, 1U, CLI_Proccess);
 
     if (!is_success)
@@ -66,6 +73,8 @@ void AppCli_Init(void)
 
     if (is_success)
     {
+        uart_driver->ezmUart_RegisterCallback(UartCallbackHandle);
+
         cli_inst_num = ezmCli_RegisterCommand("echo", "echo your text", CommandHandle);
         if (0xFF == cli_inst_num)
         {
@@ -94,21 +103,21 @@ void AppCli_Init(void)
 
 static uint8_t CLI_Proccess(void)
 {
-    static uint16_t index = 0U;
     static uint8_t ch;
 
-    (void)uart_driver->ezmUart_Receive(CLI_UART, &ch, 1U);
-    cli_buffer[index] = ch;
-    if (cli_buffer[index] == '\n' || index == sizeof(cli_buffer) || cli_buffer[index] == '\r')
+    switch (state)
     {
-        //(void)getchar();
+    case GET_BYTE:
+        (void)uart_driver->ezmUart_Receive(&ch, 1U);
+        break;
+    case PROC_CMD:
         (void)ezmCli_CommandReceivedCallback(0, cli_buffer, sizeof(cli_buffer));
         memset(cli_buffer, 0, sizeof(cli_buffer));
         index = 0U;
-    }
-    else
-    {
-        index++;
+        state = GET_BYTE;
+        break;
+    default:
+        break;;
     }
     return 0;
 }
@@ -138,32 +147,34 @@ static CLI_NOTIFY_CODE CommandHandle(const char* pu8Command, void* pValueList)
     }
     return CLI_NC_OK;
 }
-/******************************************************************************
-* Function : sum
-*//** 
-* \b Description:
-*
-* This function initializes the ring buffer
-*
-* PRE-CONDITION: None
-*
-* POST-CONDITION: None
-* 
-* @param    a: (IN)pointer to the ring buffer
-* @param    b: (IN)size of the ring buffer
-* @return   None
-*
-* \b Example Example:
-* @code
-* sum(a, b);
-* @endcode
-*
-* @see sum
-*
-*******************************************************************************/
-int sum(int a, int b)
+
+static uint8_t UartCallbackHandle(uint8_t notify_code, void* param1, void* param2)
 {
-    return a + b;
+    char* ch;
+    switch ((UART_NOTIFY_CODE)notify_code)
+    {
+    case UART_TX_COMPLT:
+        break;
+    case UART_RX_COMPLT:
+        ch = (char*)param1;
+        if (ch)
+        {
+            cli_buffer[index] = *ch;
+            if (cli_buffer[index] == '\n' || index == sizeof(cli_buffer) || cli_buffer[index] == '\r')
+            {
+                state = PROC_CMD;
+            }
+            index++;
+        }
+        break;
+    case UART_BUFF_FULL:
+        break;
+    case UART_UNSUPPORTED:
+        break;
+    default:
+        break;
+    }
+    return 0U;
 }
 
 /* End of file*/

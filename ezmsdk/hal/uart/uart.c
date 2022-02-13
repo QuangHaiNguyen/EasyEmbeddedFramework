@@ -8,7 +8,7 @@
 *******************************************************************************/
 
 /** @file  uart.c
- *  @brief This is the source template for a uart
+ *  @brief This is the source file for uart module
  */
 
 /******************************************************************************
@@ -49,27 +49,21 @@
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
-
-/** @brief definition of a new type
- *
- */
-
-
-static Driver aszSupportedUart[NUM_OF_SUPPORTED_UART] = {0};
+/* None */
 
 /******************************************************************************
 * Module Variable Definitions
 *******************************************************************************/
-/* None */
+static Driver aszSupportedUart[NUM_OF_SUPPORTED_UART] = { 0 };
 
 /******************************************************************************
 * Function Definitions
 *******************************************************************************/
+/* None */
 
 /********************** Public functions **************************************/
 void* GetUart0Driver(void)
 {
-    ezmUart* api = aszSupportedUart[CLI_UART].driver_api;
     Driver* ret_driver = NULL;
 #if (SUPPORTED_CHIP == ESP32)
     bResult = bResult & espUart_Init(CLI_UART, &aszSupportedUart[CLI_UART].stPublicApi);
@@ -84,7 +78,6 @@ void* GetUart0Driver(void)
     return (void*)ret_driver;
 #endif /* SUPPORTED_CHIP */
 }
-
 
 
 #endif /* NUM_OF_SUPPORTED_UART > 0U */

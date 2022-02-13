@@ -53,7 +53,7 @@ typedef struct
 * Module Variable Definitions
 *******************************************************************************/
 bool simUart_Init(void);
-ezmUart *simUart_GetApi(uint8_t hw_uart_index);
+UartDrvApi *simUart_GetApi(uint8_t hw_uart_index);
 
 /******************************************************************************
 * Function Prototypes

@@ -288,87 +288,87 @@ static void ezm_AppPrintActiveModule(void)
     APPPRINT("ACTIVE MODULES:");
 
 #if (CLI == 1U)
-    APPPRINT("\t[x] CLI");
+    APPPRINT("[x] CLI");
 #else
-    APPPRINT("\t[ ] CLI");
+    APPPRINT("[ ] CLI");
 #endif
 
 #if (SCHEDULER == 1U)
-    APPPRINT("\t[x] SCHEDULER");
+    APPPRINT("[x] SCHEDULER");
 #else
-    APPPRINT("\t[ ] SCHEDULER");
+    APPPRINT("[ ] SCHEDULER");
 #endif
 
 #if (SMALLOC == 1U)
-    APPPRINT("\t[x] SMALLOC");
+    APPPRINT("[x] SMALLOC");
 #else
-    APPPRINT("\t[ ] SMALLOC");
+    APPPRINT("[ ] SMALLOC");
 #endif
 
 #if (BIN_PARSER == 1U)
-    APPPRINT("\t[x] BIN_PARSER");
+    APPPRINT("[x] BIN_PARSER");
 #else
-    APPPRINT("\t[ ] BIN_PARSER");
+    APPPRINT("[ ] BIN_PARSER");
 #endif
 
 #if (DEBUG == 1U)
-    APPPRINT("\t[x] DEBUG");
+    APPPRINT("[x] DEBUG");
 #else
-    APPPRINT("\t[ ] DEBUG");
+    APPPRINT("[ ] DEBUG");
 #endif
 
 #if (HELPER_LINKEDLIST == 1U)
-    APPPRINT("\t[x] HELPER_LINKEDLIST");
+    APPPRINT("[x] HELPER_LINKEDLIST");
 #else
-    APPPRINT("\t[ ] HELPER_LINKEDLIST");
+    APPPRINT("[ ] HELPER_LINKEDLIST");
 #endif
 
 #if (HELPER_HEXDUMP == 1U)
-    APPPRINT("\t[x] HELPER_HEXDUMP");
+    APPPRINT("[x] HELPER_HEXDUMP");
 #else
-    APPPRINT("\t[ ] HELPER_HEXDUMP");
+    APPPRINT("[ ] HELPER_HEXDUMP");
 #endif
 
 #if (RING_BUFFER == 1U)
-    APPPRINT("\t[x] RING_BUFFER");
+    APPPRINT("[x] RING_BUFFER");
 #else
-    APPPRINT("\t[ ] RING_BUFFER");
+    APPPRINT("[ ] RING_BUFFER");
 #endif
 
 #if (HELPER_ASSERT == 1U)
-    APPPRINT("\t[x] HELPER_ASSERT");
+    APPPRINT("[x] HELPER_ASSERT");
 #else
-    APPPRINT("\t[ ] HELPER_ASSERT");
+    APPPRINT("[ ] HELPER_ASSERT");
 #endif
 
 #if (STATEMACHINE == 1U)
-    APPPRINT("\t[x] STATEMACHINE");
+    APPPRINT("[x] STATEMACHINE");
 #else
-    APPPRINT("\t[ ] STATEMACHINE");
+    APPPRINT("[ ] STATEMACHINE");
 #endif
 
 #if (IPC == 1U)
-    APPPRINT("\t[x] IPC");
+    APPPRINT("[x] IPC");
 #else
-    APPPRINT("\t[ ] IPC");
+    APPPRINT("[ ] IPC");
 #endif
 
 #if (STCMEM==1U)
-    APPPRINT("\t[x] STCMEM");
+    APPPRINT("[x] STCMEM");
 #else
-    APPPRINT("\t[ ] STCMEM");
+    APPPRINT("[ ] STCMEM");
 #endif
 
 #if(DRIVERINF == 1U)
-    APPPRINT("\t[x] DRIVERINF");
+    APPPRINT("[x] DRIVERINF");
 #else
-    APPPRINT("\t[ ] DRIVERINF");
+    APPPRINT("[ ] DRIVERINF");
 #endif
 
 #if (NUM_OF_SUPPORTED_UART)
-    APPPRINT("\t[x] UART");
+    APPPRINT("[x] UART");
 #else
-    APPPRINT("\t[ ] UART");
+    APPPRINT("[ ] UART");
 #endif /* NUM_OF_SUPPORTED_UART */
 }
 

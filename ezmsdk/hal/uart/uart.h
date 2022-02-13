@@ -55,18 +55,18 @@ typedef enum
 /** @brief definition the callback function pointer 
  *  
  */
-typedef uint8_t (*UART_CALLBACK)(uint8_t eCode, void * pParam);
+typedef uint8_t (*UART_CALLBACK)(uint8_t eCode, void *param1, void *param2);
 
 /** @brief definition of api set for UART
  *  
  */
 typedef struct
 {
-    uint16_t(*ezmUart_Send)         (uint8_t uart_drv_id, uint8_t *au8Buffer, uint16_t u16Size);
-    uint16_t(*ezmUart_Receive)      (uint8_t uart_drv_id, uint8_t * au8Buffer, uint16_t u16Size);
-    void(*ezmUart_RegisterCallback) (uint8_t uart_drv_id, UART_CALLBACK pfnCallback);
-    void(*ezmUart_UnregisterCallback)(uint8_t uart_drv_id); /* TBD */
-}ezmUart;
+    uint16_t(*ezmUart_Send)         (uint8_t *au8Buffer, uint16_t u16Size);
+    uint16_t(*ezmUart_Receive)      (uint8_t * au8Buffer, uint16_t u16Size);
+    void(*ezmUart_RegisterCallback) (UART_CALLBACK pfnCallback);
+    void(*ezmUart_UnregisterCallback)(void);
+}UartDrvApi;
 
 
 /******************************************************************************
