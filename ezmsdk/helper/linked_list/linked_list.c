@@ -26,10 +26,9 @@
 #include "../../app/app_config.h"
 
 #if (HELPER_LINKEDLIST == 1U)
-
+#include "../../ezmDebug/ezmDebug.h"
 #include "linked_list.h"
-#include "stdlib.h"
-#include "stdbool.h"
+
 
 /******************************************************************************
 * Module Preprocessor Macros
@@ -124,35 +123,28 @@ void LinkedList_InsertToHead(LinkedList * pstList, Node * pstNewNode)
     {
         if(pstList->pstHead == NULL)
         {
-            /** Has no head
-             * it also implies that, list is new, aka it also has no tail
-             */
-            pstList->pstHead = pstNewNode;
             pstList->pstTail = pstNewNode;
-            pstNewNode->pstPrevNode = NULL; 
             pstNewNode->pstNextNode = NULL;
         }
         else
         {
-            pstNewNode->pstNextNode = pstList->pstHead;    /*new node next node point to head*/
-            pstNewNode->pstPrevNode = NULL;                /*new node prev node point to NULL*/
-            pstList->pstHead->pstPrevNode = pstNewNode;    /*prev node of current head point to new node*/
-            pstList->pstHead = pstNewNode;                 /*Update the head to new node*/
+            pstNewNode->pstNextNode = pstList->pstHead;
+            pstList->pstHead->pstPrevNode = pstNewNode;
+            pstList->pstHead = pstNewNode;
         }
 
+        pstList->pstHead = pstNewNode;
+        pstNewNode->pstPrevNode = NULL;
         pstList->u16Size++;
     }
 
     PRINT_LIST_METADATA(pstList);
-
-    return;
 }
 
 Node * LinkedList_RemoveFromHead(LinkedList * pstList)
 {
     LLPRINT("LinkedList_RemoveFromHead");
-    Node * pstRemovedNode;
-    pstRemovedNode = pstList->pstHead;
+    Node * pstRemovedNode = pstRemovedNode = pstList->pstHead;
 
     if(pstList != NULL)
     {
@@ -190,10 +182,7 @@ void LinkedList_InsertToTail(LinkedList * pstList, Node * pstNewNode)
             /** Has no tail
              * it also implies that, list is new, aka it also has no head
              */
-            pstList->pstHead = pstNewNode;
-            pstList->pstTail = pstNewNode;
-            pstNewNode->pstPrevNode = NULL; 
-            pstNewNode->pstNextNode = NULL;
+            LinkedList_InsertToHead(pstList, pstNewNode);
         }
         else
         {
@@ -201,9 +190,8 @@ void LinkedList_InsertToTail(LinkedList * pstList, Node * pstNewNode)
             pstNewNode->pstNextNode = NULL;                /*new node next node point to NULL*/
             pstList->pstTail->pstNextNode = pstNewNode;    /*Next node of current tail point to new node*/
             pstList->pstTail = pstNewNode;                 /*Update the tail to new node*/
+            pstList->u16Size++;
         }
-
-        pstList->u16Size++;
     }
 
     PRINT_LIST_METADATA(pstList);
@@ -214,8 +202,7 @@ void LinkedList_InsertToTail(LinkedList * pstList, Node * pstNewNode)
 Node * LinkedList_RemoveFromTail(LinkedList * pstList)
 {
     LLPRINT("LinkedList_RemoveFromTail");
-    Node * pstRemovedNode;
-    pstRemovedNode = pstList->pstTail;
+    Node * pstRemovedNode = pstRemovedNode = pstList->pstTail;
 
     if(pstList != NULL)
     {
@@ -239,113 +226,6 @@ Node * LinkedList_RemoveFromTail(LinkedList * pstList)
 
     PRINT_LIST_METADATA(pstList);
 
-    return pstRemovedNode;
-}
-
-Node * LinkedList_FindNodeAtIndex(LinkedList * pstList, uint16_t u16Index)
-{
-    LLPRINT("LinkedList_FindNodeAtIndex");
-    Node * pstFoundNode = NULL;
-
-    if(pstList != NULL)
-    {
-        if (u16Index < pstList->u16Size)
-        {
-            if(u16Index == 0U)
-            {
-                pstFoundNode = pstList->pstHead;
-            }
-            else if(u16Index == pstList->u16Size - 1U)
-            {
-                pstFoundNode = pstList->pstTail;
-            }
-            else if (u16Index > pstList->u16Size/2)
-            {
-                pstFoundNode = pstList->pstTail;
-                for(uint16_t i = 0; i < pstList->u16Size - 1U - u16Index; i++)
-                {
-                    pstFoundNode = pstFoundNode->pstPrevNode;
-                }
-            }
-            else
-            {
-                pstFoundNode = pstList->pstHead;
-                for(uint16_t i = 0; i < u16Index; i++)
-                {
-                    pstFoundNode = pstFoundNode->pstNextNode;
-                }
-            }
-        }
-    }
-
-    PRINT_NODE_METADATA(pstFoundNode);
-
-    return pstFoundNode;
-}
-
-
-void LinkedList_InsertNodeAtIndex(LinkedList * pstList, Node * pstInsertedNode, uint16_t u16Index)
-{
-    LLPRINT("LinkedList_InsertNodeAtIndex");
-    Node * pstFoundNode;
-
-    if(u16Index == 0U)
-    {
-        LinkedList_InsertToHead(pstList, pstInsertedNode);
-    }
-    else if(u16Index == pstList->u16Size - 1U)
-    {
-        LinkedList_InsertToTail(pstList, pstInsertedNode);
-    }
-    else
-    {
-        /*Looking for the node in that index*/
-        pstFoundNode = LinkedList_FindNodeAtIndex(pstList, u16Index);
-        if(pstFoundNode != NULL)
-        {
-            /*Insert the node before the node at given index*/
-            pstFoundNode->pstPrevNode->pstNextNode = pstInsertedNode;
-            pstInsertedNode->pstPrevNode = pstFoundNode->pstPrevNode;
-
-            pstFoundNode->pstPrevNode = pstInsertedNode;
-            pstInsertedNode->pstNextNode = pstFoundNode;
-
-            pstList->u16Size++;
-        }
-    }
-    
-    PRINT_LIST_METADATA(pstList);
-    return;
-}
-
-Node * LinkedList_RemoveNodeAtIndex(LinkedList * pstList, uint16_t u16Index)
-{
-    LLPRINT("LinkedList_RemoveNodeAtIndex");
-    Node * pstRemovedNode = NULL;
-
-    if(u16Index == 0U)
-    {
-        pstRemovedNode = LinkedList_RemoveFromHead(pstList);
-    }
-    else if(u16Index == pstList->u16Size - 1U)
-    {
-        pstRemovedNode = LinkedList_RemoveFromTail(pstList);
-    }
-    else
-    {
-        /*Looking for the node in that index*/
-        pstRemovedNode = LinkedList_FindNodeAtIndex(pstList, u16Index);
-        if(pstRemovedNode != NULL)
-        {
-            /*unlink the remove node*/
-            pstRemovedNode->pstPrevNode->pstNextNode = pstRemovedNode->pstNextNode;
-            pstRemovedNode->pstNextNode->pstPrevNode =  pstRemovedNode->pstPrevNode;
-
-            pstList->u16Size--;
-        }
-    }
-    
-    PRINT_LIST_METADATA(pstList);
     return pstRemovedNode;
 }
 

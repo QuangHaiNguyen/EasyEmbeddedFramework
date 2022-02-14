@@ -24,7 +24,11 @@
 *******************************************************************************/
 #include "app.h"
 #include "app_config.h"
+#include "../ezmDebug/ezmDebug.h"
+
+#if (SUPPORTED_CHIP == WIN)
 #include <time.h>
+#endif
 
 #if (CLI == 1U)
 #include "../cli/cli.h"
