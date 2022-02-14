@@ -76,7 +76,6 @@ void* GetUart0Driver(void)
     ret_driver = &aszSupportedUart[CLI_UART];
     UARTPRINT("UART0 init complete");
 #elif(SUPPORTED_CHIP == WIN)
-
     aszSupportedUart[CLI_UART].is_busy = false;
     aszSupportedUart[CLI_UART].init_function = simUart_Init;
     aszSupportedUart[CLI_UART].driver_api = simUart_GetApi(CLI_UART);

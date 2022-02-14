@@ -110,7 +110,9 @@ static uint8_t CLI_Proccess(void)
     {
     case GET_BYTE:
         (void)uart_driver->ezmUart_Receive(&one_byte, 1U);
+#if(SUPPORTED_CHIP != WIN)
         state = WAIT;
+#endif
         break;
     case WAIT:
     	break;
@@ -160,16 +162,24 @@ static uint8_t UartCallbackHandle(uint8_t notify_code, void* param1, void* param
     case UART_TX_COMPLT:
         break;
     case UART_RX_COMPLT:
-    	cli_buffer[buff_index] = one_byte;
-    	if (cli_buffer[buff_index] == '\n' || buff_index == sizeof(cli_buffer) || cli_buffer[buff_index] == '\r')
-		{
-			state = PROC_CMD;
-		}
+#if(SUPPORTED_CHIP == WIN)
+        cli_buffer[buff_index] = *(char*)param1;;
+        if (cli_buffer[buff_index] == '\n' || buff_index == sizeof(cli_buffer) || cli_buffer[buff_index] == '\r')
+        {
+            state = PROC_CMD;
+        }
+#else
+        cli_buffer[buff_index] = one_byte;
+        if (cli_buffer[buff_index] == '\n' || buff_index == sizeof(cli_buffer) || cli_buffer[buff_index] == '\r')
+        {
+            state = PROC_CMD;
+        }
         else
         {
-        	(void)uart_driver->ezmUart_Receive(&one_byte, 1U);
+            (void)uart_driver->ezmUart_Receive(&one_byte, 1U);
         }
-    	buff_index++;
+#endif
+        buff_index++;
         break;
     case UART_BUFF_FULL:
         break;

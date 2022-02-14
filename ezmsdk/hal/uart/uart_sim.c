@@ -106,7 +106,7 @@ static uint16_t UartSim_Read(uint8_t* buff, uint16_t size)
 
     if (hw_uarts[CLI_UART].callback)
     {
-        (void)hw_uarts[CLI_UART].callback((uint8_t)UART_RX_COMPLT, (void*)buff, (void*)&size);
+        (void)hw_uarts[CLI_UART].callback((uint8_t)UART_RX_COMPLT, (void*)buff, size);
     }
 
     return size;
