@@ -2,54 +2,28 @@
 * Title                 :   link_list 
 * Filename              :   link_list.c
 * Author                :   Quang Hai Nguyen
-* Origin Date           :   21.02.2021
-* Version               :   1.0.0
-*
-* <br><b> - HISTORY OF CHANGES - </b>
-*  
-* <table align="left" style="width:800px">
-* <tr><td> Date       </td><td> Software Version </td><td> Initials         </td><td> Description </td></tr>
-* <tr><td> 21.02.2021 </td><td> 1.0.0            </td><td> Quang Hai Nguyen </td><td> Interface Created </td></tr>
-* </table><br><br>
-* <hr>
 *
 *******************************************************************************/
 
-/** @file  link_list.c
- *  @brief This is the source template for a link_list
+/** @file   link_list.c
+ *  @brief  This is the implementation of the doubly linked list data structure
+ *          It is inspired by the linked list implementation in the linux kernel
  */
 
 /******************************************************************************
 * Includes
 *******************************************************************************/
-
-#include "../../app/app_config.h"
-
-#if (HELPER_LINKEDLIST == 1U)
-#include "../../ezmDebug/ezmDebug.h"
 #include "linked_list.h"
 
+#if (HELPER_LINKEDLIST == 1U)
 
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
-#define MOD_NAME        "LL"
-
-#if (MODULE_DEBUG == 1U) && (HELPER_LINKEDLIST_DEBUG == 1U)
-    #define LLPRINT(a)                  PRINT_DEBUG(MOD_NAME,a)
-    #define LLPRINT1(a,b)               PRINT_DEBUG1(MOD_NAME,a,b)
-    #define LLPRINT2(a,b,c)             PRINT_DEBUG2(MOD_NAME,a,b,c)
-    #define LLPRINT3(a,b,c,d)           PRINT_DEBUG3(MOD_NAME,a,b,c,d)
-    #define LLPRINT4(a,b,c,d,e)         PRINT_DEBUG4(MOD_NAME,a,b,c,d,e)
-#else 
-    #define LLPRINT(a)
-    #define LLPRINT1(a,b)
-    #define LLPRINT2(a,b,c)
-    #define LLPRINT3(a,b,c,d)
-    #define LLPRINT4(a,b,c,d,e)
-#endif
 
 #define NODE_INVALID_ID     0xFFFF
+
+#define UNLINK_NODE(node)   node->prev->next = node->next;node->next->prev = node->prev;
 
 /******************************************************************************
 * Module Typedefs
@@ -65,244 +39,181 @@ static Node node_pool[NUM_OF_NODE] = { 0 };
 * Function Definitions
 *******************************************************************************/
 
-#if HELPER_LINKEDLIST_DEBUG == 1U
-void LinkedList_PrintLinkedListMetaData(LinkedList * pstList);      /*Print linked list's metadata*/
-void LinkedList_PrintNodeMetaData(Node * pstNode);                  /*Print node's metadata*/
-void LinkedList_PrintListForward(LinkedList * pstList);             /*Print list from head -> tail*/
-void LinkedList_PrintListBackward(LinkedList * pstList);            /*Print List from tail -> head*/
-#endif
-
-#if (MODULE_DEBUG == 1U) && (HELPER_LINKEDLIST_DEBUG == 1U)
-    #define PRINT_LIST_METADATA(x)      LinkedList_PrintLinkedListMetaData(x)
-    #define PRINT_NODE_METADATA(x)      LinkedList_PrintNodeMetaData(x)
-    #define PRINT_LIST_FORWARD(x)       LinkedList_PrintListForward(x)
-    #define PRINT_LIST_BACKWARD(x)      LinkedList_PrintListBackward(x)
-#else
-    #define PRINT_LIST_METADATA(x)
-    #define PRINT_NODE_METADATA(x)
-    #define PRINT_LIST_FORWARD(x)
-    #define PRINT_LIST_BACKWARD(x)
-#endif
-
 
 void ezmLL_Initialization(void)
 {
     for (uint16_t i = 0; i < NUM_OF_NODE; i++)
     {
-        ezmLL_ResetNode(&node_pool[i]);
+        //ezmLL_ResetNode(&node_pool[i]);
     }
 }
+
+
 /******************************************************************************
-* Function : LinkedList_AddToHead
+* Function : ezmLL_AppendNode
+*//**
+* \b Description:
+*
+* Append a node after a node
+*
+* PRE-CONDITION: None
+*
+* POST-CONDITION: None
+*
+* @param    *new_node: (IN)pointer to the new node
+* @param    *node (IN)pointer to the node, which new node will be appended to
+* @return   true if suceess
+*
+*******************************************************************************/
+bool ezmLL_AppendNode(Node* new_node, Node* node)
+{
+    bool is_success = false;
+    if (new_node != NULL && node != NULL)
+    {
+        new_node->next = node->next;
+        new_node->prev = node;
+        node->next->prev = new_node;
+        node->next = new_node;
+
+        is_success = true;
+    }
+
+    return is_success;
+}
+
+/******************************************************************************
+* Function : ezmLL_InsertNewHead
 *//** 
 * \b Description:
 *
-* Add a new node to the head of the linked list
+* Add a new node to the current head position
 *
-* PRE-CONDITION: Linked list must be initialized
+* PRE-CONDITION: None
 *
 * POST-CONDITION: None
 * 
-* @param    pstList:    (IN)pointer to the linked list
-* @param    pstNewNode: (IN)pointer to the new node
-* @return   None
-*
-* \b Example Example:
-* @code
-* LinkedList stMyList;
-* LinkedList_AddToHead(&stMyList, &stNewNode);
-* @endcode
-*
-* @see sum
+* @param    *current_head: (IN)pointer to the current head
+* @param    *new_node (IN)pointer to the new node
+* @return   pointer to the new head  or NULL
 *
 *******************************************************************************/
-void LinkedList_InsertToHead(LinkedList * pstList, Node * pstNewNode)
+Node* ezmLL_InsertNewHead(Node *current_head, Node * new_node)
 {
-    LLPRINT("LinkedList_InsertToHead");
-    if(pstList != NULL && pstNewNode != NULL)
-    {
-        if(pstList->pstHead == NULL)
-        {
-            pstList->pstTail = pstNewNode;
-            pstNewNode->pstNextNode = NULL;
-        }
-        else
-        {
-            pstNewNode->pstNextNode = pstList->pstHead;
-            pstList->pstHead->pstPrevNode = pstNewNode;
-            pstList->pstHead = pstNewNode;
-        }
+    bool is_success = true;
+    Node* new_head = NULL;
 
-        pstList->pstHead = pstNewNode;
-        pstNewNode->pstPrevNode = NULL;
-        pstList->u16Size++;
+    if(current_head == NULL || new_node == NULL)
+    {
+        is_success = false;
     }
 
-    PRINT_LIST_METADATA(pstList);
+    if (is_success)
+    {
+        is_success && ezmLL_AppendNode(new_node, current_head->prev);
+    }
+
+    if (is_success)
+    {
+        new_head = new_node;
+    }
+
+    return new_head;
 }
 
-Node * LinkedList_RemoveFromHead(LinkedList * pstList)
+/******************************************************************************
+* Function : ezmLL_UnlinkCurrentHead
+*//**
+* \b Description:
+*
+* unlink the current head of the linked list, the head position will be changed to
+* head->next
+*
+* PRE-CONDITION: None
+* POST-CONDITION: None
+*
+* @param    *head: (IN)pointer to the current head
+* @return   pointer to the unlinked head or NULL
+*
+*******************************************************************************/
+Node * ezmLL_UnlinkCurrentHead(Node * head)
 {
-    LLPRINT("LinkedList_RemoveFromHead");
-    Node * pstRemovedNode = pstRemovedNode = pstList->pstHead;
+    Node* new_head = head;
 
-    if(pstList != NULL)
+    if(head->next != head)
     {
-        if(pstRemovedNode != NULL)
+        new_head = head->next;
+        UNLINK_NODE(head);
+    }
+
+    return new_head;
+}
+
+/******************************************************************************
+* Function : ezmLL_IsNodeInList
+*//**
+* \b Description:
+*
+* Check if a node is in the list
+*
+* PRE-CONDITION: None
+*
+* POST-CONDITION: None
+*
+* @param    *head: (IN)pointer to the list head
+* @param    *searched_node (IN)node to be search for existance
+* @return   True if exsisting
+*
+*******************************************************************************/
+bool ezmLL_IsNodeInList(Node* head, Node* searched_node)
+{
+    bool is_existing = false;
+    Node* node;
+
+    if (head == searched_node)
+    {
+        is_existing = true;
+    }
+    else if (head != NULL && searched_node != NULL)
+    {
+        EZMLL_FOR_EACH(node, head)
         {
-            PRINT_NODE_METADATA(pstRemovedNode);
-            pstList->pstHead = pstList->pstHead->pstNextNode;
-            
-            /*Linked list is not empty*/
-            if(pstList->pstHead != NULL)
+            if (node == searched_node)
             {
-                pstList->pstHead->pstPrevNode = NULL;
+                is_existing = true;
+                break;
             }
-            else
-            {
-                pstList->pstTail = NULL;
-            }
-            pstList->u16Size--;
         }
-    }
-
-    PRINT_LIST_METADATA(pstList);
-
-    return pstRemovedNode;
-}
-
-void LinkedList_InsertToTail(LinkedList * pstList, Node * pstNewNode)
-{
-    LLPRINT("LinkedList_InsertToTail");
-    /*Only perform action when list and node are not Null*/
-    if(pstList != NULL && pstNewNode != NULL)
-    {
-        if(pstList->pstTail == NULL)
-        {
-            /** Has no tail
-             * it also implies that, list is new, aka it also has no head
-             */
-            LinkedList_InsertToHead(pstList, pstNewNode);
-        }
-        else
-        {
-            pstNewNode->pstPrevNode = pstList->pstTail;    /*new node prev node point to tail*/
-            pstNewNode->pstNextNode = NULL;                /*new node next node point to NULL*/
-            pstList->pstTail->pstNextNode = pstNewNode;    /*Next node of current tail point to new node*/
-            pstList->pstTail = pstNewNode;                 /*Update the tail to new node*/
-            pstList->u16Size++;
-        }
-    }
-
-    PRINT_LIST_METADATA(pstList);
-
-    return;
-}
-
-Node * LinkedList_RemoveFromTail(LinkedList * pstList)
-{
-    LLPRINT("LinkedList_RemoveFromTail");
-    Node * pstRemovedNode = pstRemovedNode = pstList->pstTail;
-
-    if(pstList != NULL)
-    {
-        if(pstRemovedNode != NULL)
-        {
-            PRINT_NODE_METADATA(pstRemovedNode);
-            pstList->pstTail = pstList->pstTail->pstPrevNode;
-            
-            /*Linked list is not empty*/
-            if(pstList->pstTail != NULL)
-            {
-                pstList->pstTail->pstNextNode = NULL;
-            }
-            else
-            {
-                pstList->pstHead = NULL;
-            }
-            pstList->u16Size--;
-        }
-    }
-
-    PRINT_LIST_METADATA(pstList);
-
-    return pstRemovedNode;
-}
-
-Node * LinkedList_SearchNode(LinkedList * pstList, Node * pstSearchNode)
-{
-    Node * pstNode;
-    pstNode = pstList->pstHead;
-
-    while(pstNode != NULL)
-    {
-        if(pstNode == pstSearchNode)
-        {
-            break;
-        }
-        else
-        {
-            pstNode = pstNode->pstNextNode;
-        }   
-    }
-
-    return pstNode;
-}
-
-bool LinkedList_InsertNewNodeAfterANode(LinkedList * pstList, Node * pstCurrentNode, Node * pstNewNode)
-{
-    bool bSuccess = false;
-    Node * pstSearchNode = LinkedList_SearchNode(pstList, pstCurrentNode);
-
-    if(pstSearchNode != NULL)
-    {
-        pstNewNode->pstPrevNode = pstSearchNode;
-        pstNewNode-> pstNextNode = pstSearchNode->pstNextNode;
-        pstSearchNode->pstNextNode = pstNewNode;
-        
-        if (pstNewNode->pstNextNode == NULL)
-        {
-            /* new node is at tail so we have to update the tail*/
-            pstList->pstTail = pstNewNode;
-        }
-        
-
-        pstList->u16Size++;
-        bSuccess = true;
-    }     
-
-    return bSuccess;
-}
-
-bool LinkedList_RemoveNode(LinkedList * pstList, Node * pstRemovedNode)
-{
-    bool bSuccess = false;
-
-    if(pstRemovedNode == pstList->pstHead)
-    {
-        LinkedList_RemoveFromHead(pstList);
-        bSuccess = true;
-    }
-    else if (pstRemovedNode == pstList->pstTail)
-    {
-        LinkedList_RemoveFromTail(pstList);
-        bSuccess = true;
     }
     else
     {
-        Node * pstSearchNode = LinkedList_SearchNode(pstList, pstRemovedNode);
-        if(pstSearchNode != NULL)
-        {
-            pstSearchNode->pstPrevNode->pstNextNode = pstSearchNode->pstNextNode;
-            pstSearchNode->pstNextNode->pstPrevNode = pstSearchNode->pstPrevNode;
-            pstList->u16Size--;
-            bSuccess = true;
-        }      
+        /* could not find node, return false */
     }
 
-    return bSuccess;
+    return is_existing;
 }
 
+/******************************************************************************
+* Function : ezmLL_UnlinkNode
+*//**
+* \b Description:
+*
+* Unlinked a node
+*
+* PRE-CONDITION: None
+*
+* POST-CONDITION: None
+*
+* @param    *unlinked_node: (IN)pointer to the node, which will be unlinked
+* @return   None
+*
+*******************************************************************************/
+void ezmLL_UnlinkNode(Node * unlinked_node)
+{
+    UNLINK_NODE(unlinked_node);
+}
+
+
+#if 0
 Node* ezmLL_GetFreeNode(void)
 {
     Node *free_node = NULL;
@@ -326,61 +237,12 @@ void ezmLL_ResetNode(Node * node)
 {
     if (NULL != node && node->u16NodeIndex < NUM_OF_NODE)
     {
-        node->pBuffer = NULL;
         node->pstNextNode = NULL;
         node->pstPrevNode = NULL;
-        node->u16BufferSize = 0U;
         node->u16NodeIndex = NODE_INVALID_ID;
     }
 }
+#endif
 
-#if HELPER_LINKEDLIST_DEBUG == 1U
-void LinkedList_PrintLinkedListMetaData(LinkedList * pstList)
-{
-    if(pstList != NULL)
-    {
-        PRINT2("list head: %p", (void*)pstList->pstHead);
-        PRINT2("list tail: %p", (void*)pstList->pstTail);
-        PRINT2("list size: %u", pstList->u16Size);    
-    }
-}
-
-void LinkedList_PrintNodeMetaData(Node * pstNode)
-{
-    if(pstNode != NULL)
-    {
-        PRINT2("node @: %p", (void*)pstNode);
-        PRINT2("node Id: %u", pstNode->u16NodeIndex);
-        PRINT2("next node: %p", (void*)pstNode->pstNextNode);
-        PRINT2("prev node: %p", (void*)pstNode->pstPrevNode);
-    }
-}
-
-void LinkedList_PrintListForward(LinkedList * pstList)
-{
-    PRINT1("LinkedList_PrintListForward");
-    Node * pstCurrentNode;
-    pstCurrentNode = pstList->pstHead;
-
-    while(pstCurrentNode != NULL)
-    {
-        PRINT_NODE_METADATA(pstCurrentNode);
-        pstCurrentNode = pstCurrentNode->pstNextNode;
-    }
-}
-
-void LinkedList_PrintListBackward(LinkedList * pstList)
-{
-    PRINT1("LinkedList_PrintListBackward");
-    Node * pstCurrentNode;
-    pstCurrentNode = pstList->pstTail;
-
-    while(pstCurrentNode != NULL)
-    {
-        PRINT_NODE_METADATA(pstCurrentNode);
-        pstCurrentNode = pstCurrentNode->pstPrevNode;
-    }
-}
-#endif /* HELPER_LINKEDLIST_DEBUG */
 #endif /* HELPER_LINKEDLIST */
 /* End of file*/

@@ -23,13 +23,36 @@
 /*******************************************************************************
 * Includes
 *******************************************************************************/
+#include "../../app/app_config.h"
+
 #include "stdint.h"
 #include "stdbool.h"
 
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
-/* None */
+
+/*@brief: iterate thru a link list starting from head
+ *
+ */
+#define EZMLL_FOR_EACH(node,head)               for(node = head->next; node != head; node = node->next)
+
+/*@brief: initialize a node
+ *
+ */
+#define EZMLL_INIT_NODE(name)                   {&(name), &(name)}
+
+/* It deserves a whole story. Generally speaking, it use the same concept 
+ * as in the linked list of the linux kernel
+ * (type*)0 cast address 0 (zero) to data type "type"
+ * (type*)0)->member access the member of type "type"
+ * ((char*)&(((type*)0)->member) - (char*)((type*)0)): minus the address of the member and the addres 0
+ */
+#define OFFSET(type, member)    ((char*)&(((type*)0)->member) - (char*)((type*)0))
+
+/* This one is easy, see OFFSET */
+#define EZMLL_GET_PARENT_OF(ptr,member,type)   (type*)((char*)ptr - OFFSET(type, member))
+
 
 /******************************************************************************
 * Module Typedefs
@@ -40,23 +63,21 @@
  */
 typedef struct Node
 {
-    uint8_t* pBuffer;          /**< pointer to the buffer storing data*/
-    uint16_t u16BufferSize;     /**< size of buffer*/
-    uint16_t u16NodeIndex;      /**< Store the node index*/
-    struct Node * pstNextNode;  /**< pointer to the next node in a linked list*/
-    struct Node * pstPrevNode;  /**< pointer to the previous node in a linked list*/
+    //uint16_t u16NodeIndex;      /**< Store the node index*/
+    struct Node * next;  /**< pointer to the next node in a linked list*/
+    struct Node * prev;  /**< pointer to the previous node in a linked list*/
 }Node;
 
+#if 0
 /** @brief Meta data of the linked list
  *      Contain the size and pointer to the first node
  */
 typedef struct LinkedList
 {
     Node * pstHead;     /**< pointer to the head of linked list*/
-    Node * pstTail;     /**< pointer to the tail of linked list*/
-    uint16_t u16Size;   /**< store the size of the linked list*/
+    uint16_t offset;
 }LinkedList;
-
+#endif
 
 /******************************************************************************
 * Module Variable Definitions
@@ -66,16 +87,14 @@ typedef struct LinkedList
 /******************************************************************************
 * Function Prototypes
 *******************************************************************************/
-void        ezmLL_Initialization                (void);
-void        LinkedList_InsertToHead             (LinkedList *pstList, Node *pstNewNode);                          /*Add a node to the head*/
-Node       *LinkedList_RemoveFromHead           (LinkedList *pstList);                                             /*Remove the head node*/
-void        LinkedList_InsertToTail             (LinkedList *pstList, Node *pstNewNode);                          /*Add a node to the tail*/
-Node       *LinkedList_RemoveFromTail           (LinkedList *pstList);                                             /*Remove the tail node*/
-bool        LinkedList_InsertNewNodeAfterANode  (LinkedList *pstList, Node *pstCurrentNode, Node *pstNewNode);
-Node       *LinkedList_SearchNode               (LinkedList *pstList, Node *pstSearchNode);
-bool        LinkedList_RemoveNode               (LinkedList *pstList, Node *pstRemovedNode);
-Node        *ezmLL_GetFreeNode                  (void);
-void        ezmLL_ResetNode                     (Node *node);
+void        ezmLL_Initialization        (void);
+bool        ezmLL_AppendNode            (Node *new_node, Node *appended_node);
+Node        *ezmLL_InsertNewHead        (Node * current_head, Node *new_node);
+Node        *ezmLL_UnlinkCurrentHead    (Node *head);
+bool        ezmLL_IsNodeInList          (Node *head, Node *searched_node);
+void        ezmLL_UnlinkNode            (Node *unlinked_node);
+//Node        *ezmLL_GetFreeNode                  (void);
+//void        ezmLL_ResetNode                     (Node *node);
 
 #endif /* _LINKEDLIST_H */
 
