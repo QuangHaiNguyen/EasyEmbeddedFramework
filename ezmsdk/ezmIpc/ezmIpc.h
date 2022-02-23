@@ -1,25 +1,17 @@
 /*******************************************************************************
-* Title                 :   IPC module
+* Title                 :   ezmIpc
 * Filename              :   ezmIpc.h
 * Author                :   Quang Hai Nguyen
-* Origin Date           :   09.08.2021
-* Version               :   1.0.0
+* Origin Date           :   03.02.2022
 *
 *******************************************************************************/
 
-/*************** INTERFACE CHANGE LIST *****************************************
-*
-*  Date         Version     Author              Description 
-*  09.08.2021   1.0.0       Quang Hai Nguyen    Interface Created.
-*
-*******************************************************************************/
 /** @file   ezmIpc.h
  *  @brief  Header template for a module
  */
 
 #ifndef _IPC_H
 #define _IPC_H
-
 
 /*******************************************************************************
 * Includes
@@ -32,13 +24,13 @@
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
-/* None */
+#define IPC_INVALID         NUM_OF_IPC_INSTANCE
 
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
 typedef uint32_t(*ezmIpc_MessageCallback)(void);
-
+typedef uint32_t ezmIpc;
 /******************************************************************************
 * Module Variable Definitions
 *******************************************************************************/
@@ -48,11 +40,11 @@ typedef uint32_t(*ezmIpc_MessageCallback)(void);
 * Function Prototypes
 *******************************************************************************/
 void    ezmIpc_InitModule       (void);
-bool    ezmIpc_GetInstance      (uint8_t owner_id, uint8_t* ipc_buffer, uint16_t buffer_size, ezmIpc_MessageCallback fnCallback);
-void*   ezmIpc_InitMessage      (uint8_t send_to_id, uint16_t size_in_byte);
-bool    ezmIpc_SendMessage      (uint8_t send_to_id, void *message);
-void*   ezmIpc_ReceiveMessage   (uint8_t owner_id, uint16_t *message_size);
-bool    ezmIpc_ReleaseMessage   (uint8_t owner_id, void *message);
+ezmIpc  ezmIpc_GetInstance      (uint8_t* ipc_buffer, uint16_t buffer_size, ezmIpc_MessageCallback fnCallback);
+void*   ezmIpc_InitMessage      (ezmIpc send_to, uint16_t size_in_byte);
+bool    ezmIpc_SendMessage      (ezmIpc send_to, void *message);
+void*   ezmIpc_ReceiveMessage   (ezmIpc receive_from, uint16_t *message_size);
+bool    ezmIpc_ReleaseMessage   (ezmIpc receive_from, void *message);
 
 #endif /* IPC */
 #endif /* _IPC_H */

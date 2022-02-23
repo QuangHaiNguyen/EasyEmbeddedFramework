@@ -3,7 +3,6 @@
 * Filename              :   ezmIpc.c
 * Author                :   Quang Hai Nguyen
 * Origin Date           :   03.02.2022
-* Version               :   1.0.0
 *
 *******************************************************************************/
 
@@ -17,6 +16,7 @@
 #include "ezmIpc.h"
 
 #if (IPC == 1U)
+#include "../helper/linked_list/linked_list.h"
 #include "../helper/stcmem/stcmem.h"
 #include "ezmIpc_conf.h"
 #include "string.h"
@@ -37,11 +37,15 @@
     #define IPCPRINT4(a,b,c,d,e)
 #endif
 
-#define FREE_INSTANCE       0xFFU
+/**@brief Get the MemBlock structure from the node
+ *
+ */
+#define GET_BLOCK(node_ptr) (EZMLL_GET_PARENT_OF(node_ptr, node, struct MemBlock))
 
-#define NUM_OF_MODULE       sizeof(au8RegisteredModule)
-
-
+/**@brief Get the instance from the ezmIpc type
+ *
+ */
+#define GET_INSTANCE(ipc) ((ipc<NUM_OF_IPC_INSTANCE) ? &instance_pool[ipc] : NULL)
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
@@ -51,10 +55,10 @@
  */
 typedef struct
 {
-    uint8_t instance_owner_id;          /**< Store the id of the owner of the instance */
+    bool        is_busy;                /**< Store the id of the owner of the instance */
+    ezmMemList  memory_list;            /**< Memory list to manage the buffer of the ipc instance*/
+    struct Node pending_list_head;      /**< list contains message pending to be sent*/
     ezmIpc_MessageCallback fnCallback;  /**< Callback function */
-    ezmMemList memory_list;             /**< Memory list to manage the buffer of the ipc instance*/
-    LinkedList pending_list;            /**< list contains message pending to be sent*/
 }IpcInstance;
 
 /******************************************************************************
@@ -67,16 +71,14 @@ static IpcInstance instance_pool[NUM_OF_IPC_INSTANCE] = {0};    /**< pool of ipc
 * Function Definitions
 *******************************************************************************/
 
-/**Function to manipulate the buffer of the ipc extern is used because these 
+/**Function to manipulate the buffer of the ipc. Keyword extern is used because these 
  * functions are not meant to be shared with the user
  */
-extern MemHdr*  ezmStcMem_ReserveMemoryBlock(LinkedList* free_list, uint16_t block_size_byte);
-extern bool     ezmStcMem_MoveHeader        (MemHdr* header, LinkedList* from_list, LinkedList* to_list);
-
-static void         ezmIpc_ResetInstance    (uint8_t instance_index);
-static IpcInstance  *ezmIpc_GetFreeInstance (void);
-static IpcInstance  *ezmIpc_SearchInstance  (uint8_t owner_id);
-static bool         ezmIpc_IsInstanceExist  (uint8_t owner_id);
+extern inline struct Node*      ezmStcMem_ReserveMemoryBlock(struct Node* free_list_head, uint16_t block_size_byte);
+extern inline bool              ezmStcMem_MoveBlock(struct Node* move_node, struct Node* from_list_head, struct Node* to_list_head);
+extern inline struct MemBlock*  GetFreeBlock(void);
+extern inline void              ReleaseBlock(struct MemBlock* block);
+static void                     ezmIpc_ResetInstance    (uint8_t instance_index);
 
 /******************************************************************************
 * Function : ezmIpc_InitModule
@@ -112,48 +114,30 @@ void ezmIpc_InitModule(void)
 *
 * POST-CONDITION: None
 *
-* @param    owner_id:       id of the owner of this IPC instance. MUST BE UNIQUE
 * @param    *ipc_buffer:    pointer to the providing buffer for the instance
 * @param    buffer_size:    size of the buffer in byte
 * @param    fnCallback:     callback function, tell the owner that it receives a message
 *
-* @return   true: success
-*           false: fail
+* @return   handle to the ipc instance
 *
 *******************************************************************************/
-bool ezmIpc_GetInstance(uint8_t owner_id, uint8_t *ipc_buffer, uint16_t buffer_size, ezmIpc_MessageCallback fnCallback)
+ezmIpc ezmIpc_GetInstance(uint8_t* ipc_buffer, uint16_t buffer_size, ezmIpc_MessageCallback fnCallback)
 {
-    bool is_success = true;
-    IpcInstance *new_instance = NULL;
-
-    if (FREE_INSTANCE == owner_id || NULL == ipc_buffer || 0 == buffer_size)
+    ezmIpc free_instance = NUM_OF_IPC_INSTANCE;
+    for (uint8_t i = 0; i < NUM_OF_IPC_INSTANCE; i++)
     {
-        is_success = false;
-    }
-
-    if (ezmIpc_IsInstanceExist(owner_id))
-    {
-        is_success = false;
-    }
-
-    if (is_success)
-    {
-        new_instance = ezmIpc_GetFreeInstance();
-        if (NULL == new_instance)
+        if (instance_pool[i].is_busy == false)
         {
-            is_success = false;
-            PRINT_ERR("Dont have enough instance!!!");
+            instance_pool[i].is_busy = true;
+            instance_pool[i].fnCallback = fnCallback;
+            instance_pool[i].memory_list.buff = ipc_buffer;
+            instance_pool[i].memory_list.buff_size = buffer_size;
+            (void)ezmStcMem_InitMemList(&instance_pool[i].memory_list, ipc_buffer, buffer_size);
+            free_instance = (ezmIpc)i;
+            break;
         }
     }
-
-    if (is_success)
-    {
-        new_instance->instance_owner_id = owner_id;
-        new_instance->fnCallback = fnCallback;
-        is_success = is_success & ezmStcMem_InitMemList(&new_instance->memory_list, ipc_buffer, buffer_size);
-    }
-
-    return is_success;
+    return free_instance;
 }
 
 /******************************************************************************
@@ -169,46 +153,29 @@ bool ezmIpc_GetInstance(uint8_t owner_id, uint8_t *ipc_buffer, uint16_t buffer_s
 *
 * POST-CONDITION: None
 *
-* @param    send_to_id:     the id of the module which we want to send the message to
+* @param    send_to:        ipc handle, which the message will be sent to
 * @param    size_in_byte    size of the message in byte
 *
 * @return   address of the buffer
 *           NULL error
 *
 *******************************************************************************/
-void* ezmIpc_InitMessage(uint8_t send_to_id, uint16_t size_in_byte)
+void* ezmIpc_InitMessage(ezmIpc send_to, uint16_t size_in_byte)
 {
-    bool        is_success = true;
-    void        *buffer_address = NULL;
-    IpcInstance *send_to_instance = NULL;
-    MemHdr      *reserved_header = NULL;
+    void            *buffer_address = NULL;
+    IpcInstance     *send_to_instance = NULL;
+    struct Node     *pending_node = NULL;
 
-    if (0U == size_in_byte)
+    if (size_in_byte > 0 && send_to < NUM_OF_IPC_INSTANCE)
     {
-        is_success = false;
-    }
-
-    if (is_success)
-    {
-        send_to_instance = ezmIpc_SearchInstance(send_to_id);
-
-        if (NULL == send_to_instance)
+        send_to_instance = GET_INSTANCE(send_to);
+        pending_node = ezmStcMem_ReserveMemoryBlock(&send_to_instance->memory_list.free_list_head, size_in_byte);
+        if (NULL != pending_node)
         {
-            is_success = false;
-            PRINT_ERR1("[module = %x] does not exist", send_to_id);
+            buffer_address = GET_BLOCK(pending_node)->buff;
+            EZMLL_UNLINK_NODE(pending_node);
+            EZMLL_ADD_TAIL(&send_to_instance->pending_list_head, pending_node);
         }
-    }
-
-    if (is_success)
-    {
-        reserved_header = ezmStcMem_ReserveMemoryBlock(&send_to_instance->memory_list.free_list, size_in_byte);
-        if (NULL != reserved_header)
-        {
-            buffer_address = reserved_header->pBuffer;
-        }
-
-        LinkedList_RemoveNode(&send_to_instance->memory_list.free_list, reserved_header);
-        LinkedList_InsertToTail(&send_to_instance->pending_list, reserved_header);
     }
 
     return buffer_address;
@@ -227,62 +194,35 @@ void* ezmIpc_InitMessage(uint8_t send_to_id, uint16_t size_in_byte)
 *
 * POST-CONDITION: None
 *
-* @param    send_to_id: id of the module which a message is sent to
+* @param    send_to:    ipc handle, which the message will be sent to
 * @param    *message:   pointer the message
 *
 * @return   true: success
 *           false: fail
 *
 *******************************************************************************/
-bool ezmIpc_SendMessage(uint8_t send_to_id, void *message)
+bool ezmIpc_SendMessage(ezmIpc send_to, void *message)
 {
-    bool        is_success = true;
+    bool        is_success = false;
     IpcInstance *send_to_instance = NULL;
-    MemHdr      *next_header = NULL;
+    struct Node *it_node = NULL;
 
-    if (NULL == message)
+    if (NULL != message && send_to < NUM_OF_IPC_INSTANCE)
     {
-        is_success = false;
-    }
-
-    if (is_success)
-    {
-        send_to_instance = ezmIpc_SearchInstance(send_to_id);
-
-        if (NULL == send_to_instance)
+        send_to_instance = GET_INSTANCE(send_to);
+        EZMLL_FOR_EACH(it_node, &send_to_instance->pending_list_head)
         {
-            is_success = false;
-        }
-    }
-
-    if (is_success)
-    {
-        next_header = send_to_instance->pending_list.pstHead;
-        while (NULL != next_header)
-        {
-            if (next_header->pBuffer == message)
+            if (GET_BLOCK(it_node)->buff == message)
             {
-                ezmStcMem_MoveHeader(next_header, &send_to_instance->pending_list, &send_to_instance->memory_list.alloc_list);
+                ezmStcMem_MoveBlock(it_node, &send_to_instance->pending_list_head, &send_to_instance->memory_list.alloc_list_head);
                 IPCPRINT("message sent");
+                if (NULL != send_to_instance->fnCallback)
+                {
+                    send_to_instance->fnCallback();
+                }
+                is_success = true;
                 break;
             }
-            else
-            {
-                next_header = next_header->pstNextNode;
-            }
-        }
-    }
-
-    if (NULL == next_header)
-    {
-        is_success = false;
-        PRINT_ERR("Cannot find message");
-    }
-    else
-    {
-        if (NULL != send_to_instance->fnCallback)
-        {
-            send_to_instance->fnCallback();
         }
     }
 
@@ -302,31 +242,27 @@ bool ezmIpc_SendMessage(uint8_t send_to_id, void *message)
 *
 * POST-CONDITION: None
 *
-* @param    owner_id:       id of the owner of the instance
+* @param    receive_from:   the handle, which message will be read out
 * @param    *message_size:  size of the message
 *
 * @return   address of the message if there is one
 *
 *******************************************************************************/
-void* ezmIpc_ReceiveMessage(uint8_t owner_id, uint16_t *message_size)
+void* ezmIpc_ReceiveMessage(ezmIpc receive_from, uint16_t *message_size)
 {
-    bool        is_success = true;
     void        *buffer_address = NULL;
     IpcInstance *instance = NULL;
 
-    instance = ezmIpc_SearchInstance(owner_id);
-
-    if (NULL == instance)
+    if (receive_from < NUM_OF_IPC_INSTANCE)
     {
-        is_success = false;
+        instance = GET_INSTANCE(receive_from);
+   
+        if (!IS_LIST_EMPTY(&instance->memory_list.alloc_list_head))
+        {
+            buffer_address = GET_BLOCK(instance->memory_list.alloc_list_head.next)->buff;
+            *message_size = GET_BLOCK(instance->memory_list.alloc_list_head.next)->buff_size;
+        }
     }
-
-    if (is_success)
-    {
-        buffer_address = instance->memory_list.alloc_list.pstHead->pBuffer;
-        *message_size = instance->memory_list.alloc_list.pstHead->u16BufferSize;
-    }
-
     return buffer_address;
 }
 
@@ -341,29 +277,23 @@ void* ezmIpc_ReceiveMessage(uint8_t owner_id, uint16_t *message_size)
 *
 * POST-CONDITION: None
 *
-* @param    owner_id: owner id of the ipc instance
+* @param    receive_from: the handle, which message will be read out
 * @param    *message:   message to be free
 *
 * @return   true: success
 *           false: fail
 *
 *******************************************************************************/
-bool ezmIpc_ReleaseMessage(uint8_t owner_id, void* message)
+bool ezmIpc_ReleaseMessage(ezmIpc receive_from, void* message)
 {
     bool        is_success = true;
     void        *buffer_address = NULL;
     IpcInstance *instance = NULL;
 
-    instance = ezmIpc_SearchInstance(owner_id);
-
-    if (NULL == instance || NULL == message )
+    if (message != NULL && receive_from < NUM_OF_IPC_INSTANCE)
     {
-        is_success = false;
-    }
-
-    if (is_success)
-    {
-        is_success = is_success & ezmStcMem_Free(&instance->memory_list, message);
+        instance = GET_INSTANCE(receive_from);
+        is_success = is_success && ezmStcMem_Free(&instance->memory_list, message);
     }
 
     return is_success;
@@ -388,89 +318,16 @@ static void ezmIpc_ResetInstance(uint8_t instance_index)
 {
     if (instance_index < NUM_OF_IPC_INSTANCE)
     {
-        instance_pool[instance_index].instance_owner_id = FREE_INSTANCE;
+        instance_pool[instance_index].is_busy = false;
         instance_pool[instance_index].fnCallback = NULL;
  
-        instance_pool[instance_index].pending_list.pstHead = NULL;
-        instance_pool[instance_index].pending_list.pstTail = NULL;
-        instance_pool[instance_index].pending_list.u16Size = 0U;
+        instance_pool[instance_index].pending_list_head.next = &instance_pool[instance_index].pending_list_head;
+        instance_pool[instance_index].pending_list_head.prev = &instance_pool[instance_index].pending_list_head;
 
         memset(&instance_pool[instance_index].memory_list, 0, sizeof(instance_pool[instance_index].memory_list));
     }
 }
 
-/******************************************************************************
-* Function : ezmIpc_GetFreeInstance
-*//**
-* \b Description:
-*
-* Return a free instance from the pool
-*
-* PRE-CONDITION: None
-*
-* POST-CONDITION: None
-*
-* @param    None
-* @return   pointer to free instance or NULL
-*
-*******************************************************************************/
-static IpcInstance *ezmIpc_GetFreeInstance(void)
-{
-    IpcInstance *free_instance = NULL;
-    for (uint8_t i = 0; i < NUM_OF_IPC_INSTANCE; i++)
-    {
-        if (FREE_INSTANCE == instance_pool[i].instance_owner_id)
-        {
-            free_instance = &instance_pool[i];
-            break;
-        }
-    }
-    return free_instance;
-}
-
-/******************************************************************************
-* Function : ezmIpc_SearchInstance
-*//**
-* \b Description:
-*
-* Search a intance in the pool according to the owner id
-*
-* PRE-CONDITION: None
-*
-* POST-CONDITION: None
-*
-* @param    owner_id: owner id of the instance
-* @return   pointer to the instance or null
-*
-*******************************************************************************/
-static IpcInstance* ezmIpc_SearchInstance(uint8_t owner_id)
-{
-    IpcInstance *searched_instance = NULL;
-    for (uint8_t i = 0; i < NUM_OF_IPC_INSTANCE; i++)
-    {
-        if (instance_pool[i].instance_owner_id == owner_id)
-        {
-            searched_instance = &instance_pool[i];
-            break;
-        }
-    }
-    return searched_instance;
-}
-
-static bool ezmIpc_IsInstanceExist(uint8_t owner_id)
-{
-    bool is_existing = false;
-    for (uint8_t i = 0; i < NUM_OF_IPC_INSTANCE; i++)
-    {
-        if (instance_pool[i].instance_owner_id == owner_id)
-        {
-            is_existing = true;
-            break;
-        }
-    }
-
-    return is_existing;
-}
 #endif /* IPC */
 
 /* End of file*/

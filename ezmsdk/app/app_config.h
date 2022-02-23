@@ -15,21 +15,21 @@
 #define _APP_CONFIG_H
 
 
-#define CLI                     1U
+#define CLI                     0U
 #define SCHEDULER               0U
 #define SMALLOC                 0U
-#define BIN_PARSER              1U
+#define BIN_PARSER              0U
 #define HELPER_LINKEDLIST       1U
 #define HELPER_HEXDUMP          1U
 #define EZM_DEBUG               1U
 #define RING_BUFFER             0U
 #define HELPER_ASSERT           0U
 #define STATEMACHINE            0U
-#define IPC                     0U
+#define IPC                     1U
 #define STCMEM                  1U
-#define KERNEL                  1U
-#define DRIVERINF               1U
-#define HAL_UART                1U
+#define KERNEL                  0U
+#define DRIVERINF               0U
+#define HAL_UART                0U
 
 /*Module ID section*/
 
@@ -94,7 +94,6 @@
 /* HELPER_LINKEDLIST SECTION **************************************************/
 #if (HELPER_LINKEDLIST == 1U)
 #define HELPER_LINKEDLIST_MOD_ID    0x06U
-#define NUM_OF_NODE                 256U
 #endif /* HELPER_LINKEDLIST */
 
 
@@ -136,6 +135,7 @@
 /* STCMEM SECTION ***************************************************************/
 #if (STCMEM == 1U)
 #define STCMEM_MOD_ID               0x0CU
+#define NUM_OF_MEM_BLOCK            100U
 
 #if (HELPER_LINKEDLIST == 0U)
 #error module HELPER_LINKEDLIST must be activated

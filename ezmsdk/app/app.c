@@ -256,6 +256,7 @@ void ezmApp_SdkInit(void)
 #endif
 #endif /* NUM_OF_SUPPORTED_UART */
 
+#if(CLI)
     AppCli_Init();
 
 #if(SUPPORTED_CHIP == WIN)
@@ -269,6 +270,7 @@ void ezmApp_SdkInit(void)
             execute_time_stamp = ezmApp_ReturnTimestampMillisvoid();
         }
     }while (execute_time_stamp);
+#endif
 #endif
 }
 

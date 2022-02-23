@@ -23,6 +23,9 @@
 * Includes
 *******************************************************************************/
 #include "app_cli.h"
+#include "app_config.h"
+
+#if(CLI == 1U)
 #include "string.h"
 #include "../ezmKernel/ezmKernel.h"
 #include "../ezmDriver/ezmDriver.h"
@@ -36,7 +39,7 @@
 typedef enum
 {
     GET_BYTE,
-	WAIT,
+    WAIT,
     PROC_CMD,
 }CLT_STATE;
 
@@ -190,5 +193,5 @@ static uint8_t UartCallbackHandle(uint8_t notify_code, void* param1, void* param
     }
     return 0U;
 }
-
+#endif
 /* End of file*/

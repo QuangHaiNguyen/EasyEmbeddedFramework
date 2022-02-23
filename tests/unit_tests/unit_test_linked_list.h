@@ -20,7 +20,7 @@ namespace
         struct test_struct1
         {
             char c;
-            Node node;
+            struct Node node;
         };
 
         struct a_more_complex_one
@@ -28,26 +28,51 @@ namespace
             char c;
             uint8_t buffer[5];
             uint32_t data;
-            Node node;
+            struct Node node;
             bool busy;
         };
 
-        Node head = EZMLL_INIT_NODE(head);
+        struct Node head = EZMLL_INIT_NODE(head);
 
         EXPECT_TRUE(head.next == &head);
         EXPECT_TRUE(head.prev == &head);
 
-        Node node1 = EZMLL_INIT_NODE(node1);
+        struct Node node1 = EZMLL_INIT_NODE(node1);
         ASSERT_EQ(node1.next, &node1);
         ASSERT_EQ(node1.prev, &node1);
 
-        Node node2 = EZMLL_INIT_NODE(node2);
+        struct Node node2 = EZMLL_INIT_NODE(node2);
         ASSERT_EQ(node2.next, &node2);
         ASSERT_EQ(node2.prev, &node2);
 
-        Node node3 = EZMLL_INIT_NODE(node3);
+        struct Node node3 = EZMLL_INIT_NODE(node3);
         ASSERT_EQ(node3.next, &node3);
         ASSERT_EQ(node3.prev, &node3);
+
+        EZMLL_ADD_HEAD(&head, &node1);
+        EZMLL_ADD_TAIL(&head, &node2);
+
+        struct Node* it_node = NULL;
+        uint32_t count = 0;
+
+        EZMLL_FOR_EACH(it_node, &head)
+        {
+            count++;
+        }
+        ASSERT_EQ(count, 2);
+
+        EZMLL_UNLINK_NODE(&node2);
+
+        count = 0;
+        EZMLL_FOR_EACH(it_node, &head)
+        {
+            count++;
+        }
+        ASSERT_EQ(count, 1);
+
+        it_node = &head;
+        EZMLL_TO_NEXT_NODE(it_node);
+        ASSERT_EQ(it_node, &node1);
 
         struct test_struct1 data1;
         data1.c = 'a';
@@ -71,13 +96,13 @@ namespace
     TEST(Linked_List, LinkedList_InsertNewHead)
     {
         uint32_t count = 0;
-        Node *iterate_node; 
+        struct Node *iterate_node;
 
-        Node node1 = EZMLL_INIT_NODE(node1);
-        Node node2 = EZMLL_INIT_NODE(node2);
-        Node node3 = EZMLL_INIT_NODE(node3);
-        Node node4 = EZMLL_INIT_NODE(node4);
-        Node node5 = EZMLL_INIT_NODE(node5);
+        struct Node node1 = EZMLL_INIT_NODE(node1);
+        struct Node node2 = EZMLL_INIT_NODE(node2);
+        struct Node node3 = EZMLL_INIT_NODE(node3);
+        struct Node node4 = EZMLL_INIT_NODE(node4);
+        struct Node node5 = EZMLL_INIT_NODE(node5);
 
         void* address[5] =
         {
@@ -88,7 +113,7 @@ namespace
             &node5,
         };
 
-        Node* head = &node1;
+        struct Node* head = &node1;
 
         ASSERT_EQ(false, ezmLL_InsertNewHead(NULL, NULL));
         ASSERT_EQ(false, ezmLL_InsertNewHead(&node1, NULL));
@@ -126,16 +151,16 @@ namespace
     TEST(Linked_List, LinkedList_UnlinkCurrentHead)
     {
         uint32_t count = 0;
-        Node* iterate_node;
-        Node* new_head;
+        struct Node* iterate_node;
+        struct Node* new_head;
 
-        Node node1 = EZMLL_INIT_NODE(node1);
-        Node node2 = EZMLL_INIT_NODE(node2);
-        Node node3 = EZMLL_INIT_NODE(node3);
-        Node node4 = EZMLL_INIT_NODE(node4);
-        Node node5 = EZMLL_INIT_NODE(node5);
+        struct Node node1 = EZMLL_INIT_NODE(node1);
+        struct Node node2 = EZMLL_INIT_NODE(node2);
+        struct Node node3 = EZMLL_INIT_NODE(node3);
+        struct Node node4 = EZMLL_INIT_NODE(node4);
+        struct Node node5 = EZMLL_INIT_NODE(node5);
 
-        Node* head = &node1;
+        struct Node* head = &node1;
         head = ezmLL_InsertNewHead(head, &node2);
         head = ezmLL_InsertNewHead(head, &node3);
         head = ezmLL_InsertNewHead(head, &node4);
@@ -205,13 +230,13 @@ namespace
     {
         uint32_t count = 0;
 
-        Node node1 = EZMLL_INIT_NODE(node1);
-        Node node2 = EZMLL_INIT_NODE(node2);
-        Node node3 = EZMLL_INIT_NODE(node3);
-        Node node4 = EZMLL_INIT_NODE(node4);
-        Node node5 = EZMLL_INIT_NODE(node5);
+        struct Node node1 = EZMLL_INIT_NODE(node1);
+        struct Node node2 = EZMLL_INIT_NODE(node2);
+        struct Node node3 = EZMLL_INIT_NODE(node3);
+        struct Node node4 = EZMLL_INIT_NODE(node4);
+        struct Node node5 = EZMLL_INIT_NODE(node5);
 
-        Node* head = &node1;
+        struct Node* head = &node1;
         head = ezmLL_InsertNewHead(head, &node2);
         head = ezmLL_InsertNewHead(head, &node3);
         head = ezmLL_InsertNewHead(head, &node4);
@@ -225,39 +250,39 @@ namespace
 
     }
 
-    TEST(Linked_List, ezmLL_UnlinkNode)
+    TEST(Linked_List, Unlink_node)
     {
-        Node node1 = EZMLL_INIT_NODE(node1);
-        Node node2 = EZMLL_INIT_NODE(node2);
-        Node node3 = EZMLL_INIT_NODE(node3);
-        Node node4 = EZMLL_INIT_NODE(node4);
-        Node node5 = EZMLL_INIT_NODE(node5);
+        struct Node node1 = EZMLL_INIT_NODE(node1);
+        struct Node node2 = EZMLL_INIT_NODE(node2);
+        struct Node node3 = EZMLL_INIT_NODE(node3);
+        struct Node node4 = EZMLL_INIT_NODE(node4);
+        struct Node node5 = EZMLL_INIT_NODE(node5);
 
-        Node* head = &node1;
+        struct Node* head = &node1;
         head = ezmLL_InsertNewHead(head, &node2);
         head = ezmLL_InsertNewHead(head, &node3);
         head = ezmLL_InsertNewHead(head, &node4);
         head = ezmLL_InsertNewHead(head, &node5);
 
-        ezmLL_UnlinkNode(&node1);
+        EZMLL_UNLINK_NODE(&node1);
         ASSERT_EQ(false, ezmLL_IsNodeInList(head, &node1));
 
-        ezmLL_UnlinkNode(&node2);
+        EZMLL_UNLINK_NODE(&node2);
         ASSERT_EQ(false, ezmLL_IsNodeInList(head, &node2));
 
-        ezmLL_UnlinkNode(&node3);
+        EZMLL_UNLINK_NODE(&node3);
         ASSERT_EQ(false, ezmLL_IsNodeInList(head, &node3));
 
-        ezmLL_UnlinkNode(&node4);
+        EZMLL_UNLINK_NODE(&node4);
         ASSERT_EQ(false, ezmLL_IsNodeInList(head, &node4));
     }
 
     TEST(Linked_List, ezmLL_AppendNode)
     {
-        Node node1 = EZMLL_INIT_NODE(node1);
-        Node node2 = EZMLL_INIT_NODE(node2);
-        Node node3 = EZMLL_INIT_NODE(node3);
-        Node* head = &node1;
+        struct Node node1 = EZMLL_INIT_NODE(node1);
+        struct Node node2 = EZMLL_INIT_NODE(node2);
+        struct Node node3 = EZMLL_INIT_NODE(node3);
+        struct Node* head = &node1;
 
         ASSERT_EQ(false, ezmLL_IsNodeInList(head, &node2));
         ASSERT_EQ(false, ezmLL_IsNodeInList(head, &node3));

@@ -23,7 +23,6 @@
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
-#define MEMHDR_INVALID_ID     0xFFFF
 
 /******************************************************************************
 * Module Typedefs
@@ -32,18 +31,30 @@
 /**@brief List to manage the memory block
  *
  */
-typedef struct
+struct MemList
 {
-    LinkedList  free_list;      /**< list to manage the free memory blocks */
-    LinkedList  alloc_list;     /**< list to manage the allocated blocks*/
-    uint8_t     *buffer;        /**< pointer to the memory */
-    uint16_t    buffer_size;    /**< size of the buffer */
-}ezmMemList;
+    struct Node free_list_head;      /**< list to manage the free memory blocks */
+    struct Node alloc_list_head;     /**< list to manage the allocated blocks*/
+    uint8_t* buff;        /**< pointer to the memory */
+    uint16_t buff_size;    /**< size of the buffer */
+};
 
-/**@brief Header to manage a memory block
+/**@brief Memory block
  *
  */
-typedef Node MemHdr;
+struct MemBlock
+{
+    struct Node node;
+    void* buff;
+    uint16_t buff_size;
+};
+
+
+/**@brief opauue pointer for MemList
+ *
+ */
+typedef struct MemList ezmMemList;
+
 
 /******************************************************************************
 * Module Variable Definitions
@@ -53,13 +64,18 @@ typedef Node MemHdr;
 /******************************************************************************
 * Function Prototypes
 *******************************************************************************/
+
 void        ezmStcMem_Initialization(void);
-bool        ezmStcMem_InitMemList   (ezmMemList* mem_list, uint8_t* buffer, uint16_t buffer_size);
+bool        ezmStcMem_InitMemList   (ezmMemList* mem_list, void* buff, uint16_t buff_size);
 void        *ezmStcMem_Malloc       (ezmMemList* mem_list, uint16_t alloc_size);
-bool        ezmStcMem_Free          (ezmMemList* mem_list, void* alloc_addr);
+bool        ezmStcMem_Free          (ezmMemList *mem_list, void *alloc_addr);
+
+uint16_t    ezmStcMem_GetNumOfAllocBlock(ezmMemList* mem_list);
+uint16_t    ezmStcMem_GetNumOfFreeBlock(ezmMemList* mem_list);
 void        ezmStcMem_HexdumpBuffer (ezmMemList* mem_list);
 void        ezmStcMem_PrintFreeList (ezmMemList* mem_list);
 void        ezmStcMem_PrintAllocList(ezmMemList* mem_list);
+
 
 #endif /* _STCMEM_H */
 

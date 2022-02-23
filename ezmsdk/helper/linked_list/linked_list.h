@@ -35,7 +35,7 @@
 /*@brief: iterate thru a link list starting from head
  *
  */
-#define EZMLL_FOR_EACH(node,head)               for(node = head->next; node != head; node = node->next)
+#define EZMLL_FOR_EACH(node,head)               for(node = (head)->next; node != head; node = (node)->next)
 
 /*@brief: initialize a node
  *
@@ -48,11 +48,28 @@
  * (type*)0)->member access the member of type "type"
  * ((char*)&(((type*)0)->member) - (char*)((type*)0)): minus the address of the member and the addres 0
  */
-#define OFFSET(type, member)    ((char*)&(((type*)0)->member) - (char*)((type*)0))
+#define OFFSET(type, member) ((char*)&(((type*)0)->member) - (char*)((type*)0))
 
 /* This one is easy, see OFFSET */
-#define EZMLL_GET_PARENT_OF(ptr,member,type)   (type*)((char*)ptr - OFFSET(type, member))
+#define EZMLL_GET_PARENT_OF(ptr,member,type) (type*)((char*)ptr - OFFSET(type, member))
 
+/*@brief advance a node to next node
+ */
+#define EZMLL_TO_NEXT_NODE(node) node = node->next
+
+/*@brief Insert a node to head
+*/
+#define EZMLL_ADD_HEAD(list_head,node) ezmLL_AppendNode(node, (list_head)->next)
+
+/*@brief Insert a node to tail
+*/
+#define EZMLL_ADD_TAIL(list_head,node) ezmLL_AppendNode(node, (list_head)->prev)
+
+/*@brief unlink a node
+*/
+#define EZMLL_UNLINK_NODE(node) (node)->prev->next = (node)->next;(node)->next->prev = (node)->prev;ezmLL_InitNode(node);
+
+#define IS_LIST_EMPTY(list_head) ((list_head)->next == (list_head)) ? true : false
 
 /******************************************************************************
 * Module Typedefs
@@ -61,12 +78,31 @@
 /** @brief Meta data of a node
  *      Contain the pointer to the next node and pointer to the buffer 
  */
-typedef struct Node
+struct Node
 {
     //uint16_t u16NodeIndex;      /**< Store the node index*/
     struct Node * next;  /**< pointer to the next node in a linked list*/
     struct Node * prev;  /**< pointer to the previous node in a linked list*/
 }Node;
+
+
+void inline ezmLL_InitNode(struct Node* node)
+{
+    node->next = node;
+    node->prev = node;
+}
+
+uint16_t inline ezmLL_GetListSize(struct Node* list_head)
+{
+    uint16_t size = 0;
+    struct Node* it_node = NULL;
+ 
+    EZMLL_FOR_EACH(it_node, list_head)
+    {
+        size++;
+    }
+    return size;
+}
 
 #if 0
 /** @brief Meta data of the linked list
@@ -88,11 +124,10 @@ typedef struct LinkedList
 * Function Prototypes
 *******************************************************************************/
 void        ezmLL_Initialization        (void);
-bool        ezmLL_AppendNode            (Node *new_node, Node *appended_node);
-Node        *ezmLL_InsertNewHead        (Node * current_head, Node *new_node);
-Node        *ezmLL_UnlinkCurrentHead    (Node *head);
-bool        ezmLL_IsNodeInList          (Node *head, Node *searched_node);
-void        ezmLL_UnlinkNode            (Node *unlinked_node);
+bool        ezmLL_AppendNode            (struct Node *new_node, struct Node *appended_node);
+struct Node *ezmLL_InsertNewHead        (struct Node * current_head, struct Node *new_node);
+struct Node *ezmLL_UnlinkCurrentHead    (struct Node *head);
+bool        ezmLL_IsNodeInList          (struct Node *head, struct Node *searched_node);
 //Node        *ezmLL_GetFreeNode                  (void);
 //void        ezmLL_ResetNode                     (Node *node);
 

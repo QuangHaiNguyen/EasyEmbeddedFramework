@@ -23,8 +23,6 @@
 
 #define NODE_INVALID_ID     0xFFFF
 
-#define UNLINK_NODE(node)   node->prev->next = node->next;node->next->prev = node->prev;
-
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
@@ -33,7 +31,7 @@
 /******************************************************************************
 * Module Variable Definitions
 *******************************************************************************/
-static Node node_pool[NUM_OF_NODE] = { 0 };
+//static struct Node node_pool[NUM_OF_NODE] = { 0 };
 
 /******************************************************************************
 * Function Definitions
@@ -42,10 +40,10 @@ static Node node_pool[NUM_OF_NODE] = { 0 };
 
 void ezmLL_Initialization(void)
 {
-    for (uint16_t i = 0; i < NUM_OF_NODE; i++)
-    {
+    //for (uint16_t i = 0; i < NUM_OF_NODE; i++)
+    //{
         //ezmLL_ResetNode(&node_pool[i]);
-    }
+    //}
 }
 
 
@@ -65,7 +63,7 @@ void ezmLL_Initialization(void)
 * @return   true if suceess
 *
 *******************************************************************************/
-bool ezmLL_AppendNode(Node* new_node, Node* node)
+bool ezmLL_AppendNode(struct Node* new_node, struct Node* node)
 {
     bool is_success = false;
     if (new_node != NULL && node != NULL)
@@ -97,22 +95,14 @@ bool ezmLL_AppendNode(Node* new_node, Node* node)
 * @return   pointer to the new head  or NULL
 *
 *******************************************************************************/
-Node* ezmLL_InsertNewHead(Node *current_head, Node * new_node)
+struct Node* ezmLL_InsertNewHead(struct Node *current_head, struct Node * new_node)
 {
     bool is_success = true;
-    Node* new_head = NULL;
+    struct Node* new_head = NULL;
 
-    if(current_head == NULL || new_node == NULL)
-    {
-        is_success = false;
-    }
-
-    if (is_success)
-    {
-        is_success && ezmLL_AppendNode(new_node, current_head->prev);
-    }
-
-    if (is_success)
+    if(current_head != NULL 
+        && new_node != NULL
+        && ezmLL_AppendNode(new_node, current_head->prev) == true)
     {
         new_head = new_node;
     }
@@ -135,14 +125,14 @@ Node* ezmLL_InsertNewHead(Node *current_head, Node * new_node)
 * @return   pointer to the unlinked head or NULL
 *
 *******************************************************************************/
-Node * ezmLL_UnlinkCurrentHead(Node * head)
+struct Node * ezmLL_UnlinkCurrentHead(struct Node * head)
 {
-    Node* new_head = head;
+    struct Node* new_head = head;
 
     if(head->next != head)
     {
         new_head = head->next;
-        UNLINK_NODE(head);
+        EZMLL_UNLINK_NODE(head);
     }
 
     return new_head;
@@ -164,10 +154,10 @@ Node * ezmLL_UnlinkCurrentHead(Node * head)
 * @return   True if exsisting
 *
 *******************************************************************************/
-bool ezmLL_IsNodeInList(Node* head, Node* searched_node)
+bool ezmLL_IsNodeInList(struct Node* head, struct Node* searched_node)
 {
     bool is_existing = false;
-    Node* node;
+    struct Node* node;
 
     if (head == searched_node)
     {
@@ -192,25 +182,6 @@ bool ezmLL_IsNodeInList(Node* head, Node* searched_node)
     return is_existing;
 }
 
-/******************************************************************************
-* Function : ezmLL_UnlinkNode
-*//**
-* \b Description:
-*
-* Unlinked a node
-*
-* PRE-CONDITION: None
-*
-* POST-CONDITION: None
-*
-* @param    *unlinked_node: (IN)pointer to the node, which will be unlinked
-* @return   None
-*
-*******************************************************************************/
-void ezmLL_UnlinkNode(Node * unlinked_node)
-{
-    UNLINK_NODE(unlinked_node);
-}
 
 
 #if 0
