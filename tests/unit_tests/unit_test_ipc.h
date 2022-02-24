@@ -28,7 +28,7 @@ namespace
 
         bool is_success;
         uint8_t compare;
-        ezmIpc test_ipc;
+        ezmMailBox test_ipc;
 
         test_ipc = ezmIpc_GetInstance(ipc_buffer, 32, &MessageRcvCallback);
         ASSERT_LT(test_ipc, IPC_INVALID);

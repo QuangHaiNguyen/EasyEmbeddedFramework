@@ -53,7 +53,9 @@
 GetDriverFunction get_driver[NUM_OF_DRIVER] =
 {
     (GetDriverFunction)DummyDriver_GetDriver,
+#if(HAL_UART)
     (GetDriverFunction)GetUart0Driver,
+#endif
 };
 
 /******************************************************************************
@@ -76,42 +78,31 @@ bool ezmDriver_Init(void)
         if (false == driver_list[i]->init_function())
         {
             is_success = false;
-        }
-        else
-        {
-            DRIVERPRINT("driver init successfully");
+            DRIVERPRINT("driver init failed");
         }
     }
 
     return is_success;
 }
 
-bool ezmDriver_GetDriverInstance(DriverId id, void** driver_api)
+void ezmDriver_GetDriverInstance(DriverId id, void** driver_api)
 {
-    bool is_success = true;
+    *driver_api = NULL;
 
-    if (id >= NUM_OF_DRIVER)
+    if (id < NUM_OF_DRIVER && id >= 0)
     {
-        is_success = false;
+        if (!driver_list[(uint8_t)id]->is_busy)
+        {
+            *driver_api = driver_list[id]->driver_api;
+        }
     }
-
-    if (is_success && false == driver_list[id]->is_busy)
-    {
-        *driver_api = driver_list[id]->driver_api;
-    }
-    else
-    {
-        is_success = false;
-    }
-
-    return is_success;
 }
 
 bool ezmDriver_ReleaseDriverInstance(DriverId id)
 {
     bool is_success = false;
 
-    if (id < NUM_OF_DRIVER)
+    if (id < NUM_OF_DRIVER && id >= 0)
     {
         driver_list[id]->is_busy = false;
         is_success = true;
@@ -124,7 +115,7 @@ bool ezmDriver_IsDriverBusy(DriverId id)
 {
     bool is_busy = false;
 
-    if (id < NUM_OF_DRIVER)
+    if (id < NUM_OF_DRIVER && id >= 0)
     {
         is_busy = driver_list[id]->is_busy;
     }

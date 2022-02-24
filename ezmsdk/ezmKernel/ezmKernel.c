@@ -19,7 +19,6 @@
 #if (KERNEL == 1U)
 #include "string.h"
 #include "../helper/hexdump/hexdump.h"
-#include "../helper/linked_list/linked_list.h"
 #include "../ezmDebug/ezmDebug.h"
 
 #define MOD_NAME        "KERNEL"
@@ -42,161 +41,176 @@
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
-#define SAMPLING_TIME_MS    10000U
-
+#define SAMPLING_TIME_MS        10000U
+#define PROCESS(proc)           ((struct Process*)proc)
+#define GET_PROCESS(node_ptr)   (EZMLL_GET_PARENT_OF(node_ptr, node, struct Process))
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
-typedef struct
+struct ProcessAnalysis
 {
     uint32_t sampling_time;
     uint32_t proc_run_time;
     uint32_t before;
     uint32_t after;
     uint8_t load;
-}ProcLoad;
+};
 
 /******************************************************************************
 * Module Variable Definitions
 *******************************************************************************/
-static LinkedList proccess_list = { 0 };
-static uint32_t uuid = 0U;
-static ProcLoad kernel_load = {0};
+static struct Node proc_list_head = EZMLL_INIT_NODE(proc_list_head);
+static struct ProcessAnalysis kernel_load = {0};
+
 /******************************************************************************
 * Function Prototypes
 *******************************************************************************/
-void ezmKernel_Initialization(void)
+
+/******************************************************************************
+* Function : ezmKernel_AddProcess
+*//**
+* \b Description:
+*
+* add a process to the kernel
+*
+* PRE-CONDITION: None
+*
+* POST-CONDITION: None
+*
+* @param    *proc: (IN)pointer to the new process
+* @param    proc_type: (IN)type of the process
+* @param    period_ms: (IN)period
+* @param    handler: (IN)pointer to the process function
+* @return   true if suceess
+*
+*******************************************************************************/
+bool ezmKernel_AddProcess(EzmProcess* proc, PROCESS_TYPE proc_type, uint32_t period_ms, process_handler handler)
 {
-    /* Do nothing */
-}
+    bool is_success = false;
 
-bool ezmKernel_AddProcess(process* proc, PROCESS_TYPE proc_type, uint32_t period_ms, process_handler handler)
-{
-    bool is_success = true;
-    Node* node = NULL;
-
-    process* free_proc = NULL;
-
-    if (NULL == proc || NULL == handler || period_ms == 0U)
+    if (NULL != proc && NULL != handler && period_ms > 0U)
     {
-        is_success = false;
+        EZMLL_ADD_TAIL(&proc_list_head, &PROCESS(proc)->node);
+
+        PROCESS(proc)->handler = handler;
+        PROCESS(proc)->period = period_ms;
+        PROCESS(proc)->exec_cnt_down = 0;
+        PROCESS(proc)->proc_type = proc_type;
+        is_success = true;
+        KERNELPRINT("add process successfully");
     }
-
-    if (is_success)
-    {
-        
-        node = ezmLL_GetFreeNode();
-
-        if (node)
-        {
-            node->pBuffer = (void*)proc;
-            node->u16BufferSize = sizeof(process);
-
-            LinkedList_InsertToTail(&proccess_list, node);
-
-            proc->handler = handler;
-            proc->period = period_ms;
-            proc->exec_cnt_down = period_ms;
-            proc->uuid = uuid++;
-            proc->proc_type = proc_type;
-
-            KERNELPRINT1("add process [id = %x] successfully", proc->uuid);
-        }
-        else
-        {
-            is_success = false;
-        }
-    }
-
 
     return is_success;
 }
 
+
+/******************************************************************************
+* Function : ezmKernel_Run
+*//**
+* \b Description:
+*
+* run the kernel, must be put in a while loop
+*
+* PRE-CONDITION: None
+*
+* POST-CONDITION: None
+*
+* @param    None
+* @return   None
+*
+*******************************************************************************/
 void ezmKernel_Run(void)
 {
-    Node *smallest_exec_node = NULL;
-    Node *curr_node = proccess_list.pstHead;
+    struct Node* smallest_exe_node = NULL;
+    struct Node* it_node = NULL;
 
-    process *proc1 = NULL;
-    process* proc2 = NULL;
+    smallest_exe_node = proc_list_head.next;
 
-    smallest_exec_node = curr_node;
- 
-    while (curr_node)
+    if (smallest_exe_node != &proc_list_head)
     {
-        proc1 = (process*)smallest_exec_node->pBuffer;
-        proc2 = (process*)curr_node->pBuffer;
-
-        if (proc2->exec_cnt_down < proc1->exec_cnt_down)
+        EZMLL_FOR_EACH(it_node, &proc_list_head)
         {
-            smallest_exec_node = curr_node;
+            if (GET_PROCESS(it_node)->exec_cnt_down < GET_PROCESS(smallest_exe_node)->exec_cnt_down)
+            {
+                smallest_exe_node = it_node;
+            }
         }
 
-        curr_node = curr_node->pstNextNode;
-    }
+        EZMLL_UNLINK_NODE(smallest_exe_node);
+        EZMLL_ADD_HEAD(&proc_list_head, smallest_exe_node);
 
-    LinkedList_RemoveNode(&proccess_list, smallest_exec_node);
-    LinkedList_InsertToHead(&proccess_list, smallest_exec_node);
-
-    smallest_exec_node = proccess_list.pstHead;
-    if (smallest_exec_node)
-    {
-        proc1 = (process*)smallest_exec_node->pBuffer;
-
-        if (proc1)
+        if (GET_PROCESS(smallest_exe_node)->exec_cnt_down <= 0)
         {
-            if (proc1->exec_cnt_down <= 0)
+            kernel_load.before = kernel_load.sampling_time;
+            GET_PROCESS(smallest_exe_node)->handler();
+            kernel_load.after = kernel_load.sampling_time;
+            kernel_load.proc_run_time = kernel_load.proc_run_time + (kernel_load.after - kernel_load.before);
+
+            switch (GET_PROCESS(smallest_exe_node)->proc_type)
             {
-                kernel_load.before = kernel_load.sampling_time;
-                proc1->handler();
-                kernel_load.after = kernel_load.sampling_time;
-                kernel_load.proc_run_time = kernel_load.proc_run_time + (kernel_load.after - kernel_load.before);
+            case PROC_REPEATED:
+                GET_PROCESS(smallest_exe_node)->exec_cnt_down = GET_PROCESS(smallest_exe_node)->period;
+                break;
 
-                switch (proc1->proc_type)
-                {
-                case PROC_REPEATED:
-                    proc1->exec_cnt_down = proc1->period;
-                    break;
-
-                case PROC_ONCE:
-                default:
-                    LinkedList_RemoveNode(&proccess_list, smallest_exec_node);
-                    ezmLL_ResetNode(smallest_exec_node);
-                    break;
-                }
+            case PROC_ONCE:
+            default:
+                EZMLL_UNLINK_NODE(smallest_exe_node);
+                break;
             }
-            
         }
     }
 
     if (SAMPLING_TIME_MS == kernel_load.sampling_time)
     {
-        kernel_load.load = kernel_load.proc_run_time / kernel_load.sampling_time;
+        kernel_load.load = (kernel_load.proc_run_time / kernel_load.sampling_time)*100;
         kernel_load.proc_run_time = 0;
         kernel_load.sampling_time = 0;
     }
 }
 
-void ezmKernel_Clock(void)
+/******************************************************************************
+* Function : ezmKernel_UpdateClock
+*//**
+* \b Description:
+*
+* update the counter of the process, must be called in a 1ms timer inerrupt
+*
+* PRE-CONDITION: None
+*
+* POST-CONDITION: None
+*
+* @param    None
+* @return   None
+*
+*******************************************************************************/
+void ezmKernel_UpdateClock(void)
 {
-    Node* next_node = proccess_list.pstHead;
-    process* proc = NULL;
-
-    /*Update clock on each process*/
-    while (next_node)
+    struct Node* it_node = NULL;
+    EZMLL_FOR_EACH(it_node, &proc_list_head)
     {
-        proc = (process*)next_node->pBuffer;
-        if (proc->exec_cnt_down > INT32_MIN)
+        if (GET_PROCESS(it_node)->exec_cnt_down > INT32_MIN)
         {
-            proc->exec_cnt_down--;
+            GET_PROCESS(it_node)->exec_cnt_down--;
         }
-        next_node = next_node->pstNextNode;
     }
-
-    /*Update clock of the kernel load*/
     kernel_load.sampling_time++;
 }
 
+/******************************************************************************
+* Function : ezmKernel_GetLoad
+*//**
+* \b Description:
+*
+* Get the cpu load, not sure if it work
+*
+* PRE-CONDITION: None
+*
+* POST-CONDITION: None
+*
+* @param    None
+* @return   cpu load in percentage
+*
+*******************************************************************************/
 uint8_t ezmKernel_GetLoad(void)
 {
     return kernel_load.load;

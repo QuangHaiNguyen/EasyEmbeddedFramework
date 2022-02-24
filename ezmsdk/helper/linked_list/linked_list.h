@@ -54,21 +54,28 @@
 #define EZMLL_GET_PARENT_OF(ptr,member,type) (type*)((char*)ptr - OFFSET(type, member))
 
 /*@brief advance a node to next node
+ *
  */
 #define EZMLL_TO_NEXT_NODE(node) node = node->next
 
 /*@brief Insert a node to head
-*/
+ *
+ */
 #define EZMLL_ADD_HEAD(list_head,node) ezmLL_AppendNode(node, (list_head)->next)
 
 /*@brief Insert a node to tail
-*/
+  *
+ */
 #define EZMLL_ADD_TAIL(list_head,node) ezmLL_AppendNode(node, (list_head)->prev)
 
 /*@brief unlink a node
-*/
+ *
+ */
 #define EZMLL_UNLINK_NODE(node) (node)->prev->next = (node)->next;(node)->next->prev = (node)->prev;ezmLL_InitNode(node);
 
+/*@brief check if a list is empty
+ *
+ */
 #define IS_LIST_EMPTY(list_head) ((list_head)->next == (list_head)) ? true : false
 
 /******************************************************************************
@@ -80,18 +87,23 @@
  */
 struct Node
 {
-    //uint16_t u16NodeIndex;      /**< Store the node index*/
     struct Node * next;  /**< pointer to the next node in a linked list*/
     struct Node * prev;  /**< pointer to the previous node in a linked list*/
 }Node;
 
 
+/*@brief init a new node
+ *
+ */
 void inline ezmLL_InitNode(struct Node* node)
 {
     node->next = node;
     node->prev = node;
 }
 
+/*@brief get the size of a list
+ *
+ */
 uint16_t inline ezmLL_GetListSize(struct Node* list_head)
 {
     uint16_t size = 0;
@@ -103,17 +115,6 @@ uint16_t inline ezmLL_GetListSize(struct Node* list_head)
     }
     return size;
 }
-
-#if 0
-/** @brief Meta data of the linked list
- *      Contain the size and pointer to the first node
- */
-typedef struct LinkedList
-{
-    Node * pstHead;     /**< pointer to the head of linked list*/
-    uint16_t offset;
-}LinkedList;
-#endif
 
 /******************************************************************************
 * Module Variable Definitions
@@ -128,8 +129,6 @@ bool        ezmLL_AppendNode            (struct Node *new_node, struct Node *app
 struct Node *ezmLL_InsertNewHead        (struct Node * current_head, struct Node *new_node);
 struct Node *ezmLL_UnlinkCurrentHead    (struct Node *head);
 bool        ezmLL_IsNodeInList          (struct Node *head, struct Node *searched_node);
-//Node        *ezmLL_GetFreeNode                  (void);
-//void        ezmLL_ResetNode                     (Node *node);
 
 #endif /* _LINKEDLIST_H */
 

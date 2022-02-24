@@ -60,12 +60,11 @@ namespace
     TEST(kernel, basic)
     {
         ezmLL_Initialization();
-        ezmKernel_Initialization();
 
-        process proc_1000_ms;
-        process proc_2000_ms;
-        process proc_4000_ms;
-        process high_load_process;
+        EzmProcess proc_1000_ms;
+        EzmProcess proc_2000_ms;
+        EzmProcess proc_4000_ms;
+        EzmProcess high_load_process;
 
         uint32_t start_ms;
         uint32_t current_ms;
@@ -82,7 +81,7 @@ namespace
         {
             if (ImplementTickFunction() - current_ms >= 1)
             {
-                ezmKernel_Clock();
+                ezmKernel_UpdateClock();
                 ezmKernel_Run();
                 current_ms = ImplementTickFunction();
             }

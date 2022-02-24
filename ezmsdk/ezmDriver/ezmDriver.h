@@ -37,7 +37,9 @@ typedef bool    (*DriverInitFunction)   (void);
 typedef enum
 {
     DUMMY_DRIVER,
+#if(HAL_UART)
     UART0_DRIVER,
+#endif
     NUM_OF_DRIVER
 }DriverId;
 
@@ -54,7 +56,7 @@ typedef Driver* (*GetDriverFunction)    (void);
 * Module Variable Definitions
 *******************************************************************************/
 bool ezmDriver_Init                 (void);
-bool ezmDriver_GetDriverInstance    (DriverId id, void **driver_api);
+void ezmDriver_GetDriverInstance    (DriverId id, void **driver_api);
 bool ezmDriver_ReleaseDriverInstance(DriverId id);
 bool ezmDriver_IsDriverBusy         (DriverId id);
 /******************************************************************************

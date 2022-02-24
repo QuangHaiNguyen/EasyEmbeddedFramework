@@ -30,7 +30,8 @@
 * Module Typedefs
 *******************************************************************************/
 typedef uint32_t(*ezmIpc_MessageCallback)(void);
-typedef uint32_t ezmIpc;
+typedef uint32_t ezmMailBox;
+
 /******************************************************************************
 * Module Variable Definitions
 *******************************************************************************/
@@ -39,12 +40,12 @@ typedef uint32_t ezmIpc;
 /******************************************************************************
 * Function Prototypes
 *******************************************************************************/
-void    ezmIpc_InitModule       (void);
-ezmIpc  ezmIpc_GetInstance      (uint8_t* ipc_buffer, uint16_t buffer_size, ezmIpc_MessageCallback fnCallback);
-void*   ezmIpc_InitMessage      (ezmIpc send_to, uint16_t size_in_byte);
-bool    ezmIpc_SendMessage      (ezmIpc send_to, void *message);
-void*   ezmIpc_ReceiveMessage   (ezmIpc receive_from, uint16_t *message_size);
-bool    ezmIpc_ReleaseMessage   (ezmIpc receive_from, void *message);
+void        ezmIpc_InitModule       (void);
+ezmMailBox  ezmIpc_GetInstance      (uint8_t* ipc_buffer, uint16_t buffer_size, ezmIpc_MessageCallback fnCallback);
+void*       ezmIpc_InitMessage      (ezmMailBox send_to, uint16_t size_in_byte);
+bool        ezmIpc_SendMessage      (ezmMailBox send_to, void *message);
+void*       ezmIpc_ReceiveMessage   (ezmMailBox receive_from, uint16_t *message_size);
+bool        ezmIpc_ReleaseMessage   (ezmMailBox receive_from, void *message);
 
 #endif /* IPC */
 #endif /* _IPC_H */

@@ -64,7 +64,6 @@ typedef struct
 /******************************************************************************
 * Module Variable Definitions
 *******************************************************************************/
-
 static IpcInstance instance_pool[NUM_OF_IPC_INSTANCE] = {0};    /**< pool of ipc intance*/
 
 /******************************************************************************
@@ -121,9 +120,9 @@ void ezmIpc_InitModule(void)
 * @return   handle to the ipc instance
 *
 *******************************************************************************/
-ezmIpc ezmIpc_GetInstance(uint8_t* ipc_buffer, uint16_t buffer_size, ezmIpc_MessageCallback fnCallback)
+ezmMailBox ezmIpc_GetInstance(uint8_t* ipc_buffer, uint16_t buffer_size, ezmIpc_MessageCallback fnCallback)
 {
-    ezmIpc free_instance = NUM_OF_IPC_INSTANCE;
+    ezmMailBox free_instance = NUM_OF_IPC_INSTANCE;
     for (uint8_t i = 0; i < NUM_OF_IPC_INSTANCE; i++)
     {
         if (instance_pool[i].is_busy == false)
@@ -133,7 +132,7 @@ ezmIpc ezmIpc_GetInstance(uint8_t* ipc_buffer, uint16_t buffer_size, ezmIpc_Mess
             instance_pool[i].memory_list.buff = ipc_buffer;
             instance_pool[i].memory_list.buff_size = buffer_size;
             (void)ezmStcMem_InitMemList(&instance_pool[i].memory_list, ipc_buffer, buffer_size);
-            free_instance = (ezmIpc)i;
+            free_instance = (ezmMailBox)i;
             break;
         }
     }
@@ -160,7 +159,7 @@ ezmIpc ezmIpc_GetInstance(uint8_t* ipc_buffer, uint16_t buffer_size, ezmIpc_Mess
 *           NULL error
 *
 *******************************************************************************/
-void* ezmIpc_InitMessage(ezmIpc send_to, uint16_t size_in_byte)
+void* ezmIpc_InitMessage(ezmMailBox send_to, uint16_t size_in_byte)
 {
     void            *buffer_address = NULL;
     IpcInstance     *send_to_instance = NULL;
@@ -201,7 +200,7 @@ void* ezmIpc_InitMessage(ezmIpc send_to, uint16_t size_in_byte)
 *           false: fail
 *
 *******************************************************************************/
-bool ezmIpc_SendMessage(ezmIpc send_to, void *message)
+bool ezmIpc_SendMessage(ezmMailBox send_to, void *message)
 {
     bool        is_success = false;
     IpcInstance *send_to_instance = NULL;
@@ -248,7 +247,7 @@ bool ezmIpc_SendMessage(ezmIpc send_to, void *message)
 * @return   address of the message if there is one
 *
 *******************************************************************************/
-void* ezmIpc_ReceiveMessage(ezmIpc receive_from, uint16_t *message_size)
+void* ezmIpc_ReceiveMessage(ezmMailBox receive_from, uint16_t *message_size)
 {
     void        *buffer_address = NULL;
     IpcInstance *instance = NULL;
@@ -284,7 +283,7 @@ void* ezmIpc_ReceiveMessage(ezmIpc receive_from, uint16_t *message_size)
 *           false: fail
 *
 *******************************************************************************/
-bool ezmIpc_ReleaseMessage(ezmIpc receive_from, void* message)
+bool ezmIpc_ReleaseMessage(ezmMailBox receive_from, void* message)
 {
     bool        is_success = true;
     void        *buffer_address = NULL;

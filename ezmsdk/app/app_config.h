@@ -27,8 +27,8 @@
 #define STATEMACHINE            0U
 #define IPC                     1U
 #define STCMEM                  1U
-#define KERNEL                  0U
-#define DRIVERINF               0U
+#define KERNEL                  1U
+#define DRIVERINF               1U
 #define HAL_UART                0U
 
 /*Module ID section*/
