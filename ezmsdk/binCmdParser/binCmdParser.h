@@ -38,6 +38,7 @@
 * Module Preprocessor Macros
 *******************************************************************************/
 
+
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
@@ -46,24 +47,24 @@
 /**
  * brief:
  */
-typedef struct
+struct BinaryHeader
 {
     uint8_t  sof;               /**< Start of frame, for syncronization */
     uint32_t uuid;              /**< Unique ID */
     uint8_t  opcode;            /**< Opcode */
     uint8_t  encrypt_info;      /**< Store encryption info, future feature*/
     uint16_t payload_size_byte; /**< size of payload, in byte*/
-}BinaryFrameHeader;
+};
 
 /**
  * brief:
  */
-typedef struct
+struct BinaryFrame
 {
-    BinaryFrameHeader   header;             /**< header of the frame */
+    struct BinaryHeader header;             /**< header of the frame */
     uint8_t             *payload;           /**< pointer to the payload */
     uint8_t             checksum[CRC_SIZE]; /**< buffer to store checksum */
-}BinaryFrame;
+};
 
 /**
  * brief:
@@ -79,28 +80,29 @@ typedef enum
 }BinParserStatus;
 
 typedef void(*CommandHandler)   (void *payload, uint16_t payload_size_byte);
-typedef bool(*CrcVerify)        (BinaryFrame *frame);
-typedef void(*CrcCalculate)     (BinaryFrame *frame);
+typedef bool(*CrcVerify)        (struct BinaryFrame *frame);
+typedef void(*CrcCalculate)     (struct BinaryFrame *frame);
 typedef void(*StatusHandler)    (BinParserStatus status);
 
-typedef struct
+struct Command
 {
    uint8_t          opcode;       /**< Stores the command code*/
    CommandHandler   pfnHandler;   /**< pointer to function handling that command */
-}Command;
+};
 
 
-typedef struct
+struct BinCmdParser
 {
     uint8_t             command_table_size; /**< Size of the command table, how many commands are there in total */
-    Command             *command_table;     /**< Poiter to the command table */
+    struct Command      *command_table;     /**< Poiter to the command table */
     CrcVerify           CrcVerify;          /**< Pointer to the CRC verification function */
     CrcCalculate        CrcCalculate;       /**< Pointer to the CRC calculation function */
     StatusHandler       StatusHandler;      /**< Callback to handle status (BinParserStatus), not required to use */
     ezmMemList          memory_list;        /**< Memory list, which holds command pending to be executed */
     uint8_t             parser_state;       /**< Store the state of the binary parser statemachine */
-    BinaryFrame         *curr_frame;        /**< pointer to the current frame that the parser is working*/
-}BinCmdParser;
+    struct BinaryFrame  *curr_frame;        /**< pointer to the current frame that the parser is working*/
+    uint16_t            buff_index;         /**< index of the payload of current frame */
+};
 
 
 
@@ -113,8 +115,8 @@ typedef struct
 * Function Prototypes
 *******************************************************************************/
 
-bool ezmParser_Init         (BinCmdParser* parser, uint8_t *buffer, uint16_t buffer_size_byte, StatusHandler handler);
-void ezmParser_RunBinParser (BinCmdParser* parser, uint8_t data_byte);
+bool ezmParser_Init         (struct BinCmdParser* parser, uint8_t *buffer, uint16_t buffer_size_byte, StatusHandler handler);
+void ezmParser_RunBinParser (struct BinCmdParser* parser, uint8_t data_byte);
 
 #endif /* BIN_PARSER */
 #endif /* _BIN_PARSER_H */

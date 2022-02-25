@@ -122,12 +122,7 @@ namespace
 
         ezmParser_RunBinParser(&test_parser, 0x02);
         ezmParser_RunBinParser(&test_parser, 0x03);
-        compare = memcmp(test_parser.curr_frame->payload, &buffer[sizeof(BinaryFrame)], 2U);
-        ezmHexdump(buffer, 64);
-        ASSERT_EQ(0x00, compare);
 
-        ezmParser_RunBinParser(&test_parser, 0xFF);
-        ezmParser_RunBinParser(&test_parser, 0xFF);
 
         /* minus command */
         ezmParser_RunBinParser(&test_parser, 0x80);
@@ -151,11 +146,7 @@ namespace
 
         ezmParser_RunBinParser(&test_parser, 0x03);
         ezmParser_RunBinParser(&test_parser, 0x02);
-        compare = memcmp(test_parser.curr_frame->payload, &buffer[sizeof(BinaryFrame)], 2U);
-        ASSERT_EQ(0x00, compare);
 
-        ezmParser_RunBinParser(&test_parser, 0xFF);
-        ezmParser_RunBinParser(&test_parser, 0xFF);
 
         /* multiply command */
         ezmParser_RunBinParser(&test_parser, 0x80);
@@ -179,11 +170,6 @@ namespace
 
         ezmParser_RunBinParser(&test_parser, 0x03);
         ezmParser_RunBinParser(&test_parser, 0x02);
-        compare = memcmp(test_parser.curr_frame->payload, &buffer[sizeof(BinaryFrame)], 2U);
-        ASSERT_EQ(0x00, compare);
-
-        ezmParser_RunBinParser(&test_parser, 0xFF);
-        ezmParser_RunBinParser(&test_parser, 0xFF);
 
         /* divide command */
         ezmParser_RunBinParser(&test_parser, 0x80);
@@ -207,11 +193,6 @@ namespace
 
         ezmParser_RunBinParser(&test_parser, 0x06);
         ezmParser_RunBinParser(&test_parser, 0x02);
-        compare = memcmp(test_parser.curr_frame->payload, &buffer[sizeof(BinaryFrame)], 2U);
-        ASSERT_EQ(0x00, compare);
-
-        ezmParser_RunBinParser(&test_parser, 0xFF);
-        ezmParser_RunBinParser(&test_parser, 0xFF);
 
         /* wrong command */
         ezmParser_RunBinParser(&test_parser, 0x80);
@@ -235,9 +216,6 @@ namespace
 
         ezmParser_RunBinParser(&test_parser, 0x06);
         ezmParser_RunBinParser(&test_parser, 0x02);
-
-        ezmParser_RunBinParser(&test_parser, 0xFF);
-        ezmParser_RunBinParser(&test_parser, 0xFF);
 
     }
 #endif /* BIN_PARSER */

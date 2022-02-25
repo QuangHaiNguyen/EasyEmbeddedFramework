@@ -21,7 +21,7 @@
 #include "../ezmDebug/ezmDebug.h"
 #include "../helper/hexdump/hexdump.h"
 
-#define VERBOSE     1U
+#define VERBOSE     0U
 #define MOD_ID      "BIN PARSER"
 #if (MODULE_DEBUG == 1U) && (PARSER_DEBUG == 1U)
     #define PARSERPRINT(a)              PRINT_DEBUG(MOD_ID,a)
@@ -54,8 +54,16 @@
 #endif
 
 #define SOF         0x80U
+#define HEADER(parser)  (parser->curr_frame->header)
+#define CLEANUP()   {\
+                        (void)ezmStcMem_Free(&parser->memory_list, parser->curr_frame->payload);\
+                        (void)ezmStcMem_Free(&parser->memory_list, parser->curr_frame);\
+                        parser->curr_frame = NULL;\
+                        parser->parser_state = START_OF_FRAME;\
+                        parser->buff_index = 0U;\
+                    }
 
-
+#define EXECUTE_STATUS_HANDLER(status)  if (parser->StatusHandler){parser->StatusHandler(status);}
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
@@ -72,7 +80,6 @@ typedef enum
     DATA_LENGTH,        /**< This state receives the size of the data section */
     DATA,               /**< This state receives the packet data */
     CHECKSUM,           /**< This state receives the checksum bytes */
-    COMPLETE,           /**< Complete state, execute the command */
 }BinaryParserState;
 
 /******************************************************************************
@@ -83,7 +90,7 @@ typedef enum
 /******************************************************************************
 * Function Definitions
 *******************************************************************************/
-static void ezmParser_RunCommand(BinCmdParser *parser);
+static void ezmParser_RunCommand(struct BinCmdParser *parser);
 
 
 /******************************************************************************
@@ -103,30 +110,20 @@ static void ezmParser_RunCommand(BinCmdParser *parser);
 * @return   true if initialization success
 *
 *******************************************************************************/
-bool ezmParser_Init(BinCmdParser *parser, uint8_t *buffer, uint16_t buffer_size_byte, StatusHandler handler)
+bool ezmParser_Init(struct BinCmdParser *parser, uint8_t *buffer, uint16_t buffer_size_byte, StatusHandler handler)
 {
-    bool is_success = true;
+    bool is_success = false;
 
     /* sanity check the parser*/
-    if (NULL == parser || NULL == buffer || 0U == buffer_size_byte)
+    if (NULL != parser && NULL != buffer && buffer_size_byte > 0 
+        && NULL != parser->command_table && parser->command_table_size > 0)
     {
-        is_success = false;
-    }
-
-    if (is_success)
-    {
-        if (NULL == parser->command_table || 0U == parser->command_table_size)
-        {
-            is_success = false;
-        }
-    }
-
-    if (is_success)
-    {
+        is_success = true;
         parser->parser_state = START_OF_FRAME;
         parser->curr_frame = NULL;
         parser->StatusHandler = handler;
-        is_success = is_success & ezmStcMem_InitMemList(&parser->memory_list, buffer, buffer_size_byte);
+        parser->buff_index = 0U;
+        is_success = is_success && ezmStcMem_InitMemList(&parser->memory_list, buffer, buffer_size_byte);
     }
 
     return is_success;
@@ -147,11 +144,8 @@ bool ezmParser_Init(BinCmdParser *parser, uint8_t *buffer, uint16_t buffer_size_
 * @return   None
 *
 *******************************************************************************/
-void ezmParser_RunBinParser(BinCmdParser* parser, uint8_t data_byte)
+void ezmParser_RunBinParser(struct BinCmdParser* parser, uint8_t data_byte)
 {
-    static uint8_t buff_index = 0U;
-    BinaryFrameHeader *header;
-
     switch ((BinaryParserState)parser->parser_state)
     {
     case START_OF_FRAME:
@@ -159,172 +153,117 @@ void ezmParser_RunBinParser(BinCmdParser* parser, uint8_t data_byte)
         if (SOF == data_byte)
         {
             VERBOSEPRINT1("[sof = 0x%02x]", data_byte);
-            parser->curr_frame = (BinaryFrame*)ezmStcMem_Malloc(&parser->memory_list, sizeof(BinaryFrame));
-            memset(parser->curr_frame, 0, sizeof(BinaryFrame));
-
+            parser->curr_frame = (struct BinaryFrame*)ezmStcMem_Malloc(&parser->memory_list, sizeof(struct BinaryFrame));
             if (parser->curr_frame)
             {
                 parser->curr_frame->header.sof = data_byte;
                 parser->parser_state = UUID;
+                parser->buff_index = sizeof(uint32_t);
             }
             else
             {
-                if (parser->StatusHandler)
-                {
-                    parser->StatusHandler(BINPARSER_MEM_ERR);
-                }
-
-                parser->parser_state = START_OF_FRAME;
-                ezmStcMem_Free(&parser->memory_list, parser->curr_frame);
-                parser->curr_frame = NULL;
                 PRINT_ERR("[error = cannot allocate memory]");
+                EXECUTE_STATUS_HANDLER(BINPARSER_MEM_ERR);
             }
         }
         else
         {
-            if (parser->StatusHandler)
-            {
-                parser->StatusHandler(BINPARSER_FORMAT_ERR);
-            }
-
-            parser->parser_state = START_OF_FRAME;
-            ezmStcMem_Free(&parser->memory_list, parser->curr_frame);
-            parser->curr_frame = NULL;
-            PRINT_ERR("[error = Wwrong opcode]");
+            PRINT_ERR("[error = wrong sof]");
+            EXECUTE_STATUS_HANDLER(BINPARSER_FORMAT_ERR);
         }
+
         break;
     }
     case UUID:
     {
-        header = &parser->curr_frame->header;
-        if (0 == buff_index)
+        *((uint8_t*)(&(HEADER(parser).uuid)) + --parser->buff_index) = data_byte;
+        if (parser->buff_index == 0)
         {
-            header->uuid = data_byte << 24;
-            buff_index++;
-        }
-        else if (1 == buff_index)
-        {
-            header->uuid = header->uuid | (data_byte << 16);
-            buff_index++;
-        }
-        else if (2 == buff_index)
-        {
-            header->uuid = header->uuid | (data_byte << 8);
-            buff_index++;
-        }
-        else
-        {
-            header->uuid = header->uuid | data_byte;
-            buff_index = 0U;
-
-            VERBOSEPRINT1("[uuid = 0x%02x]", parser->curr_frame->header.uuid);
             parser->parser_state = OP_CODE;
+            VERBOSEPRINT1("[uuid = 0x%02x]", parser->curr_frame->header.uuid);
         }
         break;
     }
     case OP_CODE:
     {
-        header = &parser->curr_frame->header;
-        header->opcode = data_byte;
+        HEADER(parser).opcode = data_byte;
         parser->parser_state = ENCRYPT_INFO;
         VERBOSEPRINT1("[opcode = 0x%02x]", data_byte);
         break;
     }
     case ENCRYPT_INFO:
     {
-        header = &parser->curr_frame->header;
-        header->encrypt_info = data_byte;
+        HEADER(parser).encrypt_info = data_byte;
         parser->parser_state = DATA_LENGTH;
+        parser->buff_index = sizeof(uint16_t);
         VERBOSEPRINT1("[encryption = 0x%02x]", data_byte);
         break;
     }
     case DATA_LENGTH:
     {
-        header = &parser->curr_frame->header;
-        if (0 == buff_index)
+        *((uint8_t*)(&(HEADER(parser).payload_size_byte)) + --parser->buff_index) = data_byte;
+        if (parser->buff_index == 0)
         {
-            header->payload_size_byte = data_byte << 8;
-            buff_index++;
-        }
-        else
-        {
-            header->payload_size_byte |= data_byte ;
-            parser->curr_frame->payload = (uint8_t*)ezmStcMem_Malloc(&parser->memory_list, header->payload_size_byte);
-            parser->parser_state = DATA;
-            buff_index = 0;
-            VERBOSEPRINT1("[len = 0x%02x]", header->payload_size_byte);
+            parser->curr_frame->payload = (uint8_t*)ezmStcMem_Malloc(&parser->memory_list, HEADER(parser).payload_size_byte);
+
+            if (parser->curr_frame->payload)
+            {
+                parser->parser_state = DATA;
+                VERBOSEPRINT1("[len = 0x%02x]", header->payload_size_byte);
+            }
+            else
+            {
+                EXECUTE_STATUS_HANDLER(BINPARSER_MEM_ERR);
+                CLEANUP();
+            }
         }
         break;
     }
     case DATA:
     {
-        header = &parser->curr_frame->header;
-
-        parser->curr_frame->payload[buff_index] = data_byte;
-        buff_index++;
-        if (buff_index >= header->payload_size_byte)
+        parser->curr_frame->payload[parser->buff_index++] = data_byte;
+        if (parser->buff_index >= HEADER(parser).payload_size_byte)
         {
-            parser->parser_state = CHECKSUM;
-            buff_index = 0U;
-
-            if (header->encrypt_info > 0U)
+            if (HEADER(parser).encrypt_info > 0U)
             {
                 /* decrypt frame before moving on */
             }
 
-            HEXDUMP(parser->curr_frame->payload, header->payload_size_byte);
+            HEXDUMP(parser->curr_frame->payload, HEADER(parser).payload_size_byte);
+
+            if (parser->CrcVerify)
+            {
+                parser->buff_index = CRC_SIZE;
+                parser->parser_state = CHECKSUM;
+            }
+            else
+            {
+                ezmParser_RunCommand(parser);
+                CLEANUP();
+            }
         }
         break;
     }
     case CHECKSUM:
     {
-        if (parser->CrcVerify)
+        *((uint8_t*)(&(parser->curr_frame->checksum)) + --parser->buff_index) = data_byte;
+        if (parser->buff_index == 0)
         {
-            parser->curr_frame->checksum[buff_index] = buff_index;
-            buff_index++;
-            if (buff_index >= CRC_SIZE)
+            if (parser->CrcVerify(parser->curr_frame))
             {
-                if (parser->CrcVerify(parser->curr_frame))
-                {
-                    parser->parser_state = COMPLETE;
-                    buff_index = 0U;
-                    VERBOSEPRINT("[CRC = OK]");
-                }
-                else
-                {
-                    if (parser->StatusHandler)
-                    {
-                        parser->StatusHandler(BINPARSER_CRC_ERR);
-                    }
-
-                    ezmStcMem_Free(&parser->memory_list, parser->curr_frame->payload);
-                    ezmStcMem_Free(&parser->memory_list, parser->curr_frame);
-                    parser->curr_frame = NULL;
-                    parser->parser_state = START_OF_FRAME;
-                    buff_index = 0U;
-                    PRINT_ERR("[CRC fail]");
-                }
+                ezmParser_RunCommand(parser);
             }
+            else
+            {
+                EXECUTE_STATUS_HANDLER(BINPARSER_CRC_ERR);
+            }
+            CLEANUP();
         }
-        else
-        {
-            parser->parser_state = COMPLETE;
-        }
-        break;
-    }
-    case COMPLETE:
-    {
-        ezmParser_RunCommand(parser);
-        ezmStcMem_Free(&parser->memory_list, parser->curr_frame->payload);
-        ezmStcMem_Free(&parser->memory_list, parser->curr_frame);
-        parser->curr_frame = NULL;
-        parser->parser_state = START_OF_FRAME;
         break;
     }
     default:
-    {
+        CLEANUP();
         break;
-    }
     }
 }
 
@@ -342,7 +281,7 @@ void ezmParser_RunBinParser(BinCmdParser* parser, uint8_t data_byte)
 * @return   None
 *
 *******************************************************************************/
-static void ezmParser_RunCommand(BinCmdParser* parser)
+static void ezmParser_RunCommand(struct BinCmdParser* parser)
 {
     if (parser->curr_frame && parser->curr_frame->payload)
     {

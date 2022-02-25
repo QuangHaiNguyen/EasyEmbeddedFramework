@@ -256,7 +256,7 @@ void ezmApp_SdkInit(void)
 #endif
 #endif /* NUM_OF_SUPPORTED_UART */
 
-#if(CLI)
+#if(CLI == 1U && HAL_UART == 1U)
     AppCli_Init();
 
 #if(SUPPORTED_CHIP == WIN)

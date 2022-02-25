@@ -36,18 +36,6 @@
 * Module Typedefs
 *******************************************************************************/
 
-/** @brief definition of a new type
- *  
- */
-
-typedef struct
-{
-    int a;
-    /**< an integer */
-    int b;
-    /**< an integer */
-}aType;
-
 
 /******************************************************************************
 * Module Variable Definitions
@@ -58,7 +46,6 @@ typedef struct
 * Function Prototypes
 *******************************************************************************/
 void AppCli_Init(void);
-int sum(int a, int b); /*Short description of function*/
 
 #endif /* _APP_CLI_H */
 

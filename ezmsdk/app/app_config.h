@@ -15,10 +15,10 @@
 #define _APP_CONFIG_H
 
 
-#define CLI                     0U
+#define CLI                     1U
 #define SCHEDULER               0U
 #define SMALLOC                 0U
-#define BIN_PARSER              0U
+#define BIN_PARSER              1U
 #define HELPER_LINKEDLIST       1U
 #define HELPER_HEXDUMP          1U
 #define EZM_DEBUG               1U

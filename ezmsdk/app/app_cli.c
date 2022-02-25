@@ -25,7 +25,7 @@
 #include "app_cli.h"
 #include "app_config.h"
 
-#if(CLI == 1U)
+#if(CLI == 1U && HAL_UART == 1U)
 #include "string.h"
 #include "../ezmKernel/ezmKernel.h"
 #include "../ezmDriver/ezmDriver.h"
@@ -46,13 +46,13 @@ typedef enum
 /******************************************************************************
 * Module Variable Definitions
 *******************************************************************************/
-static uint8_t 		cli_buffer[256] = {0U};
-static uint8_t 		cli_inst_num = 0xFF;
-static uint8_t 		one_byte;
-static uint16_t 	buff_index = 0U;
-static UartDrvApi* 	uart_driver = NULL;
-static process 		cli_process;
-static CLT_STATE 	state;
+static uint8_t      cli_buffer[256] = {0U};
+static uint8_t      cli_inst_num = 0xFF;
+static uint8_t      one_byte;
+static uint16_t     buff_index = 0U;
+static UartDrvApi*  uart_driver = NULL;
+static process      cli_process;
+static CLT_STATE    state;
 
 /******************************************************************************
 * Function Definitions
