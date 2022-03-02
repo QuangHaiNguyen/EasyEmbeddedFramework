@@ -265,7 +265,7 @@ void ezmApp_SdkInit(void)
     {
         if (ezmApp_ReturnTimestampMillisvoid() - execute_time_stamp > 1)
         {
-            ezmKernel_Clock();
+            ezmKernel_UpdateClock();
             ezmKernel_Run();
             execute_time_stamp = ezmApp_ReturnTimestampMillisvoid();
         }

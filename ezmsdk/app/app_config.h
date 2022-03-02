@@ -29,7 +29,7 @@
 #define STCMEM                  1U
 #define KERNEL                  1U
 #define DRIVERINF               1U
-#define HAL_UART                0U
+#define HAL_UART                1U
 
 /*Module ID section*/
 

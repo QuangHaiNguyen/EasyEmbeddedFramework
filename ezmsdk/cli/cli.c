@@ -21,15 +21,14 @@
 #include "../ezmDebug/ezmDebug.h"
 #include "string.h"
 
-#define VERBOSE                 0U
-#define CLI_INDEX_INVALID       0xffU
+#define VERBOSE                 1U
 
 #define MOD_NAME                "CLI"
 
 #if (MODULE_DEBUG == 1U) && (CLI_DEBUG == 1U)
-    #define CLIPRINT(a)                     PRINT_DEBUG1(MOD_NAME,a)
-    #define CLIPRINT1(a,b)                  PRINT_DEBUG1(MOD_NAME,a,b,)
-    #define CLIPRINT2(a,b,c)                PRINT_DEBUG2(MOD_NAME,a,b,c,)
+    #define CLIPRINT(a)                     PRINT_DEBUG(MOD_NAME,a)
+    #define CLIPRINT1(a,b)                  PRINT_DEBUG1(MOD_NAME,a,b)
+    #define CLIPRINT2(a,b,c)                PRINT_DEBUG2(MOD_NAME,a,b,c)
     #define CLIPRINT3(a,b,c,d)              PRINT_DEBUG3(MOD_NAME,a,b,c,d)
     #define CLIPRINT4(a,b,c,d,e)            PRINT_DEBUG4(MOD_NAME,a,b,c,d,e)
 #else 
@@ -40,8 +39,10 @@
     #define CLIPRINT4(a,b,c,d,e)
 #endif
 
-
-
+#define STR_TERMINATE   '\0'
+#define SPACE           ' '
+#define ARG_INVALID     NUM_OF_ARG
+#define SKIP_NULL_SPACE(pointer, end)   while((*pointer == ' ' || *pointer == '\0') && pointer != end){pointer++;}
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
@@ -68,6 +69,8 @@ typedef enum
     STATE_COMMAND,  /**< State parsing the command */
     STATE_ARGUMENT, /**< State parsing the argument */
     STATE_VALUE,    /**< State parsing the value */
+    STATE_EXECUTE,  /**< State execute the callback function*/
+    STATE_ERROR,    /**< Handle error and clean up */
 }ENUM_CLI_STATE;
 
 /******************************************************************************
@@ -81,7 +84,6 @@ static ENUM_CLI_STATE  eState = STATE_COMMAND;      /**< Holding the current sta
 *******************************************************************************/
 static uint8_t  ezmCli_GetFreeInstance          (void);
 static bool     ezmCli_ResetMetaData            (uint8_t u8Index);
-static bool     ezmCli_IsIndexExist             (uint8_t u8Index);
 static bool     ezmCli_IsCommandExist           (const char * pu8Command, uint8_t * pu8Index);
 static uint8_t  ezmCli_IsLongFormArgumentExist  (uint8_t u8CommandIndex, const char * pu8LongForm);
 static uint8_t  ezmCli_IsShortFormArgumentExist (uint8_t u8CommandIndex,const char * pu8ShortForm);
@@ -153,45 +155,29 @@ void ezmCli_Init(void)
 * @see sum
 *
 *******************************************************************************/
-uint8_t ezmCli_RegisterCommand(const char * pu8Command, const char *  pu8Description, CLI_CALLBACK pfnCallback)
+CommandHandle ezmCli_RegisterCommand(const char * pu8Command, const char *  pu8Description, CLI_CALLBACK pfnCallback)
 {
-    bool bSuccess = true;
-    uint8_t u8Index = CLI_INDEX_INVALID;
+    CommandHandle handle = CLI_HANDLE_INVALID;
     
-    if(pu8Command == NULL || pfnCallback == NULL || pu8Description == NULL)
+    if (pu8Command != NULL 
+        && pfnCallback != NULL 
+        && pu8Description != NULL 
+        && ezmCli_IsCommandExist(pu8Command, NULL) == false)
     {
-        bSuccess = false;
-        CLIPRINT("Input parameter is NULL");
-    }
-
-    if(ezmCli_IsCommandExist(pu8Command, NULL))
-    {
-        bSuccess = false;
-    }
-
-    if(bSuccess)
-    {
-        u8Index = ezmCli_GetFreeInstance();
-        if(u8Index == CLI_INDEX_INVALID)
+        handle = ezmCli_GetFreeInstance();
+        if (handle < CLI_HANDLE_INVALID)
         {
-            bSuccess = false;
-            CLIPRINT("Could not find free instance");
+            astMetaData[handle].pfnCallback = pfnCallback;
+            astMetaData[handle].pu8Command = pu8Command;
+            astMetaData[handle].pu8Description = pu8Description;
+            CLIPRINT2("Add new command: [command = %s] [description = %s]", pu8Command, pu8Description);
+        }
+        else
+        {
+            CLIPRINT("ezmCli_RegisterCommand() FAILED");
         }
     }
-
-    if(bSuccess)
-    {
-        astMetaData[u8Index].pfnCallback = pfnCallback;
-        astMetaData[u8Index].pu8Command = pu8Command;
-        astMetaData[u8Index].pu8Description = pu8Description;
-        CLIPRINT2("Add new command: [command = %s] [description = %s]", pu8Command, pu8Description);
-    }
-    else
-    {
-        CLIPRINT("ezmCli_RegisterCommand() FAILED");
-    }
-
-    return u8Index;
+    return handle;
 }
 
 
@@ -223,55 +209,38 @@ uint8_t ezmCli_RegisterCommand(const char * pu8Command, const char *  pu8Descrip
 * @see sum
 *
 *******************************************************************************/
-bool ezmCli_AddArgument ( uint8_t u8CommandIndex, 
+bool ezmCli_AddArgument (CommandHandle u8CommandIndex,
                             const char * pu8LongForm, 
                             const char * pu8ShortForm, 
                             const char * pu8Description)
 {
-    bool bResult = true;
+    bool bResult = false;
 
-
-    if (pu8LongForm == NULL || pu8ShortForm == NULL || pu8Description == NULL)
+    if (pu8LongForm != NULL
+        && pu8ShortForm != NULL
+        && pu8Description != NULL
+        && (uint32_t)u8CommandIndex < CLI_HANDLE_INVALID)
     {
-        bResult = false;
-    }
-
-    if (bResult)
-    {
-        if(!ezmCli_IsIndexExist(u8CommandIndex))
+        if (ezmCli_IsLongFormArgumentExist(u8CommandIndex, pu8LongForm) == ARG_INVALID
+            && ezmCli_IsShortFormArgumentExist(u8CommandIndex, pu8ShortForm) == ARG_INVALID)
         {
-            bResult = false;
-        }
-    }
-
-    if(bResult)
-    {
-        if(ezmCli_IsLongFormArgumentExist(u8CommandIndex, pu8LongForm) != CLI_INDEX_INVALID || 
-            ezmCli_IsShortFormArgumentExist(u8CommandIndex, pu8ShortForm) != CLI_INDEX_INVALID)
-        {
-            bResult = false;
-        }
-    }
-    
-    if(bResult)
-    {
-        bResult = false;
-        for(uint8_t i = 0; i < NUM_OF_ARG; i++)
-        {
-            if(astMetaData[u8CommandIndex].au32LongArgumenList[i] == NULL)
+            for (uint8_t i = 0; i < NUM_OF_ARG; i++)
             {
-                astMetaData[u8CommandIndex].au32LongArgumenList[i] = (uint32_t *)pu8LongForm;
-                astMetaData[u8CommandIndex].au32ShordArgumenList[i] = (uint32_t *)pu8ShortForm;
-                astMetaData[u8CommandIndex].au32DescriptionList[i] = (uint32_t *)pu8Description;
+                if (astMetaData[u8CommandIndex].au32LongArgumenList[i] == NULL)
+                {
+                    astMetaData[u8CommandIndex].au32LongArgumenList[i] = (uint32_t*)pu8LongForm;
+                    astMetaData[u8CommandIndex].au32ShordArgumenList[i] = (uint32_t*)pu8ShortForm;
+                    astMetaData[u8CommandIndex].au32DescriptionList[i] = (uint32_t*)pu8Description;
 
-                CLIPRINT3("Add new argument: [long = %s] [shord = %s] [description = %s]",
-                            (char *)astMetaData[u8CommandIndex].au32LongArgumenList[i],
-                            (char *)astMetaData[u8CommandIndex].au32ShordArgumenList[i],
-                            (char *)astMetaData[u8CommandIndex].au32DescriptionList[i]);
-                bResult = true;
-                break;
+                    CLIPRINT3("Add new argument: [long = %s] [shord = %s] [description = %s]",
+                        (char*)astMetaData[u8CommandIndex].au32LongArgumenList[i],
+                        (char*)astMetaData[u8CommandIndex].au32ShordArgumenList[i],
+                        (char*)astMetaData[u8CommandIndex].au32DescriptionList[i]);
+                    bResult = true;
+                    break;
+                }
             }
-        }   
+        }
     }
     return bResult;
 }
@@ -305,217 +274,137 @@ bool ezmCli_AddArgument ( uint8_t u8CommandIndex,
 *******************************************************************************/
 bool ezmCli_CommandReceivedCallback(uint8_t u8NotifyCode, char * pu8CommandBuffer, uint16_t u16CommandBufferSize)
 {
-    bool bResult = true;
-    char * pu8Helper = pu8CommandBuffer;
-    uint8_t u8CommandIndex = CLI_INDEX_INVALID;
-    uint8_t u8ValueIndex = CLI_INDEX_INVALID;
-    uint16_t u16Count = 0;
-
+    bool bResult = false;
+    bool process_is_done = false;
+    uint8_t u8CommandIndex = CLI_HANDLE_INVALID;
+    uint8_t u8ValueIndex = CLI_HANDLE_INVALID;
+    char* tail;
     eState = STATE_COMMAND;
 
-    CLIPRINT1("Receive data: [data = %s]", pu8CommandBuffer);
+    char* head = pu8CommandBuffer;
+    SKIP_NULL_SPACE(head, pu8CommandBuffer + u16CommandBufferSize);
+    tail = head;
 
-    /* Skip white space at the beginning of the command */
-    for(uint16_t i = 0; i < u16CommandBufferSize - 1; i++)
+    if (*head == '\n' || *head == '\r')
     {
-        if(*(pu8CommandBuffer + i) == ' ')
-        {
-            u16Count = u16Count + 1;
-        }
-        else
-        {
-            break;
-        }
+        process_is_done = true;
     }
-    pu8Helper = pu8CommandBuffer + u16Count;
 
-    /* Search command */
-    for(uint16_t i = u16Count; i < u16CommandBufferSize; i++)
+    while (head != pu8CommandBuffer + u16CommandBufferSize &&
+        process_is_done == false)
     {
-        /* Verify the result of the last iteration */
-        if(bResult == false)
-        {
-            break;
-        }
-
         switch (eState)
         {
         case STATE_COMMAND:
-            if(*(pu8CommandBuffer + i) == ' ')
+            if (*head == SPACE)
             {
-                *(pu8CommandBuffer + i) = '\0';
-                CLIPRINT1("Receive command: [command = %s]", pu8Helper);
+                *head = STR_TERMINATE;
+                CLIPRINT1("Receive command: [command = %s]", tail);
 
-                if(ezmCli_IsCommandExist((char *)pu8Helper, &u8CommandIndex))
+                if (ezmCli_IsCommandExist((char*)tail, &u8CommandIndex))
                 {
                     eState = STATE_ARGUMENT;
-                    pu8Helper = (pu8CommandBuffer + i + 1);
 
-                    /* Skip  next white space */
-                    while(i < u16CommandBufferSize - 1 && *(pu8CommandBuffer + i + 1) == ' ')
-                    {
-                        i = i + 1;
-                    }
-                    pu8Helper = (pu8CommandBuffer + i + 1);
+                    SKIP_NULL_SPACE(head, pu8CommandBuffer + u16CommandBufferSize);
+                    tail = head;
                 }
                 else
                 {
-                    /* Command does not exist, print help */
-                    ezmCli_PrintMenu();
-                    bResult = false; 
+                    eState = STATE_ERROR;
                 }
             }
-            else if (*(pu8CommandBuffer + i) == '\r' || *(pu8CommandBuffer + i) == '\n')
+            
+            if (*head == '\r' || *head == '\n')
             {
-                *(pu8CommandBuffer + i) = '\0';
-                ezmCli_IsCommandExist((char*)pu8Helper, &u8CommandIndex);
-
-                if(i == u16Count)
+                *head = STR_TERMINATE;
+                if(ezmCli_IsCommandExist((char*)tail, &u8CommandIndex) 
+                    && NULL == astMetaData[u8CommandIndex].au32LongArgumenList[0])
                 {
-                    bResult = false;
-
-                    /* missing command*/
-                    CLIPRINT("Missing command");
-                    ezmCli_PrintMenu();
+                    eState = STATE_EXECUTE;
                 }
                 else
                 {
-                    if (NULL == astMetaData[u8CommandIndex].au32LongArgumenList[0] && u8CommandIndex < NUM_OF_CMD)
-                    {
-                        bResult = true;
-                        /*command without argument*/
-
-                        /* Execute the callback */
-                        if (CLI_NC_OK != astMetaData[u8CommandIndex].pfnCallback(astMetaData[u8CommandIndex].pu8Command, astMetaData[u8CommandIndex].au8ValueList))
-                        {
-                            bResult = false;
-                        }
-
-                        ezmCli_ResetValueList(u8CommandIndex);
-
-                        /* End of command, use next line to terminate the loop*/
-                        i = u16CommandBufferSize;
-                    }
-                    else
-                    {
-                        bResult = false;
-                        /* missing argument*/
-                        CLIPRINT("Missing argument");
-                        ezmCli_PrintCommandHelp(u8CommandIndex);
-                    }
-
+                    eState = STATE_ERROR;
                 }
-            }
-            else
-            {
-                /* Do nothing */
             }
 
             break;
-        
         case STATE_ARGUMENT:
-            if(*(pu8CommandBuffer + i) == ' ')
+            if (*head == SPACE)
             {
-                *(pu8CommandBuffer + i) = '\0';
-                CLIPRINT1("Receive argument: [argument = %s]", pu8Helper);
+                *head = STR_TERMINATE;
 
-                if(ezmCli_IsArgumentLongForm(pu8Helper))
+                CLIPRINT1("Receive argument: [argument = %s]", tail);
+
+                u8ValueIndex = ezmCli_IsShortFormArgumentExist(u8CommandIndex, tail);
+                if (u8ValueIndex == ARG_INVALID)
                 {
-                    u8ValueIndex = ezmCli_IsLongFormArgumentExist(u8CommandIndex, pu8Helper);
-                    if(CLI_INDEX_INVALID != u8ValueIndex)
-                    {
-                        eState = STATE_VALUE;
-                        CLIPRINT1("Value index: [idx = %d]", u8ValueIndex);
-                    }
+                    u8ValueIndex = ezmCli_IsLongFormArgumentExist(u8CommandIndex, tail);
                 }
-                else if (ezmCli_IsArgumentShortForm(pu8Helper))
+
+                if (ARG_INVALID != u8ValueIndex)
                 {
-                    u8ValueIndex = ezmCli_IsShortFormArgumentExist(u8CommandIndex, pu8Helper);
-                    if(CLI_INDEX_INVALID != u8ValueIndex)
-                    {
-                        eState = STATE_VALUE;
-                        CLIPRINT1("Value index: [idx = %d]", u8ValueIndex);
-                    }
-                    else
-                    {
-                        CLIPRINT("argument does not exist");
-                    }
+                    eState = STATE_VALUE;
+                    CLIPRINT1("Value index: [idx = %d]", u8ValueIndex);
+
+                    SKIP_NULL_SPACE(head, pu8CommandBuffer + u16CommandBufferSize);
+                    tail = head;
                 }
                 else
                 {
-                    /* Wrong format*/
-                    CLIPRINT("Argument in wrong format");
-                    ezmCli_PrintCommandHelp(u8CommandIndex);
-                    bResult = false;  
+                    eState = STATE_ERROR;
                 }
-
-                /* Skip white space */
-                while(i < u16CommandBufferSize - 1 && *(pu8CommandBuffer + i + 1) == ' ')
-                {
-                    i = i + 1;
-                }
-                pu8Helper = (pu8CommandBuffer + i + 1);
-            }
-            else if (*(pu8CommandBuffer + i) == '\r' || *(pu8CommandBuffer + i) == '\n')
-            {
-                /* missing value*/
-                CLIPRINT("Missing value");
-                ezmCli_PrintCommandHelp(u8CommandIndex);
-                bResult = false;  
-            }
-            else
-            {
-                /* Do nothing */
             }
             
+            if (*head == '\r' || *head == '\n')
+            {
+                eState = STATE_ERROR;
+            }
             break;
 
         case STATE_VALUE:
-            if(*(pu8CommandBuffer + i) == ' ' && *(pu8CommandBuffer + i + 1) == '-')
+            if (*head == SPACE && *(head + 1) == '-')
             {
-                *(pu8CommandBuffer + i) = '\0';
-                CLIPRINT1("Receive value: [value = %s]", pu8Helper);
+                *head = STR_TERMINATE;
+                CLIPRINT1("Receive value: [value = %s]", tail);
 
-                astMetaData[u8CommandIndex].au8ValueList[u8ValueIndex] = pu8Helper;
+                astMetaData[u8CommandIndex].au8ValueList[u8ValueIndex] = tail;
                 eState = STATE_ARGUMENT;
 
-                /* Skip white space*/
-                while (i < u16CommandBufferSize - 1 && *(pu8CommandBuffer + i + 1) == ' ')
-                {
-                    i = i + 1;
-                }
-                pu8Helper = (pu8CommandBuffer + i + 1);
+                SKIP_NULL_SPACE(head, pu8CommandBuffer + u16CommandBufferSize);
+                tail = head;
 
             }
-            else if (*(pu8CommandBuffer + i) == '\r' || *(pu8CommandBuffer + i) == '\n')
-            {
-                *(pu8CommandBuffer + i) = '\0';
-                CLIPRINT1("Receive value: [value = %s]", pu8Helper);
-
-                astMetaData[u8CommandIndex].au8ValueList[u8ValueIndex] = pu8Helper;
-                
-                /* Execute the callback */
-                if (CLI_NC_OK != astMetaData[u8CommandIndex].pfnCallback(astMetaData[u8CommandIndex].pu8Command, astMetaData[u8CommandIndex].au8ValueList))
-                {
-                    bResult = false;
-                }
-
-                ezmCli_ResetValueList(u8CommandIndex);
-
-                /* End of command, use next line to terminate the loop*/
-                i = u16CommandBufferSize;
-            }
-            else
-            {
-                /* do nothing */
-            }
-
             
+            if (*head == '\r' || *head == '\n')
+            {
+                *head = STR_TERMINATE;
+                CLIPRINT1("Receive value: [value = %s]", tail);
+
+                astMetaData[u8CommandIndex].au8ValueList[u8ValueIndex] = tail;
+                eState = STATE_EXECUTE;
+            }
+
             break;
-        
-        default:
+
+        case STATE_EXECUTE:
+            /* Execute the callback */
+            if (CLI_NC_OK == astMetaData[u8CommandIndex].pfnCallback(astMetaData[u8CommandIndex].pu8Command, astMetaData[u8CommandIndex].au8ValueList))
+            {
+                bResult = true;
+            }
+
+            ezmCli_ResetValueList(u8CommandIndex);
+            process_is_done = true;
+            break;
+
+        case STATE_ERROR:
+            CLIPRINT("Error");
+            ezmCli_PrintCommandHelp(u8CommandIndex);
+            process_is_done = true;
             break;
         }
+        head++;
     }
 
     (void)(u8NotifyCode);
@@ -569,46 +458,6 @@ static bool ezmCli_ResetMetaData (uint8_t u8Index)
 }
 
 /******************************************************************************
-* Function : ezmCli_IsIndexExist
-*//** 
-* \b Description:
-*
-* This function checks if the index of the command is available
-*
-* PRE-CONDITION: None
-*
-* POST-CONDITION: None
-* 
-* @param    u8Index:    (IN) index of the command
-* @return   True:       Command is existing
-*           False:      Command is not existing
-*
-* \b Example Example:
-* @code
-* if(ezmCli_IsIndexExist(0U))
-* {
-*       printf("command exists")
-* }
-* @endcode
-*
-*******************************************************************************/
-static bool ezmCli_IsIndexExist (uint8_t u8Index)
-{
-    bool bResult = false;
-
-    for (uint8_t i = 0; i < NUM_OF_CMD; i++)
-    {
-        if (i == u8Index)
-        {
-            bResult = true;
-            break;
-        }
-    }
-
-    return bResult;
-}
-
-/******************************************************************************
 * Function : ezmCli_GetFreeInstance
 *//** 
 * \b Description:
@@ -620,7 +469,7 @@ static bool ezmCli_IsIndexExist (uint8_t u8Index)
 * POST-CONDITION: None
 * 
 * @param    None
-* @return   CLI_INDEX_INVALID if there is no free instance, otherwise the index
+* @return   CLI_HANDLE_INVALID if there is no free instance, otherwise the index
 *           of the intsance
 *
 * \b Example Example:
@@ -631,7 +480,7 @@ static bool ezmCli_IsIndexExist (uint8_t u8Index)
 *******************************************************************************/
 static uint8_t ezmCli_GetFreeInstance (void)
 {
-    uint8_t u8FreeInstanceIndex = CLI_INDEX_INVALID;
+    uint8_t u8FreeInstanceIndex = CLI_HANDLE_INVALID;
 
     for(uint8_t i = 0; i < NUM_OF_CMD; i++)
     {
@@ -790,8 +639,8 @@ static bool ezmCli_IsArgumentShortForm(char * pu8ShortFormArg)
     bool bResult = false;
     if(*pu8ShortFormArg == '-')
     {
-        if(( *(pu8ShortFormArg + 1) >= 'a' && *(pu8ShortFormArg + 1) <= 'z') || 
-            ( *(pu8ShortFormArg + 1) >= 'A' && *(pu8ShortFormArg + 1) <= 'Z'))
+        if(( *(pu8ShortFormArg + 1) >= 'a' && *(pu8ShortFormArg + 1) <= 'z') 
+            || ( *(pu8ShortFormArg + 1) >= 'A' && *(pu8ShortFormArg + 1) <= 'Z'))
         {
             bResult = true;
         }
@@ -818,16 +667,7 @@ static bool ezmCli_IsArgumentShortForm(char * pu8ShortFormArg)
 *******************************************************************************/
 static bool ezmCli_IsArgumentLongForm(char * pu8LongFormArg)
 {
-    bool bResult = false;
-    if(*pu8LongFormArg == '-' && *(pu8LongFormArg + 1) == '-')
-    {
-        if(( *(pu8LongFormArg + 2) >= 'a' && *(pu8LongFormArg + 2) <= 'z') || 
-            ( *(pu8LongFormArg + 2) >= 'A' && *(pu8LongFormArg + 2) <= 'Z'))
-        {
-            bResult = true;
-        }
-    }
-    return  bResult;
+    return (*pu8LongFormArg == '-' && ezmCli_IsArgumentShortForm(pu8LongFormArg + 1));
 }
 
 /******************************************************************************
@@ -849,7 +689,7 @@ static bool ezmCli_IsArgumentLongForm(char * pu8LongFormArg)
 *******************************************************************************/
 uint8_t ezmCli_IsLongFormArgumentExist  (uint8_t u8CommandIndex, const char * pu8LongForm)
 {
-    uint8_t u8Index = CLI_INDEX_INVALID;
+    uint8_t u8Index = ARG_INVALID;
     for(uint8_t i = 0; i < NUM_OF_ARG; i++)
     {
         if(astMetaData[u8CommandIndex].au32LongArgumenList[i] != NULL && 
@@ -882,7 +722,7 @@ uint8_t ezmCli_IsLongFormArgumentExist  (uint8_t u8CommandIndex, const char * pu
 *******************************************************************************/
 uint8_t ezmCli_IsShortFormArgumentExist  (uint8_t u8CommandIndex,const char * pu8ShortForm)
 {
-    uint8_t u8Index = CLI_INDEX_INVALID;
+    uint8_t u8Index = ARG_INVALID;
     for(uint8_t i = 0; i < NUM_OF_ARG; i++)
     {
         if(astMetaData[u8CommandIndex].au32ShordArgumenList[i] != NULL && 

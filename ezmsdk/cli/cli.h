@@ -33,7 +33,7 @@
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
-/* None */
+#define CLI_HANDLE_INVALID       NUM_OF_CMD
 
 /******************************************************************************
 * Module Typedefs
@@ -54,7 +54,7 @@ typedef enum
  *
  */
 typedef CLI_NOTIFY_CODE(*CLI_CALLBACK)(const char * pu8Command, void * pValueList);
-
+typedef uint32_t CommandHandle;
 /******************************************************************************
 * Module Variable Definitions
 *******************************************************************************/
@@ -62,12 +62,12 @@ typedef CLI_NOTIFY_CODE(*CLI_CALLBACK)(const char * pu8Command, void * pValueLis
 /******************************************************************************
 * Function Prototypes
 *******************************************************************************/
-void    ezmCli_Init             (void);
-uint8_t ezmCli_RegisterCommand  (const char * pu8Command, 
-                                    const char *  pu8Description, 
-                                    CLI_CALLBACK pfnCallback);
+void            ezmCli_Init             (void);
+CommandHandle   ezmCli_RegisterCommand  (const char * pu8Command,
+                                            const char *  pu8Description, 
+                                            CLI_CALLBACK pfnCallback);
 
-bool    ezmCli_AddArgument      (uint8_t u8CommandIndex, 
+bool    ezmCli_AddArgument      (CommandHandle u8CommandIndex,
                                     const char * pu8LongForm, 
                                     const char * pu8ShortForm, 
                                     const char * pu8Description);

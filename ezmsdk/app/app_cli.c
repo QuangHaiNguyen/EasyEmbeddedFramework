@@ -33,33 +33,39 @@
 #include "../ezmDebug/ezmDebug.h"
 #include "../cli/cli.h"
 
+#define BEGIN   "$"
+
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
+
+/**@brief
+ *
+ */
 typedef enum
 {
-    GET_BYTE,
-    WAIT,
-    PROC_CMD,
+    GET_BYTE,   /**< */
+    WAIT,       /**< */
+    PROC_CMD,   /**< */
 }CLT_STATE;
 
 /******************************************************************************
 * Module Variable Definitions
 *******************************************************************************/
-static uint8_t      cli_buffer[256] = {0U};
-static uint8_t      cli_inst_num = 0xFF;
-static uint8_t      one_byte;
-static uint16_t     buff_index = 0U;
-static UartDrvApi*  uart_driver = NULL;
-static process      cli_process;
-static CLT_STATE    state;
+static uint8_t          cli_buffer[256] = {0U};
+static CommandHandle    cli_inst_num = 0xFF;
+static uint8_t          one_byte;
+static uint16_t         buff_index = 0U;
+static UartDrvApi*      uart_driver;
+static EzmProcess       cli_process;
+static CLT_STATE        state;
 
 /******************************************************************************
 * Function Definitions
 *******************************************************************************/
-static uint8_t 			CLI_Proccess(void);
-static CLI_NOTIFY_CODE 	CommandHandle(const char* pu8Command, void* pValueList);
-static uint8_t 			UartCallbackHandle(uint8_t notify_code, void* param1, void* param2);
+static uint8_t          CLI_Proccess(void);
+static CLI_NOTIFY_CODE  CliCallback(const char* pu8Command, void* pValueList);
+static uint8_t          UartCallbackHandle(uint8_t notify_code, void* param1, void* param2);
 
 void AppCli_Init(void)
 {
@@ -74,14 +80,18 @@ void AppCli_Init(void)
 
     if (is_success)
     {
-        is_success = is_success && ezmDriver_GetDriverInstance(UART0_DRIVER, (void*)&uart_driver);
+        ezmDriver_GetDriverInstance(UART0_DRIVER, (void*)(&uart_driver));
+        if (uart_driver == NULL)
+        {
+            is_success = false;
+        }
     }
 
     if (is_success)
     {
         uart_driver->ezmUart_RegisterCallback(UartCallbackHandle);
 
-        cli_inst_num = ezmCli_RegisterCommand("echo", "echo your text", CommandHandle);
+        cli_inst_num = ezmCli_RegisterCommand("echo", "echo your text", CliCallback);
         if (0xFF == cli_inst_num)
         {
             PRINT_DEBUG("APPCLI", "add command error");
@@ -91,19 +101,24 @@ void AppCli_Init(void)
             is_success = ezmCli_AddArgument(cli_inst_num, "--text", "-t", "text to echo");
         }
 
-        cli_inst_num = ezmCli_RegisterCommand("proc_load", "show kernel load", CommandHandle);
+        cli_inst_num = ezmCli_RegisterCommand("proc_load", "show kernel load", CliCallback);
         if (0xFF == cli_inst_num)
         {
             PRINT_DEBUG("APPCLI", "add command error");
             is_success = false;
         }
 
-        cli_inst_num = ezmCli_RegisterCommand("help", "show help", CommandHandle);
+        cli_inst_num = ezmCli_RegisterCommand("help", "show help", CliCallback);
         if (0xFF == cli_inst_num)
         {
             PRINT_DEBUG("APPCLI", "add command error");
             is_success = false;
         }
+    }
+
+    if (is_success)
+    {
+        uart_driver->ezmUart_Send(BEGIN, sizeof(BEGIN));
     }
 }
 
@@ -123,15 +138,16 @@ static uint8_t CLI_Proccess(void)
         (void)ezmCli_CommandReceivedCallback(0, (char*)cli_buffer, sizeof(cli_buffer));
         memset(cli_buffer, 0, sizeof(cli_buffer));
         buff_index = 0U;
+        uart_driver->ezmUart_Send(BEGIN, sizeof(BEGIN));
         state = GET_BYTE;
         break;
     default:
-        break;;
+        break;
     }
     return 0;
 }
 
-static CLI_NOTIFY_CODE CommandHandle(const char* pu8Command, void* pValueList)
+static CLI_NOTIFY_CODE CliCallback(const char* pu8Command, void* pValueList)
 {
     uint32_t* params = (uint32_t*)pValueList;
     if (strcmp(pu8Command, "echo") == 0)
@@ -166,7 +182,7 @@ static uint8_t UartCallbackHandle(uint8_t notify_code, void* param1, void* param
         break;
     case UART_RX_COMPLT:
 #if(SUPPORTED_CHIP == WIN)
-        cli_buffer[buff_index] = *(char*)param1;;
+        cli_buffer[buff_index] = *(char*)param1;
         if (cli_buffer[buff_index] == '\n' || buff_index == sizeof(cli_buffer) || cli_buffer[buff_index] == '\r')
         {
             state = PROC_CMD;

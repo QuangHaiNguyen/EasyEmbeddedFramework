@@ -78,6 +78,12 @@ CLI_NOTIFY_CODE CopyString(const char* pu8Command, void* pValueList)
     return eReturn;
 }
 
+CLI_NOTIFY_CODE DoNothing(const char* pu8Command, void* pValueList)
+{
+    CLI_NOTIFY_CODE eReturn = CLI_NC_OK;
+    return eReturn;
+}
+
 #endif /* CLI */
 }
 
@@ -89,19 +95,19 @@ namespace
     {
         uint8_t u8Result;
         u8Result = ezmCli_RegisterCommand(NULL, NULL, NULL);
-        ASSERT_EQ(u8Result, 0xff);
+        ASSERT_EQ(u8Result, CLI_HANDLE_INVALID);
 
         u8Result = ezmCli_RegisterCommand("Test_Command", NULL, NULL);
-        ASSERT_EQ(u8Result, 0xff);
+        ASSERT_EQ(u8Result, CLI_HANDLE_INVALID);
 
         u8Result = ezmCli_RegisterCommand(NULL, "this is a test command", &TestCommand);
-        ASSERT_EQ(u8Result, 0xff);
+        ASSERT_EQ(u8Result, CLI_HANDLE_INVALID);
 
         u8Result = ezmCli_RegisterCommand("Test_Command", "this is a test command", &TestCommand);
-        ASSERT_NE(u8Result, 0xff);
+        ASSERT_NE(u8Result, CLI_HANDLE_INVALID);
 
         u8Result = ezmCli_RegisterCommand("Test_Command", "this is a test command", &TestCommand);
-        ASSERT_EQ(u8Result, 0xff);
+        ASSERT_EQ(u8Result, CLI_HANDLE_INVALID);
     }
 
     TEST(cli, add_argument) 
@@ -111,7 +117,7 @@ namespace
 
         ezmCli_Init();
         u8Result = ezmCli_RegisterCommand("Test_Command1", "this is a test command",  &TestCommand);
-        ASSERT_NE(u8Result, 0xff);
+        ASSERT_NE(u8Result, CLI_HANDLE_INVALID);
 
         bResult = ezmCli_AddArgument(u8Result, NULL, "-a1", "argument 1");
         ASSERT_EQ(bResult, false);
@@ -155,7 +161,7 @@ namespace
 
         ezmCli_Init();
         u8Result = ezmCli_RegisterCommand("Test_Command1", "this is a test command",  &TestCommand);
-        ASSERT_NE(u8Result, 0xff);
+        ASSERT_NE(u8Result, CLI_HANDLE_INVALID);
 
         bResult = ezmCli_AddArgument(u8Result, "--arg1", "-a1", "argument 1");
         ASSERT_EQ(bResult, true);
@@ -200,7 +206,7 @@ namespace
         ASSERT_EQ(bResult, false);
 
         memset(au8CommandBuffer, 0, sizeof(au8CommandBuffer));
-        memcpy(au8CommandBuffer, "\n", sizeof("n"));
+        memcpy(au8CommandBuffer, "\n", 1);
         bResult = ezmCli_CommandReceivedCallback(0, au8CommandBuffer, sizeof(au8CommandBuffer));
         ASSERT_EQ(bResult, false);
         
@@ -217,7 +223,7 @@ namespace
 
         ezmCli_Init();
         u8Result = ezmCli_RegisterCommand("sum", "sum of 2 unsigned interger", &Sum);
-        ASSERT_NE(u8Result, 0xff);
+        ASSERT_NE(u8Result, CLI_HANDLE_INVALID);
 
         bResult = ezmCli_AddArgument(u8Result, "--int1", "-i1", "integer 1");
         ASSERT_EQ(bResult, true);
@@ -232,19 +238,19 @@ namespace
         ASSERT_EQ(u32TestSum, 30);
 
         memset(au8CommandBuffer, 0, sizeof(au8CommandBuffer));
-        memcpy(au8CommandBuffer, "sum -i1 0 -i2 20\n", sizeof("sum -i1 10 -i2 20\n"));
+        memcpy(au8CommandBuffer, "sum -i1 0 -i2 20\n", sizeof("sum -i1 0 -i2 20\n"));
         bResult = ezmCli_CommandReceivedCallback(0, au8CommandBuffer, sizeof(au8CommandBuffer));
         ASSERT_EQ(bResult, true);
         ASSERT_EQ(u32TestSum, 20);
 
         memset(au8CommandBuffer, 0, sizeof(au8CommandBuffer));
-        memcpy(au8CommandBuffer, "sum -i1 0 -i2 0\n", sizeof("sum -i1 10 -i2 20\n"));
+        memcpy(au8CommandBuffer, "sum -i1 0 -i2 0\n", sizeof("sum -i1 0 -i2 0\n"));
         bResult = ezmCli_CommandReceivedCallback(0, au8CommandBuffer, sizeof(au8CommandBuffer));
         ASSERT_EQ(bResult, true);
         ASSERT_EQ(u32TestSum, 0);
 
         memset(au8CommandBuffer, 0, sizeof(au8CommandBuffer));
-        memcpy(au8CommandBuffer, "sum -i1 10\n", sizeof("sum -i1 10\n\n"));
+        memcpy(au8CommandBuffer, "sum -i1 10\n", sizeof("sum -i1 10\n"));
         bResult = ezmCli_CommandReceivedCallback(0, au8CommandBuffer, sizeof(au8CommandBuffer));
         ASSERT_EQ(bResult, false);
     }
@@ -254,10 +260,10 @@ namespace
         uint8_t u8Result;
         bool    bResult;
         bool    bStringCompareResult;
-
+        
         ezmCli_Init();
         u8Result = ezmCli_RegisterCommand("string", "copy a string", &CopyString);
-        ASSERT_NE(u8Result, 0xff);
+        ASSERT_NE(u8Result, CLI_HANDLE_INVALID);
 
         bResult = ezmCli_AddArgument(u8Result, "--string", "-str", "string value");
         ASSERT_EQ(bResult, true);
@@ -276,12 +282,26 @@ namespace
         bStringCompareResult = strcmp(pu8TestString, "hello world\0");
         ASSERT_EQ(bStringCompareResult, 0);
 
+        pu8TestString = NULL;
         memset(au8CommandBuffer, 0, sizeof(au8CommandBuffer));
         memcpy(au8CommandBuffer, "string -str     \n", sizeof("string -str     \n"));
         bResult = ezmCli_CommandReceivedCallback(0, au8CommandBuffer, sizeof(au8CommandBuffer));
+        ASSERT_EQ(bResult, false);
+    }
+
+    TEST(cli, test_cmd_no_arg)
+    {
+        uint8_t u8Result;
+        bool    bResult;
+
+        ezmCli_Init();
+        u8Result = ezmCli_RegisterCommand("no_arg", "command has no argument", &DoNothing);
+        ASSERT_NE(u8Result, CLI_HANDLE_INVALID);
+
+        memset(au8CommandBuffer, 0, sizeof(au8CommandBuffer));
+        memcpy(au8CommandBuffer, "no_arg\n", sizeof("no_arg\n"));
+        bResult = ezmCli_CommandReceivedCallback(0, au8CommandBuffer, sizeof(au8CommandBuffer));
         ASSERT_EQ(bResult, true);
-        bStringCompareResult = strcmp(pu8TestString, "\0");
-        ASSERT_EQ(bStringCompareResult, 0);
     }
 
 #endif /* CLI */
