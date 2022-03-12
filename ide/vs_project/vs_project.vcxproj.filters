@@ -118,6 +118,9 @@
     <ClCompile Include="..\..\ezmsdk\hal\uart\uart_sim.c">
       <Filter>Source Files\hal\uart</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\ezmDebug\ezmDebug.c">
+      <Filter>Source Files\ezmDebug</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\ezmsdk\app\app.h">

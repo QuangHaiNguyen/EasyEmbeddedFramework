@@ -155,6 +155,7 @@
     <ClCompile Include="..\..\ezmsdk\app\app_cli.c" />
     <ClCompile Include="..\..\ezmsdk\binCmdParser\binCmdParser.c" />
     <ClCompile Include="..\..\ezmsdk\cli\cli.c" />
+    <ClCompile Include="..\..\ezmsdk\ezmDebug\ezmDebug.c" />
     <ClCompile Include="..\..\ezmsdk\ezmDriver\dummy_driver.c" />
     <ClCompile Include="..\..\ezmsdk\ezmDriver\ezmDriver.c" />
     <ClCompile Include="..\..\ezmsdk\ezmIpc\ezmIpc.c" />

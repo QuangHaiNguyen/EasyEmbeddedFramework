@@ -26,7 +26,8 @@
 #include "../../app/app_config.h"
 
 #if(HAL_UART == 1U && SUPPORTED_CHIP == WIN)
-#include "stdint.h"
+#include <stdint.h>
+#include <stdio.h>
 #include "../../ezmDebug/ezmDebug.h"
 #include "../../helper/hexdump/hexdump.h"
 

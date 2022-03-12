@@ -20,8 +20,6 @@
 #ifndef DEBUG_CONF_H
 #define	DEBUG_CONF_H
 
-#include "stdio.h"
-
 #define MODULE_DEBUG                1U  /*main switch to activate the debug output*/
 
 /******************************************************************************

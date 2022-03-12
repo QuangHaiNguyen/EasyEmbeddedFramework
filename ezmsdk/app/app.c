@@ -78,7 +78,6 @@
 #include "../helper/stcmem/stcmem.h"
 #endif
 
-
 #if(KERNEL == 1U)
 #include "../ezmKernel/ezmKernel.h"
 #endif
@@ -270,7 +269,7 @@ void ezmApp_SdkInit(void)
             execute_time_stamp = ezmApp_ReturnTimestampMillisvoid();
         }
     }while (execute_time_stamp);
-#endif
+#endif /* SUPPORTED_CHIP */
 #endif
 }
 

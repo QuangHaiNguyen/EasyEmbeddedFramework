@@ -28,18 +28,23 @@
     #define DEBUG_LEVEL = 0
 #endif
 
+#if (USING_EZM_PRINTF == 1U)
+#else
+#endif
+
+
 /*print, always activated, independent from the debug level*/
-#define PRINTF(format, ...)                 printf(format "\n", __VA_ARGS__ )
-#define PRINTF_NO_NL(format, ...)           printf(format, __VA_ARGS__ )
+#define PRINTF(format, ...)                 ezm_printf(format "\n", __VA_ARGS__ )
+#define PRINTF_NO_NL(format, ...)           ezm_printf(format, __VA_ARGS__ )
 #define PRINT1(a)                           PRINTF("%s", a)
 #define PRINT2(a,b)                         PRINTF(a, b)
 #define PRINT3(a,b,c)                       PRINTF(a, b, c)
 
-#define PRINTF_MOD(MOD_NAME, format, ...)   printf("[%s]::" format "\n", MOD_NAME, __VA_ARGS__ )
+#define PRINTF_MOD(MOD_NAME, format, ...)   ezm_printf("[%s]::" format "\n", MOD_NAME, __VA_ARGS__ )
 
 /*print, dependent on debug level*/
 #if DEBUG_LEVEL >= 3
-    #define PRINT_ERROR( format, ... )      printf( "[ERROR]::%s(%d) " format "\n", __FUNCTION__,  __LINE__, __VA_ARGS__ )
+    #define PRINT_ERROR( format, ... )      ezm_printf( "[ERROR]::%s(%d) " format "\n", __FUNCTION__,  __LINE__, __VA_ARGS__ )
     #define PRINT_ERR(a)                    PRINT_ERROR("%s", a)
     #define PRINT_ERR1(a,b)                 PRINT_ERROR(a,b)
     #define PRINT_ERR2(a,b,c)               PRINT_ERROR(a,b,c)
@@ -69,7 +74,7 @@
 #endif
 
 #if DEBUG_LEVEL >= 1
-    #define PRINTINFO(format, ...)          printf( "[INFO] " format "\n", __VA_ARGS__ )
+    #define PRINTINFO(format, ...)          ezm_printf( "[INFO] " format "\n", __VA_ARGS__ )
     #define PRINT_INFO(a)                   PRINTINFO("%s", a)
     #define PRINT_INFO1(a,b)                PRINTINFO(a,b)
     #define PRINT_INFO2(a,b,c)              PRINTINFO(a,b,c)
@@ -84,8 +89,12 @@
     #define PRINT_INFO4(a,b,c,d,e)
 #endif
 
+typedef void(*PRINT_STRING)(char *string, int string_size);
 
-
+int ezm_printf(char* fmt, ...);
+int ezm_snprintf(char* buff, int buff_size, char* fmt, ...);
+unsigned int ezm_StringLen(char * string);
+int ezm_StringCopy(char* src, char* dst, int size_dst);
 #endif	/* DEBUG_H */
 
 /* End of file*/
