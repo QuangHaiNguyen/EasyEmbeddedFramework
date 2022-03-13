@@ -28,23 +28,28 @@
     #define DEBUG_LEVEL = 0
 #endif
 
-#if (USING_EZM_PRINTF == 1U)
-#else
+#if (USING_EZM_PRINTF == 0U)
+#include <stdio.h>
 #endif
 
-
 /*print, always activated, independent from the debug level*/
-#define PRINTF(format, ...)                 ezm_printf(format "\n", __VA_ARGS__ )
-#define PRINTF_NO_NL(format, ...)           ezm_printf(format, __VA_ARGS__ )
+#if (USING_EZM_PRINTF == 1U)
+    #define PRINTF(format, ...)                 ezm_printf(format "\n", __VA_ARGS__ )
+    #define PRINTF_NO_NL(format, ...)           ezm_printf(format, __VA_ARGS__ )
+    define PRINTF_MOD(MOD_NAME, format, ...)    ezm_printf("[%s]::" format "\n", MOD_NAME, __VA_ARGS__ )
+#else
+    #define PRINTF(format, ...)                 printf(format "\n", __VA_ARGS__ )
+    #define PRINTF_NO_NL(format, ...)           printf(format, __VA_ARGS__ )
+    #define PRINTF_MOD(MOD_NAME, format, ...)   printf("[%s]::" format "\n", MOD_NAME, __VA_ARGS__ )
+#endif
+
 #define PRINT1(a)                           PRINTF("%s", a)
 #define PRINT2(a,b)                         PRINTF(a, b)
 #define PRINT3(a,b,c)                       PRINTF(a, b, c)
 
-#define PRINTF_MOD(MOD_NAME, format, ...)   ezm_printf("[%s]::" format "\n", MOD_NAME, __VA_ARGS__ )
-
 /*print, dependent on debug level*/
 #if DEBUG_LEVEL >= 3
-    #define PRINT_ERROR( format, ... )      ezm_printf( "[ERROR]::%s(%d) " format "\n", __FUNCTION__,  __LINE__, __VA_ARGS__ )
+    #define PRINT_ERROR( format, ... )      PRINTF( "[ERROR]::%s(%d) " format "\n", __FUNCTION__,  __LINE__, __VA_ARGS__ )
     #define PRINT_ERR(a)                    PRINT_ERROR("%s", a)
     #define PRINT_ERR1(a,b)                 PRINT_ERROR(a,b)
     #define PRINT_ERR2(a,b,c)               PRINT_ERROR(a,b,c)
@@ -74,7 +79,7 @@
 #endif
 
 #if DEBUG_LEVEL >= 1
-    #define PRINTINFO(format, ...)          ezm_printf( "[INFO] " format "\n", __VA_ARGS__ )
+    #define PRINTINFO(format, ...)          PRINTF( "[INFO] " format "\n", __VA_ARGS__ )
     #define PRINT_INFO(a)                   PRINTINFO("%s", a)
     #define PRINT_INFO1(a,b)                PRINTINFO(a,b)
     #define PRINT_INFO2(a,b,c)              PRINTINFO(a,b,c)

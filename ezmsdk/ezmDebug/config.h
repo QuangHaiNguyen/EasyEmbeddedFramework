@@ -20,7 +20,8 @@
 #ifndef DEBUG_CONF_H
 #define	DEBUG_CONF_H
 
-#define MODULE_DEBUG                1U  /*main switch to activate the debug output*/
+#define MODULE_DEBUG                1U  /* main switch to activate the debug output */
+#define USING_EZM_PRINTF            0U  /* to use our own printf instead of standard lib */
 
 /******************************************************************************
 * debug output switch for each module
