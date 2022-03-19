@@ -36,6 +36,9 @@
     <ClInclude Include="..\unit_test_kernel.h">
       <Filter>test_cases</Filter>
     </ClInclude>
+    <ClInclude Include="..\unit_test_printf.h">
+      <Filter>test_cases</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

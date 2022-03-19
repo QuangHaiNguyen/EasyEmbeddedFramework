@@ -18,9 +18,9 @@
 
 #if (NUM_OF_SUPPORTED_UART > 0U)
 #include "../../ezmDriver/ezmDriver.h"
-#include "ezmDebug/config.h"
-#include "ezmDebug/ezmDebug.h"
-#include "helper/hexdump/hexdump.h"
+#include "../../ezmDebug/config.h"
+#include "../../ezmDebug/ezmDebug.h"
+#include "../../helper/hexdump/hexdump.h"
 
 #if (SUPPORTED_CHIP == ESP32)
 #include "esp_uart/esp_uart.h"

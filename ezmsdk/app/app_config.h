@@ -29,6 +29,7 @@
 #define STCMEM                  1U
 #define KERNEL                  1U
 #define DRIVERINF               1U
+#define EZM_PRINTF              1U
 #define HAL_UART                1U
 
 /*Module ID section*/
@@ -151,8 +152,12 @@
 #if (HELPER_LINKEDLIST == 0U)
 #error module HELPER_LINKEDLIST must be activated
 #endif
-
 #endif /* KERNEL */
+
+/* EZM_PRINTF SECTION ***********************************************************/
+#if (EZM_PRINTF == 1U)
+#define PRINTF_BUFF_SIZE        256U
+#endif
 
 /* DRIVERINF SECTION ***************************************************************/
 #if (DRIVERINF == 1U)
