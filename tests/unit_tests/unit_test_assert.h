@@ -9,14 +9,11 @@ extern "C" {
 
 #if (HELPER_ASSERT == 1U)
 #include "../../ezmsdk/helper/ezmAssert/ezmAssert.h"
-#define ASSERT_MOD_ID       0x01U
-REGISTER_ASSERT(ASSERT_MOD_ID)
 #endif /* HELPER_ASSERT */
 }
 
 namespace 
 {
-
 #if (HELPER_ASSERT == 1U)
     TEST(assert, module) 
     {
@@ -29,6 +26,7 @@ namespace
         int var2 = 20;
 
         ASSERT(ptr == NULL);
+        ASSERT_MSG(ptr != NULL, "this param must not be NULL");
 
         ptr = &var2;
         ASSERT(ptr != NULL);

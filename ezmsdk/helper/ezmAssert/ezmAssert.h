@@ -32,23 +32,12 @@
 #include "../../app/app_config.h"
 
 #if (HELPER_ASSERT == 1U)
-
-#define ASSERT(expr) \
-    if (expr) \
-        {} \
-    else \
-        ezmAssert_AssertFailHandler(MODULE_ID, __LINE__);
-/**< Assert operation*/
-
-#define REGISTER_ASSERT(module_id) \
-    enum { MODULE_ID=module_id }; \
-    void _dummy##module_id(void) {}
-
+#include "../../ezmDebug/ezmDebug.h"
+    #define ASSERT(expr)            if(!(expr)) {PRINTF("assert:%s:%d", __func__ , __LINE__);}
+    #define ASSERT_MSG(expr, msg)   if(!(expr)) {PRINTF("assert:%s:%d - %s", __func__ , __LINE__, msg);}
 #else
-
-#define ASSERT(expr)
-#define REGISTER_ASSERT(module_id)
-
+    #define ASSERT(expr)
+    #define ASSERT_MSG(expr, msg)
 #endif /* HELPER_ASSERT */
 
 /**< register your module id*/
@@ -66,7 +55,7 @@
 /******************************************************************************
 * Function Prototypes
 *******************************************************************************/
-void ezmAssert_AssertFailHandler(int u32ModuleId, int u32LineNumer); /*Handling when assert fail*/
+
 
 #endif /* _EZMASSERT_H */
 
