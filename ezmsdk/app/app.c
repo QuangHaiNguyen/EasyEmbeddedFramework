@@ -209,8 +209,8 @@ void ezmApp_SdkInit(void)
 
 #if (HELPER_ASSERT == 1U)
     /* DEBUG module has no init function*/
-    APPPRINT1("Initialize assert module");
-    APPPRINT2("Module Id: 0x%02x", HELPER_ASSERT_MOD_ID);
+    APPPRINT("Initialize assert module");
+    APPPRINT1("Module Id: 0x%02x", HELPER_ASSERT_MOD_ID);
 #endif
 
 #if (STATEMACHINE == 1U)

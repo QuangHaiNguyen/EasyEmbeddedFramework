@@ -52,34 +52,5 @@
 *******************************************************************************/
 /* None */
 
-/******************************************************************************
-* Function : ezmAssert_AssertFailHandler
-*//** 
-* \b Description:
-*
-* This function handles when assert fail. it must be adapted to the hardware. For example
-* log fail code, reset system... 
-*
-* PRE-CONDITION: None
-*
-* POST-CONDITION: None
-* 
-* @param    u32ModuleId: (IN)id of the module
-* @param    u32LineNumer: (IN)line where assert fails
-* @return   None
-*
-* \b Example Example:
-* @code
-* int var = 10;
-* ASSERT(var > 10);
-* @endcode
-*
-*******************************************************************************/
-void ezmAssert_AssertFailHandler(int u32ModuleId, int u32LineNumer)
-{
-    ASSERTPRINT3("assert fail add module id: %d, line: %d", u32ModuleId, u32LineNumer);
-
-    /*Further action must be adapted to hardware*/
-}
 #endif /* HELPER_ASSERT */
 /* End of file*/
