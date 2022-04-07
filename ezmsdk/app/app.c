@@ -82,6 +82,10 @@
 #include "../ezmKernel/ezmKernel.h"
 #endif
 
+#if (SYSTEM_ERROR == 1U)
+#include "../helper/system_error/system_error.h"
+#endif
+
 #if (NUM_OF_SUPPORTED_UART)
 #include "../hal/uart/uart.h"
 #endif /* NUM_OF_SUPPORTED_UART */
@@ -244,6 +248,13 @@ void ezmApp_SdkInit(void)
     }
 #endif
 
+#if (SYSTEM_ERROR == 1U)
+    SystemError_Initialize();
+    APPPRINT("Initialize SYSTEM_ERROR module");
+    APPPRINT1("Module Id: 0x%02x", SYSTEM_ERROR_MOD_ID);
+
+#endif /* SYSTEM_ERROR*/
+
 #if (NUM_OF_SUPPORTED_UART)
     APPPRINT("Initialize UART Driver");
     APPPRINT1("Module Id: 0x%02x", UART_MOD_ID);
@@ -375,11 +386,21 @@ static void ezm_AppPrintActiveModule(void)
     APPPRINT("[ ] DRIVERINF");
 #endif
 
+#if (SYSTEM_ERROR == 1U)
+    APPPRINT("[x] SYSTEM_ERROR");
+#else
+    APPPRINT("[ ] SYSTEM_ERROR");
+#endif /* SYSTEM_ERROR*/
+
 #if (NUM_OF_SUPPORTED_UART)
     APPPRINT("[x] UART");
 #else
     APPPRINT("[ ] UART");
 #endif /* NUM_OF_SUPPORTED_UART */
+
+ APPPRINT("");
+ APPPRINT("******************************************************************************\n\n");
+
 }
 
 static void ezmApp_PrintHeader(void)

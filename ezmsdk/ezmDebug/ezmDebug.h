@@ -30,13 +30,14 @@
 
 #if (USING_EZM_PRINTF == 0U)
 #include <stdio.h>
+#else
 #endif
 
 /*print, always activated, independent from the debug level*/
 #if (USING_EZM_PRINTF == 1U)
     #define PRINTF(format, ...)                 ezm_printf(format "\n", __VA_ARGS__ )
     #define PRINTF_NO_NL(format, ...)           ezm_printf(format, __VA_ARGS__ )
-    #define PRINTF_MOD(MOD_NAME, format, ...)    ezm_printf("[%s]::" format "\n", MOD_NAME, __VA_ARGS__ )
+    #define PRINTF_MOD(MOD_NAME, format, ...)   ezm_printf("[%s]::" format "\n", MOD_NAME, __VA_ARGS__ )
 #else
     #define PRINTF(format, ...)                 printf(format "\n", __VA_ARGS__ )
     #define PRINTF_NO_NL(format, ...)           printf(format, __VA_ARGS__ )
@@ -56,7 +57,7 @@
     #define PRINT_ERR3(a,b,c,d)             PRINT_ERROR(a,b,c,d)
     #define PRINT_ERR4(a,b,c,d,e)           PRINT_ERROR(a,b,c,d,e)
 #else
-    #define PRINT_ERROR(...)               printf( "[ERROR]::%s(%d) " format "\n", __FUNCTION__,  __LINE__, __VA_ARGS__ )
+    #define PRINT_ERROR(...)                printf( "[ERROR]::%s(%d) " format "\n", __FUNCTION__,  __LINE__, __VA_ARGS__ )
     #define PRINT_ERR(a)                    PRINT_ERROR("%s", a)
     #define PRINT_ERR1(a,b)                 PRINT_ERROR(a,b)
     #define PRINT_ERR2(a,b,c)               PRINT_ERROR(a,b,c)

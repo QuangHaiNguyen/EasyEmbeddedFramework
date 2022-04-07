@@ -59,6 +59,9 @@
     <Filter Include="Source Files\ezmDriver">
       <UniqueIdentifier>{25879416-665b-4b27-801c-db85fd8e2b27}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\helper\system_error">
+      <UniqueIdentifier>{a58fff17-4b19-425d-a7af-5155a1dea7cf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ezmsdk\app\app.c">
@@ -120,6 +123,9 @@
     </ClCompile>
     <ClCompile Include="..\..\ezmsdk\ezmDebug\ezmDebug.c">
       <Filter>Source Files\ezmDebug</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\helper\system_error\system_error.c">
+      <Filter>Source Files\helper\system_error</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -188,6 +194,12 @@
     </ClInclude>
     <ClInclude Include="..\..\ezmsdk\hal\uart\uart_sim.h">
       <Filter>Source Files\hal\uart</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ezmsdk\helper\system_error\system_error.h">
+      <Filter>Source Files\helper\system_error</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ezmsdk\helper\system_error\system_error_table.h">
+      <Filter>Source Files\helper\system_error</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

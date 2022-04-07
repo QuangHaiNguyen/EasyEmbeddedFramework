@@ -31,17 +31,18 @@
 #define DRIVERINF               1U
 #define EZM_PRINTF              1U
 #define HAL_UART                1U
+#define SYSTEM_ERROR            1U
 
 /*Module ID section*/
 
-/* CLI SECTION ***************************************************************/
+/* CLI SECTION ****************************************************************/
 #if (CLI == 1U)
 #define CLI_MOD_ID                  0x01U
 #define NUM_OF_CMD                  10U
 #define NUM_OF_ARG                  4U
 #endif
 
-/* SCHEDULER SECTION *********************************************************/
+/* SCHEDULER SECTION **********************************************************/
 #if (SCHEDULER == 1U)
 #define SCHEDULER_MOD_ID            0x02U
 /**< ID of scheduler module*/
@@ -53,7 +54,7 @@
 /**< turn on task timing debug out*/
 #endif /* SCHEDULER */
 
-/* SMALLOC SECTION ***********************************************************/
+/* SMALLOC SECTION ************************************************************/
 #if (SMALLOC == 1U)
 #if (HELPER_LINKEDLIST == 0U)
 #error module HELPER_LINKEDLIST must be activated
@@ -69,7 +70,7 @@
 
 #endif /* SMALLOC */
 
-/* BIN_PARSER SECTION ********************************************************/
+/* BIN_PARSER SECTION *********************************************************/
 #if (BIN_PARSER == 1U)
 
 #if (STCMEM == 0U)
@@ -114,17 +115,17 @@
 #endif /* RING_BUFFER */
 
 
-/* HELPER_ASSERT SECTION *****************************************************/
+/* HELPER_ASSERT SECTION ******************************************************/
 #if (HELPER_ASSERT == 1U)
 #define HELPER_ASSERT_MOD_ID        0x09U
 #endif /* HELPER_ASSERT */
 
-/* STATEMACHINE SECTION *****************************************************/
+/* STATEMACHINE SECTION *******************************************************/
 #if (STATEMACHINE == 1U)
 #define STATEMACHINE_MOD_ID        0x0AU
 #endif /* STATEMACHINE */
 
-/* IPC SECTION ***************************************************************/
+/* IPC SECTION ****************************************************************/
 #if (IPC == 1U)
 #define IPC_MOD_ID                  0x0BU
 #define NUM_OF_IPC_INSTANCE         5U
@@ -133,7 +134,7 @@
 /**< turn on/off module name in string*/
 #endif /* IPC */
 
-/* STCMEM SECTION ***************************************************************/
+/* STCMEM SECTION *************************************************************/
 #if (STCMEM == 1U)
 #define STCMEM_MOD_ID               0x0CU
 #define NUM_OF_MEM_BLOCK            100U
@@ -144,7 +145,7 @@
 
 #endif /*STCMEM*/
 
-/* KERNEL SECTION ***************************************************************/
+/* KERNEL SECTION *************************************************************/
 #if (KERNEL == 1U)
 #define KERNEL_MOD_ID               0x0DU
 #define NUM_OF_PROC                 5U
@@ -154,12 +155,12 @@
 #endif
 #endif /* KERNEL */
 
-/* EZM_PRINTF SECTION ***********************************************************/
+/* EZM_PRINTF SECTION *********************************************************/
 #if (EZM_PRINTF == 1U)
 #define PRINTF_BUFF_SIZE        256U
 #endif
 
-/* DRIVERINF SECTION ***************************************************************/
+/* DRIVERINF SECTION***********************************************************/
 #if (DRIVERINF == 1U)
 #define DRIVERINF_MOD_ID            0x0EU
 #define NUM_OF_DRIVERINF            5U
@@ -170,11 +171,16 @@
 
 #endif /* DRIVERINF */
 
-/*****************************************************************************/
-/* DRIVER SECTION                                                            */
-/*****************************************************************************/
+/* SYSTEM ERROR SECTION *******************************************************/
+#if (SYSTEM_ERROR == 1U)
+#define SYSTEM_ERROR_MOD_ID         0x0FU
+#endif /* SYSTEM_ERROR*/
 
-/* MICROCONTROLER SECTION ****************************************************/
+/******************************************************************************/
+/* DRIVER SECTION                                                             */
+/******************************************************************************/
+
+/* MICROCONTROLER SECTION *****************************************************/
 #define NO_CHIP             1U
 #define WIN                 2U
 #define LINUX               3U
@@ -183,7 +189,7 @@
 
 #define SUPPORTED_CHIP      WIN
 
-/* UART SECTION **************************************************************/
+/* UART SECTION ***************************************************************/
 #if HAL_UART == 1U
 #if(SUPPORTED_CHIP == WIN)
     #define NUM_OF_SUPPORTED_UART   1U    /**< Number of supported Uart*/

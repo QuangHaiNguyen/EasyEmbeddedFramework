@@ -98,6 +98,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <GenerateMapFile>true</GenerateMapFile>
       <MapExports>true</MapExports>
+      <AdditionalOptions>/FORCE %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -168,6 +169,7 @@
     <ClCompile Include="..\..\ezmsdk\helper\ring_buffer\ring_buffer.c" />
     <ClCompile Include="..\..\ezmsdk\helper\smalloc\smalloc.c" />
     <ClCompile Include="..\..\ezmsdk\helper\stcmem\stcmem.c" />
+    <ClCompile Include="..\..\ezmsdk\helper\system_error\system_error.c" />
     <ClCompile Include="..\..\ezmsdk\scheduler\scheduler.c" />
     <ClCompile Include="..\..\ezmsdk\statemachine\statemachine.c" />
     <ClCompile Include="main.c" />
@@ -193,6 +195,8 @@
     <ClInclude Include="..\..\ezmsdk\helper\ring_buffer\ring_buffer.h" />
     <ClInclude Include="..\..\ezmsdk\helper\smalloc\smalloc.h" />
     <ClInclude Include="..\..\ezmsdk\helper\stcmem\stcmem.h" />
+    <ClInclude Include="..\..\ezmsdk\helper\system_error\system_error.h" />
+    <ClInclude Include="..\..\ezmsdk\helper\system_error\system_error_table.h" />
     <ClInclude Include="..\..\ezmsdk\scheduler\scheduler.h" />
     <ClInclude Include="..\..\ezmsdk\statemachine\statemachine.h" />
   </ItemGroup>
