@@ -59,7 +59,7 @@ _doxygen_file_header=\
  *  @date   {2}
  *  @brief  This is the source for a module
  *  
- * Details
+ *  @details
  * 
  */
 """
@@ -187,7 +187,7 @@ def _generate_source_file(file_name : str, args):
     dt_string = now.strftime("%d.%m.%Y - %H:%M:%S")
     with open(file_name, "a") as header:
         header.write(_file_header.format(args.filename + ".c", args.author, dt_string))
-        header.write(_doxygen_file_header.format(args.filename + ".h", args.author, dt_string))
+        header.write(_doxygen_file_header.format(args.filename + ".c", args.author, dt_string))
         header.write(_doxygen_source_body.format(args.filename))
     logger.info("complete")
 
