@@ -29,10 +29,10 @@
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
-#include "../../app/app_config.h"
+#include "app/app_config.h"
 
 #if (HELPER_ASSERT == 1U)
-#include "../../ezmDebug/ezmDebug.h"
+#include "ezmDebug/ezmDebug.h"
     #define ASSERT(expr)            if(!(expr)) {PRINTF("assert:%s:%d", __func__ , __LINE__);}
     #define ASSERT_MSG(expr, msg)   if(!(expr)) {PRINTF("assert:%s:%d - %s", __func__ , __LINE__, msg);}
 #else

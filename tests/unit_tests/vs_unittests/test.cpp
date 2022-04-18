@@ -13,7 +13,7 @@
 #define TEST_RINGBUFFER         0U
 #define TEST_STCMEM             0U
 #define TEST_KERNEL             0U
-#define TEST_PRINTF             0U
+#define TEST_PRINTF             1U
 #define TEST_SYSTEM_ERROR       1U
 
 #if (TEST_IPC == 1U)

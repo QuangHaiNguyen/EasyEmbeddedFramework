@@ -18,7 +18,7 @@
 /*******************************************************************************
 * Includes
 *******************************************************************************/
-#include "../app/app_config.h"
+#include "app/app_config.h"
 
 #if (DRIVERINF == 1U)
 #include "stdint.h"
@@ -45,9 +45,9 @@ typedef enum
 
 typedef struct
 {
-    bool                is_busy;
     void                *driver_api;
     DriverInitFunction  init_function;
+    bool                is_busy;
 }Driver;
 
 typedef Driver* (*GetDriverFunction)    (void);

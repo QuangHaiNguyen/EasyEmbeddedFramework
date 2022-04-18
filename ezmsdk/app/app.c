@@ -24,74 +24,74 @@
 *******************************************************************************/
 #include "app.h"
 #include "app_config.h"
-#include "../ezmDebug/ezmDebug.h"
+#include "ezmDebug/ezmDebug.h"
 
 #if (SUPPORTED_CHIP == WIN)
 #include <time.h>
 #endif
 
 #if (CLI == 1U)
-#include "../cli/cli.h"
+#include "cli/cli.h"
 #endif
 
 #if (SCHEDULER == 1U)
-#include "../scheduler/scheduler.h"
+#include "scheduler/scheduler.h"
 #endif /* SCHEDULER */
 
 #if (SMALLOC == 1U)
-#include "../helper/smalloc/smalloc.h"
+#include "helper/smalloc/smalloc.h"
 #endif /* SMALLOC */
 
 #if (BIN_PARSER == 1U)
-#include "../binCmdParser/binCmdParser.h"
+#include "binCmdParser/binCmdParser.h"
 #endif /* BIN_PARSER */
 
 #if (DEBUG == 1U)
-#include "../ezmDebug/ezmDebug.h"
+#include "ezmDebug/ezmDebug.h"
 #endif /* DEBUG */
 
 #if (HELPER_LINKEDLIST == 1U)
-#include "../helper/linked_list/linked_list.h"
+#include "helper/linked_list/linked_list.h"
 #endif /* HELPER_LINKEDLIST */
 
 #if (HELPER_HEXDUMP == 1U)
-#include "../helper/hexdump/hexdump.h"
+#include "helper/hexdump/hexdump.h"
 #endif /* DEBUG */
 
 #if (RING_BUFFER == 1U)
-#include "../helper/ring_buffer/ring_buffer.h"
+#include "helper/ring_buffer/ring_buffer.h"
 #endif /* RING_BUFFER */
 
 #if (HELPER_ASSERT == 1U)
-#include "../helper/ezmAssert/ezmAssert.h"
+#include "helper/ezmAssert/ezmAssert.h"
 #endif /* HELPER_ASSERT */
 
 #if (STATEMACHINE == 1U)
-#include "../statemachine/statemachine.h"
+#include "statemachine/statemachine.h"
 #endif /* STATEMACHINE */
 
 #if (IPC == 1U)
-#include "../ezmIpc/ezmIpc.h"
+#include "ezmIpc/ezmIpc.h"
 #endif
 
 #if (STCMEM==1U)
-#include "../helper/stcmem/stcmem.h"
+#include "helper/stcmem/stcmem.h"
 #endif
 
 #if(KERNEL == 1U)
-#include "../ezmKernel/ezmKernel.h"
+#include "ezmKernel/ezmKernel.h"
 #endif
 
 #if (SYSTEM_ERROR == 1U)
-#include "../helper/system_error/system_error.h"
+#include "helper/system_error/system_error.h"
 #endif
 
 #if (NUM_OF_SUPPORTED_UART)
-#include "../hal/uart/uart.h"
+#include "hal/uart/uart.h"
 #endif /* NUM_OF_SUPPORTED_UART */
 
 #if(DRIVERINF == 1U)
-#include "../ezmDriver/ezmDriver.h"
+#include "ezmDriver/ezmDriver.h"
 #endif
 
 #include "app_cli.h"

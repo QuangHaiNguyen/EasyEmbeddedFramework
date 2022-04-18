@@ -23,13 +23,12 @@
 /******************************************************************************
 * Includes
 *******************************************************************************/
-
-#include "../app/app_config.h"
+#include "scheduler.h"
 
 #if (SCHEDULER == 1U)
 
-#include "scheduler.h"
-#include "../ezmDebug/ezmDebug.h"
+
+#include "ezmDebug/ezmDebug.h"
 
 #if (MODULE_DEBUG == 1U) && (SCHEDULER_DBG == 1U)
     #define SCHEDULERPRINT1(a)              PRINT_DEBUG1(a)               

@@ -16,12 +16,12 @@
 /******************************************************************************
  Includes
 ******************************************************************************/
-#include "../../app/app_config.h"
+#include "app/app_config.h"
 
 #if (STCMEM == 1U)
-#include "../../ezmDebug/ezmDebug.h"
-#include "../linked_list/linked_list.h"
-#include "../hexdump/hexdump.h"
+#include "ezmDebug/ezmDebug.h"
+#include "helper/linked_list/linked_list.h"
+#include "helper/hexdump/hexdump.h"
 #include "stcmem.h"
 #include "stdbool.h"
 #include <string.h>
@@ -71,8 +71,8 @@ static void     ezmSmalloc_Merge                (struct Node *free_list_head);
 
 inline struct Node*      ezmStcMem_ReserveMemoryBlock(struct Node* free_list_head, uint16_t block_size_byte);
 inline bool              ezmStcMem_MoveBlock(struct Node* move_node, struct Node* from_list_head, struct Node* to_list_head);
-inline struct MemBlock*  GetFreeBlock(void);
-inline void              ReleaseBlock(struct MemBlock* block);
+static inline struct MemBlock*  GetFreeBlock(void);
+static inline void              ReleaseBlock(struct MemBlock* block);
 /**************************** Public function ********************************/
 
 /******************************************************************************
@@ -177,7 +177,6 @@ void *ezmStcMem_Malloc(ezmMemList *mem_list, uint16_t alloc_size)
     void    *alloc_addr = NULL;
     bool    is_success = true;
     struct Node  *reserved_node = NULL;
-    struct MemList* list = GET_LIST(mem_list);
 
     STCMEMPRINT("ezmStcMem_Malloc()");
 
@@ -288,6 +287,7 @@ void ezmStcMem_HexdumpBuffer(ezmMemList *mem_list)
         STCMEMHEXDUMP(list->buff, list->buff_size);
     }
 #endif /* VERBOSE */
+    (void)mem_list;
 }
 
 /******************************************************************************
@@ -324,6 +324,7 @@ void ezmStcMem_PrintFreeList(ezmMemList *mem_list)
     }
     STCMEMPRINT("*****************************************\n");
 #endif
+    (void)mem_list;
 }
 
 /******************************************************************************
@@ -360,6 +361,7 @@ void ezmStcMem_PrintAllocList(ezmMemList * mem_list)
     }
     STCMEMPRINT("*****************************************\n");
 #endif
+    (void)mem_list;
 }
 
 

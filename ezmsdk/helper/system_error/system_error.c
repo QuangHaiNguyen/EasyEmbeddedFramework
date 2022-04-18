@@ -33,8 +33,8 @@
 
 #if (SYSTEM_ERROR == 1U)
 #include "system_error_table.h"
-#include "../../ezmDebug/ezmDebug.h"
-#include "../ezmAssert/ezmAssert.h"
+#include "ezmDebug/ezmDebug.h"
+#include "helper/ezmAssert/ezmAssert.h"
 
 
 /******************************************************************************

@@ -22,14 +22,9 @@
 /******************************************************************************
 * Includes
 ******************************************************************************/
-#include "../../app/app_config.h"
+#include "smalloc.h"
 
 #if (SMALLOC == 1U)
-
-#include "../linked_list/linked_list.h"
-#include "smalloc.h"
-#include "stdbool.h"
-#include <string.h>
 
 /******************************************************************************
 * Module Preprocessor Macros

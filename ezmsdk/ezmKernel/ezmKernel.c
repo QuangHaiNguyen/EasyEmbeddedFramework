@@ -18,8 +18,8 @@
 
 #if (KERNEL == 1U)
 #include "string.h"
-#include "../helper/hexdump/hexdump.h"
-#include "../ezmDebug/ezmDebug.h"
+#include "helper/hexdump/hexdump.h"
+#include "ezmDebug/ezmDebug.h"
 
 #define MOD_NAME        "KERNEL"
 
@@ -162,7 +162,7 @@ void ezmKernel_Run(void)
 
     if (SAMPLING_TIME_MS == kernel_load.sampling_time)
     {
-        kernel_load.load = (kernel_load.proc_run_time / kernel_load.sampling_time)*100;
+        kernel_load.load = (uint8_t)((kernel_load.proc_run_time / kernel_load.sampling_time) * 100);
         kernel_load.proc_run_time = 0;
         kernel_load.sampling_time = 0;
     }
