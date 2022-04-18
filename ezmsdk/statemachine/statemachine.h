@@ -24,9 +24,12 @@
 /*******************************************************************************
 * Includes
 *******************************************************************************/
-#include "stdint.h"
-#include "stdbool.h"
+#include "app/app_config.h"
+#include <stdint.h>
+#include <stdbool.h>
+#include <stdlib.h>
 
+#if (STATEMACHINE == 1U)
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
@@ -82,6 +85,7 @@ void ezmStateMachine_Init(ezmStateMachine * pstStateMachine,
 
 void ezmStateMachine_Execution(ezmStateMachine * pstStateMachine);
 
+#endif /* STATEMACHINE */
 #endif /* _MODULE_H */
 
 /* End of file*/

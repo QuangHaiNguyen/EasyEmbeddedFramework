@@ -22,14 +22,14 @@
 /*******************************************************************************
 * Includes
 *******************************************************************************/
-#include "../app/app_config.h"
+#include "app/app_config.h"
 
 #if (BIN_PARSER == 1U)
 #include "stdint.h"
 #include "stdbool.h"
 
 #if(STCMEM == 1U)
-#include "../helper/stcmem/stcmem.h"
+#include "helper/stcmem/stcmem.h"
 #else
 #error STCMEM must be activated
 #endif /* STCMEM */

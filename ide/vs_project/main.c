@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "../../ezmsdk/app/app.h"
+#include "app/app.h"
 
 int main()
 {

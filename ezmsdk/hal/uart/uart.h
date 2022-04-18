@@ -26,7 +26,7 @@
 *******************************************************************************/
 #include "stdint.h"
 #include "stdbool.h"
-#include "../../app/app_config.h"
+#include "app/app_config.h"
 
 #if (NUM_OF_SUPPORTED_UART > 0U)
 
@@ -62,10 +62,10 @@ typedef uint8_t (*UART_CALLBACK)(uint8_t eCode, void *param1, void *param2);
  */
 typedef struct
 {
-    uint16_t(*ezmUart_Send)         (uint8_t *au8Buffer, uint16_t u16Size);
-    uint16_t(*ezmUart_Receive)      (uint8_t * au8Buffer, uint16_t u16Size);
-    void(*ezmUart_RegisterCallback) (UART_CALLBACK pfnCallback);
-    void(*ezmUart_UnregisterCallback)(void);
+    uint16_t(*ezmUart_Send)             (uint8_t *au8Buffer, uint16_t u16Size);
+    uint16_t(*ezmUart_Receive)          (uint8_t * au8Buffer, uint16_t u16Size);
+    void(*ezmUart_RegisterCallback)     (UART_CALLBACK pfnCallback);
+    void(*ezmUart_UnregisterCallback)   (void);
 }UartDrvApi;
 
 

@@ -24,7 +24,7 @@
 /*******************************************************************************
 * Includes
 *******************************************************************************/
-#include "../app/app_config.h"
+#include "app/app_config.h"
 
 #if (CLI == 1U)
 #include "stdint.h"
@@ -54,7 +54,7 @@ typedef enum
  *
  */
 typedef CLI_NOTIFY_CODE(*CLI_CALLBACK)(const char * pu8Command, void * pValueList);
-typedef uint32_t CommandHandle;
+typedef uint8_t CommandHandle;
 /******************************************************************************
 * Module Variable Definitions
 *******************************************************************************/

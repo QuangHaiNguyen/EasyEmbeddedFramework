@@ -95,12 +95,11 @@
     #define PRINT_INFO4(a,b,c,d,e)
 #endif
 
-typedef void(*PRINT_STRING)(char *string, int string_size);
-
 int ezm_printf(char* fmt, ...);
 int ezm_snprintf(char* buff, int buff_size, char* fmt, ...);
 unsigned int ezm_StringLen(char * string);
 int ezm_StringCopy(char* src, char* dst, int size_dst);
+
 #endif	/* DEBUG_H */
 
 /* End of file*/

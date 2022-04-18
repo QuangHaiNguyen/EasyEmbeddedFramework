@@ -27,11 +27,11 @@
 
 #if(CLI == 1U && HAL_UART == 1U)
 #include "string.h"
-#include "../ezmKernel/ezmKernel.h"
-#include "../ezmDriver/ezmDriver.h"
-#include "../hal/uart/uart.h"
-#include "../ezmDebug/ezmDebug.h"
-#include "../cli/cli.h"
+#include "ezmKernel/ezmKernel.h"
+#include "ezmDriver/ezmDriver.h"
+#include "hal/uart/uart.h"
+#include "ezmDebug/ezmDebug.h"
+#include "cli/cli.h"
 
 #define BEGIN   "$"
 
@@ -118,7 +118,7 @@ void AppCli_Init(void)
 
     if (is_success)
     {
-        uart_driver->ezmUart_Send(BEGIN, sizeof(BEGIN));
+        uart_driver->ezmUart_Send((uint8_t*)BEGIN, sizeof(BEGIN));
     }
 }
 
@@ -138,7 +138,7 @@ static uint8_t CLI_Proccess(void)
         (void)ezmCli_CommandReceivedCallback(0, (char*)cli_buffer, sizeof(cli_buffer));
         memset(cli_buffer, 0, sizeof(cli_buffer));
         buff_index = 0U;
-        uart_driver->ezmUart_Send(BEGIN, sizeof(BEGIN));
+        uart_driver->ezmUart_Send((uint8_t*)BEGIN, sizeof(BEGIN));
         state = GET_BYTE;
         break;
     default:
@@ -207,6 +207,8 @@ static uint8_t UartCallbackHandle(uint8_t notify_code, void* param1, void* param
     default:
         break;
     }
+
+    (void)param2;
     return 0U;
 }
 #endif

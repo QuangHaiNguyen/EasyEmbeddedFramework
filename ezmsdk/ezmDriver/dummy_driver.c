@@ -19,9 +19,9 @@
 #if (DRIVERINF == 1U)
 #include "ezmDriver.h"
 #include "string.h"
-#include "../helper/hexdump/hexdump.h"
-#include "../helper/linked_list/linked_list.h"
-#include "../ezmDebug/ezmDebug.h"
+#include "helper/hexdump/hexdump.h"
+#include "helper/linked_list/linked_list.h"
+#include "ezmDebug/ezmDebug.h"
 
 #define MOD_NAME        "DUMMY_DRIVER"
 

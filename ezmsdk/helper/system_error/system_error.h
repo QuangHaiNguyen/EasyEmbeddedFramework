@@ -34,10 +34,10 @@
 /*******************************************************************************
 * Includes
 *******************************************************************************/
-#include "../../app/app_config.h"
+#include "app/app_config.h"
 
 #if (SYSTEM_ERROR == 1U)
-#include "stdlib.h"
+#include <stdlib.h>
 #include <stdbool.h>
 #include <stdint.h>
 

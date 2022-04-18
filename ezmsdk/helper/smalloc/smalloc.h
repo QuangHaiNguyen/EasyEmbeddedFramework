@@ -24,9 +24,12 @@
 /*******************************************************************************
 * Includes
 *******************************************************************************/
-#include "../../app/app_config.h"
+#include "app/app_config.h"
+#include <stdint.h>
+#include <stdbool.h>
+#include <string.h>
+
 #if(SMALLOC == 1U)
-#include "stdint.h"
 #include "../linked_list/linked_list.h"
 /******************************************************************************
 * Module Preprocessor Macros

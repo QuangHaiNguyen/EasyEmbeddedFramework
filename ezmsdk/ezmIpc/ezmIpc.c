@@ -16,8 +16,8 @@
 #include "ezmIpc.h"
 
 #if (IPC == 1U)
-#include "../helper/linked_list/linked_list.h"
-#include "../helper/stcmem/stcmem.h"
+#include "helper/linked_list/linked_list.h"
+#include "helper/stcmem/stcmem.h"
 #include "ezmIpc_conf.h"
 #include "string.h"
 
@@ -286,7 +286,6 @@ void* ezmIpc_ReceiveMessage(ezmMailBox receive_from, uint16_t *message_size)
 bool ezmIpc_ReleaseMessage(ezmMailBox receive_from, void* message)
 {
     bool        is_success = true;
-    void        *buffer_address = NULL;
     IpcInstance *instance = NULL;
 
     if (message != NULL && receive_from < NUM_OF_IPC_INSTANCE)

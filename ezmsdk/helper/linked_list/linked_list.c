@@ -97,7 +97,6 @@ bool ezmLL_AppendNode(struct Node* new_node, struct Node* node)
 *******************************************************************************/
 struct Node* ezmLL_InsertNewHead(struct Node *current_head, struct Node * new_node)
 {
-    bool is_success = true;
     struct Node* new_head = NULL;
 
     if(current_head != NULL 

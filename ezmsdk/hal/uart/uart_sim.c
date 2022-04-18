@@ -23,13 +23,13 @@
 * Includes
 *******************************************************************************/
 #include "uart_sim.h"
-#include "../../app/app_config.h"
+#include "app/app_config.h"
 
 #if(HAL_UART == 1U && SUPPORTED_CHIP == WIN)
 #include <stdint.h>
 #include <stdio.h>
-#include "../../ezmDebug/ezmDebug.h"
-#include "../../helper/hexdump/hexdump.h"
+#include "ezmDebug/ezmDebug.h"
+#include "helper/hexdump/hexdump.h"
 
 #define MOD_NAME    "HW_UART"
 #if (MODULE_DEBUG == 1U) && (UART_DEBUG == 1U)
@@ -59,7 +59,7 @@ typedef uint8_t(*hw_uart_callback)      (uint8_t eCode, void* param1, void* para
 typedef struct
 {
     UartDrvApi uart_api;
-    hw_uart_callback callback;
+    UART_CALLBACK callback;
 }HwUart;
 
 /******************************************************************************
@@ -72,7 +72,7 @@ typedef struct
 *******************************************************************************/
 static uint16_t UartSim_Read                (uint8_t*buff, uint16_t size);
 static uint16_t UartSim_Write               (uint8_t *buff, uint16_t size);
-static void     UartSim_RegisterCallback    (void *call_back);
+static void     UartSim_RegisterCallback    (UART_CALLBACK call_back);
 static void     UartSim_UnRegisterCallback  (void);
 
 static HwUart hw_uarts[NUM_OF_SUPPORTED_UART] = { 0 };
@@ -102,7 +102,7 @@ static uint16_t UartSim_Read(uint8_t* buff, uint16_t size)
 {
     for (uint16_t i = 0; i < size; i++)
     {
-        buff[i] = _getchar_nolock();
+        buff[i] = (uint8_t)_getchar_nolock();
     }
 
     if (hw_uarts[CLI_UART].callback)
@@ -127,9 +127,9 @@ static uint16_t UartSim_Write(uint8_t* buff, uint16_t size)
     return size;
 }
 
-static void UartSim_RegisterCallback(void* call_back)
+static void UartSim_RegisterCallback(UART_CALLBACK call_back)
 {
-    hw_uarts[CLI_UART].callback = (hw_uart_callback)call_back;
+    hw_uarts[CLI_UART].callback = call_back;
 }
 
 static void UartSim_UnRegisterCallback(void)

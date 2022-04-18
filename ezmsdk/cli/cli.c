@@ -18,7 +18,7 @@
 
 #if (CLI == 1U)
 
-#include "../ezmDebug/ezmDebug.h"
+#include "ezmDebug/ezmDebug.h"
 #include "string.h"
 
 #define VERBOSE                 1U
