@@ -5,8 +5,8 @@
 #define UNIT_TEST_SYSTEM_ERROR
 
 extern "C" {
-#include "../../ezmsdk/app/app_config.h"
-#include "../../ezmsdk/helper/system_error/system_error.h"
+#include "app/app_config.h"
+#include "helper/system_error/system_error.h"
 }
 
 

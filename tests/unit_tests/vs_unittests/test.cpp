@@ -15,6 +15,7 @@
 #define TEST_KERNEL             0U
 #define TEST_PRINTF             1U
 #define TEST_SYSTEM_ERROR       1U
+#define TEST_FLASH_SIMULATOR    1U
 
 #if (TEST_IPC == 1U)
 #include "../unit_test_ipc.h"
@@ -63,3 +64,7 @@
 #if (TEST_SYSTEM_ERROR == 1U)
 #include "../unit_test_system_error.h"
 #endif /* TEST_SYSTEM_ERROR */
+
+#if (TEST_FLASH_SIMULATOR == 1U)
+#include "../unit_test_flash_simulator.h"
+#endif /* TEST_FLASH_SIMULATOR */

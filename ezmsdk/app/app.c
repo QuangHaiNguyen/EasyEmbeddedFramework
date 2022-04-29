@@ -90,9 +90,13 @@
 #include "hal/uart/uart.h"
 #endif /* NUM_OF_SUPPORTED_UART */
 
-#if(DRIVERINF == 1U)
+#if (DRIVERINF == 1U)
 #include "ezmDriver/ezmDriver.h"
 #endif
+
+#if (FLASH_SIM == 1U)
+#include "hw_simulator/flash/flash_simulator.h"
+#endif /* FLASH_SIM */
 
 #include "app_cli.h"
 

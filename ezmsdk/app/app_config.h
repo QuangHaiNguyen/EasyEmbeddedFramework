@@ -32,6 +32,7 @@
 #define EZM_PRINTF              1U
 #define HAL_UART                1U
 #define SYSTEM_ERROR            1U
+#define FLASH_SIM               1U
 
 /*Module ID section*/
 
@@ -174,7 +175,16 @@
 /* SYSTEM ERROR SECTION *******************************************************/
 #if (SYSTEM_ERROR == 1U)
 #define SYSTEM_ERROR_MOD_ID         0x0FU
-#endif /* SYSTEM_ERROR*/
+#endif /* SYSTEM_ERROR */
+
+/******************************************************************************/
+/* SIMULATOR SECTION                                                          */
+/******************************************************************************/
+
+/* FLASH_SIMULATOR ************************************************************/
+#if (FLASH_SIM == 1U)
+#define FLASH_SIM_MOD_ID            0x10U
+#endif /* FLASH_SIM */
 
 /******************************************************************************/
 /* DRIVER SECTION                                                             */

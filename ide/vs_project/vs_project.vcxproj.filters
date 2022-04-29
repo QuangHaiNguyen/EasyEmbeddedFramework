@@ -62,6 +62,12 @@
     <Filter Include="Source Files\helper\system_error">
       <UniqueIdentifier>{a58fff17-4b19-425d-a7af-5155a1dea7cf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\hw_simulator">
+      <UniqueIdentifier>{2e101964-1844-45c4-ba55-8110748ee9c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\hw_simulator\flash">
+      <UniqueIdentifier>{51bf9202-09af-4863-90cc-aacb75ee328c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ezmsdk\app\app.c">
@@ -126,6 +132,9 @@
     </ClCompile>
     <ClCompile Include="..\..\ezmsdk\helper\system_error\system_error.c">
       <Filter>Source Files\helper\system_error</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\hw_simulator\flash\flash_simulator.c">
+      <Filter>Source Files\hw_simulator\flash</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -200,6 +209,9 @@
     </ClInclude>
     <ClInclude Include="..\..\ezmsdk\helper\system_error\system_error_table.h">
       <Filter>Source Files\helper\system_error</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ezmsdk\hw_simulator\flash\flash_simulator.h">
+      <Filter>Source Files\hw_simulator\flash</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

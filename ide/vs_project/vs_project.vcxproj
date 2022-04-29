@@ -93,7 +93,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>F:\Nextcloud\My_Work\ezmSDK\ezmsdk;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>G:\SDK\ezmSDK\ezmsdk;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ScanSourceForModuleDependencies>true</ScanSourceForModuleDependencies>
       <SuppressStartupBanner>false</SuppressStartupBanner>
       <DiagnosticsFormat>Caret</DiagnosticsFormat>
@@ -176,6 +176,7 @@
     <ClCompile Include="..\..\ezmsdk\helper\smalloc\smalloc.c" />
     <ClCompile Include="..\..\ezmsdk\helper\stcmem\stcmem.c" />
     <ClCompile Include="..\..\ezmsdk\helper\system_error\system_error.c" />
+    <ClCompile Include="..\..\ezmsdk\hw_simulator\flash\flash_simulator.c" />
     <ClCompile Include="..\..\ezmsdk\scheduler\scheduler.c" />
     <ClCompile Include="..\..\ezmsdk\statemachine\statemachine.c" />
     <ClCompile Include="main.c" />
@@ -203,6 +204,7 @@
     <ClInclude Include="..\..\ezmsdk\helper\stcmem\stcmem.h" />
     <ClInclude Include="..\..\ezmsdk\helper\system_error\system_error.h" />
     <ClInclude Include="..\..\ezmsdk\helper\system_error\system_error_table.h" />
+    <ClInclude Include="..\..\ezmsdk\hw_simulator\flash\flash_simulator.h" />
     <ClInclude Include="..\..\ezmsdk\scheduler\scheduler.h" />
     <ClInclude Include="..\..\ezmsdk\statemachine\statemachine.h" />
   </ItemGroup>
