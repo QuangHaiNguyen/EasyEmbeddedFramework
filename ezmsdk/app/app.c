@@ -256,7 +256,18 @@ void ezmApp_SdkInit(void)
     SystemError_Initialize();
     APPPRINT("Initialize SYSTEM_ERROR module");
     APPPRINT1("Module Id: 0x%02x", SYSTEM_ERROR_MOD_ID);
+#endif /* SYSTEM_ERROR*/
 
+#if (FLASH_SIM == 1U)
+    if (FlashSim_Initialization())
+    {
+        APPPRINT("Initialize FLASH_SIM module");
+        APPPRINT1("Module Id: 0x%02x", FLASH_SIM_MOD_ID);
+    }
+    else
+    {
+        APPPRINT("FLASH_SIM module ERROR");
+    }
 #endif /* SYSTEM_ERROR*/
 
 #if (NUM_OF_SUPPORTED_UART)
@@ -395,6 +406,12 @@ static void ezm_AppPrintActiveModule(void)
 #else
     APPPRINT("[ ] SYSTEM_ERROR");
 #endif /* SYSTEM_ERROR*/
+
+#if (FLASH_SIM == 1U)
+    APPPRINT("[x] FLASH_SIM");
+#else
+    APPPRINT("[ ] FLASH_SIM");
+#endif /* FLASH_SIM */
 
 #if (NUM_OF_SUPPORTED_UART)
     APPPRINT("[x] UART");

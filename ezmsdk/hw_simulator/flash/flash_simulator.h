@@ -34,26 +34,22 @@
 /*******************************************************************************
 * Includes
 *******************************************************************************/
-/* None */
+#include "app/app_config.h"
+
+#if (FLASH_SIM == 1U)
+#include <stdlib.h>
+#include <stdint.h>
+#include <stdbool.h>
 
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
-#define A_MACRO     1   /**< a macro*/
+#define INVALID_HANDLE      0xFF    /**< invalide flash handle */
 
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
-
-/** @brief definition of a new type
- *  
- */
-typedef struct
-{
-    int a;  /**< an integer */
-    int b;  /**< an integer */
-}aType;
-
+typedef uint8_t FlashHandle;
 
 /******************************************************************************
 * Module Variable Definitions
@@ -63,8 +59,10 @@ typedef struct
 /******************************************************************************
 * Function Prototypes
 *******************************************************************************/
-int sum(int a, int b); /**< Short description of function */
+bool FlashSim_Initialization(void);
 
+
+#endif /* FLASH_SIM == 1U */
 #endif /* _FLASH_SIMULATOR_H */
 
 /* End of file */
