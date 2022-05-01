@@ -46,7 +46,7 @@
 /******************************************************************************
 * Function Definitions
 *******************************************************************************/
-/* None */
+static void PrintAscii(char c);
 
 /******************************************************************************
 * Function : Hexdump
@@ -81,7 +81,7 @@ void ezmHexdump( void * pAddress, uint16_t u16Size)
     {
         for(uint8_t i = 0; i < 16; i = i + 1)
         {
-            if((uint8_t *)((uint8_t*)ulStartingAddress + i) - (uint8_t *) pAddress <= u16Size)
+            if((uint8_t *)((uint8_t*)ulStartingAddress + i) - (uint8_t *) pAddress < u16Size)
             {
                 PRINTF_NO_NL("%02x ", *((uint8_t*)ulStartingAddress + i));
             }
@@ -95,22 +95,29 @@ void ezmHexdump( void * pAddress, uint16_t u16Size)
         PRINTF_NO_NL("%s", "| ");
         for(uint8_t i = 0; i < 16; i = i + 1)
         {
-            /* Only print readable ascii character */
-            if( (*((uint8_t*)ulStartingAddress + i) >= 33U && *((uint8_t*)ulStartingAddress + i) <= 126U) )
+            if ((uint8_t*)((uint8_t*)ulStartingAddress + i) - (uint8_t*)pAddress < u16Size)
             {
-                PRINTF_NO_NL("%c", *(char *)((uint32_t*)ulStartingAddress + i));
-            }
-            else
-            {
-                PRINTF_NO_NL("%s",".");
+                PrintAscii(*(char*)((uint8_t*)ulStartingAddress + i));
             }
         }
 
         PRINT1("");
-        ulStartingAddress = (void *)((uint32_t)((uint32_t*)ulStartingAddress + 16));
+        ulStartingAddress = (uint8_t*)ulStartingAddress + 16;
     }
     PRINT1("");
 }
 
+static void PrintAscii(char c)
+{
+    /* Only print readable ascii character */
+    if (c >= 33U && c <= 126U)
+    {
+        PRINTF_NO_NL("%c", c);
+    }
+    else
+    {
+        PRINTF_NO_NL("%s", ".");
+    }
+}
 #endif /* HELPER_HEXDUMP */
 /* End of file*/
