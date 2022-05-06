@@ -36,7 +36,7 @@
 *******************************************************************************/
 #include "app/app_config.h"
 
-#if (FLASH_SIM == 1U)
+#if (FLASH_SIM == 1U) && (SUPPORTED_CHIP == WIN)
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdbool.h>
@@ -59,10 +59,24 @@ typedef uint8_t FlashHandle;
 /******************************************************************************
 * Function Prototypes
 *******************************************************************************/
-bool FlashSim_Initialization(void);
+bool        FlashSim_Initialization(void);
+FlashHandle FlashSim_GetFlash(char const* name);
+uint32_t    FlashSim_GetFlashSizeInBytes(FlashHandle handle);
+bool        FlashSim_EraseChip(FlashHandle handle);
+bool        FlashSim_EraseBlock(FlashHandle handle, uint32_t address);
+bool        FlashSim_EraseSector(FlashHandle handle, uint32_t address);
+bool        FlashSim_ErasePage(FlashHandle handle, uint32_t address);
+uint32_t    FlashSim_WritePage(FlashHandle handle,
+                                uint32_t address, 
+                                uint8_t * buffer,
+                                uint16_t num_byte);
+uint32_t    FlashSim_Read(FlashHandle handle,
+                                uint32_t address,
+                                uint8_t* buffer,
+                                uint16_t num_byte);
 
 
-#endif /* FLASH_SIM == 1U */
+#endif /* (FLASH_SIM == 1U) && SUPPORTED_CHIP == WIN */
 #endif /* _FLASH_SIMULATOR_H */
 
 /* End of file */

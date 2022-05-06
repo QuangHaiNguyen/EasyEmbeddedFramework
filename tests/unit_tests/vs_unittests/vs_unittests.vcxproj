@@ -82,7 +82,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>G:\SDK\ezmSDK\ide\vs_project\Debug\cli.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\linked_list.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\smalloc.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\ring_buffer.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\stcmem.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\hexdump.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\ezmIpc.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\binCmdParser.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\ezmKernel.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\ezmDebug.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\system_error.obj;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>G:\SDK\ezmSDK\ide\vs_project\Debug\cli.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\linked_list.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\smalloc.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\ring_buffer.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\stcmem.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\hexdump.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\ezmIpc.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\binCmdParser.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\ezmKernel.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\ezmDebug.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\system_error.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\flash_simulator.obj;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

@@ -39,6 +39,7 @@
 #define STCMEM_DEBUG                0U /* debug out for StcMem module */
 #define KERNEL_DEBUG                1U /* debug out for kernel module*/
 #define SYSTEM_ERROR_DEBUG          1U /* debug out for system error module */
+#define FLASH_SIM_DEBUG             1U /* debug out for flash simulator module*/
 #define UART_DEBUG                  1U /* debug out for hal uart */
 
 #endif

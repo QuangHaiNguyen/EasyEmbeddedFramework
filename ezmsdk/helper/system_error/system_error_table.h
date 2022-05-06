@@ -54,13 +54,13 @@
 
 ErrorObject error_table[] =
 {
-    { 0x00, WARNING, SystemError_HandleTestWarningError },        
+    { 0x00, WARNING, SystemError_HandleTestWarningError },
     /**< Default system error, testing purpose*/
-    { 0x01, ATTENTION, SystemError_HandleTestAttentionError },      
+    { 0x01, ATTENTION, SystemError_HandleTestAttentionError },
     /**< Default system error, testing purpose*/
-    { 0x02, CRITICAL, SystemError_HandleTestCriticalError },       
+    { 0x02, CRITICAL, SystemError_HandleTestCriticalError },
     /**< Default system error, testing purpose*/
-    { 0x03, CASTATROPHIC, SystemError_HandleTestCastatrophicError },   
+    { 0x03, CASTATROPHIC, SystemError_HandleTestCastatrophicError },
     /**< Default system error, testing purpose*/
 };
 

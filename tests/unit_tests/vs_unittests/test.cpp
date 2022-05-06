@@ -13,8 +13,8 @@
 #define TEST_RINGBUFFER         0U
 #define TEST_STCMEM             0U
 #define TEST_KERNEL             0U
-#define TEST_PRINTF             1U
-#define TEST_SYSTEM_ERROR       1U
+#define TEST_PRINTF             0U
+#define TEST_SYSTEM_ERROR       0U
 #define TEST_FLASH_SIMULATOR    1U
 
 #if (TEST_IPC == 1U)
@@ -30,7 +30,7 @@
 #endif /* TEST_ASSERT */
 
 #if (TEST_HEXDUMP == 1U)
-#include "unit_test_hexdump.h"
+#include "../unit_test_hexdump.h"
 #endif /* TEST_HEXDUMP */
 
 #if (TEST_CLI == 1U)

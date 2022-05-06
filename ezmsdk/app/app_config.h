@@ -184,6 +184,11 @@
 /* FLASH_SIMULATOR ************************************************************/
 #if (FLASH_SIM == 1U)
 #define FLASH_SIM_MOD_ID            0x10U
+#define NUM_OF_FLASH                1U
+
+#ifndef FLASH_LOCATION
+#define FLASH_LOCATION              "G:/SDK/ezmSDK/ezmsdk/hw_simulator/flash/"
+#endif
 #endif /* FLASH_SIM */
 
 /******************************************************************************/
