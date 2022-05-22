@@ -115,7 +115,7 @@ namespace
         uint8_t u8Result;
         bool    bResult;
 
-        ezmCli_Init();
+        ezmCli_Init(NULL);
         u8Result = ezmCli_RegisterCommand("Test_Command1", "this is a test command",  &TestCommand);
         ASSERT_NE(u8Result, CLI_HANDLE_INVALID);
 
@@ -159,7 +159,7 @@ namespace
         uint8_t u8Result;
         bool    bResult;
 
-        ezmCli_Init();
+        ezmCli_Init(NULL);
         u8Result = ezmCli_RegisterCommand("Test_Command1", "this is a test command",  &TestCommand);
         ASSERT_NE(u8Result, CLI_HANDLE_INVALID);
 
@@ -221,7 +221,7 @@ namespace
         uint8_t u8Result;
         bool    bResult;
 
-        ezmCli_Init();
+        ezmCli_Init(NULL);
         u8Result = ezmCli_RegisterCommand("sum", "sum of 2 unsigned interger", &Sum);
         ASSERT_NE(u8Result, CLI_HANDLE_INVALID);
 
@@ -261,7 +261,7 @@ namespace
         bool    bResult;
         bool    bStringCompareResult;
         
-        ezmCli_Init();
+        ezmCli_Init(NULL);
         u8Result = ezmCli_RegisterCommand("string", "copy a string", &CopyString);
         ASSERT_NE(u8Result, CLI_HANDLE_INVALID);
 
@@ -294,7 +294,7 @@ namespace
         uint8_t u8Result;
         bool    bResult;
 
-        ezmCli_Init();
+        ezmCli_Init(NULL);
         u8Result = ezmCli_RegisterCommand("no_arg", "command has no argument", &DoNothing);
         ASSERT_NE(u8Result, CLI_HANDLE_INVALID);
 

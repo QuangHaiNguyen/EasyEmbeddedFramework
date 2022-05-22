@@ -98,8 +98,6 @@
 #include "hw_simulator/flash/flash_simulator.h"
 #endif /* FLASH_SIM */
 
-#include "app_cli.h"
-
 #define MOD_NAME "APPL"
 
 #if (MODULE_DEBUG == 1U) && (APP_DEBUG == 1U)

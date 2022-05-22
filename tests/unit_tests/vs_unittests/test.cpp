@@ -7,7 +7,7 @@
 #define TEST_BIN_PARSER         0U
 #define TEST_ASSERT             0U
 #define TEST_HEXDUMP            0U
-#define TEST_CLI                0U
+#define TEST_CLI                1U
 #define TEST_LINKEDLIST         0U
 #define TEST_SMALLOC            0U
 #define TEST_RINGBUFFER         0U
@@ -15,7 +15,7 @@
 #define TEST_KERNEL             0U
 #define TEST_PRINTF             0U
 #define TEST_SYSTEM_ERROR       0U
-#define TEST_FLASH_SIMULATOR    1U
+#define TEST_FLASH_SIMULATOR    0U
 
 #if (TEST_IPC == 1U)
 #include "../unit_test_ipc.h"
