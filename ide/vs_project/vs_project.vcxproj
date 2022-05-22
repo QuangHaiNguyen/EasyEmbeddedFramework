@@ -159,7 +159,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ezmsdk\app\app.c" />
-    <ClCompile Include="..\..\ezmsdk\app\app_cli.c" />
     <ClCompile Include="..\..\ezmsdk\binCmdParser\binCmdParser.c" />
     <ClCompile Include="..\..\ezmsdk\cli\cli.c" />
     <ClCompile Include="..\..\ezmsdk\ezmDebug\ezmDebug.c" />
@@ -183,7 +182,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\ezmsdk\app\app.h" />
-    <ClInclude Include="..\..\ezmsdk\app\app_cli.h" />
     <ClInclude Include="..\..\ezmsdk\app\app_config.h" />
     <ClInclude Include="..\..\ezmsdk\binCmdParser\binCmdParser.h" />
     <ClInclude Include="..\..\ezmsdk\cli\cli.h" />

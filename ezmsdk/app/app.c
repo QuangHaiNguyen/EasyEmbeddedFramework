@@ -162,13 +162,6 @@ void ezmApp_SdkInit(void)
     ezm_AppPrintActiveModule();
 #endif
 
-#if (CLI == 1U)
-    APPPRINT("Initialize command line interface");
-    APPPRINT1("Module Id: 0x%02x", CLI_MOD_ID);
-    APPPRINT1("Number of supported command: [command = %d]", NUM_OF_CMD);
-    ezmCli_Init();
-#endif
-
 #if (SCHEDULER == 1U)
     /*must call init function here, but there is problem with the init so check it later*/
     APPPRINT1("Initialize scheduler");
@@ -281,13 +274,28 @@ void ezmApp_SdkInit(void)
 #endif
 #endif /* NUM_OF_SUPPORTED_UART */
 
-#if(CLI == 1U && HAL_UART == 1U)
-    AppCli_Init();
+#if (CLI == 1U)
+
+    UartDrvApi* uart_driver;
+    ezmDriver_GetDriverInstance(UART0_DRIVER, (void*)(&uart_driver));
+    if (uart_driver == NULL)
+    {
+        APPPRINT("ERROR: Initialize command line interface");
+    }
+    else
+    {
+        APPPRINT("Initialize command line interface");
+        APPPRINT1("Module Id: 0x%02x", CLI_MOD_ID);
+        APPPRINT1("Number of supported command: [command = %d]", NUM_OF_CMD);
+        ezmCli_Init(uart_driver);
+    }
+#endif
 
 #if(SUPPORTED_CHIP == WIN)
     uint64_t execute_time_stamp = ezmApp_ReturnTimestampMillisvoid();
     do
     {
+        ezmCli_Run();
         if (ezmApp_ReturnTimestampMillisvoid() - execute_time_stamp > 1)
         {
             ezmKernel_UpdateClock();
@@ -296,7 +304,7 @@ void ezmApp_SdkInit(void)
         }
     }while (execute_time_stamp);
 #endif /* SUPPORTED_CHIP */
-#endif
+
 }
 
 /******************************************************************************

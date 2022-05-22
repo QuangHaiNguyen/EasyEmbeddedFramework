@@ -43,6 +43,8 @@
 #define SPACE           ' '
 #define ARG_INVALID     NUM_OF_ARG
 #define SKIP_NULL_SPACE(pointer, end)   while((*pointer == ' ' || *pointer == '\0') && pointer != end){pointer++;}
+#define BEGIN   "$"
+
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
@@ -61,7 +63,8 @@ typedef struct
     char *          au8ValueList[NUM_OF_ARG];           /**< Pointer to the list of values */
 }CommandMetadata;
 
-/** @brief state of the command parser
+
+/** @brief state of the CLI command parser
  *
  */
 typedef enum 
@@ -73,12 +76,34 @@ typedef enum
     STATE_ERROR,    /**< Handle error and clean up */
 }ENUM_CLI_STATE;
 
+
+/**@brief
+ *
+ */
+typedef enum
+{
+    GET_BYTE,   /**< */
+    WAIT,       /**< */
+    PROC_CMD,   /**< */
+}CLI_RUN_STATE;
+
+struct Cli_Instance
+{ 
+    uint8_t         cli_buffer[256];
+    CommandHandle   cli_inst_num;
+    uint8_t         one_byte;
+    uint16_t        buff_index;
+    CLI_RUN_STATE   state;
+    UartDrvApi*     uart_driver;
+};
+
 /******************************************************************************
 * Module Variable Definitions
 *******************************************************************************/
-static CommandMetadata astMetaData[NUM_OF_CMD];     /**< Array holding commands metadata */
-static ENUM_CLI_STATE  eState = STATE_COMMAND;      /**< Holding the current state of the parser*/
-
+static CommandMetadata  astMetaData[NUM_OF_CMD] = { 0 }; /**< holding commands metadata */
+static ENUM_CLI_STATE   eState = STATE_COMMAND; /**< Holding the current state of the parser*/
+static const char       cmd_help[] = "help";
+static const char       cmd_help_desc[] = "show help";
 /******************************************************************************
 * Function Definitions
 *******************************************************************************/
@@ -92,6 +117,10 @@ static bool     ezmCli_IsArgumentShortForm      (char * pu8ShortFormArg);
 static bool     ezmCli_IsArgumentLongForm       (char * pu8LongFormArg);
 static void     ezmCli_ResetValueList           (uint8_t u8Index);
 
+static uint8_t          UartCallbackHandle(uint8_t notify_code, void* param1, void* param2);
+static CLI_NOTIFY_CODE  HandleHelpCommand(const char* pu8Command, void* pValueList);
+static struct Cli_Instance  cli_inst;
+
 /************************** Public function **********************************/
 
 /******************************************************************************
@@ -102,13 +131,15 @@ static void     ezmCli_ResetValueList           (uint8_t u8Index);
 * This function initializes the command line interface. It resets the resource and
 * start the low level serial interface driver
 *
-* PRE-CONDITION: None
+* PRE-CONDITION: has dependency on UART HAL and deriver interface modules.
+* Therefore, they must be initiated before calling the cli module 
 *
 * POST-CONDITION: None
 * 
-* @param    None
+* @param    uart_driver: driver instance of the uart peripheral
 *
-* @return   None
+* @return   true: success
+*           false fail
 *
 * \b Example Example:
 * @code
@@ -118,17 +149,101 @@ static void     ezmCli_ResetValueList           (uint8_t u8Index);
 * @see sum
 *
 *******************************************************************************/
-void ezmCli_Init(void)
+bool ezmCli_Init(UartDrvApi* uart_driver)
 {
-    for(uint8_t i = 0; i < NUM_OF_CMD; i++)
+    bool success = true;
+
+    if (uart_driver == NULL)
     {
-        if(!ezmCli_ResetMetaData(i))
+        success = false;
+    }
+
+    if (success)
+    {
+
+        cli_inst.uart_driver = uart_driver;
+        cli_inst.uart_driver->ezmUart_RegisterCallback(UartCallbackHandle);
+        cli_inst.buff_index = 0;
+        cli_inst.state = GET_BYTE;
+        memset(cli_inst.cli_buffer, 0, sizeof(cli_inst.cli_buffer));
+
+        for (uint8_t i = 0; i < NUM_OF_CMD; i++)
         {
-            PRINT2("Cannot reset metadata: [index = %d]", i);
+            if (!ezmCli_ResetMetaData(i))
+            {
+                PRINT2("Cannot reset metadata: [index = %d]", i);
+            }
+        }
+
+        cli_inst.cli_inst_num = ezmCli_RegisterCommand(cmd_help, 
+                                                        cmd_help_desc, 
+                                                        HandleHelpCommand);
+
+        if (cli_inst.cli_inst_num == 0xFF)
+        {
+            PRINT_DEBUG("APPCLI", "add command error");
+            success = false;
+        }
+        else
+        {
+            CLIPRINT("CLI has been activated, type help for the list of command");
         }
     }
+
+    return success;
 }
 
+
+/******************************************************************************
+* Function : ezmCli_Run
+*//**
+* \b Description:
+*
+* This function must be call in a loop/or scheduler to run the CLI
+*
+* PRE-CONDITION: CLI module must be initialized
+*
+* POST-CONDITION: None
+*
+* @param    None
+*
+* @return   None
+*
+* \b Example Example:
+* @code
+* while(1)
+* {
+*     ezmCli_Run();
+* }
+* @endcode
+*
+* @see sum
+*
+*******************************************************************************/
+void ezmCli_Run(void)
+{
+    switch (cli_inst.state)
+    {
+    case GET_BYTE:
+        (void)cli_inst.uart_driver->ezmUart_Receive(&cli_inst.one_byte, 1U);
+#if(SUPPORTED_CHIP != WIN)
+        cli_inst.state = WAIT;
+#endif
+        break;
+    case WAIT:
+        break;
+    case PROC_CMD:
+        (void)ezmCli_CommandReceivedCallback(0, (char*)cli_inst.cli_buffer, sizeof(cli_inst.cli_buffer));
+        memset(cli_inst.cli_buffer, 0, sizeof(cli_inst.cli_buffer));
+        cli_inst.buff_index = 0U;
+        cli_inst.uart_driver->ezmUart_Send((uint8_t*)BEGIN, sizeof(BEGIN));
+        cli_inst.state = GET_BYTE;
+        break;
+    default:
+        cli_inst.state = GET_BYTE;
+        break;
+    }
+}
 
 /******************************************************************************
 * Function : ezmCli_RegisterCommand
@@ -764,6 +879,65 @@ static void ezmCli_ResetValueList(uint8_t u8Index)
     }
 }
 
+static uint8_t UartCallbackHandle(uint8_t notify_code, void* param1, void* param2)
+{
+    
+    switch ((UART_NOTIFY_CODE)notify_code)
+    {
+    case UART_TX_COMPLT:
+        break;
+    case UART_RX_COMPLT:
+#if(SUPPORTED_CHIP == WIN)
+        cli_inst.cli_buffer[cli_inst.buff_index] = *(char*)param1;
+        CLIPRINT1("[test = %c]", cli_inst.cli_buffer[cli_inst.buff_index]);
+        if (cli_inst.cli_buffer[cli_inst.buff_index] == '\n' || 
+            cli_inst.buff_index == sizeof(cli_inst.cli_buffer) || 
+            cli_inst.cli_buffer[cli_inst.buff_index] == '\r')
+        {
+            cli_inst.state = PROC_CMD;
+        }
+#else
+        cli_inst.cli_buffer[buff_index] = cli_inst.one_byte;
+        if (cli_inst.cli_buffer[cli_inst.buff_index] == '\n' || 
+            cli_inst.buff_index == sizeof(cli_inst.cli_buffer) || 
+            cli_inst.cli_buffer[cli_inst.buff_index] == '\r')
+        {
+            cli_inst.state = PROC_CMD;
+        }
+        else
+        {
+            (void)cli_inst.uart_driver->ezmUart_Receive(&cli_inst.one_byte, 1U);
+        }
+#endif
+        cli_inst.buff_index++;
+        break;
+    case UART_BUFF_FULL:
+        break;
+    case UART_UNSUPPORTED:
+        break;
+    default:
+        break;
+    }
+
+    (void)param2;
+    return 0U;
+}
+
+static CLI_NOTIFY_CODE  HandleHelpCommand(const char* pu8Command, void* pValueList)
+{
+    if (strcmp(pu8Command, "help") == 0U)
+    {
+        ezmCli_PrintMenu();
+    }
+    else
+    {
+        CLIPRINT("Unknown command");
+    }
+
+    (void)pu8Command;
+    (void)pValueList;
+    return CLI_NC_OK;
+}
 #endif /* CLI */
 
 /* End of file*/

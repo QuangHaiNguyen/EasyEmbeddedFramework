@@ -38,6 +38,9 @@
 
 /* CLI SECTION ****************************************************************/
 #if (CLI == 1U)
+#if(DRIVERINF == 0U)
+    #error DRIVERINF must be acivated to use this module
+#endif
 #define CLI_MOD_ID                  0x01U
 #define NUM_OF_CMD                  10U
 #define NUM_OF_ARG                  4U

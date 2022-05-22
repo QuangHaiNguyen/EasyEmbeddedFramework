@@ -29,6 +29,8 @@
 #if (CLI == 1U)
 #include "stdint.h"
 #include "stdbool.h"
+#include "ezmDriver/ezmDriver.h"
+#include "hal/uart/uart.h"
 
 /******************************************************************************
 * Module Preprocessor Macros
@@ -62,15 +64,17 @@ typedef uint8_t CommandHandle;
 /******************************************************************************
 * Function Prototypes
 *******************************************************************************/
-void            ezmCli_Init             (void);
+bool            ezmCli_Init             (UartDrvApi* uart_driver);
 CommandHandle   ezmCli_RegisterCommand  (const char * pu8Command,
                                             const char *  pu8Description, 
                                             CLI_CALLBACK pfnCallback);
 
-bool    ezmCli_AddArgument      (CommandHandle u8CommandIndex,
-                                    const char * pu8LongForm, 
-                                    const char * pu8ShortForm, 
-                                    const char * pu8Description);
+bool ezmCli_AddArgument (CommandHandle u8CommandIndex,
+                            const char * pu8LongForm, 
+                            const char * pu8ShortForm, 
+                            const char * pu8Description);
+
+void ezmCli_Run(void);
 
 bool    ezmCli_CommandReceivedCallback(uint8_t u8NotifyCode, char* pu8CommandBuffer, uint16_t u16CommandBufferSize);
 void    ezmCli_PrintMenu(void);

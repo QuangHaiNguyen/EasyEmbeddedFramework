@@ -121,9 +121,6 @@
     <ClCompile Include="..\..\ezmsdk\ezmDriver\dummy_driver.c">
       <Filter>Source Files\ezmDriver</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\ezmsdk\app\app_cli.c">
-      <Filter>Source Files\app</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\ezmsdk\hal\uart\uart_sim.c">
       <Filter>Source Files\hal\uart</Filter>
     </ClCompile>
@@ -197,9 +194,6 @@
     </ClInclude>
     <ClInclude Include="..\..\ezmsdk\ezmDriver\dummy_driver.h">
       <Filter>Source Files\ezmDriver</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ezmsdk\app\app_cli.h">
-      <Filter>Source Files\app</Filter>
     </ClInclude>
     <ClInclude Include="..\..\ezmsdk\hal\uart\uart_sim.h">
       <Filter>Source Files\hal\uart</Filter>
