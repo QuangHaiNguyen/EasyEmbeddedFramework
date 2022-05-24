@@ -2,7 +2,7 @@ __author__ = "Quang Hai Nguyen"
 __copyright__ = "Copyright 2022, Easy Embedded"
 __credits__ = ""
 __license__ = "TBD"
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 __maintainer__ = "Quang Hai Nguyen"
 __email__ = "hainguyen.ezm@gmail.com"
 __status__ = "Production"
@@ -47,8 +47,11 @@ _file_header =\
 *                   hainguyen.ezm@gmail.com
 *
 * -----------------------------------------------------------------------------
-* Copyright (C) 2022 by Easy Embedded
-*  
+* Copyright {1} - All Rights Reserved
+* Unauthorized copying of this file, via any medium is strictly prohibited
+* Proprietary and confidential
+* Written by {1} {2}
+*
 *******************************************************************************/
 """
 
@@ -117,6 +120,11 @@ _doxygen_source_body=\
 #include "{0}.h"
 
 /******************************************************************************
+* Module Preprocessor Macros
+*******************************************************************************/
+#define A_MACRO     1   /**< a macro*/
+
+/******************************************************************************
 * Module Typedefs
 *******************************************************************************/
 /* None */
@@ -130,6 +138,10 @@ _doxygen_source_body=\
 * Function Definitions
 *******************************************************************************/
 /* None */
+
+/******************************************************************************
+* External functions
+*******************************************************************************/
 
 /******************************************************************************
 * Function : sum
@@ -155,6 +167,10 @@ int sum(int a, int b)
     return a + b;
 }}
 
+/******************************************************************************
+* Internal functions
+*******************************************************************************/
+
 /* End of file*/
 
 """
@@ -168,7 +184,7 @@ def _generate_header_file(file_name : str, args):
     """
     logger.info("generating header file")
     now = datetime.now()
-    dt_string = now.strftime("%d.%m.%Y - %H:%M:%S")
+    dt_string = now.strftime("%d.%m.%Y")
     with open(file_name, "a") as header:
         header.write(_file_header.format(args.filename + ".h", args.author, dt_string))
         header.write(_doxygen_file_header.format(args.filename + ".h", args.author, dt_string))
@@ -184,7 +200,7 @@ def _generate_source_file(file_name : str, args):
     """
     logger.info("generating source file")
     now = datetime.now()
-    dt_string = now.strftime("%d.%m.%Y - %H:%M:%S")
+    dt_string = now.strftime("%d.%m.%Y")
     with open(file_name, "a") as header:
         header.write(_file_header.format(args.filename + ".c", args.author, dt_string))
         header.write(_doxygen_file_header.format(args.filename + ".c", args.author, dt_string))
