@@ -95,7 +95,7 @@
 #endif
 
 #if (FLASH_SIM == 1U)
-#include "hw_simulator/flash/flash_simulator.h"
+#include "platforms/simulator/flash/flash_simulator.h"
 #endif /* FLASH_SIM */
 
 #define MOD_NAME "APPL"

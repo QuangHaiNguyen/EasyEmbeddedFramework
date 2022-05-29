@@ -7,7 +7,7 @@
 #define TEST_BIN_PARSER         0U
 #define TEST_ASSERT             0U
 #define TEST_HEXDUMP            0U
-#define TEST_CLI                1U
+#define TEST_CLI                0U
 #define TEST_LINKEDLIST         0U
 #define TEST_SMALLOC            0U
 #define TEST_RINGBUFFER         0U

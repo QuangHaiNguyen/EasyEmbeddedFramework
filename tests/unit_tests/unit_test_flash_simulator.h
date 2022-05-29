@@ -6,7 +6,7 @@
 
 extern "C" {
 #include "app/app_config.h"
-#include "hw_simulator/flash/flash_simulator.h"
+#include "platforms/simulator/flash/flash_simulator.h"
 #include "helper/hexdump/hexdump.h"
 #include "ezmDebug/ezmDebug.h"
 

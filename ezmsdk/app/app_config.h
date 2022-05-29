@@ -190,7 +190,7 @@
 #define NUM_OF_FLASH                1U
 
 #ifndef FLASH_LOCATION
-#define FLASH_LOCATION              "G:/SDK/ezmSDK/ezmsdk/hw_simulator/flash/"
+#define FLASH_LOCATION              "G:/SDK/ezmSDK/ezmsdk/platforms/simulator/flash/"
 #endif
 #endif /* FLASH_SIM */
 
