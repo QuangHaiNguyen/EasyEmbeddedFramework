@@ -71,6 +71,9 @@
     <Filter Include="Source Files\platforms\simulator\flash">
       <UniqueIdentifier>{2acd557c-ae4a-4c51-8ae9-fc092be9d772}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\platforms\simulator\uart">
+      <UniqueIdentifier>{f066faf8-5141-4a30-b537-6a7877737c70}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ezmsdk\app\app.c">
@@ -124,9 +127,6 @@
     <ClCompile Include="..\..\ezmsdk\ezmDriver\dummy_driver.c">
       <Filter>Source Files\ezmDriver</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\ezmsdk\hal\uart\uart_sim.c">
-      <Filter>Source Files\hal\uart</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\ezmsdk\ezmDebug\ezmDebug.c">
       <Filter>Source Files\ezmDebug</Filter>
     </ClCompile>
@@ -135,6 +135,9 @@
     </ClCompile>
     <ClCompile Include="..\..\ezmsdk\platforms\simulator\flash\flash_simulator.c">
       <Filter>Source Files\platforms\simulator\flash</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\platforms\simulator\uart\uart_sim.c">
+      <Filter>Source Files\platforms\simulator\uart</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -198,9 +201,6 @@
     <ClInclude Include="..\..\ezmsdk\ezmDriver\dummy_driver.h">
       <Filter>Source Files\ezmDriver</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\ezmsdk\hal\uart\uart_sim.h">
-      <Filter>Source Files\hal\uart</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\ezmsdk\helper\system_error\system_error.h">
       <Filter>Source Files\helper\system_error</Filter>
     </ClInclude>
@@ -209,6 +209,9 @@
     </ClInclude>
     <ClInclude Include="..\..\ezmsdk\platforms\simulator\flash\flash_simulator.h">
       <Filter>Source Files\platforms\simulator\flash</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ezmsdk\platforms\simulator\uart\uart_sim.h">
+      <Filter>Source Files\platforms\simulator\uart</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

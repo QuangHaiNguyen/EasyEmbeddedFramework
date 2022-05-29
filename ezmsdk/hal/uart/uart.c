@@ -27,7 +27,7 @@
 #elif (SUPPORTED_CHIP == STM32)
 #include "../../Core/target_driver/stm32_uart.h"
 #elif (SUPPORTED_CHIP == WIN)
-#include "uart_sim.h"
+#include "platforms/simulator/uart/uart_sim.h"
 #endif /* SUPPORTED_CHIP == ESP32 */
 
 #define MOD_NAME    "UART"

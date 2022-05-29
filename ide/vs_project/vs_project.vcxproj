@@ -167,7 +167,6 @@
     <ClCompile Include="..\..\ezmsdk\ezmIpc\ezmIpc.c" />
     <ClCompile Include="..\..\ezmsdk\ezmKernel\ezmKernel.c" />
     <ClCompile Include="..\..\ezmsdk\hal\uart\uart.c" />
-    <ClCompile Include="..\..\ezmsdk\hal\uart\uart_sim.c" />
     <ClCompile Include="..\..\ezmsdk\helper\ezmAssert\ezmAssert.c" />
     <ClCompile Include="..\..\ezmsdk\helper\hexdump\hexdump.c" />
     <ClCompile Include="..\..\ezmsdk\helper\linked_list\linked_list.c" />
@@ -176,6 +175,7 @@
     <ClCompile Include="..\..\ezmsdk\helper\stcmem\stcmem.c" />
     <ClCompile Include="..\..\ezmsdk\helper\system_error\system_error.c" />
     <ClCompile Include="..\..\ezmsdk\platforms\simulator\flash\flash_simulator.c" />
+    <ClCompile Include="..\..\ezmsdk\platforms\simulator\uart\uart_sim.c" />
     <ClCompile Include="..\..\ezmsdk\scheduler\scheduler.c" />
     <ClCompile Include="..\..\ezmsdk\statemachine\statemachine.c" />
     <ClCompile Include="main.c" />
@@ -193,7 +193,6 @@
     <ClInclude Include="..\..\ezmsdk\ezmIpc\ezmIpc_conf.h" />
     <ClInclude Include="..\..\ezmsdk\ezmKernel\ezmKernel.h" />
     <ClInclude Include="..\..\ezmsdk\hal\uart\uart.h" />
-    <ClInclude Include="..\..\ezmsdk\hal\uart\uart_sim.h" />
     <ClInclude Include="..\..\ezmsdk\helper\ezmAssert\ezmAssert.h" />
     <ClInclude Include="..\..\ezmsdk\helper\hexdump\hexdump.h" />
     <ClInclude Include="..\..\ezmsdk\helper\linked_list\linked_list.h" />
@@ -203,6 +202,7 @@
     <ClInclude Include="..\..\ezmsdk\helper\system_error\system_error.h" />
     <ClInclude Include="..\..\ezmsdk\helper\system_error\system_error_table.h" />
     <ClInclude Include="..\..\ezmsdk\platforms\simulator\flash\flash_simulator.h" />
+    <ClInclude Include="..\..\ezmsdk\platforms\simulator\uart\uart_sim.h" />
     <ClInclude Include="..\..\ezmsdk\scheduler\scheduler.h" />
     <ClInclude Include="..\..\ezmsdk\statemachine\statemachine.h" />
   </ItemGroup>
