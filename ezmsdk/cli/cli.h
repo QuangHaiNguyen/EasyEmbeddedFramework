@@ -37,7 +37,7 @@
 #if (CLI == 1U)
 #include "stdint.h"
 #include "stdbool.h"
-#include "ezmDriver/ezmDriver.h"
+#include "ezmDriver/driver.h"
 #include "hal/uart/uart.h"
 
 /******************************************************************************

@@ -91,7 +91,7 @@
 #endif /* NUM_OF_SUPPORTED_UART */
 
 #if (DRIVERINF == 1U)
-#include "ezmDriver/ezmDriver.h"
+#include "ezmDriver/driver.h"
 #endif
 
 #if (FLASH_SIM == 1U)

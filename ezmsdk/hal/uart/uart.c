@@ -17,7 +17,7 @@
 #include "uart.h"
 
 #if (NUM_OF_SUPPORTED_UART > 0U)
-#include "ezmDriver/ezmDriver.h"
+#include "ezmDriver/driver.h"
 #include "ezmDebug/config.h"
 #include "ezmDebug/ezmDebug.h"
 #include "helper/hexdump/hexdump.h"

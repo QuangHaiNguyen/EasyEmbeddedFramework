@@ -121,7 +121,7 @@
     <ClCompile Include="..\..\ezmsdk\ezmKernel\ezmKernel.c">
       <Filter>Source Files\ezmKernel</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\ezmsdk\ezmDriver\ezmDriver.c">
+    <ClCompile Include="..\..\ezmsdk\ezmDriver\driver.c">
       <Filter>Source Files\ezmDriver</Filter>
     </ClCompile>
     <ClCompile Include="..\..\ezmsdk\ezmDriver\dummy_driver.c">
@@ -195,7 +195,7 @@
     <ClInclude Include="..\..\ezmsdk\ezmKernel\ezmKernel.h">
       <Filter>Source Files\ezmKernel</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\ezmsdk\ezmDriver\ezmDriver.h">
+    <ClInclude Include="..\..\ezmsdk\ezmDriver\driver.h">
       <Filter>Source Files\ezmDriver</Filter>
     </ClInclude>
     <ClInclude Include="..\..\ezmsdk\ezmDriver\dummy_driver.h">
