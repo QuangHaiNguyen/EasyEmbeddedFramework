@@ -79,17 +79,17 @@ typedef uint8_t CommandHandle;
 * Function Prototypes
 *******************************************************************************/
 bool            ezmCli_Init             (UartDrvApi* uart_driver);
-CommandHandle   ezmCli_RegisterCommand  (const char * pu8Command,
-                                            const char *  pu8Description, 
-                                            CLI_CALLBACK pfnCallback);
-bool    ezmCli_AddArgument (CommandHandle u8CommandIndex,
-                                const char * pu8LongForm, 
-                                const char * pu8ShortForm, 
-                                const char * pu8Description);
+CommandHandle   ezmCli_RegisterCommand  (const char * command,
+                                            const char *  description, 
+                                            CLI_CALLBACK callback);
+bool    ezmCli_AddArgument (CommandHandle cmd_handle,
+                                const char * long_arg, 
+                                const char * short_arg, 
+                                const char * description);
 void    ezmCli_Run(void);
-bool    ezmCli_CommandReceivedCallback(uint8_t u8NotifyCode,
-                                    char* pu8CommandBuffer,
-                                    uint16_t u16CommandBufferSize);
+bool    ezmCli_CommandReceivedCallback(uint8_t notify_code,
+                                        char* command_buffer,
+                                        uint16_t command_buff_size);
 void    ezmCli_PrintMenu(void);
 #endif /* CLI */
 #endif /* _CLI_H */

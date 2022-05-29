@@ -181,7 +181,7 @@ bool ezmCli_Init(UartDrvApi* uart_driver)
     {
         if (!ezmCli_ResetMetaData(i))
         {
-            PRINT2("Cannot reset metadata: [index = %d]", i);
+            CLIPRINT1("Cannot reset metadata: [index = %d]", i);
         }
     }
 
@@ -204,7 +204,7 @@ bool ezmCli_Init(UartDrvApi* uart_driver)
 
         if (cli_inst.cli_inst_num == 0xFF)
         {
-            PRINT_DEBUG("APPCLI", "add command error");
+            CLIPRINT("add command error");
             success = false;
         }
         else
@@ -279,9 +279,10 @@ void ezmCli_Run(void)
 *
 * POST-CONDITION: None
 * 
-* @param    pu8Command:     (IN)pointer to the command buffer
-* @param    pu8Description: (IN)pointer to the description buffer
-* @param    pfnCallback:    (IN)pointer to the callback function, where the command is executed
+* @param    *command:     (IN)pointer to the command buffer
+* @param    *description: (IN)pointer to the description buffer
+* @param    callback:    (IN)pointer to the callback function, where the command is executed
+*
 * @return   index of the command, or 0xff of fail
 *
 * \b Example Example:
@@ -293,26 +294,27 @@ void ezmCli_Run(void)
 * @see sum
 *
 *******************************************************************************/
-CommandHandle ezmCli_RegisterCommand(const char * pu8Command,
-                                        const char *  pu8Description,
-                                        CLI_CALLBACK pfnCallback)
+CommandHandle ezmCli_RegisterCommand(const char *command,
+                                        const char *description,
+                                        CLI_CALLBACK callback)
 {
     CommandHandle handle = CLI_HANDLE_INVALID;
     
-    if (pu8Command != NULL 
-        && pfnCallback != NULL 
-        && pu8Description != NULL 
-        && ezmCli_IsCommandExist(pu8Command, NULL) == false)
+    if (command != NULL
+        && callback != NULL
+        && description != NULL
+        && ezmCli_IsCommandExist(command, NULL) == false)
     {
         handle = ezmCli_GetFreeInstance();
         if (handle < CLI_HANDLE_INVALID)
         {
-            astMetaData[handle].callback = pfnCallback;
-            astMetaData[handle].command = pu8Command;
-            astMetaData[handle].description = pu8Description;
+            astMetaData[handle].callback = callback;
+            astMetaData[handle].command = command;
+            astMetaData[handle].description = description;
 
             CLIPRINT2("Add new command: [command = %s] [description = %s]",
-                            pu8Command, pu8Description);
+                        command,
+                        description);
         }
         else
         {
@@ -334,10 +336,10 @@ CommandHandle ezmCli_RegisterCommand(const char * pu8Command,
 *
 * POST-CONDITION: None
 * 
-* @param    u8CommandIndex: (IN)index of the command, which the argument will be added
-* @param    *pu8LongForm:   (IN)argument in long form, starting with --
-* @param    *pu8ShortForm:  (IN)argument in short form, starting with -
-* @param    *pu8Description:(IN)argument description
+* @param    cmd_handle:  (IN)index of the command, which the argument will be added
+* @param    *long_arg:   (IN)argument in long form, starting with --
+* @param    *short_arg:  (IN)argument in short form, starting with -
+* @param    *description:(IN)argument description
 *
 * @return   True if success, else false
 *
@@ -351,33 +353,33 @@ CommandHandle ezmCli_RegisterCommand(const char * pu8Command,
 * @see sum
 *
 *******************************************************************************/
-bool ezmCli_AddArgument (CommandHandle u8CommandIndex,
-                            const char * pu8LongForm, 
-                            const char * pu8ShortForm, 
-                            const char * pu8Description)
+bool ezmCli_AddArgument (CommandHandle cmd_handle,
+                            const char * long_arg,
+                            const char * short_arg,
+                            const char * description)
 {
     bool bResult = false;
 
-    if (pu8LongForm != NULL
-        && pu8ShortForm != NULL
-        && pu8Description != NULL
-        && (uint32_t)u8CommandIndex < CLI_HANDLE_INVALID)
+    if (long_arg != NULL
+        && short_arg != NULL
+        && description != NULL
+        && (uint32_t)cmd_handle < CLI_HANDLE_INVALID)
     {
-        if (ezmCli_IsLongFormArgumentExist(u8CommandIndex, pu8LongForm) == ARG_INVALID
-            && ezmCli_IsShortFormArgumentExist(u8CommandIndex, pu8ShortForm) == ARG_INVALID)
+        if (ezmCli_IsLongFormArgumentExist(cmd_handle, long_arg) == ARG_INVALID
+            && ezmCli_IsShortFormArgumentExist(cmd_handle, short_arg) == ARG_INVALID)
         {
             for (uint8_t i = 0; i < NUM_OF_ARG; i++)
             {
-                if (astMetaData[u8CommandIndex].long_arg_list[i] == NULL)
+                if (astMetaData[cmd_handle].long_arg_list[i] == NULL)
                 {
-                    astMetaData[u8CommandIndex].long_arg_list[i] = (uint32_t*)pu8LongForm;
-                    astMetaData[u8CommandIndex].short_arg_list[i] = (uint32_t*)pu8ShortForm;
-                    astMetaData[u8CommandIndex].description_list[i] = (uint32_t*)pu8Description;
+                    astMetaData[cmd_handle].long_arg_list[i] = (uint32_t*)long_arg;
+                    astMetaData[cmd_handle].short_arg_list[i] = (uint32_t*)short_arg;
+                    astMetaData[cmd_handle].description_list[i] = (uint32_t*)description;
 
                     CLIPRINT3("Add new argument: [long = %s] [shord = %s] [description = %s]",
-                        (char*)astMetaData[u8CommandIndex].au32LongArgumenList[i],
-                        (char*)astMetaData[u8CommandIndex].au32ShordArgumenList[i],
-                        (char*)astMetaData[u8CommandIndex].au32DescriptionList[i]);
+                        (char*)astMetaData[cmd_handle].long_arg_list[i],
+                        (char*)astMetaData[cmd_handle].short_arg_list[i],
+                        (char*)astMetaData[cmd_handle].description_list[i]);
                     bResult = true;
                     break;
                 }
@@ -399,9 +401,9 @@ bool ezmCli_AddArgument (CommandHandle u8CommandIndex,
 *
 * POST-CONDITION: None
 * 
-* @param    u8NotifyCode:           (IN) notification code
-* @param    *pu8CommandBuffer:      (IN) pointer to the buffer storing the command
-* @param    u16CommandBufferSize:   (IN) size of the buffer storing the command
+* @param    notify_code:         (IN) notification code
+* @param    *command_buffer:     (IN) pointer to the buffer storing the command
+* @param    command_buff_size:   (IN) size of the buffer storing the command
 *
 * @return   True if success, else false
 *
@@ -414,9 +416,9 @@ bool ezmCli_AddArgument (CommandHandle u8CommandIndex,
 * @endcode
 *
 *******************************************************************************/
-bool ezmCli_CommandReceivedCallback(uint8_t u8NotifyCode,
-                                    char * pu8CommandBuffer,
-                                    uint16_t u16CommandBufferSize)
+bool ezmCli_CommandReceivedCallback(uint8_t notify_code,
+                                    char * command_buffer,
+                                    uint16_t command_buff_size)
 {
     bool bResult = false;
     bool process_is_done = false;
@@ -425,8 +427,8 @@ bool ezmCli_CommandReceivedCallback(uint8_t u8NotifyCode,
     char* tail;
     eState = STATE_COMMAND;
 
-    char* head = pu8CommandBuffer;
-    SKIP_NULL_SPACE(head, pu8CommandBuffer + u16CommandBufferSize);
+    char* head = command_buffer;
+    SKIP_NULL_SPACE(head, command_buffer + command_buff_size);
     tail = head;
 
     if (*head == '\n' || *head == '\r')
@@ -434,7 +436,7 @@ bool ezmCli_CommandReceivedCallback(uint8_t u8NotifyCode,
         process_is_done = true;
     }
 
-    while (head != pu8CommandBuffer + u16CommandBufferSize &&
+    while (head != command_buffer + command_buff_size &&
         process_is_done == false)
     {
         switch (eState)
@@ -449,7 +451,7 @@ bool ezmCli_CommandReceivedCallback(uint8_t u8NotifyCode,
                 {
                     eState = STATE_ARGUMENT;
 
-                    SKIP_NULL_SPACE(head, pu8CommandBuffer + u16CommandBufferSize);
+                    SKIP_NULL_SPACE(head, command_buffer + command_buff_size);
                     tail = head;
                 }
                 else
@@ -491,7 +493,7 @@ bool ezmCli_CommandReceivedCallback(uint8_t u8NotifyCode,
                     eState = STATE_VALUE;
                     CLIPRINT1("Value index: [idx = %d]", u8ValueIndex);
 
-                    SKIP_NULL_SPACE(head, pu8CommandBuffer + u16CommandBufferSize);
+                    SKIP_NULL_SPACE(head, command_buffer + command_buff_size);
                     tail = head;
                 }
                 else
@@ -515,7 +517,7 @@ bool ezmCli_CommandReceivedCallback(uint8_t u8NotifyCode,
                 astMetaData[u8CommandIndex].value_list[u8ValueIndex] = tail;
                 eState = STATE_ARGUMENT;
 
-                SKIP_NULL_SPACE(head, pu8CommandBuffer + u16CommandBufferSize);
+                SKIP_NULL_SPACE(head, command_buffer + command_buff_size);
                 tail = head;
 
             }
@@ -552,7 +554,7 @@ bool ezmCli_CommandReceivedCallback(uint8_t u8NotifyCode,
         head++;
     }
 
-    (void)(u8NotifyCode);
+    (void)(notify_code);
 
     return bResult;
 }
@@ -668,25 +670,25 @@ static uint8_t ezmCli_GetFreeInstance (void)
 *******************************************************************************/
 static bool ezmCli_IsCommandExist   (const char *command, uint8_t *index)
 {
-    bool bIsExist = false;
+    bool cmd_exist = false;
 
     for(uint8_t i = 0; i < NUM_OF_CMD; i++)
     {
         if(astMetaData[i].command != NULL && 
             strcmp(astMetaData[i].command, command) == 0)
         {
-            bIsExist = true;
+            cmd_exist = true;
 
             if(index != NULL)
             {
                 *index = i;
             }
-            
-            CLIPRINT1("Command is existing: [command = %s]", pu8Command);
+
+            CLIPRINT1("Command is existing: [command = %s]", command);
             break;
         }
     }
-    return bIsExist;
+    return cmd_exist;
 }
 
 
