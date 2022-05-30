@@ -19,7 +19,7 @@
 #if (BIN_PARSER == 1U)
 #include "string.h"
 #include "../ezmDebug/ezmDebug.h"
-#include "../helper/hexdump/hexdump.h"
+#include "../utilities/hexdump/hexdump.h"
 
 #define VERBOSE     0U
 #define MOD_ID      "BIN PARSER"

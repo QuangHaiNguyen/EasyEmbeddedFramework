@@ -29,7 +29,7 @@
 #include "stdbool.h"
 
 #if(STCMEM == 1U)
-#include "helper/stcmem/stcmem.h"
+#include "utilities/stcmem/stcmem.h"
 #else
 #error STCMEM must be activated
 #endif /* STCMEM */

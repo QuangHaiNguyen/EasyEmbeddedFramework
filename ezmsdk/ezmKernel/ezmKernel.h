@@ -21,7 +21,7 @@
 #include "app/app_config.h"
 
 #if (KERNEL == 1U)
-#include "helper/linked_list/linked_list.h"
+#include "utilities/linked_list/linked_list.h"
 #include "stdint.h"
 #include "stdbool.h"
 

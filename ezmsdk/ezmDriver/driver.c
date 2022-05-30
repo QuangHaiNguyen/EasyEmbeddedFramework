@@ -42,8 +42,8 @@
 #include "hal/uart/uart.h"
 #include "dummy_driver.h"
 #include "string.h"
-#include "helper/hexdump/hexdump.h"
-#include "helper/linked_list/linked_list.h"
+#include "utilities/hexdump/hexdump.h"
+#include "utilities/linked_list/linked_list.h"
 #include "ezmDebug/ezmDebug.h"
 
 #define MOD_NAME        "DRIVER"

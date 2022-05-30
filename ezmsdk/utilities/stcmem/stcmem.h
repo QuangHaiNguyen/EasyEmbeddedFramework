@@ -18,7 +18,7 @@
 * Includes
 *******************************************************************************/
 #include "stdint.h"
-#include "helper/linked_list/linked_list.h"
+#include "utilities/linked_list/linked_list.h"
 
 /******************************************************************************
 * Module Preprocessor Macros

@@ -39,7 +39,7 @@
 #endif /* SCHEDULER */
 
 #if (SMALLOC == 1U)
-#include "helper/smalloc/smalloc.h"
+#include "utilities/smalloc/smalloc.h"
 #endif /* SMALLOC */
 
 #if (BIN_PARSER == 1U)
@@ -51,11 +51,11 @@
 #endif /* DEBUG */
 
 #if (HELPER_LINKEDLIST == 1U)
-#include "helper/linked_list/linked_list.h"
+#include "utilities/linked_list/linked_list.h"
 #endif /* HELPER_LINKEDLIST */
 
 #if (HELPER_HEXDUMP == 1U)
-#include "helper/hexdump/hexdump.h"
+#include "utilities/hexdump/hexdump.h"
 #endif /* DEBUG */
 
 #if (RING_BUFFER == 1U)
@@ -63,7 +63,7 @@
 #endif /* RING_BUFFER */
 
 #if (HELPER_ASSERT == 1U)
-#include "helper/ezmAssert/ezmAssert.h"
+#include "utilities/ezmAssert/ezmAssert.h"
 #endif /* HELPER_ASSERT */
 
 #if (STATEMACHINE == 1U)
@@ -75,7 +75,7 @@
 #endif
 
 #if (STCMEM==1U)
-#include "helper/stcmem/stcmem.h"
+#include "utilities/stcmem/stcmem.h"
 #endif
 
 #if(KERNEL == 1U)
@@ -83,7 +83,7 @@
 #endif
 
 #if (SYSTEM_ERROR == 1U)
-#include "helper/system_error/system_error.h"
+#include "utilities/system_error/system_error.h"
 #endif
 
 #if (NUM_OF_SUPPORTED_UART)

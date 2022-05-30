@@ -20,29 +20,11 @@
     <Filter Include="Source Files\ezmIpc">
       <UniqueIdentifier>{7bf95d2e-9715-4c28-a03b-fe3d39a7914f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\helper">
-      <UniqueIdentifier>{6ff18ae1-66ea-408f-a12b-e06976d889af}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\scheduler">
       <UniqueIdentifier>{6ae0099d-2518-4e7d-9e81-aa9e2c78689c}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\statemachine">
       <UniqueIdentifier>{9b624c5e-cbb2-46c3-af8e-9ca5d22c4235}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\helper\ezmAssert">
-      <UniqueIdentifier>{8607bce4-30a1-4650-99e7-18893553967f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\helper\hexdump">
-      <UniqueIdentifier>{5b36ecd0-de44-425b-944c-a04fd9d1d396}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\helper\linked_list">
-      <UniqueIdentifier>{d1f9805a-a55a-4874-8d02-3412c9b14378}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\helper\ring_buffer">
-      <UniqueIdentifier>{f4bfc553-45c3-4819-9790-df6548e52788}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\helper\smalloc">
-      <UniqueIdentifier>{bb18918c-82ff-4448-915b-5b73219450c4}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\hal">
       <UniqueIdentifier>{3ad76244-b414-4c89-bd1f-d34589c6ce26}</UniqueIdentifier>
@@ -50,17 +32,11 @@
     <Filter Include="Source Files\hal\uart">
       <UniqueIdentifier>{b30949af-1e11-4e7a-afb4-2545d1d27014}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\helper\stcmem">
-      <UniqueIdentifier>{a0cb07a6-a579-449b-9957-d5c24d1feeb2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\ezmKernel">
       <UniqueIdentifier>{4a81b923-0631-4fcf-8091-505b57217a1a}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\ezmDriver">
       <UniqueIdentifier>{25879416-665b-4b27-801c-db85fd8e2b27}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\helper\system_error">
-      <UniqueIdentifier>{a58fff17-4b19-425d-a7af-5155a1dea7cf}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\platforms">
       <UniqueIdentifier>{ce76c551-9fa7-45f5-92ea-8d2e0de52ccd}</UniqueIdentifier>
@@ -73,6 +49,30 @@
     </Filter>
     <Filter Include="Source Files\platforms\simulator\uart">
       <UniqueIdentifier>{f066faf8-5141-4a30-b537-6a7877737c70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\utilities">
+      <UniqueIdentifier>{6ff18ae1-66ea-408f-a12b-e06976d889af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\utilities\ezmAssert">
+      <UniqueIdentifier>{8607bce4-30a1-4650-99e7-18893553967f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\utilities\hexdump">
+      <UniqueIdentifier>{5b36ecd0-de44-425b-944c-a04fd9d1d396}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\utilities\linked_list">
+      <UniqueIdentifier>{d1f9805a-a55a-4874-8d02-3412c9b14378}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\utilities\ring_buffer">
+      <UniqueIdentifier>{f4bfc553-45c3-4819-9790-df6548e52788}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\utilities\smalloc">
+      <UniqueIdentifier>{bb18918c-82ff-4448-915b-5b73219450c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\utilities\stcmem">
+      <UniqueIdentifier>{a0cb07a6-a579-449b-9957-d5c24d1feeb2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\utilities\system_error">
+      <UniqueIdentifier>{a58fff17-4b19-425d-a7af-5155a1dea7cf}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -94,29 +94,11 @@
     <ClCompile Include="..\..\ezmsdk\scheduler\scheduler.c">
       <Filter>Source Files\scheduler</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\ezmsdk\helper\ezmAssert\ezmAssert.c">
-      <Filter>Source Files\helper\ezmAssert</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\ezmsdk\helper\hexdump\hexdump.c">
-      <Filter>Source Files\helper\hexdump</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\ezmsdk\helper\linked_list\linked_list.c">
-      <Filter>Source Files\helper\linked_list</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\ezmsdk\helper\smalloc\smalloc.c">
-      <Filter>Source Files\helper\smalloc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\ezmsdk\helper\ring_buffer\ring_buffer.c">
-      <Filter>Source Files\helper\ring_buffer</Filter>
-    </ClCompile>
     <ClCompile Include="main.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\ezmsdk\hal\uart\uart.c">
       <Filter>Source Files\hal\uart</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\ezmsdk\helper\stcmem\stcmem.c">
-      <Filter>Source Files\helper\stcmem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\ezmsdk\ezmKernel\ezmKernel.c">
       <Filter>Source Files\ezmKernel</Filter>
@@ -130,14 +112,32 @@
     <ClCompile Include="..\..\ezmsdk\ezmDebug\ezmDebug.c">
       <Filter>Source Files\ezmDebug</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\ezmsdk\helper\system_error\system_error.c">
-      <Filter>Source Files\helper\system_error</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\ezmsdk\platforms\simulator\flash\flash_simulator.c">
       <Filter>Source Files\platforms\simulator\flash</Filter>
     </ClCompile>
     <ClCompile Include="..\..\ezmsdk\platforms\simulator\uart\uart_sim.c">
       <Filter>Source Files\platforms\simulator\uart</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\utilities\ezmAssert\ezmAssert.c">
+      <Filter>Source Files\utilities\ezmAssert</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\utilities\hexdump\hexdump.c">
+      <Filter>Source Files\utilities\hexdump</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\utilities\linked_list\linked_list.c">
+      <Filter>Source Files\utilities\linked_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\utilities\ring_buffer\ring_buffer.c">
+      <Filter>Source Files\utilities\ring_buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\utilities\smalloc\smalloc.c">
+      <Filter>Source Files\utilities\smalloc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\utilities\stcmem\stcmem.c">
+      <Filter>Source Files\utilities\stcmem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\utilities\system_error\system_error.c">
+      <Filter>Source Files\utilities\system_error</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -171,26 +171,8 @@
     <ClInclude Include="..\..\ezmsdk\scheduler\scheduler.h">
       <Filter>Source Files\scheduler</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\ezmsdk\helper\ezmAssert\ezmAssert.h">
-      <Filter>Source Files\helper\ezmAssert</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ezmsdk\helper\hexdump\hexdump.h">
-      <Filter>Source Files\helper\hexdump</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ezmsdk\helper\linked_list\linked_list.h">
-      <Filter>Source Files\helper\linked_list</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ezmsdk\helper\smalloc\smalloc.h">
-      <Filter>Source Files\helper\smalloc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ezmsdk\helper\ring_buffer\ring_buffer.h">
-      <Filter>Source Files\helper\ring_buffer</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\ezmsdk\hal\uart\uart.h">
       <Filter>Source Files\hal\uart</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ezmsdk\helper\stcmem\stcmem.h">
-      <Filter>Source Files\helper\stcmem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\ezmsdk\ezmKernel\ezmKernel.h">
       <Filter>Source Files\ezmKernel</Filter>
@@ -201,17 +183,35 @@
     <ClInclude Include="..\..\ezmsdk\ezmDriver\dummy_driver.h">
       <Filter>Source Files\ezmDriver</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\ezmsdk\helper\system_error\system_error.h">
-      <Filter>Source Files\helper\system_error</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ezmsdk\helper\system_error\system_error_table.h">
-      <Filter>Source Files\helper\system_error</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\ezmsdk\platforms\simulator\flash\flash_simulator.h">
       <Filter>Source Files\platforms\simulator\flash</Filter>
     </ClInclude>
     <ClInclude Include="..\..\ezmsdk\platforms\simulator\uart\uart_sim.h">
       <Filter>Source Files\platforms\simulator\uart</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ezmsdk\utilities\ezmAssert\ezmAssert.h">
+      <Filter>Source Files\utilities\ezmAssert</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ezmsdk\utilities\hexdump\hexdump.h">
+      <Filter>Source Files\utilities\hexdump</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ezmsdk\utilities\linked_list\linked_list.h">
+      <Filter>Source Files\utilities\linked_list</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ezmsdk\utilities\ring_buffer\ring_buffer.h">
+      <Filter>Source Files\utilities\ring_buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ezmsdk\utilities\smalloc\smalloc.h">
+      <Filter>Source Files\utilities\smalloc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ezmsdk\utilities\stcmem\stcmem.h">
+      <Filter>Source Files\utilities\stcmem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ezmsdk\utilities\system_error\system_error.h">
+      <Filter>Source Files\utilities\system_error</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ezmsdk\utilities\system_error\system_error_table.h">
+      <Filter>Source Files\utilities\system_error</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
