@@ -16,8 +16,8 @@
 #include "ezmIpc.h"
 
 #if (IPC == 1U)
-#include "helper/linked_list/linked_list.h"
-#include "helper/stcmem/stcmem.h"
+#include "utilities/linked_list/linked_list.h"
+#include "utilities/stcmem/stcmem.h"
 #include "ezmIpc_conf.h"
 #include "string.h"
 

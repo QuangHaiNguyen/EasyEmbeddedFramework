@@ -20,8 +20,8 @@
 
 #if (STCMEM == 1U)
 #include "ezmDebug/ezmDebug.h"
-#include "helper/linked_list/linked_list.h"
-#include "helper/hexdump/hexdump.h"
+#include "utilities/linked_list/linked_list.h"
+#include "utilities/hexdump/hexdump.h"
 #include "stcmem.h"
 #include "stdbool.h"
 #include <string.h>

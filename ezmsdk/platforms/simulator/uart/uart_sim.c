@@ -29,7 +29,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include "ezmDebug/ezmDebug.h"
-#include "helper/hexdump/hexdump.h"
+#include "utilities/hexdump/hexdump.h"
 
 #define MOD_NAME    "HW_UART"
 #if (MODULE_DEBUG == 1U) && (UART_DEBUG == 1U)

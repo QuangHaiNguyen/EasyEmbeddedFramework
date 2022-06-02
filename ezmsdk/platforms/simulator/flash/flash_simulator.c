@@ -35,8 +35,8 @@
 
 #if (FLASH_SIM == 1U) && (SUPPORTED_CHIP == WIN)
 #include "ezmDebug/ezmDebug.h"
-#include "helper/hexdump/hexdump.h"
-#include "helper/ezmAssert/ezmAssert.h"
+#include "utilities/hexdump/hexdump.h"
+#include "utilities/ezmAssert/ezmAssert.h"
 #include <string.h>
 
 /******************************************************************************
