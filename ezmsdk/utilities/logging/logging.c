@@ -27,7 +27,9 @@
  *  @date   01.06.2022
  *  @brief  This is the source for a logging module
  *  
- *  @details
+ *  @details this source file will be reserve for porting logging module to
+ *  other interface. At the moment, it prints the supported logging level and
+ *  format
  * 
  */
 
@@ -36,7 +38,7 @@
 /******************************************************************************
 * Includes
 *******************************************************************************/
-#define DEBUG_LVL   LVL_TRACE   /**< logging level */
+#define DEBUG_LVL   LVL_TRACE  /**< logging level */
 #define MOD_NAME    "LOGGING"   /**< module name */
 #include "logging.h"
 
@@ -45,7 +47,7 @@
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
-
+/* None */
 
 /******************************************************************************
 * Module Typedefs
@@ -78,7 +80,7 @@
 *******************************************************************************/
 void Logging_DemoFeatures(void)
 {
-#if 1
+    INFO("\n\nsupported logging level and format:");
     TRACE("This is a test message, [integer = %d], [float = %f], [char = %c]", 
                 10, 3.14, 'a');
     DEBUG("This is a test message, [integer = %d], [float = %f], [char = %c]",
@@ -93,7 +95,7 @@ void Logging_DemoFeatures(void)
                 10, 3.14, 'a');
     CRITICAL("This is a test message, [integer = %d], [float = %f], [char = %c]",
                 10, 3.14, 'a');
-#endif
+    INFO("\n\n");
 }
 
 /******************************************************************************

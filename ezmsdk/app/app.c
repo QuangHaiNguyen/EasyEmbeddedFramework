@@ -47,6 +47,8 @@
 #endif /* BIN_PARSER */
 
 #if (LOGGING == 1U)
+#define DEBUG_LVL   LVL_INFO  /**< logging level */
+#define MOD_NAME    "APP"   /**< module name */
 #include "utilities/logging/logging.h"
 #endif /* DEBUG */
 
@@ -98,22 +100,6 @@
 #include "platforms/simulator/flash/flash_simulator.h"
 #endif /* FLASH_SIM */
 
-#define MOD_NAME "APPL"
-
-#if (MODULE_DEBUG == 1U) && (APP_DEBUG == 1U)
-    #define APPPRINT(a)                     PRINT_DEBUG(MOD_NAME, a)
-    #define APPPRINT1(a,b)                  PRINT_DEBUG1(MOD_NAME,a,b)
-    #define APPPRINT2(a,b,c)                PRINT_DEBUG2(MOD_NAME,a,b,c)
-    #define APPPRINT3(a,b,c,d)              PRINT_DEBUG3(MOD_NAME,a,b,c,d)
-    #define APPPRINT4(a,b,c,d,e)            PRINT_DEBUG3(MOD_NAME,a,b,c,d,e)
-#else 
-    #define APPPRINT(a)
-    #define APPPRINT1(a,b)
-    #define APPPRINT2(a,b,c)
-    #define APPPRINT3(a,b,c,d)
-    #define APPPRINT4(a,b,c,d,e)
-#endif
-
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
@@ -162,54 +148,48 @@ void ezmApp_SdkInit(void)
 
 #if (SCHEDULER == 1U)
     /*must call init function here, but there is problem with the init so check it later*/
-    APPPRINT1("Initialize scheduler");
-    APPPRINT2("Module Id: 0x%02x", SCHEDULER_MOD_ID);
-    APPPRINT2("Number of available tasks: %d", NUM_OF_TASK);
+    INFO("Initialize scheduler");
+    INFO("Module Id: 0x%02x", SCHEDULER_MOD_ID);
+    INFO("Number of available tasks: %d", NUM_OF_TASK);
 #endif
 
 #if (SMALLOC == 1U)
     /* SMALLOC module has no init function*/
-    APPPRINT("Initialize smalloc");
-    APPPRINT1("Module Id: 0x%02x", SMALLOC_MOD_ID);
-    APPPRINT1("Availalbe memory: %d bytes", STATIC_MEMORY_SIZE);
+    INFO("Initialize smalloc");
+    INFO("Module Id: 0x%02x", SMALLOC_MOD_ID);
+    INFO("Availalbe memory: %d bytes", STATIC_MEMORY_SIZE);
 #endif
 
 #if (BIN_PARSER == 1U)
     /* BIN_PARSER module has no init function*/
-    APPPRINT("Initialize binary command parser module");
-    APPPRINT1("Module Id: 0x%02x", BIN_PARSER_MOD_ID);
-    APPPRINT1("payload size: %d bytes", PAYLOAD_MAX_SIZE);
-    APPPRINT1("CRC size: %d bytes", CRC_SIZE);
+    INFO("Initialize binary command parser module");
+    INFO("Module Id: 0x%02x", BIN_PARSER_MOD_ID);
+    INFO("payload size: %d bytes", PAYLOAD_MAX_SIZE);
+    INFO("CRC size: %d bytes", CRC_SIZE);
 #endif /* BIN_PARSER */
 
-#if (DEBUG == 1U)
-    /* DEBUG module has no init function*/
-    APPPRINT("Initialize debug module");
-    APPPRINT1("Module Id: 0x%02x", DEBUG_MOD_ID);
-#endif
-
 #if (HELPER_LINKEDLIST == 1U)
-    APPPRINT("Initialize linked list module");
-    APPPRINT1("Module Id: 0x%02x", HELPER_LINKEDLIST_MOD_ID);
+    INFO("Initialize linked list module");
+    INFO("Module Id: 0x%02x", HELPER_LINKEDLIST_MOD_ID);
     ezmLL_Initialization();
 #endif
 
 #if (HELPER_HEXDUMP == 1U)
     /* DEBUG module has no init function*/
-    APPPRINT("Initialize hexdump module");
-    APPPRINT1("Module Id: 0x%02x", HELPER_HEXDUMP_MOD_ID);
+    INFO("Initialize hexdump module");
+    INFO("Module Id: 0x%02x", HELPER_HEXDUMP_MOD_ID);
 #endif
 
 #if (RING_BUFFER == 1U)
     /* DEBUG module has no init function*/
-    APPPRINT("Initialize ring buffer module");
-    APPPRINT1("Module Id: 0x%02x", RING_BUFFER_MOD_ID);
+    INFO("Initialize ring buffer module");
+    INFO("Module Id: 0x%02x", RING_BUFFER_MOD_ID);
 #endif /* RING_BUFFER */
 
 #if (HELPER_ASSERT == 1U)
     /* DEBUG module has no init function*/
-    APPPRINT("Initialize assert module");
-    APPPRINT1("Module Id: 0x%02x", HELPER_ASSERT_MOD_ID);
+    INFO("Initialize assert module");
+    INFO("Module Id: 0x%02x", HELPER_ASSERT_MOD_ID);
 #endif
 
 #if (STATEMACHINE == 1U)
@@ -220,54 +200,54 @@ void ezmApp_SdkInit(void)
 
 #if (IPC == 1U)
     ezmIpc_InitModule();
-    APPPRINT("Initialize IPC module");
-    APPPRINT1("Module Id: 0x%02x", IPC_MOD_ID);
+    INFO("Initialize IPC module");
+    INFO("Module Id: 0x%02x", IPC_MOD_ID);
     
 #endif
 
 #if (STCMEM==1U)
     ezmStcMem_Initialization();
-    APPPRINT("Initialize STCMEM module");
-    APPPRINT1("Module Id: 0x%02x", STCMEM_MOD_ID);
+    INFO("Initialize STCMEM module");
+    INFO("Module Id: 0x%02x", STCMEM_MOD_ID);
 #endif
 
 #if(DRIVERINF == 1U)
     if (ezmDriver_Init())
     {
-        APPPRINT("Initialize DRIVERINF module");
-        APPPRINT1("Module Id: 0x%02x", DRIVERINF_MOD_ID);
+        INFO("Initialize DRIVERINF module");
+        INFO("Module Id: 0x%02x", DRIVERINF_MOD_ID);
     }
     else
     {
-        APPPRINT("Initialize DRIVERINF module error");
+        INFO("Initialize DRIVERINF module error");
     }
 #endif
 
 #if (SYSTEM_ERROR == 1U)
     SystemError_Initialize();
-    APPPRINT("Initialize SYSTEM_ERROR module");
-    APPPRINT1("Module Id: 0x%02x", SYSTEM_ERROR_MOD_ID);
+    INFO("Initialize SYSTEM_ERROR module");
+    INFO("Module Id: 0x%02x", SYSTEM_ERROR_MOD_ID);
 #endif /* SYSTEM_ERROR*/
 
 #if (FLASH_SIM == 1U)
     if (FlashSim_Initialization())
     {
-        APPPRINT("Initialize FLASH_SIM module");
-        APPPRINT1("Module Id: 0x%02x", FLASH_SIM_MOD_ID);
+        INFO("Initialize FLASH_SIM module");
+        INFO("Module Id: 0x%02x", FLASH_SIM_MOD_ID);
     }
     else
     {
-        APPPRINT("FLASH_SIM module ERROR");
+        INFO("FLASH_SIM module ERROR");
     }
 #endif /* SYSTEM_ERROR*/
 
 #if (NUM_OF_SUPPORTED_UART)
-    APPPRINT("Initialize UART Driver");
-    APPPRINT1("Module Id: 0x%02x", UART_MOD_ID);
+    INFO("Initialize UART Driver");
+    INFO("Module Id: 0x%02x", UART_MOD_ID);
 #endif /* NUM_OF_SUPPORTED_UART */
 
 #if (LOGGING == 1U)
-    APPPRINT("Initialize Logging module");
+    INFO("Initialize Logging module");
     Logging_DemoFeatures();
 #endif /* LOGGING == 1U */
 
@@ -277,13 +257,13 @@ void ezmApp_SdkInit(void)
     ezmDriver_GetDriverInstance(UART0_DRIVER, (void*)(&uart_driver));
     if (uart_driver == NULL)
     {
-        APPPRINT("ERROR: Initialize command line interface");
+        INFO("ERROR: Initialize command line interface");
     }
     else
     {
-        APPPRINT("Initialize command line interface");
-        APPPRINT1("Module Id: 0x%02x", CLI_MOD_ID);
-        APPPRINT1("Number of supported command: [command = %d]", NUM_OF_CMD);
+        INFO("Initialize command line interface");
+        INFO("Module Id: 0x%02x", CLI_MOD_ID);
+        INFO("Number of supported command: [command = %d]", NUM_OF_CMD);
         ezmCli_Init(uart_driver);
     }
 #endif
@@ -326,131 +306,131 @@ void ezmApp_SdkInit(void)
 *******************************************************************************/
 static void ezm_AppPrintActiveModule(void)
 {
-    APPPRINT("ACTIVE MODULES:");
+    INFO("ACTIVE MODULES:");
 
 #if (CLI == 1U)
-    APPPRINT("[x] CLI");
+    INFO("[x] CLI");
 #else
-    APPPRINT("[ ] CLI");
+    INFO("[ ] CLI");
 #endif
 
 #if (SCHEDULER == 1U)
-    APPPRINT("[x] SCHEDULER");
+    INFO("[x] SCHEDULER");
 #else
-    APPPRINT("[ ] SCHEDULER");
+    INFO("[ ] SCHEDULER");
 #endif
 
 #if (SMALLOC == 1U)
-    APPPRINT("[x] SMALLOC");
+    INFO("[x] SMALLOC");
 #else
-    APPPRINT("[ ] SMALLOC");
+    INFO("[ ] SMALLOC");
 #endif
 
 #if (BIN_PARSER == 1U)
-    APPPRINT("[x] BIN_PARSER");
+    INFO("[x] BIN_PARSER");
 #else
-    APPPRINT("[ ] BIN_PARSER");
+    INFO("[ ] BIN_PARSER");
 #endif
 
 #if (EZM_DEBUG == 1U)
-    APPPRINT("[x] DEBUG");
+    INFO("[x] DEBUG");
 #else
-    APPPRINT("[ ] DEBUG");
+    INFO("[ ] DEBUG");
 #endif
 
 #if (LOGGING == 1U)
-    APPPRINT("[x] LOGGING");
+    INFO("[x] LOGGING");
 #else
-    APPPRINT("[ ] LOGGING");
+    INFO("[ ] LOGGING");
 #endif
 
 #if (HELPER_LINKEDLIST == 1U)
-    APPPRINT("[x] HELPER_LINKEDLIST");
+    INFO("[x] HELPER_LINKEDLIST");
 #else
-    APPPRINT("[ ] HELPER_LINKEDLIST");
+    INFO("[ ] HELPER_LINKEDLIST");
 #endif
 
 #if (HELPER_HEXDUMP == 1U)
-    APPPRINT("[x] HELPER_HEXDUMP");
+    INFO("[x] HELPER_HEXDUMP");
 #else
-    APPPRINT("[ ] HELPER_HEXDUMP");
+    INFO("[ ] HELPER_HEXDUMP");
 #endif
 
 #if (RING_BUFFER == 1U)
-    APPPRINT("[x] RING_BUFFER");
+    INFO("[x] RING_BUFFER");
 #else
-    APPPRINT("[ ] RING_BUFFER");
+    INFO("[ ] RING_BUFFER");
 #endif
 
 #if (HELPER_ASSERT == 1U)
-    APPPRINT("[x] HELPER_ASSERT");
+    INFO("[x] HELPER_ASSERT");
 #else
-    APPPRINT("[ ] HELPER_ASSERT");
+    INFO("[ ] HELPER_ASSERT");
 #endif
 
 #if (STATEMACHINE == 1U)
-    APPPRINT("[x] STATEMACHINE");
+    INFO("[x] STATEMACHINE");
 #else
-    APPPRINT("[ ] STATEMACHINE");
+    INFO("[ ] STATEMACHINE");
 #endif
 
 #if (IPC == 1U)
-    APPPRINT("[x] IPC");
+    INFO("[x] IPC");
 #else
-    APPPRINT("[ ] IPC");
+    INFO("[ ] IPC");
 #endif
 
 #if (STCMEM==1U)
-    APPPRINT("[x] STCMEM");
+    INFO("[x] STCMEM");
 #else
-    APPPRINT("[ ] STCMEM");
+    INFO("[ ] STCMEM");
 #endif
 
 #if(DRIVERINF == 1U)
-    APPPRINT("[x] DRIVERINF");
+    INFO("[x] DRIVERINF");
 #else
-    APPPRINT("[ ] DRIVERINF");
+    INFO("[ ] DRIVERINF");
 #endif
 
 #if (SYSTEM_ERROR == 1U)
-    APPPRINT("[x] SYSTEM_ERROR");
+    INFO("[x] SYSTEM_ERROR");
 #else
-    APPPRINT("[ ] SYSTEM_ERROR");
+    INFO("[ ] SYSTEM_ERROR");
 #endif /* SYSTEM_ERROR*/
 
 #if (FLASH_SIM == 1U)
-    APPPRINT("[x] FLASH_SIM");
+    INFO("[x] FLASH_SIM");
 #else
-    APPPRINT("[ ] FLASH_SIM");
+    INFO("[ ] FLASH_SIM");
 #endif /* FLASH_SIM */
 
 #if (NUM_OF_SUPPORTED_UART)
-    APPPRINT("[x] UART");
+    INFO("[x] UART");
 #else
-    APPPRINT("[ ] UART");
+    INFO("[ ] UART");
 #endif /* NUM_OF_SUPPORTED_UART */
 
- APPPRINT("");
- APPPRINT("******************************************************************************\n\n");
+    INFO("");
+    INFO("******************************************************************************\n\n");
 
 }
 
 static void ezmApp_PrintHeader(void)
 {
-    PRINT_INFO("******************************************************************************");
-    PRINT_INFO("* EASY EMBEDDED SOFTWARE DEVELOPMENT KIT");
-    PRINT_INFO("* Author: Quang Hai Nguyen");
-    PRINT_INFO("* Version: 1.0.0");
-    PRINT_INFO("* Build date: 16.01.2022");
+    INFO("******************************************************************************");
+    INFO("* EASY EMBEDDED SOFTWARE DEVELOPMENT KIT");
+    INFO("* Author: Quang Hai Nguyen");
+    INFO("* Version: 1.0.0");
+    INFO("* Build date: 16.01.2022");
 #if(SUPPORTED_CHIP == ESP32)
-    PRINT_INFO("* Platform: ESP32");
+    INFO("* Platform: ESP32");
 #elif (SUPPORTED_CHIP == STM32)
-    PRINT_INFO("* Platform: STM32");
+    INFO("* Platform: STM32");
 #else
-    PRINT_INFO("* Platform: PC");
+    INFO("* Platform: PC");
 #endif
-    PRINT_INFO("* Contact: hainguyen.ezm@gmail.com");
-    PRINT_INFO("******************************************************************************\n\n");
+    INFO("* Contact: hainguyen.ezm@gmail.com");
+    INFO("******************************************************************************\n\n");
 }
 
 #if(SUPPORTED_CHIP == WIN)
