@@ -75,7 +75,7 @@ _doxygen_header_body=\
 /*******************************************************************************
 * Includes
 *******************************************************************************/
-/* None */
+#include "app/app_config.h"
 
 /******************************************************************************
 * Module Preprocessor Macros
@@ -118,6 +118,12 @@ _doxygen_source_body=\
 * Includes
 *******************************************************************************/
 #include "{0}.h"
+
+#define DEBUG_LVL   LVL_TRACE   /**< logging level */
+#define MOD_NAME    "{0}"       /**< module name */
+#include "utilities/logging/logging.h"
+
+/*the rest of include go here*/
 
 /******************************************************************************
 * Module Preprocessor Macros
