@@ -55,8 +55,8 @@ _file_header =\
 
 _test_header =\
 """
-#ifndef UNIT_TEST_{0}
-#define UNIT_TEST_{0}
+#ifndef _{0}
+#define _{0}
 
 #include <limits.h>
 #include "gtest/gtest.h"
@@ -67,7 +67,7 @@ extern "C" {{
 
 _test_footer =\
 """
-#endif /* UNIT_TEST_{0} */
+#endif /* _{0} */
 """
 
 _test_body =\
