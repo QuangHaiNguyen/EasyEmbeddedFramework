@@ -16,6 +16,7 @@
 #define TEST_PRINTF             0U
 #define TEST_SYSTEM_ERROR       0U
 #define TEST_FLASH_SIMULATOR    0U
+#define TEST_LOGGING            1U
 
 #if (TEST_IPC == 1U)
 #include "../unit_test_ipc.h"
@@ -68,3 +69,8 @@
 #if (TEST_FLASH_SIMULATOR == 1U)
 #include "../unit_test_flash_simulator.h"
 #endif /* TEST_FLASH_SIMULATOR */
+
+#if (TEST_LOGGING == 1U)
+#include "../unit_test_logging1.h"
+#include "../unit_test_logging2.h"
+#endif /* TEST_LOGGING */

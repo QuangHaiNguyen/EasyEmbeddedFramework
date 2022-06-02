@@ -45,6 +45,12 @@
     <ClInclude Include="..\unit_test_flash_simulator.h">
       <Filter>test_cases</Filter>
     </ClInclude>
+    <ClInclude Include="..\unit_test_logging1.h">
+      <Filter>test_cases</Filter>
+    </ClInclude>
+    <ClInclude Include="..\unit_test_logging2.h">
+      <Filter>test_cases</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

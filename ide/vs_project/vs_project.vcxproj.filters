@@ -74,6 +74,9 @@
     <Filter Include="Source Files\utilities\system_error">
       <UniqueIdentifier>{a58fff17-4b19-425d-a7af-5155a1dea7cf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\utilities\logging">
+      <UniqueIdentifier>{e9175cfd-dcaf-4f6b-996d-57d836f97ca8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ezmsdk\app\app.c">
@@ -138,6 +141,9 @@
     </ClCompile>
     <ClCompile Include="..\..\ezmsdk\utilities\system_error\system_error.c">
       <Filter>Source Files\utilities\system_error</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\utilities\logging\logging.c">
+      <Filter>Source Files\utilities\logging</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -212,6 +218,9 @@
     </ClInclude>
     <ClInclude Include="..\..\ezmsdk\utilities\system_error\system_error_table.h">
       <Filter>Source Files\utilities\system_error</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ezmsdk\utilities\logging\logging.h">
+      <Filter>Source Files\utilities\logging</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -22,6 +22,7 @@
 #define HELPER_LINKEDLIST       1U
 #define HELPER_HEXDUMP          1U
 #define EZM_DEBUG               1U
+#define LOGGING                 1U
 #define RING_BUFFER             0U
 #define HELPER_ASSERT           1U
 #define STATEMACHINE            0U
