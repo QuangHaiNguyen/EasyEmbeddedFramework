@@ -31,15 +31,21 @@
  * 
  */
 
+
+
 /******************************************************************************
 * Includes
 *******************************************************************************/
+#define DEBUG_LVL   LVL_TRACE   /**< logging level */
+#define MOD_NAME    "LOGGING"   /**< module name */
 #include "logging.h"
+
+#if (LOGGING == 1U)
 
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
-#define A_MACRO     1   /**< a macro*/
+
 
 /******************************************************************************
 * Module Typedefs
@@ -49,7 +55,6 @@
 /******************************************************************************
 * Module Variable Definitions
 *******************************************************************************/
-/* None */
 
 /******************************************************************************
 * Function Definitions
@@ -61,32 +66,40 @@
 *******************************************************************************/
 
 /******************************************************************************
-* Function : sum
+* Function : Logging_DemoFeatures
 *//** 
 * @Description:
 *
-* This function initializes the ring buffer
+* This function demostrates some features of logging module
 * 
-* @param    a: (IN)pointer to the ring buffer
-* @param    b: (IN)size of the ring buffer
+* @param    None
 * @return   None
 *
-* @Example Example:
-* @code
-* sum(a, b);
-* @endcode
-*
-* @see sum
-*
 *******************************************************************************/
-int sum(int a, int b)
+void Logging_DemoFeatures(void)
 {
-    return a + b;
+#if 1
+    TRACE("This is a test message, [integer = %d], [float = %f], [char = %c]", 
+                10, 3.14, 'a');
+    DEBUG("This is a test message, [integer = %d], [float = %f], [char = %c]",
+                10, 3.14, 'a');
+    INFO("This is a test message, [integer = %d], [float = %f], [char = %c]",
+                10, 3.14, 'a');
+    NOTICE("This is a test message, [integer = %d], [float = %f], [char = %c]",
+                10, 3.14, 'a');
+    WARNING("This is a test message, [integer = %d], [float = %f], [char = %c]",
+                10, 3.14, 'a');
+    ERROR("This is a test message, [integer = %d], [float = %f], [char = %c]",
+                10, 3.14, 'a');
+    CRITICAL("This is a test message, [integer = %d], [float = %f], [char = %c]",
+                10, 3.14, 'a');
+#endif
 }
 
 /******************************************************************************
 * Internal functions
 *******************************************************************************/
 
+#endif /* LOGGING == 1U */
 /* End of file*/
 

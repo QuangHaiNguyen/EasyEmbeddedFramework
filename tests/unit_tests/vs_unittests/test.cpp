@@ -72,5 +72,4 @@
 
 #if (TEST_LOGGING == 1U)
 #include "../unit_test_logging1.h"
-#include "../unit_test_logging2.h"
 #endif /* TEST_LOGGING */

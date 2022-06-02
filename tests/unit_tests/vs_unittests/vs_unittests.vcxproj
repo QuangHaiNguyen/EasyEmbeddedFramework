@@ -45,7 +45,6 @@
     <ClInclude Include="..\unit_test_kernel.h" />
     <ClInclude Include="..\unit_test_linked_list.h" />
     <ClInclude Include="..\unit_test_logging1.h" />
-    <ClInclude Include="..\unit_test_logging2.h" />
     <ClInclude Include="..\unit_test_printf.h" />
     <ClInclude Include="..\unit_test_ring_buffer.h" />
     <ClInclude Include="..\unit_test_smalloc.h" />

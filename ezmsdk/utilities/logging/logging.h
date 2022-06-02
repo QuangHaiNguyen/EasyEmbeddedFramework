@@ -27,7 +27,9 @@
  *  @date   01.06.2022
  *  @brief  This is the header file for logging module
  *  
- *  @details
+ *  @details Logging module provides user with multi-level and multi-format
+ *  logging. Originally, logging will use printf to print file on the console,
+ *  but  it can be tailored to other IO
  * 
  */
 
@@ -43,17 +45,18 @@
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
-#define LVL_CRITICAL    0   /**< set logging to level critical */
-#define LVL_ERROR       1   /**< set logging to level error */
-#define LVL_WARNING     2   /**< set logging to level warning */
-#define LVL_NOTICE      3   /**< set logging to level notice */
-#define LVL_INFO        4   /**< set logging to level info */
-#define LVL_DEBUG       5   /**< set logging to level debug */
-#define LVL_TRACE       6   /**< set logging to level trace */
+#define LVL_NO_LOG      0   /**< set no logging */
+#define LVL_CRITICAL    1   /**< set logging to level critical */
+#define LVL_ERROR       2   /**< set logging to level error */
+#define LVL_WARNING     3   /**< set logging to level warning */
+#define LVL_NOTICE      4   /**< set logging to level notice */
+#define LVL_INFO        5   /**< set logging to level info */
+#define LVL_DEBUG       6   /**< set logging to level debug */
+#define LVL_TRACE       7   /**< set logging to level trace */
 
 #define PRINT_MODULE_NAME       1U  /**< logging shows module name */
 #define PRINT_FILENAME          0U  /**< logging shows file name */
-#define PRINT_LINE              1U  /**< logging shows line number */
+#define PRINT_LINE              0U  /**< logging shows line number */
 #define PRINT_FUNCTION_NAME     0U  /**< logging shows function name */
 
 #define dbg_print(fmt, ...)     printf(fmt, ##__VA_ARGS__)
@@ -83,30 +86,33 @@
 #endif
 
 #if (LOGGING == 1U)
+#if DEBUG_LVL >= LVL_CRITICAL
 #define CRITICAL(fmt, ...)   do {\
-                                if (DEBUG_LVL >= LVL_CRITICAL)\
-                                {\
-                                    dbg_print("[CRITICAL]::");\
-                                    print_module(MOD_NAME);\
-                                    print_file();\
-                                    print_line();\
-                                    print_func();\
-                                    dbg_print(fmt "\n", ##__VA_ARGS__);\
-                                }\
+                                dbg_print("[CRITICAL]::");\
+                                print_module(MOD_NAME);\
+                                print_file();\
+                                print_line();\
+                                print_func();\
+                                dbg_print(fmt "\n", ##__VA_ARGS__);\
                             }while(0)
+#else
+#define CRITICAL(fmt, ...)
+#endif
 
+#if DEBUG_LVL >= LVL_ERROR
 #define ERROR(fmt, ...)     do {\
-                                if (DEBUG_LVL >= LVL_ERROR)\
-                                {\
-                                    dbg_print("[ERROR]::");\
-                                    print_module(MOD_NAME);\
-                                    print_file();\
-                                    print_line();\
-                                    print_func();\
-                                    dbg_print(fmt "\n", ##__VA_ARGS__);\
-                                }\
+                                dbg_print("[ERROR]::");\
+                                print_module(MOD_NAME);\
+                                print_file();\
+                                print_line();\
+                                print_func();\
+                                dbg_print(fmt "\n", ##__VA_ARGS__);\
                             }while(0)
+#else
+#define ERROR(fmt, ...)
+#endif
 
+#if DEBUG_LVL >= LVL_WARNING
 #define WARNING(fmt, ...)   do {\
                                 if (DEBUG_LVL >= LVL_WARNING)\
                                 {\
@@ -118,54 +124,62 @@
                                     dbg_print(fmt "\n", ##__VA_ARGS__);\
                                 }\
                             }while(0)
+#else
+#define WARNING(fmt, ...)
+#endif
 
+#if DEBUG_LVL >= LVL_NOTICE
 #define NOTICE(fmt, ...)    do {\
-                                if (DEBUG_LVL >= LVL_NOTICE)\
-                                {\
-                                    dbg_print("[NOTICE]::");\
-                                    print_module(MOD_NAME);\
-                                    print_file();\
-                                    print_line();\
-                                    print_func();\
-                                    dbg_print(fmt "\n", ##__VA_ARGS__);\
-                                }\
+                                dbg_print("[NOTICE]::");\
+                                print_module(MOD_NAME);\
+                                print_file();\
+                                print_line();\
+                                print_func();\
+                                dbg_print(fmt "\n", ##__VA_ARGS__);\
                             }while(0)
+#else
+#define NOTICE(fmt, ...)
+#endif
 
+#if DEBUG_LVL >= LVL_INFO
 #define INFO(fmt, ...)      do {\
-                                if (DEBUG_LVL >= LVL_INFO)\
-                                {\
-                                    dbg_print("[INFO]::");\
-                                    print_module(MOD_NAME);\
-                                    print_file();\
-                                    print_line();\
-                                    print_func();\
-                                    dbg_print(fmt "\n", ##__VA_ARGS__);\
-                                }\
+                                dbg_print("[INFO]::");\
+                                print_module(MOD_NAME);\
+                                print_file();\
+                                print_line();\
+                                print_func();\
+                                dbg_print(fmt "\n", ##__VA_ARGS__);\
                             }while(0)
+#else
+#define INFO(fmt, ...)
+#endif
 
+#if DEBUG_LVL >= LVL_DEBUG
 #define DEBUG(fmt, ...)     do {\
-                                if (DEBUG_LVL >= LVL_DEBUG)\
-                                {\
-                                    dbg_print("[DEBUG]::");\
-                                    print_module(MOD_NAME);\
-                                    print_file();\
-                                    print_line();\
-                                    print_func();\
-                                    dbg_print(fmt "\n", ##__VA_ARGS__);\
-                                }\
+                                dbg_print("[DEBUG]::");\
+                                print_module(MOD_NAME);\
+                                print_file();\
+                                print_line();\
+                                print_func();\
+                                dbg_print(fmt "\n", ##__VA_ARGS__);\
                             }while(0)
+#else
+#define DEBUG(fmt, ...)
+#endif
 
+#if DEBUG_LVL >= LVL_TRACE
 #define TRACE(fmt, ...)     do {\
-                                if (DEBUG_LVL >= LVL_TRACE)\
-                                {\
-                                    dbg_print("[TRACE]::");\
-                                    print_module(MOD_NAME);\
-                                    print_file();\
-                                    print_line();\
-                                    print_func();\
-                                    dbg_print(fmt "\n", ##__VA_ARGS__);\
-                                }\
+                                dbg_print("[TRACE]::");\
+                                print_module(MOD_NAME);\
+                                print_file();\
+                                print_line();\
+                                print_func();\
+                                dbg_print(fmt "\n", ##__VA_ARGS__);\
                             }while(0)
+#else
+#define TRACE(fmt, ...)
+#endif
+
 #else
 #define CRITICAL(fmt, ...)
 #define ERROR(fmt, ...)
@@ -189,7 +203,7 @@
 /******************************************************************************
 * Function Prototypes
 *******************************************************************************/
-/* None */
+void Logging_DemoFeatures(void);
 
 #endif /* _LOGGING_H */
 

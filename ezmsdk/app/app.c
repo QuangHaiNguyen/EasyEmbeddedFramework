@@ -46,8 +46,8 @@
 #include "binCmdParser/binCmdParser.h"
 #endif /* BIN_PARSER */
 
-#if (DEBUG == 1U)
-#include "ezmDebug/ezmDebug.h"
+#if (LOGGING == 1U)
+#include "utilities/logging/logging.h"
 #endif /* DEBUG */
 
 #if (HELPER_LINKEDLIST == 1U)
@@ -264,13 +264,12 @@ void ezmApp_SdkInit(void)
 #if (NUM_OF_SUPPORTED_UART)
     APPPRINT("Initialize UART Driver");
     APPPRINT1("Module Id: 0x%02x", UART_MOD_ID);
-#if 0
-    if(ezmUart_Init() != true)
-    {
-        APPPRINT1("Initialize UART Driver failed");
-    }
-#endif
 #endif /* NUM_OF_SUPPORTED_UART */
+
+#if (LOGGING == 1U)
+    APPPRINT("Initialize Logging module");
+    Logging_DemoFeatures();
+#endif /* LOGGING == 1U */
 
 #if (CLI == 1U)
 
@@ -357,6 +356,12 @@ static void ezm_AppPrintActiveModule(void)
     APPPRINT("[x] DEBUG");
 #else
     APPPRINT("[ ] DEBUG");
+#endif
+
+#if (LOGGING == 1U)
+    APPPRINT("[x] LOGGING");
+#else
+    APPPRINT("[ ] LOGGING");
 #endif
 
 #if (HELPER_LINKEDLIST == 1U)
