@@ -87,8 +87,6 @@ void Logging_DemoFeatures(void)
                 10, 3.14, 'a');
     INFO("This is a test message, [integer = %d], [float = %f], [char = %c]",
                 10, 3.14, 'a');
-    NOTICE("This is a test message, [integer = %d], [float = %f], [char = %c]",
-                10, 3.14, 'a');
     WARNING("This is a test message, [integer = %d], [float = %f], [char = %c]",
                 10, 3.14, 'a');
     ERROR("This is a test message, [integer = %d], [float = %f], [char = %c]",

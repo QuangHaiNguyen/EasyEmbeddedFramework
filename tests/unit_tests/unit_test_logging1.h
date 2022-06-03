@@ -29,10 +29,10 @@
 #include "gtest/gtest.h"
 
 extern "C" {
-#include "utilities/logging/logging.h"
-
 #define DEBUG_LVL   LVL_TRACE
 #define MOD_NAME    "logging1"
+
+#include "utilities/logging/logging.h"
 }
 
 namespace 

@@ -98,6 +98,12 @@
 #define DEBUG_MOD_ID                0x05U
 #endif /* DEBUG */
 
+/* DEBUG SECTION **************************************************************/
+#if (LOGGING == 1U)
+#define DEBUG_MOD_ID                0x05U
+#define USING_COLOR                 1U
+#endif /* DEBUG */
+
 /* HELPER_LINKEDLIST SECTION **************************************************/
 #if (HELPER_LINKEDLIST == 1U)
 #define HELPER_LINKEDLIST_MOD_ID    0x06U
