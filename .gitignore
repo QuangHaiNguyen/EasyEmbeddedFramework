@@ -1,4 +1,5 @@
 .vscode/
+build/
 ide/cmake/build/
 ide/cmake/bin/
 ide/cmake/lib/
