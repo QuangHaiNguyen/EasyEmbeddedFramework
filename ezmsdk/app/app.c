@@ -251,8 +251,7 @@ void ezmApp_SdkInit(void)
     Logging_DemoFeatures();
 #endif /* LOGGING == 1U */
 
-#if (CLI == 1U)
-
+#if (CLI == 1U && HAL_UART == 1U)
     UartDrvApi* uart_driver;
     ezmDriver_GetDriverInstance(UART0_DRIVER, (void*)(&uart_driver));
     if (uart_driver == NULL)
@@ -272,7 +271,9 @@ void ezmApp_SdkInit(void)
     uint64_t execute_time_stamp = ezmApp_ReturnTimestampMillisvoid();
     do
     {
+#if (CLI == 1U)
         ezmCli_Run();
+#endif
         if (ezmApp_ReturnTimestampMillisvoid() - execute_time_stamp > 1)
         {
             ezmKernel_UpdateClock();

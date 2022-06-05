@@ -31,22 +31,19 @@
 *******************************************************************************/
 #include "system_error.h"
 
+#define MOD_NAME    "SYS_ERR"
+#define DEBUG_LVL   LVL_ERROR
 #if (SYSTEM_ERROR == 1U)
+
+#include "utilities/logging/logging.h"
 #include "system_error_table.h"
-#include "ezmDebug/ezmDebug.h"
 #include "utilities/ezmAssert/ezmAssert.h"
 
 
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
-#define MOD_NAME    "SYS_ERROR"
-
-#if (MODULE_DEBUG == 1U) && (SYSTEM_ERROR_DEBUG == 1U)
-#define SYSERRPRINT(format, ...)    PRINTF_MOD(MOD_NAME, format, __VA_ARGS__)
-#else
-#define SYSERRPRINT(format, ...) 
-#endif
+/* None */
 
 /******************************************************************************
 * Module Typedefs
@@ -139,7 +136,7 @@ bool SystemError_SetError(int error_id)
 *******************************************************************************/
 void SystemError_HandleTestWarningError(void)
 {
-    SYSERRPRINT("test warning error triggered");
+    ERROR("test warning error triggered");
 }
 
 /******************************************************************************
@@ -154,7 +151,7 @@ void SystemError_HandleTestWarningError(void)
 *******************************************************************************/
 void SystemError_HandleTestAttentionError(void)
 {
-    SYSERRPRINT("test attention error triggered");
+    ERROR("test attention error triggered");
 }
 
 /******************************************************************************
@@ -169,7 +166,7 @@ void SystemError_HandleTestAttentionError(void)
 *******************************************************************************/
 void SystemError_HandleTestCriticalError(void)
 {
-    SYSERRPRINT("test critical error triggered");
+    ERROR("test critical error triggered");
 }
 
 /******************************************************************************
@@ -184,7 +181,7 @@ void SystemError_HandleTestCriticalError(void)
 *******************************************************************************/
 void SystemError_HandleTestCastatrophicError(void)
 {
-    SYSERRPRINT("test castatrophic error triggered");
+    ERROR("test castatrophic error triggered");
 }
 #endif
 /* End of file*/

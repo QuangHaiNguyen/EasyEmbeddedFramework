@@ -37,15 +37,73 @@
 * Function Definitions
 *******************************************************************************/
 
-
+/******************************************************************************
+* Function : ezmLL_Initialization
+*//**
+* \b Description:
+*
+* Initialize linked list module. Do nothing at the moment
+*
+* PRE-CONDITION: None
+*
+* POST-CONDITION: None
+*
+* @param    None
+* @return   None
+*
+*******************************************************************************/
 void ezmLL_Initialization(void)
 {
-    //for (uint16_t i = 0; i < NUM_OF_NODE; i++)
-    //{
-        //ezmLL_ResetNode(&node_pool[i]);
-    //}
+    /* Do nothing */
 }
 
+/******************************************************************************
+* Function : ezmLL_InitNode
+*//**
+* \b Description:
+*
+* Initialize a new node
+*
+* PRE-CONDITION: None
+*
+* POST-CONDITION: None
+*
+* @param    node: (IN) node to be initialized
+* @return   None
+*
+*******************************************************************************/
+void ezmLL_InitNode(struct Node* node)
+{
+    node->next = node;
+    node->prev = node;
+}
+
+/******************************************************************************
+* Function : ezmLL_GetListSize
+*//**
+* \b Description:
+*
+* Return number of node in a list
+*
+* PRE-CONDITION: None
+*
+* POST-CONDITION: None
+*
+* @param    list_head: (IN)pointer to the head of the list
+* @return   number of node
+*
+*******************************************************************************/
+uint16_t ezmLL_GetListSize(struct Node* list_head)
+{
+    uint16_t size = 0;
+    struct Node* it_node = NULL;
+ 
+    EZMLL_FOR_EACH(it_node, list_head)
+    {
+        size++;
+    }
+    return size;
+}
 
 /******************************************************************************
 * Function : ezmLL_AppendNode

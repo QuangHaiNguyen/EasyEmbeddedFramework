@@ -29,7 +29,7 @@
 #include "ezmDebug.h"
 #include "app/app_config.h"
 
-#if(EZM_DEBUG == 1U)
+#if(EZM_PRINTF == 1U)
 
 #include <stdio.h>
 
@@ -448,5 +448,6 @@ static inline void CopyString(char* from, char* to, int to_size_bytes)
         to_size_bytes--;
     }
 }
-#endif
+#endif /* EZM_PRINTF */
+
 /* End of file*/

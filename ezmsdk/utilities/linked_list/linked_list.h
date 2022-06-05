@@ -25,8 +25,9 @@
 *******************************************************************************/
 #include "app/app_config.h"
 
-#include "stdint.h"
-#include "stdbool.h"
+#include <stdint.h>
+#include <stdbool.h>
+#include <stddef.h>
 
 /******************************************************************************
 * Module Preprocessor Macros
@@ -92,30 +93,6 @@ struct Node
 }Node;
 
 
-/*@brief init a new node
- *
- */
-void inline ezmLL_InitNode(struct Node* node)
-{
-    node->next = node;
-    node->prev = node;
-}
-
-/*@brief get the size of a list
- *
- */
-uint16_t inline ezmLL_GetListSize(struct Node* list_head)
-{
-    uint16_t size = 0;
-    struct Node* it_node = NULL;
- 
-    EZMLL_FOR_EACH(it_node, list_head)
-    {
-        size++;
-    }
-    return size;
-}
-
 /******************************************************************************
 * Module Variable Definitions
 *******************************************************************************/
@@ -125,6 +102,8 @@ uint16_t inline ezmLL_GetListSize(struct Node* list_head)
 * Function Prototypes
 *******************************************************************************/
 void        ezmLL_Initialization        (void);
+void        ezmLL_InitNode              (struct Node* node);
+uint16_t    ezmLL_GetListSize           (struct Node* list_head);
 bool        ezmLL_AppendNode            (struct Node *new_node, struct Node *appended_node);
 struct Node *ezmLL_InsertNewHead        (struct Node * current_head, struct Node *new_node);
 struct Node *ezmLL_UnlinkCurrentHead    (struct Node *head);

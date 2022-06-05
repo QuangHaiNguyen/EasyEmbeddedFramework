@@ -69,8 +69,8 @@ static struct MemList test_list;
 static void     ezmStcMem_ReturnHeaderToFreeList(struct Node *free_list_head, struct Node *free_node);
 static void     ezmSmalloc_Merge                (struct Node *free_list_head);
 
-inline struct Node*      ezmStcMem_ReserveMemoryBlock(struct Node* free_list_head, uint16_t block_size_byte);
-inline bool              ezmStcMem_MoveBlock(struct Node* move_node, struct Node* from_list_head, struct Node* to_list_head);
+struct Node*      ezmStcMem_ReserveMemoryBlock(struct Node* free_list_head, uint16_t block_size_byte);
+bool              ezmStcMem_MoveBlock(struct Node* move_node, struct Node* from_list_head, struct Node* to_list_head);
 static inline struct MemBlock*  GetFreeBlock(void);
 static inline void              ReleaseBlock(struct MemBlock* block);
 /**************************** Public function ********************************/
@@ -483,7 +483,7 @@ static inline void ReleaseBlock(struct MemBlock* block)
     INIT_BLOCK(block, NULL, 0U);
 }
 
-inline struct Node* ezmStcMem_ReserveMemoryBlock(struct Node* free_list_head, uint16_t block_size_byte)
+struct Node* ezmStcMem_ReserveMemoryBlock(struct Node* free_list_head, uint16_t block_size_byte)
 {
     struct MemBlock* remain_block = NULL;
     struct Node* iterate_Node = NULL;
@@ -516,7 +516,7 @@ inline struct Node* ezmStcMem_ReserveMemoryBlock(struct Node* free_list_head, ui
     return iterate_Node;
 }
 
-inline bool ezmStcMem_MoveBlock(struct Node* move_node, struct Node* from_list_head, struct Node* to_list_head)
+bool ezmStcMem_MoveBlock(struct Node* move_node, struct Node* from_list_head, struct Node* to_list_head)
 {
     bool is_success = true;
 
