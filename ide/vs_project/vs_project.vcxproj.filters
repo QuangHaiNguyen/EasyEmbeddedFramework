@@ -97,9 +97,6 @@
     <ClCompile Include="..\..\ezmsdk\scheduler\scheduler.c">
       <Filter>Source Files\scheduler</Filter>
     </ClCompile>
-    <ClCompile Include="main.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\ezmsdk\hal\uart\uart.c">
       <Filter>Source Files\hal\uart</Filter>
     </ClCompile>
@@ -144,6 +141,9 @@
     </ClCompile>
     <ClCompile Include="..\..\ezmsdk\utilities\logging\logging.c">
       <Filter>Source Files\utilities\logging</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\app\main.c">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -159,6 +159,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ezmsdk\app\app.c" />
+    <ClCompile Include="..\..\ezmsdk\app\main.c" />
     <ClCompile Include="..\..\ezmsdk\binCmdParser\binCmdParser.c" />
     <ClCompile Include="..\..\ezmsdk\cli\cli.c" />
     <ClCompile Include="..\..\ezmsdk\ezmDebug\ezmDebug.c" />
@@ -179,7 +180,6 @@
     <ClCompile Include="..\..\ezmsdk\utilities\smalloc\smalloc.c" />
     <ClCompile Include="..\..\ezmsdk\utilities\stcmem\stcmem.c" />
     <ClCompile Include="..\..\ezmsdk\utilities\system_error\system_error.c" />
-    <ClCompile Include="main.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\ezmsdk\app\app.h" />
