@@ -121,7 +121,7 @@ static CommandMetadata  astMetaData[NUM_OF_CMD] = { 0 }; /**< holding commands m
 static ENUM_CLI_STATE   eState = STATE_COMMAND; /**< Holding the current state of the parser */
 static const char       cmd_help[] = "help";
 static const char       cmd_help_desc[] = "show help";
-
+static const uint8_t    welcome[] = "CLI has been activated, type help for the list of command\n";
 /******************************************************************************
 * Function Definitions
 *******************************************************************************/
@@ -139,8 +139,7 @@ static bool     ezmCli_IsArgumentLongForm       (char * long_arg);
 static void     ezmCli_ResetValueList           (uint8_t index);
 
 static uint8_t  UartCallbackHandle              (uint8_t notify_code,
-                                                    void *param1,
-                                                    void *param2);
+                                                    void *param1);
 
 static CLI_NOTIFY_CODE  HandleHelpCommand(const char* command, void* value_list);
 static struct CliInstance  cli_inst;
@@ -210,6 +209,7 @@ bool ezmCli_Init(UartDrvApi* uart_driver)
         else
         {
             CLIPRINT("CLI has been activated, type help for the list of command");
+            cli_inst.uart_driver->ezmUart_Send(welcome, sizeof(welcome));
         }
     }
 
@@ -935,7 +935,7 @@ static void ezmCli_ResetValueList(uint8_t index)
 * @return   None
 *
 *******************************************************************************/
-static uint8_t UartCallbackHandle(uint8_t notify_code, void* param1, void* param2)
+static uint8_t UartCallbackHandle(uint8_t notify_code, void* param1)
 {
     
     switch ((UART_NOTIFY_CODE)notify_code)
@@ -953,7 +953,8 @@ static uint8_t UartCallbackHandle(uint8_t notify_code, void* param1, void* param
             cli_inst.state = PROC_CMD;
         }
 #else
-        cli_inst.cli_buffer[buff_index] = cli_inst.one_byte;
+        cli_inst.cli_buffer[cli_inst.buff_index] = cli_inst.one_byte;
+        CLIPRINT1("[test = %c]", cli_inst.cli_buffer[cli_inst.buff_index]);
         if (cli_inst.cli_buffer[cli_inst.buff_index] == '\n' || 
             cli_inst.buff_index == sizeof(cli_inst.cli_buffer) || 
             cli_inst.cli_buffer[cli_inst.buff_index] == '\r')
@@ -975,7 +976,6 @@ static uint8_t UartCallbackHandle(uint8_t notify_code, void* param1, void* param
         break;
     }
 
-    (void)param2;
     return 0U;
 }
 

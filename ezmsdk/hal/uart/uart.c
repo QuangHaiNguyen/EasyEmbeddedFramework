@@ -23,9 +23,9 @@
 #include "utilities/hexdump/hexdump.h"
 
 #if (SUPPORTED_CHIP == ESP32)
-#include "esp_uart/esp_uart.h"
+#include "platforms/esp32/uart/esp32_uart.h"
 #elif (SUPPORTED_CHIP == STM32)
-#include "../../Core/target_driver/stm32_uart.h"
+//#include "../../Core/target_driver/stm32_uart.h"
 #elif (SUPPORTED_CHIP == WIN)
 #include "platforms/simulator/uart/uart_sim.h"
 #endif /* SUPPORTED_CHIP == ESP32 */
@@ -68,7 +68,13 @@ void* GetUart0Driver(void)
 {
     Driver* ret_driver = NULL;
 #if (SUPPORTED_CHIP == ESP32)
-    bResult = bResult & espUart_Init(CLI_UART, &aszSupportedUart[CLI_UART].stPublicApi);
+    if(espUart_Init(CLI_UART, &aszSupportedUart[CLI_UART].driver_api) == true)
+    {
+        aszSupportedUart[CLI_UART].init_function = EspUart0_Init;
+        aszSupportedUart[CLI_UART].is_busy = false;
+        ret_driver = &aszSupportedUart[CLI_UART];
+        UARTPRINT("UART0 init complete");
+    }
 #elif(SUPPORTED_CHIP == STM32)
     aszSupportedUart[CLI_UART].is_busy = false;
     aszSupportedUart[CLI_UART].init_function = stmUart1_Init;
