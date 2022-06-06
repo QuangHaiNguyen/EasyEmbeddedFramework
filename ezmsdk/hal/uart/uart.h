@@ -55,7 +55,7 @@ typedef enum
 /** @brief definition the callback function pointer 
  *  
  */
-typedef uint8_t (*UART_CALLBACK)(uint8_t eCode, void *param1, void *param2);
+typedef uint8_t (*UART_CALLBACK)(uint8_t eCode, void *param1);
 
 /** @brief definition of api set for UART
  *  

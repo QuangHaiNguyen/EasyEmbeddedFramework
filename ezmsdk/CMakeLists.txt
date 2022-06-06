@@ -55,9 +55,14 @@ target_sources(sdk PRIVATE
 hal/uart/uart.c)
 
 # platforms module
+# PC target
 target_sources(sdk PRIVATE
 platforms/simulator/flash/flash_simulator.c
 platforms/simulator/uart/uart_sim.c)
+
+#esp32 target
+target_sources(sdk PRIVATE
+platforms/esp32/uart/esp32_uart.c)
 
 #include directory
 target_include_directories(sdk PUBLIC .)

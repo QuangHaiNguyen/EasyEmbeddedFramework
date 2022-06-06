@@ -49,7 +49,7 @@
 #define MOD_NAME        "DRIVER"
 
 
-#if (MODULE_DEBUG == 1U) && (KERNEL_DEBUG == 1U)
+#if (MODULE_DEBUG == 1U) && (DRIVER_DEBUG == 1U)
 #define DRIVERPRINT(a)                     PRINT_DEBUG(MOD_NAME,a)
 #define DRIVERPRINT1(a,b)                  PRINT_DEBUG1(MOD_NAME,a,b)
 #define DRIVERPRINT2(a,b,c)                PRINT_DEBUG2(MOD_NAME,a,b,c)
@@ -121,10 +121,17 @@ bool ezmDriver_Init(void)
     {
         driver_list[i] = get_driver[i]();
 
-        if (false == driver_list[i]->init_function())
+        if (driver_list[i] != NULL)
         {
-            is_success = false;
-            DRIVERPRINT("driver init failed");
+            if(false == driver_list[i]->init_function())
+            {            
+                is_success = false;
+                DRIVERPRINT("driver init failed");
+            }
+        }
+        else
+        {
+            DRIVERPRINT1("Cannot get hw driver [index = %d]", i);
         }
     }
 
@@ -156,13 +163,21 @@ bool ezmDriver_Init(void)
 void ezmDriver_GetDriverInstance(DriverId id, void **driver_api)
 {
     *driver_api = NULL;
-
+    DRIVERPRINT("ezmDriver_GetDriverInstance()");
     if (id < NUM_OF_DRIVER && id >= 0)
     {
         if (!driver_list[(uint8_t)id]->is_busy)
         {
             *driver_api = driver_list[id]->driver_api;
         }
+        else
+        {
+            DRIVERPRINT("busy");
+        }
+    }
+    else
+    {
+        DRIVERPRINT1("invalid index [index = %d]", id);
     }
 }
 
