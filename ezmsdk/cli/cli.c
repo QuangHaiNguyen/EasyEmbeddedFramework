@@ -30,28 +30,14 @@
 *******************************************************************************/
 #include "cli.h"
 
+#define DEBUG_LVL   LVL_TRACE       /**< logging level */
+#define MOD_NAME    "CLI"      /**< module name */
+
 #if (CLI == 1U)
 
-#include "ezmDebug/ezmDebug.h"
+
 #include "string.h"
-
-#define VERBOSE                 1U
-
-#define MOD_NAME                "CLI"
-
-#if (MODULE_DEBUG == 1U) && (CLI_DEBUG == 1U)
-    #define CLIPRINT(a)                     PRINT_DEBUG(MOD_NAME,a)
-    #define CLIPRINT1(a,b)                  PRINT_DEBUG1(MOD_NAME,a,b)
-    #define CLIPRINT2(a,b,c)                PRINT_DEBUG2(MOD_NAME,a,b,c)
-    #define CLIPRINT3(a,b,c,d)              PRINT_DEBUG3(MOD_NAME,a,b,c,d)
-    #define CLIPRINT4(a,b,c,d,e)            PRINT_DEBUG4(MOD_NAME,a,b,c,d,e)
-#else 
-    #define CLIPRINT(a)
-    #define CLIPRINT1(a,b)
-    #define CLIPRINT2(a,b,c)
-    #define CLIPRINT3(a,b,c,d)
-    #define CLIPRINT4(a,b,c,d,e)
-#endif
+#include "utilities/logging/logging.h"
 
 #define STR_TERMINATE   '\0'
 #define SPACE           ' '
@@ -180,7 +166,7 @@ bool ezmCli_Init(UartDrvApi* uart_driver)
     {
         if (!ezmCli_ResetMetaData(i))
         {
-            CLIPRINT1("Cannot reset metadata: [index = %d]", i);
+            ERROR("Cannot reset metadata: [index = %d]", i);
         }
     }
 
@@ -203,13 +189,14 @@ bool ezmCli_Init(UartDrvApi* uart_driver)
 
         if (cli_inst.cli_inst_num == 0xFF)
         {
-            CLIPRINT("add command error");
+            ERROR("add command error");
             success = false;
         }
         else
         {
-            CLIPRINT("CLI has been activated, type help for the list of command");
+            INFO("CLI has been activated, type help for the list of command");
             cli_inst.uart_driver->ezmUart_Send(welcome, sizeof(welcome));
+            cli_inst.uart_driver->ezmUart_Send((uint8_t*)"$ ", sizeof("$ "));
         }
     }
 
@@ -312,13 +299,13 @@ CommandHandle ezmCli_RegisterCommand(const char *command,
             astMetaData[handle].command = command;
             astMetaData[handle].description = description;
 
-            CLIPRINT2("Add new command: [command = %s] [description = %s]",
+            DEBUG("Add new command: [command = %s] [description = %s]",
                         command,
                         description);
         }
         else
         {
-            CLIPRINT("ezmCli_RegisterCommand() FAILED");
+            ERROR("ezmCli_RegisterCommand() FAILED");
         }
     }
     return handle;
@@ -376,7 +363,7 @@ bool ezmCli_AddArgument (CommandHandle cmd_handle,
                     astMetaData[cmd_handle].short_arg_list[i] = (uint32_t*)short_arg;
                     astMetaData[cmd_handle].description_list[i] = (uint32_t*)description;
 
-                    CLIPRINT3("Add new argument: [long = %s] [shord = %s] [description = %s]",
+                    DEBUG("Add new argument: [long = %s] [shord = %s] [description = %s]",
                         (char*)astMetaData[cmd_handle].long_arg_list[i],
                         (char*)astMetaData[cmd_handle].short_arg_list[i],
                         (char*)astMetaData[cmd_handle].description_list[i]);
@@ -445,7 +432,7 @@ bool ezmCli_CommandReceivedCallback(uint8_t notify_code,
             if (*head == SPACE)
             {
                 *head = STR_TERMINATE;
-                CLIPRINT1("Receive command: [command = %s]", tail);
+                DEBUG("Receive command: [command = %s]", tail);
 
                 if (ezmCli_IsCommandExist((char*)tail, &u8CommandIndex))
                 {
@@ -480,7 +467,7 @@ bool ezmCli_CommandReceivedCallback(uint8_t notify_code,
             {
                 *head = STR_TERMINATE;
 
-                CLIPRINT1("Receive argument: [argument = %s]", tail);
+                DEBUG("Receive argument: [argument = %s]", tail);
 
                 u8ValueIndex = ezmCli_IsShortFormArgumentExist(u8CommandIndex, tail);
                 if (u8ValueIndex == ARG_INVALID)
@@ -491,7 +478,7 @@ bool ezmCli_CommandReceivedCallback(uint8_t notify_code,
                 if (ARG_INVALID != u8ValueIndex)
                 {
                     eState = STATE_VALUE;
-                    CLIPRINT1("Value index: [idx = %d]", u8ValueIndex);
+                    DEBUG("Value index: [idx = %d]", u8ValueIndex);
 
                     SKIP_NULL_SPACE(head, command_buffer + command_buff_size);
                     tail = head;
@@ -512,7 +499,7 @@ bool ezmCli_CommandReceivedCallback(uint8_t notify_code,
             if (*head == SPACE && *(head + 1) == '-')
             {
                 *head = STR_TERMINATE;
-                CLIPRINT1("Receive value: [value = %s]", tail);
+                DEBUG("Receive value: [value = %s]", tail);
 
                 astMetaData[u8CommandIndex].value_list[u8ValueIndex] = tail;
                 eState = STATE_ARGUMENT;
@@ -525,7 +512,7 @@ bool ezmCli_CommandReceivedCallback(uint8_t notify_code,
             if (*head == '\r' || *head == '\n')
             {
                 *head = STR_TERMINATE;
-                CLIPRINT1("Receive value: [value = %s]", tail);
+                DEBUG("Receive value: [value = %s]", tail);
 
                 astMetaData[u8CommandIndex].value_list[u8ValueIndex] = tail;
                 eState = STATE_EXECUTE;
@@ -546,7 +533,7 @@ bool ezmCli_CommandReceivedCallback(uint8_t notify_code,
             break;
 
         case STATE_ERROR:
-            CLIPRINT("Error");
+            WARNING("Error, wrong command or argument");
             ezmCli_PrintCommandHelp(u8CommandIndex);
             process_is_done = true;
             break;
@@ -634,7 +621,7 @@ static uint8_t ezmCli_GetFreeInstance (void)
         if(astMetaData[i].command == NULL)
         {
             u8FreeInstanceIndex = i;
-            CLIPRINT1("Found free instance: [index = %d]", u8FreeInstanceIndex);
+            DEBUG("Found free instance: [index = %d]", u8FreeInstanceIndex);
             break;
         }
     }
@@ -684,7 +671,7 @@ static bool ezmCli_IsCommandExist   (const char *command, uint8_t *index)
                 *index = i;
             }
 
-            CLIPRINT1("Command is existing: [command = %s]", command);
+            DEBUG("Command is existing: [command = %s]", command);
             break;
         }
     }
@@ -711,34 +698,34 @@ static void ezmCli_PrintCommandHelp (uint8_t index)
 {
     if(index < NUM_OF_CMD && astMetaData[index].command != NULL)
     {
-        PRINTF_NO_NL("%s\n", "-----------------------------------------");
-        PRINTF_NO_NL("%s", "usage: ");
-        PRINTF_NO_NL("%s ", astMetaData[index].command);
+        dbg_print("%s\n", "-----------------------------------------");
+        dbg_print("%s", "usage: ");
+        dbg_print("%s ", astMetaData[index].command);
 
         for(uint8_t i = 0; i < NUM_OF_ARG; i++)
         {
             if(astMetaData[index].short_arg_list[i] != NULL)
             {
-                PRINTF_NO_NL("[%s] ", (char *)astMetaData[index].short_arg_list[i]);
-                PRINTF_NO_NL("%s\n", "<VALUE>");
+                dbg_print("[%s] ", (char *)astMetaData[index].short_arg_list[i]);
+                dbg_print("%s\n", "<VALUE>");
             }
         }
 
-        PRINT1("");
-        PRINTF_NO_NL("%s", "description: ");
-        PRINTF_NO_NL("\n\t%s", astMetaData[index].description);
-        PRINT1("");
-        PRINT1("Argument options:");
+        dbg_print("\n");
+        dbg_print("%s", "description: ");
+        dbg_print("\n\t%s", astMetaData[index].description);
+        dbg_print("\n");
+        dbg_print("Argument options:\n");
         for(uint8_t i = 0; i < NUM_OF_ARG; i++)
         {
             if(astMetaData[index].short_arg_list[i] != NULL)
             {
-                PRINTF_NO_NL("\t%s, ", (char *)astMetaData[index].short_arg_list[i]);
-                PRINTF_NO_NL("%s ", (char *)astMetaData[index].long_arg_list[i]);
-                PRINTF_NO_NL("\t%s \n", (char *)astMetaData[index].description_list[i]);
+                dbg_print("\t%s, ", (char *)astMetaData[index].short_arg_list[i]);
+                dbg_print("%s ", (char *)astMetaData[index].long_arg_list[i]);
+                dbg_print("\t%s \n", (char *)astMetaData[index].description_list[i]);
             }
         }
-        PRINT1("");
+        dbg_print("");
     }
 }
 
@@ -759,12 +746,12 @@ static void ezmCli_PrintCommandHelp (uint8_t index)
 *******************************************************************************/
 void ezmCli_PrintMenu (void)
 {
-    PRINT1("\nList of commands:");
+    dbg_print("\nList of commands:\n");
     for(uint8_t i = 0; i < NUM_OF_CMD; i++)
     {
         ezmCli_PrintCommandHelp(i);
     }
-    PRINT1("\n");
+    dbg_print("\n\n");
 }
 
 /******************************************************************************
@@ -847,7 +834,7 @@ static uint8_t  ezmCli_IsLongFormArgumentExist(uint8_t command_index,
                 strcmp((char *)astMetaData[command_index].long_arg_list[i], long_arg) == 0)
         {
             index = i;
-            CLIPRINT1("argument exists: [argument = %s]", long_arg);
+            DEBUG("argument exists: [argument = %s]", long_arg);
             break;
         }
     }
@@ -881,7 +868,7 @@ static uint8_t  ezmCli_IsShortFormArgumentExist(uint8_t command_index,
             strcmp((char *)astMetaData[command_index].short_arg_list[i], short_arg) == 0)
         {
             index = i;
-            CLIPRINT1("argument exists: [argument = %s]", short_arg);
+            DEBUG("argument exists: [argument = %s]", short_arg);
             break;
         }
     }
@@ -912,7 +899,7 @@ static void ezmCli_ResetValueList(uint8_t index)
         {
             astMetaData[index].value_list[i] = NULL;
         }
-        CLIPRINT1("[index = %d]", index);
+        DEBUG("[index = %d]", index);
     }
 }
 
@@ -943,9 +930,10 @@ static uint8_t UartCallbackHandle(uint8_t notify_code, void* param1)
     case UART_TX_COMPLT:
         break;
     case UART_RX_COMPLT:
+        TRACE("UART_RX_COMPLT");
 #if(SUPPORTED_CHIP == WIN)
         cli_inst.cli_buffer[cli_inst.buff_index] = *(char*)param1;
-        CLIPRINT1("[test = %c]", cli_inst.cli_buffer[cli_inst.buff_index]);
+        TRACE("[test = %c]", cli_inst.cli_buffer[cli_inst.buff_index]);
         if (cli_inst.cli_buffer[cli_inst.buff_index] == '\n' || 
             cli_inst.buff_index == sizeof(cli_inst.cli_buffer) || 
             cli_inst.cli_buffer[cli_inst.buff_index] == '\r')
@@ -957,7 +945,7 @@ static uint8_t UartCallbackHandle(uint8_t notify_code, void* param1)
         
         cli_inst.cli_buffer[cli_inst.buff_index] = cli_inst.one_byte;
         
-        CLIPRINT2("[test = %c ], [size = %d]", 
+        TRACE("[test = %c ], [size = %d]", 
                     cli_inst.cli_buffer[cli_inst.buff_index],
                     *(uint16_t*)param1);
 
@@ -965,7 +953,7 @@ static uint8_t UartCallbackHandle(uint8_t notify_code, void* param1)
             cli_inst.buff_index == sizeof(cli_inst.cli_buffer) || 
             cli_inst.cli_buffer[cli_inst.buff_index] == '\r')
         {
-            CLIPRINT("command receeive");
+            TRACE("command receive");
             cli_inst.state = PROC_CMD;
         }
         else
@@ -1011,7 +999,7 @@ static CLI_NOTIFY_CODE  HandleHelpCommand(const char *command, void *value_list)
     }
     else
     {
-        CLIPRINT("Unknown command");
+        WARNING("Unknown command");
     }
 
     (void)value_list;
