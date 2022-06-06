@@ -57,7 +57,7 @@
 #define SPACE           ' '
 #define ARG_INVALID     NUM_OF_ARG
 #define SKIP_NULL_SPACE(pointer, end)   while((*pointer == ' ' || *pointer == '\0') && pointer != end){pointer++;}
-#define BEGIN   "$"
+#define BEGIN   "$ "
 
 /******************************************************************************
 * Module Typedefs
@@ -248,7 +248,7 @@ void ezmCli_Run(void)
     switch (cli_inst.state)
     {
     case GET_BYTE:
-        (void)cli_inst.uart_driver->ezmUart_Receive(&cli_inst.one_byte, 1U);
+        //(void)cli_inst.uart_driver->ezmUart_Receive(&cli_inst.one_byte, 1U);
 #if(SUPPORTED_CHIP != WIN)
         cli_inst.state = WAIT;
 #endif
@@ -953,17 +953,24 @@ static uint8_t UartCallbackHandle(uint8_t notify_code, void* param1)
             cli_inst.state = PROC_CMD;
         }
 #else
+        (void)cli_inst.uart_driver->ezmUart_Receive(&cli_inst.one_byte, 1U);
+        
         cli_inst.cli_buffer[cli_inst.buff_index] = cli_inst.one_byte;
-        CLIPRINT1("[test = %c]", cli_inst.cli_buffer[cli_inst.buff_index]);
+        
+        CLIPRINT2("[test = %c ], [size = %d]", 
+                    cli_inst.cli_buffer[cli_inst.buff_index],
+                    *(uint16_t*)param1);
+
         if (cli_inst.cli_buffer[cli_inst.buff_index] == '\n' || 
             cli_inst.buff_index == sizeof(cli_inst.cli_buffer) || 
             cli_inst.cli_buffer[cli_inst.buff_index] == '\r')
         {
+            CLIPRINT("command receeive");
             cli_inst.state = PROC_CMD;
         }
         else
         {
-            (void)cli_inst.uart_driver->ezmUart_Receive(&cli_inst.one_byte, 1U);
+            //(void)cli_inst.uart_driver->ezmUart_Receive(&cli_inst.one_byte, 1U);
         }
 #endif
         cli_inst.buff_index++;
