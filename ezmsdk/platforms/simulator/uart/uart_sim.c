@@ -51,10 +51,6 @@
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
-/** @brief definition the callback function pointer
- *
- */
-typedef uint8_t(*hw_uart_callback)      (uint8_t eCode, void* param1, void* param2);
 
 typedef struct
 {
@@ -107,7 +103,7 @@ static uint16_t UartSim_Read(uint8_t* buff, uint16_t size)
 
     if (hw_uarts[CLI_UART].callback)
     {
-        (void)hw_uarts[CLI_UART].callback((uint8_t)UART_RX_COMPLT, (void*)buff, (uint32_t*)&size);
+        (void)hw_uarts[CLI_UART].callback((uint8_t)UART_RX_COMPLT, (uint16_t*)&size);
     }
 
     return size;
@@ -122,7 +118,7 @@ static uint16_t UartSim_Write(uint8_t* buff, uint16_t size)
 
     if (hw_uarts[CLI_UART].callback)
     {
-        (void)hw_uarts[CLI_UART].callback((uint8_t)UART_TX_COMPLT, NULL, NULL);
+        (void)hw_uarts[CLI_UART].callback((uint8_t)UART_TX_COMPLT, NULL);
     }
     return size;
 }
