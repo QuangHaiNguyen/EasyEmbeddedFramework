@@ -91,6 +91,7 @@ bool    ezmCli_CommandReceivedCallback(uint8_t notify_code,
                                         char* command_buffer,
                                         uint16_t command_buff_size);
 void    ezmCli_PrintMenu(void);
+void    ezmCli_Printf(char *fmt, ...);
 #endif /* CLI */
 #endif /* _CLI_H */
 

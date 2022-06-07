@@ -30,21 +30,25 @@
 *******************************************************************************/
 #include "cli.h"
 
-#define DEBUG_LVL   LVL_TRACE       /**< logging level */
-#define MOD_NAME    "CLI"      /**< module name */
+#define DEBUG_LVL   LVL_INFO    /**< logging level */
+#define MOD_NAME    "CLI"       /**< module name */
 
 #if (CLI == 1U)
 
-
-#include "string.h"
+#include <string.h>
+#include <stdarg.h>
 #include "utilities/logging/logging.h"
 
-#define STR_TERMINATE   '\0'
-#define SPACE           ' '
-#define ARG_INVALID     NUM_OF_ARG
-#define SKIP_NULL_SPACE(pointer, end)   while((*pointer == ' ' || *pointer == '\0') && pointer != end){pointer++;}
-#define BEGIN   "$ "
-#define BUFF_SIZE       16
+#define STR_TERMINATE                   '\0'
+#define SPACE                           ' '
+#define ARG_INVALID                     NUM_OF_ARG
+#define SKIP_NULL_SPACE(pointer, end)   while((*pointer == ' ' || *pointer == '\0')\
+                                                && pointer != end)\
+                                        {pointer++;}
+#define BEGIN                           "$ "
+#define BUFF_SIZE                       256
+#define BUFF_PRINTF_SIZE                256
+
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
@@ -100,6 +104,7 @@ struct CliInstance
     UartDrvApi*     uart_driver;    /**< */
 };
 
+
 /******************************************************************************
 * Module Variable Definitions
 *******************************************************************************/
@@ -108,6 +113,8 @@ static ENUM_CLI_STATE   eState = STATE_COMMAND; /**< Holding the current state o
 static const char       cmd_help[] = "help";
 static const char       cmd_help_desc[] = "show help";
 static uint8_t          welcome[] = "CLI has been activated, type help for the list of command\n";
+static char             buff_printf[PRINTF_BUFF_SIZE] = { 0 };
+
 /******************************************************************************
 * Function Definitions
 *******************************************************************************/
@@ -241,7 +248,10 @@ void ezmCli_Run(void)
     case WAIT:
         break;
     case PROC_CMD:
-        (void)ezmCli_CommandReceivedCallback(0, (char*)cli_inst.cli_buffer, sizeof(cli_inst.cli_buffer));
+        (void)ezmCli_CommandReceivedCallback(0,
+                                            (char*)cli_inst.cli_buffer,
+                                            sizeof(cli_inst.cli_buffer));
+
         memset(cli_inst.cli_buffer, 0, sizeof(cli_inst.cli_buffer));
         cli_inst.buff_index = 0U;
         cli_inst.uart_driver->ezmUart_Send((uint8_t*)BEGIN, sizeof(BEGIN));
@@ -261,7 +271,10 @@ void ezmCli_Run(void)
     case WAIT:
         break;
     case PROC_CMD:
-        (void)ezmCli_CommandReceivedCallback(0, (char*)cli_inst.cli_buffer, sizeof(cli_inst.cli_buffer));
+        (void)ezmCli_CommandReceivedCallback(0,
+                                            (char*)cli_inst.cli_buffer,
+                                            sizeof(cli_inst.cli_buffer));
+
         memset(cli_inst.cli_buffer, 0, sizeof(cli_inst.cli_buffer));
         cli_inst.buff_index = 0U;
         cli_inst.uart_driver->ezmUart_Send((uint8_t*)BEGIN, sizeof(BEGIN));
@@ -565,6 +578,60 @@ bool ezmCli_CommandReceivedCallback(uint8_t notify_code,
     return bResult;
 }
 
+/******************************************************************************
+* Function : ezmCli_Printf
+*//**
+* \b Description:
+*
+* it is the printf function, but use a different IO
+*
+* PRE-CONDITION: None
+*
+* POST-CONDITION: None
+*
+* @param    fmt: (IN)input string
+* @param    ...: (IN)list of arguments
+*
+* @return   None
+*
+*******************************************************************************/
+void ezmCli_Printf (char* fmt, ...)
+{
+    va_list args;
+    va_start(args, fmt);
+    vsnprintf(buff_printf, BUFF_PRINTF_SIZE, fmt, args);
+    va_end(args);
+
+    cli_inst.uart_driver->ezmUart_Send(buff_printf, (uint16_t)strlen(buff_printf));
+    memset(buff_printf, 0, BUFF_PRINTF_SIZE);
+}
+
+/******************************************************************************
+* Function : ezmCli_PrintMenu
+*//**
+* \b Description:
+*
+* This function checks prints the complete help
+*
+* PRE-CONDITION: None
+*
+* POST-CONDITION: None
+*
+* @param    None
+* @return   None
+*
+*******************************************************************************/
+void ezmCli_PrintMenu(void)
+{
+    ezmCli_Printf("\nList of commands:\n");
+    for (uint8_t i = 0; i < NUM_OF_CMD; i++)
+    {
+        ezmCli_PrintCommandHelp(i);
+    }
+    ezmCli_Printf("\n\n");
+}
+
+
 /*********************** Private function ************************************/
 
 /******************************************************************************
@@ -717,61 +784,37 @@ static void ezmCli_PrintCommandHelp (uint8_t index)
 {
     if(index < NUM_OF_CMD && astMetaData[index].command != NULL)
     {
-        dbg_print("%s\n", "-----------------------------------------");
-        dbg_print("%s", "usage: ");
-        dbg_print("%s ", astMetaData[index].command);
+        ezmCli_Printf("%s\n", "-----------------------------------------");
+        ezmCli_Printf("%s", "usage: ");
+        ezmCli_Printf("%s ", astMetaData[index].command);
 
         for(uint8_t i = 0; i < NUM_OF_ARG; i++)
         {
             if(astMetaData[index].short_arg_list[i] != NULL)
             {
-                dbg_print("[%s] ", (char *)astMetaData[index].short_arg_list[i]);
-                dbg_print("%s\n", "<VALUE>");
+                ezmCli_Printf("[%s] ", (char *)astMetaData[index].short_arg_list[i]);
+                ezmCli_Printf("%s\n", "<VALUE>");
             }
         }
 
-        dbg_print("\n");
-        dbg_print("%s", "description: ");
-        dbg_print("\n\t%s", astMetaData[index].description);
-        dbg_print("\n");
-        dbg_print("Argument options:\n");
+        ezmCli_Printf("\n");
+        ezmCli_Printf("%s", "description: ");
+        ezmCli_Printf("\n\t%s", astMetaData[index].description);
+        ezmCli_Printf("\n");
+        ezmCli_Printf("Argument options:\n");
         for(uint8_t i = 0; i < NUM_OF_ARG; i++)
         {
             if(astMetaData[index].short_arg_list[i] != NULL)
             {
-                dbg_print("\t%s, ", (char *)astMetaData[index].short_arg_list[i]);
-                dbg_print("%s ", (char *)astMetaData[index].long_arg_list[i]);
-                dbg_print("\t%s \n", (char *)astMetaData[index].description_list[i]);
+                ezmCli_Printf("\t%s, ", (char *)astMetaData[index].short_arg_list[i]);
+                ezmCli_Printf("%s ", (char *)astMetaData[index].long_arg_list[i]);
+                ezmCli_Printf("\t%s \n", (char *)astMetaData[index].description_list[i]);
             }
         }
-        dbg_print("");
+        ezmCli_Printf("");
     }
 }
 
-/******************************************************************************
-* Function : ezmCli_PrintMenu
-*//**
-* \b Description:
-*
-* This function checks prints the complete help
-*
-* PRE-CONDITION: None
-*
-* POST-CONDITION: None
-*
-* @param    None
-* @return   None
-*
-*******************************************************************************/
-void ezmCli_PrintMenu (void)
-{
-    dbg_print("\nList of commands:\n");
-    for(uint8_t i = 0; i < NUM_OF_CMD; i++)
-    {
-        ezmCli_PrintCommandHelp(i);
-    }
-    dbg_print("\n\n");
-}
 
 /******************************************************************************
 * Function : ezmCli_IsArgumentShortForm
