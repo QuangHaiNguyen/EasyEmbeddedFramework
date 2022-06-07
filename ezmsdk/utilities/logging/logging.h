@@ -41,6 +41,7 @@
 *******************************************************************************/
 #include <stdio.h>
 #include "app/app_config.h"
+#include "utilities/hexdump/hexdump.h"
 
 /******************************************************************************
 * Module Preprocessor Macros
@@ -188,14 +189,20 @@
 #define TRACE(fmt, ...)
 #endif
 
+#if DEBUG_LVL >= LVL_DEBUG
+#define HEXDUMP(x,y)    ezmHexdump(x,y)
+#else
+#define HEXDUMP(x, y)
+#endif
+
 #else
 #define CRITICAL(fmt, ...)
 #define ERROR(fmt, ...)
 #define WARNING(fmt, ...)
-#define NOTICE(fmt, ...)
 #define INFO(fmt, ...)
 #define TRACE(fmt, ...)
 #define DEBUG(fmt, ...)
+#define HEXDUMP(x, y)
 #endif
 
 /******************************************************************************

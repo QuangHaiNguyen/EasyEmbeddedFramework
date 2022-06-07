@@ -94,6 +94,8 @@ void Logging_DemoFeatures(void)
     CRITICAL("This is a test message, [integer = %d], [float = %f], [char = %c]",
                 10, 3.14, 'a');
     INFO("\n\n");
+
+    HEXDUMP("this is a test", sizeof("this is a test"));
 }
 
 /******************************************************************************
