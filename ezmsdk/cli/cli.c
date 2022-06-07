@@ -602,7 +602,8 @@ void ezmCli_Printf (char* fmt, ...)
     vsnprintf(buff_printf, BUFF_PRINTF_SIZE, fmt, args);
     va_end(args);
 
-    cli_inst.uart_driver->ezmUart_Send(buff_printf, (uint16_t)strlen(buff_printf));
+    cli_inst.uart_driver->ezmUart_Send((uint8_t *)buff_printf,
+                                        (uint16_t)strlen(buff_printf));
     memset(buff_printf, 0, BUFF_PRINTF_SIZE);
 }
 
