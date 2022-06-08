@@ -34,6 +34,7 @@
 #define HAL_UART                1U
 #define SYSTEM_ERROR            1U
 #define FLASH_SIM               1U
+#define EVENT_NOTIFIER          1U
 
 /*Module ID section*/
 

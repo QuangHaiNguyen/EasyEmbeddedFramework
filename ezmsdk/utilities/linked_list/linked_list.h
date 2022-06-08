@@ -90,7 +90,7 @@ struct Node
 {
     struct Node * next;  /**< pointer to the next node in a linked list*/
     struct Node * prev;  /**< pointer to the previous node in a linked list*/
-}Node;
+};
 
 
 /******************************************************************************

@@ -172,6 +172,7 @@
     <ClCompile Include="..\..\ezmsdk\platforms\simulator\uart\uart_sim.c" />
     <ClCompile Include="..\..\ezmsdk\scheduler\scheduler.c" />
     <ClCompile Include="..\..\ezmsdk\statemachine\statemachine.c" />
+    <ClCompile Include="..\..\ezmsdk\utilities\event_notifier\event_notifier.c" />
     <ClCompile Include="..\..\ezmsdk\utilities\ezmAssert\ezmAssert.c" />
     <ClCompile Include="..\..\ezmsdk\utilities\hexdump\hexdump.c" />
     <ClCompile Include="..\..\ezmsdk\utilities\linked_list\linked_list.c" />
@@ -198,6 +199,7 @@
     <ClInclude Include="..\..\ezmsdk\platforms\simulator\uart\uart_sim.h" />
     <ClInclude Include="..\..\ezmsdk\scheduler\scheduler.h" />
     <ClInclude Include="..\..\ezmsdk\statemachine\statemachine.h" />
+    <ClInclude Include="..\..\ezmsdk\utilities\event_notifier\event_notifier.h" />
     <ClInclude Include="..\..\ezmsdk\utilities\ezmAssert\ezmAssert.h" />
     <ClInclude Include="..\..\ezmsdk\utilities\hexdump\hexdump.h" />
     <ClInclude Include="..\..\ezmsdk\utilities\linked_list\linked_list.h" />

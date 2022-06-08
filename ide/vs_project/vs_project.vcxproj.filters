@@ -77,6 +77,9 @@
     <Filter Include="Source Files\utilities\logging">
       <UniqueIdentifier>{e9175cfd-dcaf-4f6b-996d-57d836f97ca8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\utilities\event_notifier">
+      <UniqueIdentifier>{b574796a-873a-4b17-8a84-aa9441d74fde}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ezmsdk\app\app.c">
@@ -144,6 +147,9 @@
     </ClCompile>
     <ClCompile Include="..\..\ezmsdk\app\main.c">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\utilities\event_notifier\event_notifier.c">
+      <Filter>Source Files\utilities\event_notifier</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -221,6 +227,9 @@
     </ClInclude>
     <ClInclude Include="..\..\ezmsdk\utilities\logging\logging.h">
       <Filter>Source Files\utilities\logging</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ezmsdk\utilities\event_notifier\event_notifier.h">
+      <Filter>Source Files\utilities\event_notifier</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
