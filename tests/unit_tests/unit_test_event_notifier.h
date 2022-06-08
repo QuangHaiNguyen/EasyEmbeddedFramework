@@ -99,7 +99,7 @@ namespace
         subscriber1 = evntNoti_SubscribeEvent(publisher, Sub1EventHandler);
         subscriber2 = evntNoti_SubscribeEvent(publisher, Sub2EventHandler);
 
-        evntNoti_NotifyEnvent(publisher, TEST_EVENT_CODE, NULL, NULL);
+        evntNoti_NotifyEvent(publisher, TEST_EVENT_CODE, NULL, NULL);
 
         ASSERT_EQ(Sub1EventCount, 1);
         ASSERT_EQ(Sub1EventCode, TEST_EVENT_CODE);
@@ -132,7 +132,7 @@ namespace
         success = evntNoti_UnsubscribeEvent(publisher, subscriber2);
         ASSERT_EQ(success, true);
 
-        evntNoti_NotifyEnvent(publisher, TEST_EVENT_CODE, NULL, NULL);
+        evntNoti_NotifyEvent(publisher, TEST_EVENT_CODE, NULL, NULL);
 
         ASSERT_EQ(Sub1EventCount, 0);
         ASSERT_EQ(Sub1EventCode, 0);

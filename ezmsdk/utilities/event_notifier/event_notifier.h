@@ -43,29 +43,31 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-
 #include "utilities/linked_list/linked_list.h"
 
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
-#define A_MACRO     1   /**< a macro*/
+/* None */
 
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
 
-/** @brief
- *
+/** @brief event callback pointer. It is used by the event notifier module to 
+ *         notify the subscriber about an event.
+ *         event_code: number representing an event
+ *         param1 : send data to the event subscriber, can be NULL if not used
+ *         param2 : send data to the event subscriber, can be NULL if not used
  */
 typedef int (*EVENT_CALLBACK)(uint32_t event_code, void * param1, void * param2);
 
-/** @brief
+/** @brief Event publisher handle
  *
  */
 typedef uint32_t evnt_pub;
 
-/** @brief
+/** @brief Event subscriber handle
  *
  */
 typedef uint32_t evnt_sub;
@@ -87,10 +89,10 @@ evnt_sub evntNoti_SubscribeEvent    (evnt_pub pub_handle,
 
 bool     evntNoti_UnsubscribeEvent  (evnt_pub pub_handle, evnt_sub sub_handle);
 
-void     evntNoti_NotifyEnvent(evnt_pub pub_handle,
-                               uint32_t event_code,
-                               void* param1,
-                               void* param2);
+void     evntNoti_NotifyEvent(evnt_pub pub_handle,
+                              uint32_t event_code,
+                              void* param1,
+                              void* param2);
 
 #endif /* (EVENT_NOTIFIER == 1U) */
 

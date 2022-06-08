@@ -37,8 +37,8 @@
 #include "event_notifier.h"
 
 
-#define DEBUG_LVL   LVL_TRACE   /**< logging level */
-#define MOD_NAME    "EVENT_NOTI"       /**< module name */
+#define DEBUG_LVL   LVL_TRACE       /**< logging level */
+#define MOD_NAME    "EVENT_NOTI"    /**< module name */
 
 #if(EVENT_NOTIFIER == 1U)
 
@@ -72,9 +72,9 @@ struct event_publisher
  */
 struct event_subscriber
 {
-    bool is_avail;              /**< */
-    struct Node node;           /**< */
-    EVENT_CALLBACK callback;    /**< */
+    bool is_avail;              /**< available flag */
+    struct Node node;           /**< link list node */
+    EVENT_CALLBACK callback;    /**< event call back function */
 };
 
 
@@ -292,7 +292,7 @@ bool evntNoti_UnsubscribeEvent(evnt_pub pub_handle, evnt_sub sub_handle)
 }
 
 /******************************************************************************
-* Function : evntNoti_NotifyEnvent
+* Function : evntNoti_NotifyEvent
 *//**
 * @Description:
 *
@@ -313,7 +313,7 @@ bool evntNoti_UnsubscribeEvent(evnt_pub pub_handle, evnt_sub sub_handle)
 * @see module must be initialized
 *
 *******************************************************************************/
-void evntNoti_NotifyEnvent( evnt_pub pub_handle,
+void evntNoti_NotifyEvent( evnt_pub pub_handle,
                             uint32_t event_code,
                             void* param1,
                             void* param2)
@@ -338,6 +338,7 @@ void evntNoti_NotifyEnvent( evnt_pub pub_handle,
         }
     }
 }
+
 /******************************************************************************
 * Internal functions
 *******************************************************************************/
