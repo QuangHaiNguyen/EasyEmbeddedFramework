@@ -10,8 +10,8 @@ utilities/logging/logging.c
 utilities/ring_buffer/ring_buffer.c
 utilities/smalloc/smalloc.c
 utilities/stcmem/stcmem.c
-utilities/system_error/system_error.c)
-
+utilities/system_error/system_error.c
+utilities/event_notifier/event_notifier.c)
 
 # app module
 target_sources(sdk PRIVATE
