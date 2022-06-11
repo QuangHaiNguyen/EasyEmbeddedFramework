@@ -33,6 +33,9 @@
 *******************************************************************************/
 #include "flash_simulator.h"
 
+#define DEBUG_LVL   LVL_TRACE       /**< logging level */
+#define MOD_NAME    "FLASH_SIM"     /**< module name */
+
 #if (FLASH_SIM == 1U) && (SUPPORTED_CHIP == WIN)
 #include "ezmDebug/ezmDebug.h"
 #include "utilities/hexdump/hexdump.h"
@@ -43,24 +46,6 @@
 * Module Preprocessor Macros
 *******************************************************************************/
 #pragma warning(disable : 4996)
-
-#define MOD_NAME            "FLASH_SIM"
-#define MOD_NAME_VERBOSE    "FLASH_SIM_VERBOSE"
-#define VERBOSE     0U
-
-#if (MODULE_DEBUG == 1U) && (FLASH_SIM_DEBUG == 1U)
-#define FLASHPRINT(format, ...)    PRINTF_MOD(MOD_NAME, format, __VA_ARGS__)
-#else
-#define FLASHPRINT(format, ...) 
-#endif
-
-#if (MODULE_DEBUG == 1U) && (FLASH_SIM_DEBUG == 1U) && (VERBOSE == 1U)
-#define VERBOSEPRINT(format, ...)   PRINTF_MOD(MOD_NAME_VERBOSE, format, __VA_ARGS__)
-#define HEXDUMP(x,y)                ezmHexdump(x,y)
-#else
-#define VERBOSEPRINT(format, ...)
-#define HEXDUMP(x,y)
-#endif
 
 #define GET_PAGE_SIZE(handle)   (flash_list[handle].page_size_byte)
 #define GET_NUM_PAGE(handle)    (flash_list[handle].num_page)
@@ -142,22 +127,22 @@ static uint32_t FlashSim_GetFlashSize   (FlashHandle handle);
 *******************************************************************************/
 bool FlashSim_Initialization(void)
 {
-    FLASHPRINT("FlashSim_Initialization()");
+    INFO("FlashSim_Initialization()");
 
     for (uint8_t i = 0; i < NUM_OF_FLASH; i++)
     {
-        FLASHPRINT("Initialize [flash name = %s]", flash_list[i].name);
+        INFO("Initialize [flash name = %s]", flash_list[i].name);
         if (FlashSim_IsFlashExisting(i) == false)
         {
-            FLASHPRINT("flash does not exist");
+            INFO("flash does not exist");
             if (FlashSim_CreateNewBinFile(i) == false)
             {
-                PRINT_ERROR("cannot create new flash!!!");
+                ERROR("cannot create new flash!!!");
             }
         }
         else
         {
-            FLASHPRINT("flash exists");
+            INFO("flash exists");
         }
     }
 
@@ -193,6 +178,7 @@ FlashHandle FlashSim_GetFlash(char const* name)
         if (strncmp(name, flash_list[i].name, sizeof(flash_list[i].name)) == 0U)
         {
             handle = i;
+            TRACE("found flash [index = %d], [name = %s]", i, flash_list[i].name);
             break;
         }
     }
@@ -275,7 +261,7 @@ uint32_t FlashSim_Read(FlashHandle handle, uint32_t address,
 
         fclose(file);
 
-        VERBOSEPRINT("Read [size = %d] at [address = 0x%08x]", ret_byte, address);
+        TRACE("Read [size = %d] at [address = 0x%08x]", ret_byte, address);
         HEXDUMP(buffer, (uint16_t)ret_byte);
     }
 
@@ -361,8 +347,8 @@ uint32_t FlashSim_WritePage(FlashHandle handle,
 
         fclose(file);
 
-        VERBOSEPRINT("Write [size = %d] at [address = 0x%04x]",
-            ret_byte, address);
+        TRACE("Write [size = %d] at [address = 0x%04x]",
+                ret_byte, address);
 
         HEXDUMP(cache, (uint16_t)ret_byte);
     }
@@ -623,7 +609,7 @@ static bool FlashSim_IsFlashExisting(FlashHandle handle)
         {
             fclose(file);
             existing = true;
-            VERBOSEPRINT("bin file exists [path = %s]", path);
+            TRACE("bin file exists [path = %s]", path);
         }
     }
     return existing;
@@ -661,7 +647,7 @@ static bool FlashSim_CreateNewBinFile(FlashHandle handle)
             }
             (void)fclose(file);
             success = true;
-            VERBOSEPRINT("new bin file is created [path = %s]", path);
+            TRACE("new bin file is created [path = %s]", path);
         }
     }
 
