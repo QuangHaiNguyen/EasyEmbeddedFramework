@@ -8,7 +8,7 @@ extern "C" {
 #include "../../ezmsdk/app/app_config.h"
 
 #if (HELPER_ASSERT == 1U)
-#include "../../ezmsdk/helper/ezmAssert/ezmAssert.h"
+#include "../../ezmsdk/utilities/ezmAssert/ezmAssert.h"
 #endif /* HELPER_ASSERT */
 }
 
