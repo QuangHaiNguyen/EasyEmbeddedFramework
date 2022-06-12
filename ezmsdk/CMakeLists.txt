@@ -52,13 +52,15 @@ statemachine/statemachine.c)
 
 # hal module
 target_sources(sdk PRIVATE
-hal/uart/uart.c)
+hal/uart/uart.c
+hal/wifi_controller/wifi_controller.c)
 
 # platforms module
 # PC target
 target_sources(sdk PRIVATE
 platforms/simulator/flash/flash_simulator.c
-platforms/simulator/uart/uart_sim.c)
+platforms/simulator/uart/uart_sim.c
+platforms/simulator/wifi_controller/wifi_controller_sim.c)
 
 #esp32 target
 target_sources(sdk PRIVATE

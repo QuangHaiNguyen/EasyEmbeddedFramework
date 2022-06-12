@@ -170,11 +170,17 @@ static bool wifiSim_Connect(const char* ssid, uint32_t ssid_size,
 
     if (ssid != NULL && pwd != NULL)
     {
-        strncpy_s(wifi_component.ssid, sizeof(wifi_component.ssid),
-                    ssid, ssid_size);
-
-        strncpy_s(wifi_component.pwd, sizeof(wifi_component.pwd),
-            pwd, pwd_size);
+        if(ssid_size > sizeof(wifi_component.ssid))
+        {
+           ssid_size =  sizeof(wifi_component.ssid);
+        }
+        strncpy(wifi_component.ssid, ssid, ssid_size);
+        
+        if(pwd_size > sizeof(wifi_component.pwd))
+        {
+           pwd_size =  sizeof(wifi_component.pwd);
+        }
+        strncpy(wifi_component.pwd, pwd, pwd_size);
 
         /* mock callback function */
         INFO("WIFI is connecting");
