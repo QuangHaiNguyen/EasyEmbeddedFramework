@@ -84,7 +84,7 @@
 #endif
 
 #if (PRINT_MODULE_NAME == 1U)
-#define print_module(mod_name)      dbg_print(blue"[%s] "reset_color, mod_name)
+#define print_module(mod_name)      dbg_print("[%s] ", mod_name)
 #else
 #define print_module(mod_name)
 #endif
@@ -178,7 +178,7 @@
 
 #if DEBUG_LVL >= LVL_TRACE
 #define TRACE(fmt, ...)     do {\
-                                dbg_print("[   TRACE] ");\
+                                dbg_print(blue"[   TRACE] "reset_color);\
                                 print_module(MOD_NAME);\
                                 print_file();\
                                 print_line();\
