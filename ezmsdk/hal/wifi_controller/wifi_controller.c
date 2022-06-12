@@ -48,7 +48,7 @@
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
-#define A_MACRO     1   /**< a macro*/
+/* None */
 
 /******************************************************************************
 * Module Typedefs
@@ -79,18 +79,11 @@ static evnt_sub WifiCtrl_ReceiveEventNotification(EVENT_CALLBACK callback);
 *//** 
 * @Description:
 *
-* This function initializes the ring buffer
+* Return the driver structure of the wifi controller. This function is called by
+* the driver module to register the driver to the system
 * 
-* @param    a: (IN)pointer to the ring buffer
-* @param    b: (IN)size of the ring buffer
-* @return   None
-*
-* @Example Example:
-* @code
-* sum(a, b);
-* @endcode
-*
-* @see sum
+* @param    None
+* @return   pointer to the driver structure
 *
 *******************************************************************************/
 void* WifiCtrl_GetWifiControllerDriver(void)
@@ -127,6 +120,18 @@ void* WifiCtrl_GetWifiControllerDriver(void)
 
 /******************************************************************************
 * Internal functions
+*******************************************************************************/
+
+/******************************************************************************
+* Function : WifiCtrl_ReceiveEventNotification
+*//**
+* @Description:
+*
+* This function registers the subscriber which want to receive the wifi event
+*
+* @param    callback: (IN)callback function to thandle the event
+* @return   event subscriber handle
+*
 *******************************************************************************/
 static evnt_sub WifiCtrl_ReceiveEventNotification(EVENT_CALLBACK callback)
 {

@@ -39,29 +39,18 @@
 #include "driver.h"
 
 #if (DRIVERINF == 1U)
-#include "hal/uart/uart.h"
-#include "dummy_driver.h"
-#include "string.h"
-#include "utilities/hexdump/hexdump.h"
+
+#define DEBUG_LVL   LVL_TRACE       /**< logging level */
+#define MOD_NAME    "DRIVER"     /**< module name */
+
+#include <string.h>
+#include "utilities/logging/logging.h"
 #include "utilities/linked_list/linked_list.h"
-#include "ezmDebug/ezmDebug.h"
 
-#define MOD_NAME        "DRIVER"
+#include "hal/uart/uart.h"
+#include "hal/wifi_controller/wifi_controller.h"
 
-
-#if (MODULE_DEBUG == 1U) && (DRIVER_DEBUG == 1U)
-#define DRIVERPRINT(a)                     PRINT_DEBUG(MOD_NAME,a)
-#define DRIVERPRINT1(a,b)                  PRINT_DEBUG1(MOD_NAME,a,b)
-#define DRIVERPRINT2(a,b,c)                PRINT_DEBUG2(MOD_NAME,a,b,c)
-#define DRIVERPRINT3(a,b,c,d)              PRINT_DEBUG3(MOD_NAME,a,b,c,d)
-#define DRIVERPRINT4(a,b,c,d,e)            PRINT_DEBUG4(MOD_NAME,a,b,c,d,e)
-#else 
-#define DRIVERPRINT(a)
-#define DRIVERPRINT(a,b)
-#define DRIVERPRINT2(a,b,c)
-#define DRIVERPRINT3(a,b,c,d)
-#define DRIVERPRINT4(a,b,c,d,e)
-#endif
+#include "dummy_driver.h"
 
 /******************************************************************************
 * Module Preprocessor Macros
@@ -79,7 +68,7 @@ GetDriverFunction get_driver[NUM_OF_DRIVER] =
     (GetDriverFunction)GetUart0Driver,
 #endif
 #if(WIFI_CONTROLLER == 1U)
-    NULL,
+    (GetDriverFunction)WifiCtrl_GetWifiControllerDriver,
 #endif
 };
 
@@ -120,21 +109,31 @@ bool ezmDriver_Init(void)
 {
     bool is_success = true;
 
+    TRACE("ezmDriver_Init()");
+
     for (uint16_t i = 0; i < NUM_OF_DRIVER; i++)
     {
-        driver_list[i] = get_driver[i]();
-
-        if (driver_list[i] != NULL)
+        INFO("Init [driver id = %d]", i);
+        if (get_driver[i] != NULL)
         {
-            if(false == driver_list[i]->init_function())
-            {            
-                is_success = false;
-                DRIVERPRINT("driver init failed");
+            driver_list[i] = get_driver[i]();
+
+            if (driver_list[i] != NULL && driver_list[i]->init_function != NULL)
+            {
+                if (false == driver_list[i]->init_function())
+                {
+                    is_success = false;
+                    ERROR("[driver id = %d] init failed", i);
+                }
+            }
+            else
+            {
+                WARNING("Cannot get hw driver [index = %d]", i);
             }
         }
         else
         {
-            DRIVERPRINT1("Cannot get hw driver [index = %d]", i);
+            WARNING("[driver index = %d] is empty, and will be skipped", i);
         }
     }
 
@@ -166,7 +165,7 @@ bool ezmDriver_Init(void)
 void ezmDriver_GetDriverInstance(DriverId id, void **driver_api)
 {
     *driver_api = NULL;
-    DRIVERPRINT("ezmDriver_GetDriverInstance()");
+    DEBUG("ezmDriver_GetDriverInstance()");
     if (id < NUM_OF_DRIVER && id >= 0)
     {
         if (!driver_list[(uint8_t)id]->is_busy)
@@ -175,12 +174,12 @@ void ezmDriver_GetDriverInstance(DriverId id, void **driver_api)
         }
         else
         {
-            DRIVERPRINT("busy");
+            WARNING("busy");
         }
     }
     else
     {
-        DRIVERPRINT1("invalid index [index = %d]", id);
+        ERROR("invalid index [index = %d]", id);
     }
 }
 

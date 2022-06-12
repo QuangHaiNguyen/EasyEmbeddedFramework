@@ -196,6 +196,11 @@ void ezmApp_SdkInit(void)
     INFO("Module Id: 0x%02x", HELPER_ASSERT_MOD_ID);
 #endif
 
+#if (EVENT_NOTIFIER == 1U)
+    INFO("Initialize envent notifier module");
+    evntNoti_Initialize();
+#endif /*EVENT_NOTIFIER == 1U*/
+
 #if (STATEMACHINE == 1U)
     /* DEBUG module has no init function*/
     APPPRINT1("Initialize state machine module");
@@ -254,11 +259,6 @@ void ezmApp_SdkInit(void)
     INFO("Initialize Logging module");
     Logging_DemoFeatures();
 #endif /* LOGGING == 1U */
-
-#if (EVENT_NOTIFIER == 1U)
-    INFO("Initialize envent notifier module");
-    evntNoti_Initialize();
-#endif /*EVENT_NOTIFIER == 1U*/
 
 #if (CLI == 1U && HAL_UART == 1U)
     UartDrvApi* uart_driver;
