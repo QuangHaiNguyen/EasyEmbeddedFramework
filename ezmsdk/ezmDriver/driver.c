@@ -246,13 +246,57 @@ bool ezmDriver_IsDriverBusy(DriverId id)
     return is_busy;
 }
 
+/******************************************************************************
+* Function : ezmDriver_SubscribeDriverEvent
+*//**
+* @Description:
+*
+* This function subscribed the driver user to event notification system
+*
+* @param    id : (IN)id of the api, it can be found in driver.h
+* @param    callback: (IN)callback to be registered to handle received event
+* @return   true: success
+*           false: fail
+*
+*******************************************************************************/
 bool ezmDriver_SubscribeDriverEvent(DriverId id, EVENT_CALLBACK callback)
 {
     bool is_success = false;
-    if (id < NUM_OF_DRIVER && id >= 0)
+    if (id < NUM_OF_DRIVER && 
+        id >= 0 && 
+        driver_list[id]->SubscribeEventNotification)
     {
-        driver_list[id]->ReceiveEventNotification(callback);
-        is_success = true;
+            driver_list[id]->SubscribeEventNotification(callback);
+            is_success = true;
+    }
+    else
+    {
+        WARNING("cannot subscribe to event");
+    }
+    return is_success;
+}
+
+/******************************************************************************
+* Function : ezmDriver_UnsubscribeDriverEvent
+*//**
+* @Description:
+*
+* This function unsubscribed the driver user to event notification system
+*
+* @param    id : (IN)id of the api, it can be found in driver.h
+* @param    sub_handle: (IN)subscriber handle
+* @return   true: success 
+*           false: fail
+*
+*******************************************************************************/
+bool ezmDriver_UnsubscribeDriverEvent(DriverId id, evnt_sub sub_handle)
+{
+    bool is_success = false;
+    if (id < NUM_OF_DRIVER
+        && id >= 0 &&
+        driver_list[id]->UnsubscribeEventNotification)
+    {
+        is_success = driver_list[id]->UnsubscribeEventNotification(sub_handle);
     }
     return is_success;
 }

@@ -80,7 +80,8 @@ typedef struct
     bool                is_busy;        /**< busy flag */
     void                *driver_api;    /**< pointer to the driver api structure*/
     DriverInitFunction  init_function;  /**< pointer to the initialize  function*/
-    evnt_sub(*ReceiveEventNotification)(EVENT_CALLBACK callback); /**< */
+    evnt_sub (*SubscribeEventNotification)(EVENT_CALLBACK callback); /**< */
+    bool (*UnsubscribeEventNotification)(evnt_sub);     /**< */
 }Driver;
 
 /** @brief function pointer of the get driver function
@@ -91,11 +92,12 @@ typedef Driver* (*GetDriverFunction)    (void);
 /******************************************************************************
 * Module Variable Definitions
 *******************************************************************************/
-bool ezmDriver_Init                 (void);
-void ezmDriver_GetDriverInstance    (DriverId id, void **driver_api);
-bool ezmDriver_SubscribeDriverEvent(DriverId id, EVENT_CALLBACK callback);
-bool ezmDriver_ReleaseDriverInstance(DriverId id);
-bool ezmDriver_IsDriverBusy         (DriverId id);
+bool ezmDriver_Init                     (void);
+void ezmDriver_GetDriverInstance        (DriverId id, void **driver_api);
+bool ezmDriver_SubscribeDriverEvent     (DriverId id, EVENT_CALLBACK callback);
+bool ezmDriver_UnsubscribeDriverEvent   (DriverId id, evnt_sub sub_handle);
+bool ezmDriver_ReleaseDriverInstance    (DriverId id);
+bool ezmDriver_IsDriverBusy             (DriverId id);
 
 /******************************************************************************
 * Function Prototypes

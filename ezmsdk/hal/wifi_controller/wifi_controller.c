@@ -79,6 +79,7 @@ static struct WiFiController controller_instance = { 0 };
 * Function Definitions
 *******************************************************************************/
 static evnt_sub WifiCtrl_ReceiveEventNotification(EVENT_CALLBACK callback);
+static bool WifiCtrl_StopEventNotification(evnt_sub sub_handle);
 static uint32_t WifiCtrl_InterruptCallback(uint32_t event_code,
                                             void* param1,
                                             void* param2);
@@ -117,7 +118,8 @@ void* WifiCtrl_GetWifiControllerDriver(void)
     if (is_success)
     {
         controller_instance.driver.is_busy = false;
-        controller_instance.driver.ReceiveEventNotification = WifiCtrl_ReceiveEventNotification;
+        controller_instance.driver.SubscribeEventNotification = WifiCtrl_ReceiveEventNotification;
+        controller_instance.driver.UnsubscribeEventNotification = WifiCtrl_StopEventNotification;
 
         /* Binding to low level layer*/
         controller_instance.driver.init_function = wifiSim_Initialization;
@@ -161,6 +163,22 @@ static evnt_sub WifiCtrl_ReceiveEventNotification(EVENT_CALLBACK callback)
     return evntNoti_SubscribeEvent(controller_instance.publisher_handle, callback);
 }
 
+/******************************************************************************
+* Function : WifiCtrl_StopEventNotification
+*//**
+* @Description:
+*
+* This function unregisters the subscriber
+*
+* @param    sub_handle: (IN)subscriber handler
+* @return   true: success
+*           false: fail
+*
+*******************************************************************************/
+static bool WifiCtrl_StopEventNotification(evnt_sub sub_handle)
+{
+    return evntNoti_UnsubscribeEvent(controller_instance.publisher_handle, sub_handle);
+}
 
 /******************************************************************************
 * Function : WifiCtrl_InterruptCallback

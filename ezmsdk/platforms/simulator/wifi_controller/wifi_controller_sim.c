@@ -79,7 +79,7 @@ static struct WiFiComponent wifi_component;
 *******************************************************************************/
 static bool         wifiSim_Connect(const char * ssid, uint32_t ssid_size,
                                          const char * pwd, uint32_t pwd_size);
-static char         * wifiSim_GetStoredSsid(void);
+static void         wifiSim_GetStoredSsid(char ** ssid);
 static bool         wifiSim_Disconnect(void);
 static bool         wifiSim_Scan(void);
 static WIFI_EVENT   wifiSim_GetEvent(void);
@@ -209,9 +209,9 @@ static bool wifiSim_Connect(const char* ssid, uint32_t ssid_size,
 * @return   None
 *
 *******************************************************************************/
-static char * wifiSim_GetStoredSsid(void)
+static void  wifiSim_GetStoredSsid(char ** ssid)
 {
-    return wifi_component.ssid;
+    *ssid =  wifi_component.ssid;
 }
 
 /******************************************************************************

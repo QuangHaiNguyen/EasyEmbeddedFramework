@@ -72,7 +72,7 @@ namespace
     TEST(Wifi_Controller, General_Test) 
     {
         bool is_success = true;
-        evnt_sub sub_handler;
+        evnt_sub sub_handle;
         WiFiCtrlDriverApi * api = NULL;
         WIFI_EVENT event;
         char * ssid = NULL;
@@ -84,7 +84,7 @@ namespace
         ASSERT_NE(driver->driver_api, nullptr);
 
         is_success = driver->init_function();
-        sub_handler = driver->ReceiveEventNotification(EventCallback);
+        sub_handle = driver->SubscribeEventNotification(EventCallback);
 
         ASSERT_EQ(driver->is_busy, false);
         ASSERT_EQ(is_success, true);
@@ -97,7 +97,7 @@ namespace
         event = api->WifiCtrl_GetEvent();
         ASSERT_EQ(event, WIFI_CONNECTED);
 
-        ssid = api->WiFiCtrl_GetStoredSsid();
+        api->WiFiCtrl_GetStoredSsid(&ssid);
         ASSERT_EQ(strcmp(ssid, test_ssid), 0);
 
         api->WifiCtrl_Scan();
@@ -111,6 +111,9 @@ namespace
         ASSERT_EQ(scanning_flag, true);
         ASSERT_EQ(scan_result_flag, true);
         ASSERT_EQ(disconnected_flag, true);
+
+        is_success = driver->UnsubscribeEventNotification(sub_handle);
+        ASSERT_EQ(is_success, true);
     }
 }
 

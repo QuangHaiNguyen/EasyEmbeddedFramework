@@ -73,7 +73,7 @@ typedef struct
 {
     bool (*WiFiCtrl_Connect)(const char * ssid, uint32_t ssid_size,
                              const char * pwd, uint32_t pwd_size);  /**< pointer to the fucntion connecting to a network */
-    char *(*WiFiCtrl_GetStoredSsid)(void);                    /**< pointer to the fucntion returning the stored ssid */
+    void (*WiFiCtrl_GetStoredSsid)(char ** ssid);                   /**< pointer to the fucntion returning the stored ssid */
     bool (*WifiCtrl_Disconnect)(void);                              /**< pointer to the fucntion disconnecting from a network */
     bool (*WifiCtrl_Scan)(void);                                    /**< pointer to the fucntion scanning for available networks */
     WIFI_EVENT (*WifiCtrl_GetEvent)(void);                          /**< pointer to the fucntion returning event */
