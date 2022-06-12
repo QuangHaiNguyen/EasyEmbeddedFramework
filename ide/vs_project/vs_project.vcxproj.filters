@@ -83,6 +83,9 @@
     <Filter Include="Source Files\hal\wifi_controller">
       <UniqueIdentifier>{87478664-5f06-4850-a870-1e4d1c6de227}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\platforms\simulator\wifi_controller">
+      <UniqueIdentifier>{e22d2d1a-04cd-49d5-a36f-8d690676e4e3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ezmsdk\app\app.c">
@@ -156,6 +159,9 @@
     </ClCompile>
     <ClCompile Include="..\..\ezmsdk\hal\wifi_controller\wifi_controller.c">
       <Filter>Source Files\hal\wifi_controller</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\platforms\simulator\wifi_controller\wifi_controller_sim.c">
+      <Filter>Source Files\platforms\simulator\wifi_controller</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -239,6 +245,9 @@
     </ClInclude>
     <ClInclude Include="..\..\ezmsdk\hal\wifi_controller\wifi_controller.h">
       <Filter>Source Files\hal\wifi_controller</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ezmsdk\platforms\simulator\wifi_controller\wifi_controller_sim.h">
+      <Filter>Source Files\platforms\simulator\wifi_controller</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
