@@ -33,9 +33,13 @@
 #define EZM_PRINTF              1U
 #define HAL_UART                0U
 #define SYSTEM_ERROR            1U
+<<<<<<< Updated upstream
 #define FLASH_SIM               1U
 #define EVENT_NOTIFIER          1U
 #define WIFI_CONTROLLER         1U
+=======
+#define FLASH_SIM               0U
+>>>>>>> Stashed changes
 
 /*Module ID section*/
 
@@ -214,23 +218,20 @@
 #define ESP32               4U
 #define STM32               5U
 
-#define SUPPORTED_CHIP      WIN
+#define SUPPORTED_CHIP      ESP32
 
 /* UART SECTION ***************************************************************/
-#if HAL_UART == 1U
+#if (HAL_UART == 1U)
+#define UART_MOD_ID             0x30U
 #if(SUPPORTED_CHIP == WIN)
     #define NUM_OF_SUPPORTED_UART   1U    /**< Number of supported Uart*/
     #define SIM_UART0               0U
-
-    #define UART_MOD_ID             0x30U
 
     /* Alias name, easy to use */
     #define CLI_UART                SIM_UART0
 #else
     #define NUM_OF_SUPPORTED_UART   1U    /**< Number of supported Uart*/
     #define HAL_UART0               0U
-
-    #define UART_MOD_ID             0x30U
 
     /* Alias name, easy to use */
     #define CLI_UART                HAL_UART0

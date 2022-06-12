@@ -36,6 +36,8 @@
 *******************************************************************************/
 #include "wifi_controller.h"
 
+#if(WIFI_CONTROLLER == 1U)
+
 #define DEBUG_LVL   LVL_TRACE       /**< logging level */
 #define MOD_NAME    "WIFI_CTRL"     /**< module name */
 
@@ -115,6 +117,7 @@ void* WifiCtrl_GetWifiControllerDriver(void)
         ERROR("Cannot create event publisher");
     }
 
+#if(SUPPORTED_CHIP == WIN)
     if (is_success)
     {
         controller_instance.driver.is_busy = false;
@@ -138,6 +141,7 @@ void* WifiCtrl_GetWifiControllerDriver(void)
         memset(&controller_instance, 0, sizeof(struct WiFiController));
         WARNING("Cannot init hardware, instance is reset");
     }
+#endif
 
     return ret_driver;
 }
@@ -208,5 +212,6 @@ static uint32_t WifiCtrl_InterruptCallback(uint32_t event_code, void * param1, v
     return 0;
 }
 
+#endif /* WIFI_CONTROLLER == 1U */
 /* End of file*/
 

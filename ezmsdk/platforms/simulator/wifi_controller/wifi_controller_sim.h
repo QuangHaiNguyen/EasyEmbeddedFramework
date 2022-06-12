@@ -37,10 +37,13 @@
 /*******************************************************************************
 * Includes
 *******************************************************************************/
+
+#include "app/app_config.h"
+
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "app/app_config.h"
+#if (WIFI_CONTROLLER == 1U && SUPPORTED_CHIP == WIN)
 #include "hal/wifi_controller/wifi_controller.h"
 
 /******************************************************************************
@@ -64,6 +67,8 @@
 bool wifiSim_Initialization(void);
 bool wifiSim_BindingDriverApi(void ** api);
 bool wifiSim_RegisterInterruptCallback(INTERRUPT_CALLBACK callback);
+
+#endif /* WIFI_CONTROLLER == 1U && SUPPORTED_CHIP == WIN */
 
 #endif /* _WIFI_CONTROLLER_SIM_H */
 

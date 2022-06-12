@@ -91,7 +91,7 @@ typedef uint32_t (*INTERRUPT_CALLBACK)(uint32_t event_code, void* param1, void* 
 *******************************************************************************/
 void* WifiCtrl_GetWifiControllerDriver(void);
 
-#endif /* WIFI_CONTROLLER */
+#endif /* WIFI_CONTROLLER == 1U */
 
 #endif /* _WIFI_CONTROLLER_H */
 

@@ -61,7 +61,6 @@
  Module Variable Definitions
 *******************************************************************************/
 static struct MemBlock block_pool[NUM_OF_MEM_BLOCK] = { 0U };
-static struct MemList test_list;
 
 /******************************************************************************
  Function Definitions

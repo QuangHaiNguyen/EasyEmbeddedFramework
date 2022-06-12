@@ -36,6 +36,8 @@
 *******************************************************************************/
 #include "wifi_controller_sim.h"
 
+#if (WIFI_CONTROLLER == 1U && SUPPORTED_CHIP == WIN)
+
 #define DEBUG_LVL   LVL_TRACE   /**< logging level */
 #define MOD_NAME    "WIFI_SIM"       /**< module name */
 
@@ -323,6 +325,8 @@ bool wifiSim_RegisterInterruptCallback(INTERRUPT_CALLBACK callback)
 
     return is_success;
 }
+
+#endif /* WIFI_CONTROLLER == 1U && SUPPORTED_CHIP == WIN */
 
 /* End of file*/
 
