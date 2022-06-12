@@ -62,7 +62,7 @@
 * Function Prototypes
 *******************************************************************************/
 bool wifiSim_Initialization(void);
-bool wifiSim_BindingDriverApi(void * api);
+bool wifiSim_BindingDriverApi(void ** api);
 bool wifiSim_RegisterInterruptCallback(INTERRUPT_CALLBACK callback);
 
 #endif /* _WIFI_CONTROLLER_SIM_H */

@@ -117,7 +117,7 @@ void* WifiCtrl_GetWifiControllerDriver(void)
     if (is_success)
     {
         controller_instance.driver.is_busy = false;
-        controller_instance.driver.WifiCtrl_ReceiveEventNotification = WifiCtrl_ReceiveEventNotification;
+        controller_instance.driver.ReceiveEventNotification = WifiCtrl_ReceiveEventNotification;
 
         /* Binding to low level layer*/
         controller_instance.driver.init_function = wifiSim_Initialization;
@@ -127,6 +127,7 @@ void* WifiCtrl_GetWifiControllerDriver(void)
     /* check return */
     if (is_success)
     {
+        wifiSim_RegisterInterruptCallback(WifiCtrl_InterruptCallback);
         ret_driver = (void*)&(controller_instance.driver);
         TRACE("Init complete");
     }

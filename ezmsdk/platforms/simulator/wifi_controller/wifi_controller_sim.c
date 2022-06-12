@@ -69,6 +69,7 @@ struct WiFiComponent
     INTERRUPT_CALLBACK wifi_callback;   /**< pointer to interrupt handler */
     char ssid[256];                     /**< ssid */
     char pwd[256];                      /**< password */
+    WiFiCtrlDriverApi api;              /**< the real api */
 };
 
 static struct WiFiComponent wifi_component;
@@ -78,7 +79,7 @@ static struct WiFiComponent wifi_component;
 *******************************************************************************/
 static bool         wifiSim_Connect(const char * ssid, uint32_t ssid_size,
                                          const char * pwd, uint32_t pwd_size);
-static void         wifiSim_GetStoredSsid(char* ssid);
+static char         * wifiSim_GetStoredSsid(void);
 static bool         wifiSim_Disconnect(void);
 static bool         wifiSim_Scan(void);
 static WIFI_EVENT   wifiSim_GetEvent(void);
@@ -106,9 +107,8 @@ bool wifiSim_Initialization(void)
     wifi_component.event = WIFI_DISCONNECTED;
     memset(wifi_component.ssid, 0, sizeof(wifi_component.ssid));
     memset(wifi_component.pwd, 0, sizeof(wifi_component.pwd));
-    wifi_component.wifi_callback = NULL;
 
-    INFO("Hardware wifi in initialized");
+    INFO("Hardware wifi is initialized");
 
     return is_success;
 }
@@ -125,7 +125,7 @@ bool wifiSim_Initialization(void)
 *           false: fail
 *
 *******************************************************************************/
-bool wifiSim_BindingDriverApi(void* api)
+bool wifiSim_BindingDriverApi(void ** api)
 {
     bool is_success = true;
 
@@ -133,11 +133,13 @@ bool wifiSim_BindingDriverApi(void* api)
 
     WiFiCtrlDriverApi * wifi_api = (WiFiCtrlDriverApi*)api;
 
-    wifi_api->WiFiCtrl_Connect = wifiSim_Connect;
-    wifi_api->WifiCtrl_Disconnect = wifiSim_Disconnect;
-    wifi_api->WifiCtrl_GetEvent = wifiSim_GetEvent;
-    wifi_api->WiFiCtrl_GetStoredSsid = wifiSim_GetStoredSsid;
-    wifi_api->WifiCtrl_Scan = wifiSim_Scan;
+    wifi_component.api.WiFiCtrl_Connect = wifiSim_Connect;
+    wifi_component.api.WifiCtrl_Disconnect = wifiSim_Disconnect;
+    wifi_component.api.WifiCtrl_GetEvent = wifiSim_GetEvent;
+    wifi_component.api.WiFiCtrl_GetStoredSsid = wifiSim_GetStoredSsid;
+    wifi_component.api.WifiCtrl_Scan = wifiSim_Scan;
+
+    *api = (void*)(&wifi_component.api);
 
     return is_success;
 }
@@ -174,11 +176,16 @@ static bool wifiSim_Connect(const char* ssid, uint32_t ssid_size,
         strncpy_s(wifi_component.pwd, sizeof(wifi_component.pwd),
             pwd, pwd_size);
 
-        wifi_component.event = WIFI_CONNECTING;
-
+        /* mock callback function */
         INFO("WIFI is connecting");
+        if (wifi_component.wifi_callback)
+        {
+            wifi_component.wifi_callback(WIFI_CONNECTING, NULL, NULL);
+            wifi_component.event = WIFI_CONNECTING;
+        }
 
         /* mock callback function */
+        INFO("WIFI is connected");
         if (wifi_component.wifi_callback)
         {
             wifi_component.wifi_callback(WIFI_CONNECTED, NULL, NULL);
@@ -202,9 +209,9 @@ static bool wifiSim_Connect(const char* ssid, uint32_t ssid_size,
 * @return   None
 *
 *******************************************************************************/
-static void wifiSim_GetStoredSsid(char* ssid)
+static char * wifiSim_GetStoredSsid(void)
 {
-    ssid = wifi_component.ssid;
+    return wifi_component.ssid;
 }
 
 /******************************************************************************

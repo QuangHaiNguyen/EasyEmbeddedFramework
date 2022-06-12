@@ -246,6 +246,16 @@ bool ezmDriver_IsDriverBusy(DriverId id)
     return is_busy;
 }
 
+bool ezmDriver_SubscribeDriverEvent(DriverId id, EVENT_CALLBACK callback)
+{
+    bool is_success = false;
+    if (id < NUM_OF_DRIVER && id >= 0)
+    {
+        driver_list[id]->ReceiveEventNotification(callback);
+        is_success = true;
+    }
+    return is_success;
+}
 #endif /* DRIVERINF */
 
 /* End of file*/

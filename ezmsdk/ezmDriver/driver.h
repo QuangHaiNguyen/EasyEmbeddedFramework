@@ -80,7 +80,7 @@ typedef struct
     bool                is_busy;        /**< busy flag */
     void                *driver_api;    /**< pointer to the driver api structure*/
     DriverInitFunction  init_function;  /**< pointer to the initialize  function*/
-    evnt_sub(*WifiCtrl_ReceiveEventNotification)(EVENT_CALLBACK callback); /**< */
+    evnt_sub(*ReceiveEventNotification)(EVENT_CALLBACK callback); /**< */
 }Driver;
 
 /** @brief function pointer of the get driver function
@@ -93,6 +93,7 @@ typedef Driver* (*GetDriverFunction)    (void);
 *******************************************************************************/
 bool ezmDriver_Init                 (void);
 void ezmDriver_GetDriverInstance    (DriverId id, void **driver_api);
+bool ezmDriver_SubscribeDriverEvent(DriverId id, EVENT_CALLBACK callback);
 bool ezmDriver_ReleaseDriverInstance(DriverId id);
 bool ezmDriver_IsDriverBusy         (DriverId id);
 
