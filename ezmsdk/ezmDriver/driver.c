@@ -75,8 +75,11 @@
 GetDriverFunction get_driver[NUM_OF_DRIVER] =
 {
     (GetDriverFunction)DummyDriver_GetDriver,
-#if(HAL_UART)
+#if(HAL_UART == 1U)
     (GetDriverFunction)GetUart0Driver,
+#endif
+#if(WIFI_CONTROLLER == 1U)
+    NULL,
 #endif
 };
 

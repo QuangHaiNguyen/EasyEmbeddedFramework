@@ -168,6 +168,7 @@
     <ClCompile Include="..\..\ezmsdk\ezmIpc\ezmIpc.c" />
     <ClCompile Include="..\..\ezmsdk\ezmKernel\ezmKernel.c" />
     <ClCompile Include="..\..\ezmsdk\hal\uart\uart.c" />
+    <ClCompile Include="..\..\ezmsdk\hal\wifi_controller\wifi_controller.c" />
     <ClCompile Include="..\..\ezmsdk\platforms\simulator\flash\flash_simulator.c" />
     <ClCompile Include="..\..\ezmsdk\platforms\simulator\uart\uart_sim.c" />
     <ClCompile Include="..\..\ezmsdk\scheduler\scheduler.c" />
@@ -195,6 +196,7 @@
     <ClInclude Include="..\..\ezmsdk\ezmIpc\ezmIpc_conf.h" />
     <ClInclude Include="..\..\ezmsdk\ezmKernel\ezmKernel.h" />
     <ClInclude Include="..\..\ezmsdk\hal\uart\uart.h" />
+    <ClInclude Include="..\..\ezmsdk\hal\wifi_controller\wifi_controller.h" />
     <ClInclude Include="..\..\ezmsdk\platforms\simulator\flash\flash_simulator.h" />
     <ClInclude Include="..\..\ezmsdk\platforms\simulator\uart\uart_sim.h" />
     <ClInclude Include="..\..\ezmsdk\scheduler\scheduler.h" />

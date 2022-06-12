@@ -80,6 +80,9 @@
     <Filter Include="Source Files\utilities\event_notifier">
       <UniqueIdentifier>{b574796a-873a-4b17-8a84-aa9441d74fde}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\hal\wifi_controller">
+      <UniqueIdentifier>{87478664-5f06-4850-a870-1e4d1c6de227}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ezmsdk\app\app.c">
@@ -150,6 +153,9 @@
     </ClCompile>
     <ClCompile Include="..\..\ezmsdk\utilities\event_notifier\event_notifier.c">
       <Filter>Source Files\utilities\event_notifier</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\hal\wifi_controller\wifi_controller.c">
+      <Filter>Source Files\hal\wifi_controller</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -230,6 +236,9 @@
     </ClInclude>
     <ClInclude Include="..\..\ezmsdk\utilities\event_notifier\event_notifier.h">
       <Filter>Source Files\utilities\event_notifier</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ezmsdk\hal\wifi_controller\wifi_controller.h">
+      <Filter>Source Files\hal\wifi_controller</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

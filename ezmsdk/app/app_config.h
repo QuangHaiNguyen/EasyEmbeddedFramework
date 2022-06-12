@@ -35,6 +35,7 @@
 #define SYSTEM_ERROR            1U
 #define FLASH_SIM               1U
 #define EVENT_NOTIFIER          1U
+#define WIFI_CONTROLLER         1U
 
 /*Module ID section*/
 
@@ -236,5 +237,10 @@
 #endif /*SUPPORTED_CHIP*/
 
 #endif /* HAL_UART */
+
+/* WIFI_CONTROLLER SECTION ****************************************************/
+#if WIFI_CONTROLLER == 1U
+
+#endif /* WIFI_CONTROLLER */
 
 #endif /* _APP_CONFIG_H */

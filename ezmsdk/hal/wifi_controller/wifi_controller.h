@@ -1,8 +1,9 @@
+
 /*******************************************************************************
-* Filename:         driver.h
+* Filename:         wifi_controller.h
 * Author:           Hai Nguyen
-* Original Date:    29.05.2022
-* Last Update:      29.05.2022
+* Original Date:    12.06.2022
+* Last Update:      12.06.2022
 *
 * -----------------------------------------------------------------------------
 * Comany:           Easy Embedded
@@ -17,90 +18,78 @@
 * Copyright Hai Nguyen - All Rights Reserved
 * Unauthorized copying of this file, via any medium is strictly prohibited
 * Proprietary and confidential
-* Written by Hai Nguyen 29.05.2022
+* Written by Hai Nguyen 12.06.2022
 *
 *******************************************************************************/
 
-/** @file   driver.h
+/** @file   wifi_controller.h
  *  @author Hai Nguyen
- *  @date   29.05.2022
- *  @brief  This is the header for driver module
- *
- *  @details Providing api and data structure to work with driver module
- *
+ *  @date   12.06.2022
+ *  @brief  This is the source for a module
+ *  
+ *  @details
+ * 
  */
 
-#ifndef _DRIVER_H
-#define _DRIVER_H
-
+#ifndef _WIFI_CONTROLLER_H
+#define _WIFI_CONTROLLER_H
 
 /*******************************************************************************
 * Includes
 *******************************************************************************/
 #include "app/app_config.h"
 
-#if (DRIVERINF == 1U)
-#include "stdint.h"
-#include "stdbool.h"
-#include "utilities/event_notifier/event_notifier.h"
+#if(WIFI_CONTROLLER == 1U)
+#include <stdbool.h>
+#include <stdint.h>
+
+
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
-/* None */
+#define A_MACRO     1   /**< a macro*/
 
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
 
-/** @brief function pointer of the driver initialize function
- *
- */
-typedef bool    (*DriverInitFunction)   (void);
-
-/** @brief enumerated list of available drivers
- *
+/** @brief definition of a new type
+ *  
  */
 typedef enum
 {
-    DUMMY_DRIVER,   /**< for testing purpose only */
-#if(HAL_UART)
-    UART0_DRIVER,   /**< uart driver, normally for cli */
-#endif
-#if (WIFI_CONTROLLER == 1U)
-    WIFI_CTRL_DRIVER,   /**< wifi driver */
-#endif
-    NUM_OF_DRIVER   /**< number of available drivers */
-}DriverId;
+    WIFI_CONNECTING,    /**< */
+    WIFI_CONNECTED,     /**< */
+    WIFI_SCANNING,      /**< */
+    WIFI_SCAN_RESULT,   /**< */
+    WIFI_DISCONNECTED,  /**< */
+}WIFI_EVENT;
 
-/** @brief CLI notification code
+/** @brief definition of api set for UART
  *
  */
 typedef struct
 {
-    bool                is_busy;        /**< busy flag */
-    void                *driver_api;    /**< pointer to the driver api structure*/
-    DriverInitFunction  init_function;  /**< pointer to the initialize  function*/
-    evnt_sub(*WifiCtrl_ReceiveEventNotification)(EVENT_CALLBACK callback); /**< */
-}Driver;
-
-/** @brief function pointer of the get driver function
- *
- */
-typedef Driver* (*GetDriverFunction)    (void);
+    bool (*WiFiCtrl_Connect)(const char * ssid, const char * pwd);  /**< */
+    void (*WiFiCtrl_GetStoredSsid)(char * ssid);                    /**< */
+    bool (*WifiCtrl_Disconnect)(void);                              /**< */
+    bool (*WifiCtrl_Scan)(void);                                    /**< */
+    WIFI_EVENT (*WifiCtrl_GetEvent)(void);                          /**< */
+}WiFiCtrlDriverApi;
 
 /******************************************************************************
 * Module Variable Definitions
 *******************************************************************************/
-bool ezmDriver_Init                 (void);
-void ezmDriver_GetDriverInstance    (DriverId id, void **driver_api);
-bool ezmDriver_ReleaseDriverInstance(DriverId id);
-bool ezmDriver_IsDriverBusy         (DriverId id);
+/* None */
 
 /******************************************************************************
 * Function Prototypes
 *******************************************************************************/
+void* WifiCtrl_GetWifiControllerDriver(void);
 
-#endif /* DRIVERINF */
-#endif /* _DRIVER_H */
+#endif /* WIFI_CONTROLLER */
 
-/* End of file*/
+#endif /* _WIFI_CONTROLLER_H */
+
+/* End of file */
+
