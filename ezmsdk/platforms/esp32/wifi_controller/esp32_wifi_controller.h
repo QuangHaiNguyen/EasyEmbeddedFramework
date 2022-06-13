@@ -1,6 +1,6 @@
 
 /*******************************************************************************
-* Filename:         wifi_controller.h
+* Filename:         esp32_wifi_controller.h
 * Author:           Hai Nguyen
 * Original Date:    12.06.2022
 * Last Update:      12.06.2022
@@ -22,28 +22,25 @@
 *
 *******************************************************************************/
 
-/** @file   wifi_controller.h
+/** @file   esp32_wifi_controller.h
  *  @author Hai Nguyen
  *  @date   12.06.2022
- *  @brief  Contain the public api of wifi controller module.
+ *  @brief  This is the source for a module
  *  
- *  @details These api are not used direct by user but they are registered to
- *           the driver module, which will be used by the user
+ *  @details
  * 
  */
 
-#ifndef _WIFI_CONTROLLER_H
-#define _WIFI_CONTROLLER_H
+#ifndef _ESP32_WIFI_CONTROLLER_H
+#define _ESP32_WIFI_CONTROLLER_H
 
 /*******************************************************************************
 * Includes
 *******************************************************************************/
 #include "app/app_config.h"
 
-#if(WIFI_CONTROLLER == 1U)
-#include <stdbool.h>
-#include <stdint.h>
-
+#if(WIFI_CONTROLLER == 1U && SUPPORTED_CHIP == ESP32)
+#include "hal/wifi_controller/wifi_controller.h"
 
 /******************************************************************************
 * Module Preprocessor Macros
@@ -53,33 +50,8 @@
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
+/* None */
 
-/** @brief definition of a new type
- *  
- */
-typedef enum
-{
-    WIFI_CONNECTING,    /**< Connecting */
-    WIFI_CONNECTED,     /**< Connecting success */
-    WIFI_SCANNING,      /**< Scanning for availalbe networks*/
-    WIFI_SCAN_RESULT,   /**< Scan complete, return results */
-    WIFI_DISCONNECTED,  /**< Disconnected */
-}HAL_WIFI_EVENT;
-
-/** @brief definition of api set for Wifi controller
- *
- */
-typedef struct
-{
-    bool (*WiFiCtrl_Connect)(const char * ssid, uint32_t ssid_size,
-                             const char * pwd, uint32_t pwd_size);  /**< pointer to the fucntion connecting to a network */
-    void (*WiFiCtrl_GetStoredSsid)(char ** ssid);                   /**< pointer to the fucntion returning the stored ssid */
-    bool (*WifiCtrl_Disconnect)(void);                              /**< pointer to the fucntion disconnecting from a network */
-    bool (*WifiCtrl_Scan)(void);                                    /**< pointer to the fucntion scanning for available networks */
-    HAL_WIFI_EVENT (*WifiCtrl_GetEvent)(void);                          /**< pointer to the fucntion returning event */
-}WiFiCtrlDriverApi;
-
-typedef uint32_t (*INTERRUPT_CALLBACK)(uint32_t event_code, void* param1, void* param2);
 
 /******************************************************************************
 * Module Variable Definitions
@@ -89,11 +61,13 @@ typedef uint32_t (*INTERRUPT_CALLBACK)(uint32_t event_code, void* param1, void* 
 /******************************************************************************
 * Function Prototypes
 *******************************************************************************/
-void* WifiCtrl_GetWifiControllerDriver(void);
+bool wifiEsp_Initialization(void);
+bool wifiEsp_BindingDriverApi(void ** api);
+bool wifiEsp_RegisterInterruptCallback(INTERRUPT_CALLBACK callback);
 
-#endif /* WIFI_CONTROLLER == 1U */
+#endif /* WIFI_CONTROLLER == 1U && SUPPORTED_CHIP == ESP32 */
 
-#endif /* _WIFI_CONTROLLER_H */
+#endif /* _ESP32_WIFI_CONTROLLER_H */
 
 /* End of file */
 

@@ -159,6 +159,7 @@ bool EspUart0_Init(void)
     stUartConfig.stop_bits = UART_STOP_BITS_1;
     stUartConfig.flow_ctrl = UART_HW_FLOWCTRL_DISABLE;
     stUartConfig.source_clk = UART_SCLK_APB;
+    stUartConfig.rx_flow_ctrl_thresh = 0;
 
     /* init uart */
     err_code = uart_set_pin(astHandle[u8UartIndex].u8EspUartInstance, 

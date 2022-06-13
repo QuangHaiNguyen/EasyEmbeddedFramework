@@ -50,6 +50,8 @@
 
 #if(SUPPORTED_CHIP == WIN)
 #include "platforms/simulator/wifi_controller/wifi_controller_sim.h"
+#elif(SUPPORTED_CHIP == ESP32)
+#include "platforms/esp32/wifi_controller/esp32_wifi_controller.h"
 #endif
 
 
@@ -133,6 +135,30 @@ void* WifiCtrl_GetWifiControllerDriver(void)
     if (is_success)
     {
         wifiSim_RegisterInterruptCallback(WifiCtrl_InterruptCallback);
+        ret_driver = (void*)&(controller_instance.driver);
+        TRACE("Init complete");
+    }
+    else
+    {
+        memset(&controller_instance, 0, sizeof(struct WiFiController));
+        WARNING("Cannot init hardware, instance is reset");
+    }
+#elif(SUPPORTED_CHIP == ESP32)
+    if (is_success)
+    {
+        controller_instance.driver.is_busy = false;
+        controller_instance.driver.SubscribeEventNotification = WifiCtrl_ReceiveEventNotification;
+        controller_instance.driver.UnsubscribeEventNotification = WifiCtrl_StopEventNotification;
+
+        /* Binding to low level layer*/
+        controller_instance.driver.init_function = wifiEsp_Initialization;
+        is_success = wifiEsp_BindingDriverApi(&controller_instance.driver.driver_api);
+    }
+
+    /* check return */
+    if (is_success)
+    {
+        wifiEsp_RegisterInterruptCallback(WifiCtrl_InterruptCallback);
         ret_driver = (void*)&(controller_instance.driver);
         TRACE("Init complete");
     }
