@@ -64,7 +64,8 @@ platforms/simulator/wifi_controller/wifi_controller_sim.c)
 
 #esp32 target
 target_sources(sdk PRIVATE
-platforms/esp32/uart/esp32_uart.c)
+platforms/esp32/uart/esp32_uart.c
+platforms/esp32/wifi_controller/esp32_wifi_controller.c)
 
 #include directory
 target_include_directories(sdk PUBLIC .)
