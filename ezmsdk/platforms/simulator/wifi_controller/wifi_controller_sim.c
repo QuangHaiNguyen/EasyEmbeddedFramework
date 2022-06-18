@@ -67,10 +67,9 @@
  */
 struct WiFiComponent
 {
-    WIFI_EVENT event;                   /**< Current event of the mnodule */
+    HAL_WIFI_EVENT event;               /**< Current event of the mnodule */
     INTERRUPT_CALLBACK wifi_callback;   /**< pointer to interrupt handler */
-    char ssid[256];                     /**< ssid */
-    char pwd[256];                      /**< password */
+    WifiAccesPointInfo info;            /**< store the current access point */
     WiFiCtrlDriverApi api;              /**< the real api */
 };
 
@@ -84,7 +83,7 @@ static bool         wifiSim_Connect(const char * ssid, uint32_t ssid_size,
 static void         wifiSim_GetStoredSsid(char ** ssid);
 static bool         wifiSim_Disconnect(void);
 static bool         wifiSim_Scan(void);
-static WIFI_EVENT   wifiSim_GetEvent(void);
+static HAL_WIFI_EVENT   wifiSim_GetEvent(void);
 
 /******************************************************************************
 * External functions
@@ -107,8 +106,7 @@ bool wifiSim_Initialization(void)
     bool is_success = true;
 
     wifi_component.event = WIFI_DISCONNECTED;
-    memset(wifi_component.ssid, 0, sizeof(wifi_component.ssid));
-    memset(wifi_component.pwd, 0, sizeof(wifi_component.pwd));
+    memset(wifi_component.info.ssid, 0, sizeof(wifi_component.info.ssid));
 
     INFO("Hardware wifi is initialized");
 
@@ -172,17 +170,8 @@ static bool wifiSim_Connect(const char* ssid, uint32_t ssid_size,
 
     if (ssid != NULL && pwd != NULL)
     {
-        if(ssid_size > sizeof(wifi_component.ssid))
-        {
-           ssid_size =  sizeof(wifi_component.ssid);
-        }
-        strncpy(wifi_component.ssid, ssid, ssid_size);
-        
-        if(pwd_size > sizeof(wifi_component.pwd))
-        {
-           pwd_size =  sizeof(wifi_component.pwd);
-        }
-        strncpy(wifi_component.pwd, pwd, pwd_size);
+        snprintf(wifi_component.info.ssid, sizeof(wifi_component.info.ssid), 
+                    "%s", ssid);
 
         /* mock callback function */
         INFO("WIFI is connecting");
@@ -219,7 +208,7 @@ static bool wifiSim_Connect(const char* ssid, uint32_t ssid_size,
 *******************************************************************************/
 static void  wifiSim_GetStoredSsid(char ** ssid)
 {
-    *ssid =  wifi_component.ssid;
+    *ssid = wifi_component.info.ssid;
 }
 
 /******************************************************************************
@@ -239,8 +228,7 @@ static bool wifiSim_Disconnect(void)
 
     INFO("WIFI is disconnected");
     wifi_component.event = WIFI_DISCONNECTED;
-    memset(wifi_component.ssid, 0, sizeof(wifi_component.ssid));
-    memset(wifi_component.pwd, 0, sizeof(wifi_component.pwd));
+    memset(wifi_component.info.ssid, 0, sizeof(wifi_component.info.ssid));
 
     /* mock callback function */
     if (wifi_component.wifi_callback)
@@ -297,7 +285,7 @@ static bool wifiSim_Scan(void)
 * @return   WIFI_EVENT
 *
 *******************************************************************************/
-static WIFI_EVENT wifiSim_GetEvent(void)
+static HAL_WIFI_EVENT wifiSim_GetEvent(void)
 {
     INFO("[wifi event = %d]", wifi_component.event);
     return wifi_component.event;

@@ -44,7 +44,7 @@ extern "C" {
 
     int EventCallback(uint32_t event_code, void* param1, void* param2)
     {
-        switch ((WIFI_EVENT)event_code)
+        switch ((HAL_WIFI_EVENT)event_code)
         {
         case WIFI_CONNECTING:
             connecting_flag = true;
@@ -74,7 +74,7 @@ namespace
         bool is_success = true;
         evnt_sub sub_handle;
         WiFiCtrlDriverApi * api = NULL;
-        WIFI_EVENT event;
+        HAL_WIFI_EVENT event;
         char * ssid = NULL;
 
         evntNoti_Initialize();

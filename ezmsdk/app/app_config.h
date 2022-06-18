@@ -214,7 +214,7 @@
 #define ESP32               4U
 #define STM32               5U
 
-#define SUPPORTED_CHIP      ESP32
+#define SUPPORTED_CHIP      WIN
 
 /* UART SECTION ***************************************************************/
 #if (HAL_UART == 1U)
