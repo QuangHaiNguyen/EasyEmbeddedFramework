@@ -25,10 +25,10 @@
 /** @file   wifi_controller.c
  *  @author Hai Nguyen
  *  @date   12.06.2022
- *  @brief  This is the source for a module
+ *  @brief  This is the source for WIFI controller module
  *  
- *  @details
- * 
+ *  @details This module provides an interface to bind to the actual hardware
+ *           driver, and manage the interrupt from hardware
  */
 
 /******************************************************************************
@@ -82,11 +82,11 @@ static struct WiFiController controller_instance = { 0 };
 /******************************************************************************
 * Function Definitions
 *******************************************************************************/
-static evnt_sub WifiCtrl_ReceiveEventNotification(EVENT_CALLBACK callback);
-static bool WifiCtrl_StopEventNotification(evnt_sub sub_handle);
-static uint32_t WifiCtrl_InterruptCallback(uint32_t event_code,
-                                            void* param1,
-                                            void* param2);
+static evnt_sub WifiCtrl_ReceiveEventNotification ( EVENT_CALLBACK callback );
+static bool WifiCtrl_StopEventNotification ( evnt_sub sub_handle );
+static uint32_t WifiCtrl_InterruptCallback ( uint32_t event_code,
+                                             void* param1,
+                                             void* param2 );
 
 /******************************************************************************
 * External functions
@@ -101,7 +101,7 @@ static uint32_t WifiCtrl_InterruptCallback(uint32_t event_code,
 * the driver module to register the driver to the system
 * 
 * @param    None
-* @return   pointer to the driver structure
+* @return   pointer to the driver structure or NULL if error occurs
 *
 *******************************************************************************/
 void* WifiCtrl_GetWifiControllerDriver(void)
@@ -225,16 +225,17 @@ static bool WifiCtrl_StopEventNotification(evnt_sub sub_handle)
 * @return   always 0
 *
 *******************************************************************************/
-static uint32_t WifiCtrl_InterruptCallback(uint32_t event_code, void * param1, void * param2)
+static uint32_t WifiCtrl_InterruptCallback( uint32_t event_code,
+                                            void * param1,
+                                            void * param2 )
 {
-
     DEBUG("receive [event = %d]", event_code);
 
     /* send event code and data to subscriber */
-    evntNoti_NotifyEvent(controller_instance.publisher_handle, 
+    evntNoti_NotifyEvent( controller_instance.publisher_handle, 
                             event_code,
                             param1,
-                            param2);
+                            param2 );
     return 0;
 }
 

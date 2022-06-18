@@ -54,11 +54,13 @@
 * Module Typedefs
 *******************************************************************************/
 
-/** @brief definition of a new type
+/** @brief WIFI status event
  *  
  */
 typedef enum
 {
+    WIFI_STA_START,     /**< STA started */
+    WIFI_STA_STOP,      /**< STA stopped */
     WIFI_CONNECTING,    /**< Connecting */
     WIFI_CONNECTED,     /**< Connecting success */
     WIFI_SCANNING,      /**< Scanning for availalbe networks*/
@@ -66,7 +68,26 @@ typedef enum
     WIFI_DISCONNECTED,  /**< Disconnected */
 }HAL_WIFI_EVENT;
 
-/** @brief definition of api set for Wifi controller
+
+/** @brief Security mode enumeration
+ *
+ */
+typedef enum
+{
+    WIFI_SEC_OPEN,              /**< No security */
+    WIFI_SEC_WEP,               /**< WEP */
+    WIFI_SEC_WPA,               /**< WPA */
+    WIFI_SEC_WPA2,              /**< WPA2 */
+    WIFI_SEC_WPA2_MIX,          /**< WPA2 mix */
+    WIFI_SEC_WPA2_ENTERPRISE,   /**< WPA2 enterprise */
+    WIFI_SEC_WPA3,              /**< WPA3 */
+    WIFI_SEC_WPA3_MIX,          /**< WPA3 mix */
+    WIFI_SEC_WAPI,              /**< WAPI */
+    WIFI_SEC_UNKNOWN,           /**< Security mode unknown */
+}WIFI_SEC_MODE;
+
+
+/** @brief API set for Wifi controller
  *
  */
 typedef struct
@@ -76,9 +97,26 @@ typedef struct
     void (*WiFiCtrl_GetStoredSsid)(char ** ssid);                   /**< pointer to the fucntion returning the stored ssid */
     bool (*WifiCtrl_Disconnect)(void);                              /**< pointer to the fucntion disconnecting from a network */
     bool (*WifiCtrl_Scan)(void);                                    /**< pointer to the fucntion scanning for available networks */
-    HAL_WIFI_EVENT (*WifiCtrl_GetEvent)(void);                          /**< pointer to the fucntion returning event */
+    HAL_WIFI_EVENT (*WifiCtrl_GetEvent)(void);                      /**< pointer to the fucntion returning event */
 }WiFiCtrlDriverApi;
 
+
+/** @brief information of an access point
+ *
+ */
+typedef struct
+{
+    uint8_t channel;        /**< Channel */
+    int8_t rssi;            /**< RSSI */
+    char bssid[6];          /**< BSSID */
+    char ssid[33];          /**< SSID */
+    WIFI_SEC_MODE sec_mode; /**< Wifi security mode */
+}WifiAccesPointInfo;
+
+
+/** @brief Interrupt callback function pointer
+ *
+ */
 typedef uint32_t (*INTERRUPT_CALLBACK)(uint32_t event_code, void* param1, void* param2);
 
 /******************************************************************************

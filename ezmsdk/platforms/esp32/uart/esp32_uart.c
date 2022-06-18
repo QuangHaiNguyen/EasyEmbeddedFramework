@@ -36,7 +36,7 @@
 
 #include "esp32_uart.h"
 
-#define DEBUG_LVL   LVL_TRACE       /**< logging level */
+#define DEBUG_LVL   LVL_ERROR       /**< logging level */
 #define MOD_NAME    "ESP_UART"      /**< module name */
 
 #if (HAL_UART == 1U && SUPPORTED_CHIP == ESP32 )

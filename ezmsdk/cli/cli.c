@@ -30,8 +30,8 @@
 *******************************************************************************/
 #include "cli.h"
 
-#define DEBUG_LVL   LVL_INFO    /**< logging level */
-#define MOD_NAME    "CLI"       /**< module name */
+#define DEBUG_LVL   LVL_ERROR    /**< logging level */
+#define MOD_NAME    "CLI"        /**< module name */
 
 #if (CLI == 1U)
 
