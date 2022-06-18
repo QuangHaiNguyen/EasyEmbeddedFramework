@@ -15,7 +15,8 @@ utilities/event_notifier/event_notifier.c)
 
 # app module
 target_sources(sdk PRIVATE
-app/app.c)
+app/app.c
+app/app_wifi_management.c)
 
 # binCmdParser module
 target_sources(sdk PRIVATE
