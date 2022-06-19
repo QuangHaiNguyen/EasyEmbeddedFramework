@@ -3,7 +3,7 @@
 * Filename:         wifi_controller.c
 * Author:           Hai Nguyen
 * Original Date:    12.06.2022
-* Last Update:      12.06.2022
+* Last Update:      19.06.2022
 *
 * -----------------------------------------------------------------------------
 * Comany:           Easy Embedded
@@ -82,11 +82,11 @@ static struct WiFiController controller_instance = { 0 };
 /******************************************************************************
 * Function Definitions
 *******************************************************************************/
-static evnt_sub WifiCtrl_ReceiveEventNotification ( EVENT_CALLBACK callback );
-static bool WifiCtrl_StopEventNotification ( evnt_sub sub_handle );
-static uint32_t WifiCtrl_InterruptCallback ( uint32_t event_code,
-                                             void* param1,
-                                             void* param2 );
+static bool WifiCtrl_ReceiveEventNotification   (event_observer * observer);
+static bool WifiCtrl_StopEventNotification      (event_observer * observer);
+static uint32_t WifiCtrl_InterruptCallback (uint32_t event_code,
+                                            void* param1,
+                                            void* param2);
 
 /******************************************************************************
 * External functions
@@ -111,9 +111,9 @@ void* WifiCtrl_GetWifiControllerDriver(void)
 
     TRACE("WifiCtrl_GetWifiControllerDriver()");
 
-    evntNoti_CreatePublisher(controller_instance.event, 3);
+    is_success = evntNoti_CreateSubject(&controller_instance.event, 3);
 
-    if (controller_instance.publisher_handle == UINT32_MAX)
+    if (!is_success)
     {
         is_success = false;
         ERROR("Cannot create event publisher");
@@ -183,14 +183,14 @@ void* WifiCtrl_GetWifiControllerDriver(void)
 *
 * This function registers the subscriber which want to receive the wifi event
 *
-* @param    callback: (IN)callback function to thandle the event
+* @param    observer: (IN)pointer to the handle, which receives event
 * @return   event subscriber handle
 *
 *******************************************************************************/
-static evnt_sub WifiCtrl_ReceiveEventNotification(EVENT_CALLBACK callback)
+static bool WifiCtrl_ReceiveEventNotification(event_observer * observer)
 {
-    ASSERT_MSG(callback != NULL, "callback is Null");
-    return evntNoti_SubscribeEvent(controller_instance.publisher_handle, callback);
+    ASSERT_MSG(observer != NULL, "observer is Null");
+    return evntNoti_SubscribeEvent(&controller_instance.event, observer);
 }
 
 /******************************************************************************
@@ -200,14 +200,14 @@ static evnt_sub WifiCtrl_ReceiveEventNotification(EVENT_CALLBACK callback)
 *
 * This function unregisters the subscriber
 *
-* @param    sub_handle: (IN)subscriber handler
+* @param    observer: (IN)pointer to the observer, which stops receiving event
 * @return   true: success
 *           false: fail
 *
 *******************************************************************************/
-static bool WifiCtrl_StopEventNotification(evnt_sub sub_handle)
+static bool WifiCtrl_StopEventNotification(event_observer * observer)
 {
-    return evntNoti_UnsubscribeEvent(controller_instance.publisher_handle, sub_handle);
+    return evntNoti_UnsubscribeEvent(&controller_instance.event, observer);
 }
 
 /******************************************************************************
@@ -232,10 +232,10 @@ static uint32_t WifiCtrl_InterruptCallback( uint32_t event_code,
     DEBUG("receive [event = %d]", event_code);
 
     /* send event code and data to subscriber */
-    evntNoti_NotifyEvent( controller_instance.publisher_handle, 
-                            event_code,
-                            param1,
-                            param2 );
+    evntNoti_NotifyEvent(&controller_instance.event, 
+                         event_code,
+                         param1,
+                         param2 );
     return 0;
 }
 

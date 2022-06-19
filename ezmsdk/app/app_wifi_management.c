@@ -64,7 +64,8 @@
 /******************************************************************************
 * Module Variable Definitions
 *******************************************************************************/
-WiFiCtrlDriverApi * wifi_drv = NULL;
+static WiFiCtrlDriverApi * wifi_drv = NULL;
+static event_observer observer;
 
 static const char default_ssid[] = "BabySharkDooDoo";
 static const char default_pwd[] = "HauffStr.24-2EtageLinks!";
@@ -169,7 +170,7 @@ static bool WiFiMgmt_GetWifiDriver(void)
 
     TRACE("WiFiMgmt_GetWifiDriver()");
 
-    ezmDriver_GetDriverInstance(WIFI_CTRL_DRIVER, &wifi_drv);
+    ezmDriver_GetDriverInstance(WIFI_CTRL_DRIVER, (void**)(&wifi_drv));
 
     if(wifi_drv == NULL)
     {
@@ -179,8 +180,9 @@ static bool WiFiMgmt_GetWifiDriver(void)
 
     if(is_success)
     {
-        is_success &= ezmDriver_SubscribeDriverEvent(WIFI_CTRL_DRIVER, 
-                                                    WiFiMgmt_WifiEventHandle);
+        is_success &= evntNoti_CreateObserver(&observer, WiFiMgmt_WifiEventHandle);
+        is_success &= ezmDriver_SubscribeDriverEvent(WIFI_CTRL_DRIVER,
+                                                     &observer);
     }
 
     return is_success;
@@ -497,6 +499,7 @@ static CLI_NOTIFY_CODE WiFiMgmt_ScanCmdHandle(const char * pu8Command,
     {
         if(wifi_drv)
         {
+            ezmCli_Printf("Scanning...\n");
             wifi_drv->WifiCtrl_Scan();
         }
     }

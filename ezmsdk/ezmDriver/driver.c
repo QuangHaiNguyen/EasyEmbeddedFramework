@@ -260,15 +260,14 @@ bool ezmDriver_IsDriverBusy(DriverId id)
 *
 *******************************************************************************/
 bool ezmDriver_SubscribeDriverEvent(DriverId id,
-                                    event_observer * observer,
-                                    EVENT_CALLBACK callback)
+                                    event_observer * observer)
 {
     bool is_success = false;
     if (id < NUM_OF_DRIVER && 
         id >= 0 && 
         driver_list[id]->SubscribeEventNotification)
     {
-            driver_list[id]->SubscribeEventNotification(observer, callback);
+            driver_list[id]->SubscribeEventNotification(observer);
             is_success = true;
     }
     else

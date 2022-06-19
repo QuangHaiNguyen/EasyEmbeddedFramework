@@ -81,8 +81,7 @@ typedef struct
     void                *driver_api;                                /**< pointer to the driver api structure*/
     DriverInitFunction  init_function;                              /**< pointer to the initialize  function*/
     bool (*UnsubscribeEventNotification)(event_observer* observer); /**< */
-    bool (*SubscribeEventNotification)( event_observer * observer,
-                                        EVENT_CALLBACK callback);   /**< */
+    bool (*SubscribeEventNotification)( event_observer * observer);   /**< */
 }Driver;
 
 /** @brief function pointer of the get driver function
@@ -96,8 +95,7 @@ typedef Driver* (*GetDriverFunction)    (void);
 bool ezmDriver_Init                     (void);
 void ezmDriver_GetDriverInstance        (DriverId id, void **driver_api);
 bool ezmDriver_SubscribeDriverEvent     (DriverId id,
-                                         event_observer * observer,
-                                         EVENT_CALLBACK callback);
+                                         event_observer * observer);
 
 bool ezmDriver_UnsubscribeDriverEvent   (DriverId id, event_observer * observer);
 bool ezmDriver_ReleaseDriverInstance    (DriverId id);

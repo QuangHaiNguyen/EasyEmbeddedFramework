@@ -3,7 +3,7 @@
 * Filename:         wifi_controller.h
 * Author:           Hai Nguyen
 * Original Date:    12.06.2022
-* Last Update:      12.06.2022
+* Last Update:      19.06.2022
 *
 * -----------------------------------------------------------------------------
 * Comany:           Easy Embedded
@@ -117,7 +117,9 @@ typedef struct
 /** @brief Interrupt callback function pointer
  *
  */
-typedef uint32_t (*INTERRUPT_CALLBACK)(uint32_t event_code, void* param1, void* param2);
+typedef uint32_t (*INTERRUPT_CALLBACK)(uint32_t event_code,
+                                       void* param1,
+                                       void* param2);
 
 /******************************************************************************
 * Module Variable Definitions
