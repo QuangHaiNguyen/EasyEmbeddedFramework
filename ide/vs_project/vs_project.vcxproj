@@ -164,6 +164,7 @@
     <ClCompile Include="..\..\ezmsdk\app\main.c" />
     <ClCompile Include="..\..\ezmsdk\binCmdParser\binCmdParser.c" />
     <ClCompile Include="..\..\ezmsdk\cli\cli.c" />
+    <ClCompile Include="..\..\ezmsdk\data_model\data_model.c" />
     <ClCompile Include="..\..\ezmsdk\ezmDebug\ezmDebug.c" />
     <ClCompile Include="..\..\ezmsdk\ezmDriver\dummy_driver.c" />
     <ClCompile Include="..\..\ezmsdk\ezmDriver\driver.c" />
@@ -192,6 +193,7 @@
     <ClInclude Include="..\..\ezmsdk\app\app_wifi_management.h" />
     <ClInclude Include="..\..\ezmsdk\binCmdParser\binCmdParser.h" />
     <ClInclude Include="..\..\ezmsdk\cli\cli.h" />
+    <ClInclude Include="..\..\ezmsdk\data_model\data_model.h" />
     <ClInclude Include="..\..\ezmsdk\ezmDebug\config.h" />
     <ClInclude Include="..\..\ezmsdk\ezmDebug\ezmDebug.h" />
     <ClInclude Include="..\..\ezmsdk\ezmDriver\dummy_driver.h" />

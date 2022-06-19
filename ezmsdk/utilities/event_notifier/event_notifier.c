@@ -107,6 +107,30 @@ bool evntNoti_CreateSubject(event_subject * subject, uint32_t num_of_allow_sub)
     return is_success;
 }
 
+/******************************************************************************
+* Function : evntNoti_ResetSubject
+*//**
+* @Description:
+*
+* This function reset a subject
+*
+* @param    *subject: (IN)pointer to the subject
+* @return   None
+*
+* @Example Example:
+* @code
+* evntNoti_ResetSubject(&subject);
+* @endcode
+*
+*******************************************************************************/
+void evntNoti_ResetSubject(event_subject* subject)
+{
+    if (subject != NULL)
+    {
+        subject->num_of_subcriber = 0;
+        ezmLL_InitNode(&subject->head);
+    }
+}
 
 /******************************************************************************
 * Function : evntNoti_CreateObserver

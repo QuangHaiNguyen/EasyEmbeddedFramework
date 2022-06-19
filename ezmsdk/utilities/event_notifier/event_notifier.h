@@ -104,6 +104,8 @@ struct event_observer
 bool evntNoti_CreateSubject     (event_subject * subject,
                                  uint32_t num_of_allow_sub);
 
+void evntNoti_ResetSubject      (event_subject* subject);
+
 bool evntNoti_CreateObserver    (event_observer * observer,
                                  EVENT_CALLBACK callback);
 

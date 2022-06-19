@@ -86,6 +86,9 @@
     <Filter Include="Source Files\platforms\simulator\wifi_controller">
       <UniqueIdentifier>{e22d2d1a-04cd-49d5-a36f-8d690676e4e3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\data_model">
+      <UniqueIdentifier>{c3aa923c-9a1e-4821-a507-fac2276a594e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ezmsdk\app\app.c">
@@ -165,6 +168,9 @@
     </ClCompile>
     <ClCompile Include="..\..\ezmsdk\app\app_wifi_management.c">
       <Filter>Source Files\app</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\data_model\data_model.c">
+      <Filter>Source Files\data_model</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -254,6 +260,9 @@
     </ClInclude>
     <ClInclude Include="..\..\ezmsdk\app\app_wifi_management.h">
       <Filter>Source Files\app</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ezmsdk\data_model\data_model.h">
+      <Filter>Source Files\data_model</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
