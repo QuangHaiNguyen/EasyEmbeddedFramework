@@ -18,7 +18,7 @@
 #define TEST_FLASH_SIMULATOR    0U
 #define TEST_LOGGING            0U
 #define TEST_EVENT_NOTIFIER     0U
-#define TEST_WIFI_CONTROLLER    1U
+#define TEST_WIFI_CONTROLLER    0U
 
 #if (TEST_IPC == 1U)
 #include "../unit_test_ipc.h"

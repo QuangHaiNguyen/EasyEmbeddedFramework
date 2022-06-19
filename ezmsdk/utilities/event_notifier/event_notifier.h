@@ -3,7 +3,7 @@
 * Filename:         event_notifier.h
 * Author:           Hai Nguyen
 * Original Date:    08.06.2022
-* Last Update:      08.06.2022
+* Last Update:      19.06.2022
 *
 * -----------------------------------------------------------------------------
 * Comany:           Easy Embedded
@@ -62,15 +62,36 @@
  */
 typedef int (*EVENT_CALLBACK)(uint32_t event_code, void * param1, void * param2);
 
-/** @brief Event publisher handle
+/** @brief define event_subject type.
  *
  */
-typedef uint32_t evnt_pub;
+typedef struct event_subject event_subject;
 
-/** @brief Event subscriber handle
+/** @brief define event_observer type.
  *
  */
-typedef uint32_t evnt_sub;
+typedef struct event_observer event_observer;
+
+
+/** @brief structure to manage the data of the publisher
+ *
+ */
+struct event_subject
+{
+    uint32_t num_of_subcriber;  /**< number of allowed subcriber*/
+    struct Node head;           /**< head of the subcriber list */
+};
+
+
+/** @brief structure to manage the data of the publisher
+ *
+ */
+struct event_observer
+{
+    struct Node node;           /**< link list node */
+    EVENT_CALLBACK callback;    /**< event call back function */
+};
+
 
 /******************************************************************************
 * Module Variable Definitions
@@ -80,16 +101,19 @@ typedef uint32_t evnt_sub;
 /******************************************************************************
 * Function Prototypes
 *******************************************************************************/
-void     evntNoti_Initialize        (void);
+bool evntNoti_CreateSubject     (event_subject * subject,
+                                 uint32_t num_of_allow_sub);
 
-evnt_pub evntNoti_CreatePublisher   (uint32_t num_of_allow_sub);
+bool evntNoti_CreateObserver    (event_observer * observer,
+                                 EVENT_CALLBACK callback);
 
-evnt_sub evntNoti_SubscribeEvent    (evnt_pub pub_handle, 
-                                     EVENT_CALLBACK callback);
+bool evntNoti_SubscribeEvent    (event_subject * subject,
+                                 event_observer * observer);
 
-bool     evntNoti_UnsubscribeEvent  (evnt_pub pub_handle, evnt_sub sub_handle);
+bool evntNoti_UnsubscribeEvent(event_subject* subject,
+                               event_observer* observer);
 
-void     evntNoti_NotifyEvent(evnt_pub pub_handle,
+void     evntNoti_NotifyEvent(event_subject* subject,
                               uint32_t event_code,
                               void* param1,
                               void* param2);

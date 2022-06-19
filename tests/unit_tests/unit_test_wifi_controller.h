@@ -33,6 +33,7 @@ extern "C" {
 #include "hal/wifi_controller/wifi_controller.h"
 #include "utilities/event_notifier/event_notifier.h"
 
+#if (WIFI_CONTROLLER == 1U)
     Driver * driver = NULL;
     bool connecting_flag = false;
     bool connected_flag = false;
@@ -65,10 +66,12 @@ extern "C" {
 
         return 0;
     }
+#endif
 }
 
 namespace 
 {
+#if (WIFI_CONTROLLER == 1U)
     TEST(Wifi_Controller, General_Test) 
     {
         bool is_success = true;
@@ -115,6 +118,7 @@ namespace
         is_success = driver->UnsubscribeEventNotification(sub_handle);
         ASSERT_EQ(is_success, true);
     }
+#endif
 }
 
 #endif /* _UNIT_TEST_WIFI_CONTROLLER */

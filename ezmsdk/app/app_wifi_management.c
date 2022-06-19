@@ -35,10 +35,13 @@
 * Includes
 *******************************************************************************/
 #include "app_wifi_management.h"
-#include "string.h"
+
+#if (WIFI_CONTROLLER == 1U && CLI == 1U)
 
 #define DEBUG_LVL   LVL_TRACE       /**< logging level */
 #define MOD_NAME    "WIFI_MGMT"     /**< module name */
+
+#include "string.h"
 
 #include "utilities/logging/logging.h"
 #include "utilities/ezmAssert/ezmAssert.h"
@@ -500,5 +503,8 @@ static CLI_NOTIFY_CODE WiFiMgmt_ScanCmdHandle(const char * pu8Command,
 
     return ret_code;
 }
+
+#endif
+
 /* End of file*/
 

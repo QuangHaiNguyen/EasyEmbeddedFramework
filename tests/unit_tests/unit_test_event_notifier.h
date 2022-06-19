@@ -59,47 +59,74 @@ namespace
 {
     TEST(event_notifier, init) 
     {
-        evntNoti_Initialize();
-        evnt_pub publisher;
-        evnt_sub subscriber1;
+        bool is_success = false;
+        event_subject sub;
+        event_observer obs1;
 
-        publisher = evntNoti_CreatePublisher(NUM_SUPORTED_SUB);
-        subscriber1 = evntNoti_SubscribeEvent(publisher, Sub1EventHandler);
-        ASSERT_NE(publisher, UINT32_MAX);
-        ASSERT_NE(subscriber1, UINT32_MAX);
+        is_success = evntNoti_CreateSubject(&sub, NUM_SUPORTED_SUB);
+        ASSERT_EQ(is_success, true);
+
+        is_success = evntNoti_CreateObserver(&obs1, Sub1EventHandler);
+        ASSERT_EQ(is_success, true);
+        
+        is_success = evntNoti_SubscribeEvent(&sub, &obs1);
+        ASSERT_EQ(is_success, true);
     }
 
     TEST(event_notifier, max_subscriber)
     {
-        evntNoti_Initialize();
-        evnt_pub publisher;
-        evnt_sub subscriber1;
-        evnt_sub subscriber2;
-        evnt_sub subscriber3;
+        bool is_success = false;
+        event_subject sub;
+        event_observer obs1;
+        event_observer obs2;
+        event_observer obs3;
 
-        publisher = evntNoti_CreatePublisher(NUM_SUPORTED_SUB);
-        subscriber1 = evntNoti_SubscribeEvent(publisher, Sub1EventHandler);
-        subscriber2 = evntNoti_SubscribeEvent(publisher, Sub2EventHandler);
-        subscriber3 = evntNoti_SubscribeEvent(publisher, Sub2EventHandler);
+        is_success = evntNoti_CreateSubject(&sub, NUM_SUPORTED_SUB);
+        ASSERT_EQ(is_success, true);
 
-        ASSERT_NE(publisher, UINT32_MAX);
-        ASSERT_NE(subscriber1, UINT32_MAX);
-        ASSERT_NE(subscriber2, UINT32_MAX);
-        ASSERT_EQ(subscriber3, UINT32_MAX);
+        is_success = evntNoti_CreateObserver(&obs1, Sub1EventHandler);
+        ASSERT_EQ(is_success, true);
+
+        is_success = evntNoti_CreateObserver(&obs2, Sub1EventHandler);
+        ASSERT_EQ(is_success, true);
+
+        is_success = evntNoti_CreateObserver(&obs3, Sub1EventHandler);
+        ASSERT_EQ(is_success, true);
+
+        is_success = evntNoti_SubscribeEvent(&sub, &obs1);
+        ASSERT_EQ(is_success, true);
+
+        is_success = evntNoti_SubscribeEvent(&sub, &obs2);
+        ASSERT_EQ(is_success, true);
+
+        is_success = evntNoti_SubscribeEvent(&sub, &obs3);
+        ASSERT_NE(is_success, true);
     }
+
 
     TEST(event_notifier, event_notify)
     {
-        evntNoti_Initialize();
-        evnt_pub publisher;
-        evnt_sub subscriber1;
-        evnt_sub subscriber2;
+        bool is_success = false;
+        event_subject sub;
+        event_observer obs1;
+        event_observer obs2;
 
-        publisher = evntNoti_CreatePublisher(NUM_SUPORTED_SUB);
-        subscriber1 = evntNoti_SubscribeEvent(publisher, Sub1EventHandler);
-        subscriber2 = evntNoti_SubscribeEvent(publisher, Sub2EventHandler);
+        is_success = evntNoti_CreateSubject(&sub, NUM_SUPORTED_SUB);
+        ASSERT_EQ(is_success, true);
 
-        evntNoti_NotifyEvent(publisher, TEST_EVENT_CODE, NULL, NULL);
+        is_success = evntNoti_CreateObserver(&obs1, Sub1EventHandler);
+        ASSERT_EQ(is_success, true);
+
+        is_success = evntNoti_CreateObserver(&obs2, Sub2EventHandler);
+        ASSERT_EQ(is_success, true);
+
+        is_success = evntNoti_SubscribeEvent(&sub, &obs1);
+        ASSERT_EQ(is_success, true);
+
+        is_success = evntNoti_SubscribeEvent(&sub, &obs2);
+        ASSERT_EQ(is_success, true);
+
+        evntNoti_NotifyEvent(&sub, TEST_EVENT_CODE, NULL, NULL);
 
         ASSERT_EQ(Sub1EventCount, 1);
         ASSERT_EQ(Sub1EventCode, TEST_EVENT_CODE);
@@ -115,31 +142,42 @@ namespace
         Sub2EventCode = 0;
     }
 
+
     TEST(event_notifier, unsubscribe)
     {
-        evntNoti_Initialize();
-        evnt_pub publisher;
-        evnt_sub subscriber1;
-        evnt_sub subscriber2;
-        bool success = false;
+        bool is_success = false;
+        event_subject sub;
+        event_observer obs1;
+        event_observer obs2;
 
-        publisher = evntNoti_CreatePublisher(NUM_SUPORTED_SUB);
-        subscriber1 = evntNoti_SubscribeEvent(publisher, Sub1EventHandler);
-        subscriber2 = evntNoti_SubscribeEvent(publisher, Sub2EventHandler);
+        is_success = evntNoti_CreateSubject(&sub, NUM_SUPORTED_SUB);
+        ASSERT_EQ(is_success, true);
 
-        success = evntNoti_UnsubscribeEvent(publisher, subscriber1);
-        ASSERT_EQ(success, true);
-        success = evntNoti_UnsubscribeEvent(publisher, subscriber2);
-        ASSERT_EQ(success, true);
+        is_success = evntNoti_CreateObserver(&obs1, Sub1EventHandler);
+        ASSERT_EQ(is_success, true);
 
-        evntNoti_NotifyEvent(publisher, TEST_EVENT_CODE, NULL, NULL);
+        is_success = evntNoti_CreateObserver(&obs2, Sub2EventHandler);
+        ASSERT_EQ(is_success, true);
+
+        is_success = evntNoti_SubscribeEvent(&sub, &obs1);
+        ASSERT_EQ(is_success, true);
+
+        is_success = evntNoti_SubscribeEvent(&sub, &obs2);
+        ASSERT_EQ(is_success, true);
+        
+        is_success = evntNoti_UnsubscribeEvent(&sub, &obs1);
+        ASSERT_EQ(is_success, true);
+        
+        is_success = evntNoti_UnsubscribeEvent(&sub, &obs2);
+        ASSERT_EQ(is_success, true);
+
+        evntNoti_NotifyEvent(&sub, TEST_EVENT_CODE, NULL, NULL);
 
         ASSERT_EQ(Sub1EventCount, 0);
         ASSERT_EQ(Sub1EventCode, 0);
 
         ASSERT_EQ(Sub2EventCount, 0);
         ASSERT_EQ(Sub2EventCode, 0);
-
     }
 }
 

@@ -69,7 +69,7 @@
  */
 struct WiFiController
 {
-    evnt_pub publisher_handle;  /**< Event publisher handle, publish wifi event to subscribers*/
+    event_subject event;        /**< Event publisher handle, publish wifi event to subscribers*/
     Driver  driver;             /**< Store wifi controller api */
     INTERRUPT_CALLBACK callback;/**< Handle interrupt from hardware component */
 };
@@ -111,7 +111,7 @@ void* WifiCtrl_GetWifiControllerDriver(void)
 
     TRACE("WifiCtrl_GetWifiControllerDriver()");
 
-    controller_instance.publisher_handle = evntNoti_CreatePublisher(3);
+    evntNoti_CreatePublisher(controller_instance.event, 3);
 
     if (controller_instance.publisher_handle == UINT32_MAX)
     {

@@ -35,7 +35,7 @@
 #define SYSTEM_ERROR            1U
 #define FLASH_SIM               0U
 #define EVENT_NOTIFIER          1U
-#define WIFI_CONTROLLER         1U
+#define WIFI_CONTROLLER         0U
 
 /*Module ID section*/
 

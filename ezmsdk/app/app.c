@@ -100,9 +100,6 @@
 #include "platforms/simulator/flash/flash_simulator.h"
 #endif /* FLASH_SIM */
 
-#if (EVENT_NOTIFIER == 1U)
-#include "utilities/event_notifier/event_notifier.h"
-#endif /*EVENT_NOTIFIER == 1U*/
 
 /******************************************************************************
 * Module Typedefs
@@ -195,11 +192,6 @@ void ezmApp_SdkInit(void)
     INFO("Initialize assert module");
     INFO("Module Id: 0x%02x", HELPER_ASSERT_MOD_ID);
 #endif
-
-#if (EVENT_NOTIFIER == 1U)
-    INFO("Initialize envent notifier module");
-    evntNoti_Initialize();
-#endif /*EVENT_NOTIFIER == 1U*/
 
 #if (STATEMACHINE == 1U)
     /* DEBUG module has no init function*/
@@ -407,11 +399,6 @@ static void ezm_AppPrintActiveModule(void)
 #else
     INFO("[ ] SYSTEM_ERROR");
 #endif /* SYSTEM_ERROR*/
-#if (EVENT_NOTIFIER == 1U)
-    INFO("[x] EVENT_NOTIFIER");
-#else
-    INFO("[ ] EVENT_NOTIFIER");
-#endif /*EVENT_NOTIFIER == 1U*/
 
 #if (FLASH_SIM == 1U)
     INFO("[x] FLASH_SIM");

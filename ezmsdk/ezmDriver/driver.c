@@ -259,14 +259,16 @@ bool ezmDriver_IsDriverBusy(DriverId id)
 *           false: fail
 *
 *******************************************************************************/
-bool ezmDriver_SubscribeDriverEvent(DriverId id, EVENT_CALLBACK callback)
+bool ezmDriver_SubscribeDriverEvent(DriverId id,
+                                    event_observer * observer,
+                                    EVENT_CALLBACK callback)
 {
     bool is_success = false;
     if (id < NUM_OF_DRIVER && 
         id >= 0 && 
         driver_list[id]->SubscribeEventNotification)
     {
-            driver_list[id]->SubscribeEventNotification(callback);
+            driver_list[id]->SubscribeEventNotification(observer, callback);
             is_success = true;
     }
     else
@@ -289,14 +291,14 @@ bool ezmDriver_SubscribeDriverEvent(DriverId id, EVENT_CALLBACK callback)
 *           false: fail
 *
 *******************************************************************************/
-bool ezmDriver_UnsubscribeDriverEvent(DriverId id, evnt_sub sub_handle)
+bool ezmDriver_UnsubscribeDriverEvent(DriverId id, event_observer * observer)
 {
     bool is_success = false;
     if (id < NUM_OF_DRIVER
         && id >= 0 &&
         driver_list[id]->UnsubscribeEventNotification)
     {
-        is_success = driver_list[id]->UnsubscribeEventNotification(sub_handle);
+        is_success = driver_list[id]->UnsubscribeEventNotification(observer);
     }
     return is_success;
 }
