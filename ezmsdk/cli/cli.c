@@ -113,7 +113,7 @@ static ENUM_CLI_STATE   eState = STATE_COMMAND; /**< Holding the current state o
 static const char       cmd_help[] = "help";
 static const char       cmd_help_desc[] = "show help";
 static uint8_t          welcome[] = "CLI has been activated, type help for the list of command\n";
-static char             buff_printf[PRINTF_BUFF_SIZE] = { 0 };
+static char             buff_printf[BUFF_PRINTF_SIZE] = { 0 };
 
 /******************************************************************************
 * Function Definitions

@@ -15,7 +15,7 @@
 #define _APP_CONFIG_H
 
 
-#define CLI                     0U
+#define CLI                     1U
 #define SCHEDULER               0U
 #define SMALLOC                 0U
 #define BIN_PARSER              1U
@@ -30,13 +30,21 @@
 #define STCMEM                  1U
 #define KERNEL                  1U
 #define DRIVERINF               1U
-#define EZM_PRINTF              1U
-#define HAL_UART                0U
+#define EZM_PRINTF              0U
+#define HAL_UART                1U
 #define SYSTEM_ERROR            1U
 #define FLASH_SIM               0U
 #define EVENT_NOTIFIER          1U
-#define WIFI_CONTROLLER         0U
-#define DATA_MODEL              1U
+#define WIFI_CONTROLLER         1U
+
+/* MICROCONTROLER SECTION *****************************************************/
+#define NO_CHIP             1U
+#define WIN                 2U
+#define LINUX               3U
+#define ESP32               4U
+#define STM32               5U
+
+#define SUPPORTED_CHIP      ESP32
 
 /*Module ID section*/
 
@@ -207,15 +215,6 @@
 /******************************************************************************/
 /* DRIVER SECTION                                                             */
 /******************************************************************************/
-
-/* MICROCONTROLER SECTION *****************************************************/
-#define NO_CHIP             1U
-#define WIN                 2U
-#define LINUX               3U
-#define ESP32               4U
-#define STM32               5U
-
-#define SUPPORTED_CHIP      WIN
 
 /* UART SECTION ***************************************************************/
 #if (HAL_UART == 1U)

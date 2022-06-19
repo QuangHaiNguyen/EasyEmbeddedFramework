@@ -36,12 +36,15 @@
 *******************************************************************************/
 #include "data_model.h"
 
+#if (DATA_MODEL == 1U)
+
 #define DEBUG_LVL   LVL_TRACE       /**< logging level */
 #define MOD_NAME    "DATA_MODEL"    /**< module name */
 
 #include <string.h>
 
 #include "utilities/logging/logging.h"
+#include "utilities/event_notifier/event_notifier.h"
 
 /*the rest of include go here*/
 
@@ -399,8 +402,12 @@ bool DataModel_UnsubscribeDataPointEvent(DataPoint data_point,
     }
     return is_success;
 }
+
+
 /******************************************************************************
 * Internal functions
 *******************************************************************************/
+
+#endif /* (DATA_MODEL == 1U) */
 
 /* End of file*/
