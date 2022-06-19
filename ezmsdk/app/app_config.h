@@ -15,7 +15,7 @@
 #define _APP_CONFIG_H
 
 
-#define CLI                     1U
+#define CLI                     0U
 #define SCHEDULER               0U
 #define SMALLOC                 0U
 #define BIN_PARSER              1U
@@ -31,7 +31,7 @@
 #define KERNEL                  1U
 #define DRIVERINF               1U
 #define EZM_PRINTF              1U
-#define HAL_UART                1U
+#define HAL_UART                0U
 #define SYSTEM_ERROR            1U
 #define FLASH_SIM               0U
 #define EVENT_NOTIFIER          1U

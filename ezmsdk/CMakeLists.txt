@@ -51,6 +51,10 @@ scheduler/scheduler.c)
 target_sources(sdk PRIVATE
 statemachine/statemachine.c)
 
+# data model module
+target_sources(sdk PRIVATE
+data_model/data_model.c)
+
 # hal module
 target_sources(sdk PRIVATE
 hal/uart/uart.c
