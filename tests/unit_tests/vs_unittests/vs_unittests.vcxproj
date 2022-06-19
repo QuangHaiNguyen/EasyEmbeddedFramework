@@ -39,6 +39,7 @@
     <ClInclude Include="..\unit_test_assert.h" />
     <ClInclude Include="..\unit_test_binParser.h" />
     <ClInclude Include="..\unit_test_cli.h" />
+    <ClInclude Include="..\unit_test_data_model.h" />
     <ClInclude Include="..\unit_test_event_notifier.h" />
     <ClInclude Include="..\unit_test_flash_simulator.h" />
     <ClInclude Include="..\unit_test_hexdump.h" />
@@ -85,7 +86,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>G:\SDK\ezmSDK\ide\vs_project\Debug\cli.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\linked_list.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\smalloc.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\ring_buffer.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\stcmem.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\hexdump.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\ezmIpc.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\binCmdParser.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\ezmKernel.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\ezmDebug.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\system_error.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\flash_simulator.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\logging.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\event_notifier.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\wifi_controller.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\wifi_controller_sim.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\driver.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\uart.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\dummy_driver.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\uart_sim.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\app.obj;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>G:\SDK\ezmSDK\ide\vs_project\Debug\cli.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\linked_list.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\smalloc.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\ring_buffer.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\stcmem.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\hexdump.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\ezmIpc.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\binCmdParser.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\ezmKernel.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\ezmDebug.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\system_error.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\flash_simulator.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\logging.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\event_notifier.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\wifi_controller.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\wifi_controller_sim.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\driver.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\uart.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\dummy_driver.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\uart_sim.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\app.obj;G:\SDK\ezmSDK\ide\vs_project\Debug\data_model.obj;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

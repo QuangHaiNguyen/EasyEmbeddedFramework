@@ -19,6 +19,7 @@
 #define TEST_LOGGING            0U
 #define TEST_EVENT_NOTIFIER     0U
 #define TEST_WIFI_CONTROLLER    0U
+#define TEST_DATA_MODEL         1U
 
 #if (TEST_IPC == 1U)
 #include "../unit_test_ipc.h"
@@ -82,4 +83,8 @@
 
 #if(TEST_WIFI_CONTROLLER == 1U)
 #include "../unit_test_wifi_controller.h"
+#endif
+
+#if(TEST_DATA_MODEL == 1U)
+#include "../unit_test_data_model.h"
 #endif

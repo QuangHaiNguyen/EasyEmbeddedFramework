@@ -54,6 +54,9 @@
     <ClInclude Include="..\unit_test_wifi_controller.h">
       <Filter>test_cases</Filter>
     </ClInclude>
+    <ClInclude Include="..\unit_test_data_model.h">
+      <Filter>test_cases</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
