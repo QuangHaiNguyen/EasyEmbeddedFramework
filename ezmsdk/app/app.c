@@ -100,7 +100,13 @@
 #include "platforms/simulator/flash/flash_simulator.h"
 #endif /* FLASH_SIM */
 
+#if (DATA_MODEL == 1U)
+#include "data_model/data_model.h"
+#endif /* DATA_MODEL == 1U */
 
+#if (MQTT == 1U)
+#include "hal/network/mqtt/mqtt.h"
+#endif
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
@@ -229,6 +235,11 @@ void ezmApp_SdkInit(void)
     INFO("Initialize SYSTEM_ERROR module");
     INFO("Module Id: 0x%02x", SYSTEM_ERROR_MOD_ID);
 #endif /* SYSTEM_ERROR*/
+
+#if (DATA_MODEL == 1U)
+    DataModel_Initialization();
+    INFO("Initialize DATA_MODEL module");
+#endif /* DATA_MODEL == 1U */
 
 #if (FLASH_SIM == 1U)
     if (FlashSim_Initialization())
@@ -399,6 +410,12 @@ static void ezm_AppPrintActiveModule(void)
 #else
     INFO("[ ] SYSTEM_ERROR");
 #endif /* SYSTEM_ERROR*/
+
+#if (DATA_MODEL == 1U)
+    INFO("[x] DATA_MODEL");
+#else
+    INFO("[ ] DATA_MODEL");
+#endif /* DATA_MODEL */
 
 #if (FLASH_SIM == 1U)
     INFO("[x] FLASH_SIM");

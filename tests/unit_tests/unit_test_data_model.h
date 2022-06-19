@@ -30,8 +30,10 @@
 
 extern "C" {
 #if(TEST_DATA_MODEL == 1U)
+
 #include "data_model/data_model.h"
 #include "utilities/logging/logging.h"
+
     uint32_t test_data_1 = 0;
     char test_data_2[16] = { 0 };
 

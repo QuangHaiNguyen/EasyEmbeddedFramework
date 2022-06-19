@@ -89,6 +89,12 @@
     <Filter Include="Source Files\data_model">
       <UniqueIdentifier>{c3aa923c-9a1e-4821-a507-fac2276a594e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\hal\network">
+      <UniqueIdentifier>{c34528df-c9c8-49d2-a43e-c08000f0a993}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\hal\network\mqtt">
+      <UniqueIdentifier>{498cd2f0-144a-4735-ad03-c76321eb65ac}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ezmsdk\app\app.c">
@@ -171,6 +177,9 @@
     </ClCompile>
     <ClCompile Include="..\..\ezmsdk\data_model\data_model.c">
       <Filter>Source Files\data_model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\hal\network\mqtt\mqtt.c">
+      <Filter>Source Files\hal\network\mqtt</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -263,6 +272,9 @@
     </ClInclude>
     <ClInclude Include="..\..\ezmsdk\data_model\data_model.h">
       <Filter>Source Files\data_model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ezmsdk\hal\network\mqtt\mqtt.h">
+      <Filter>Source Files\hal\network\mqtt</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

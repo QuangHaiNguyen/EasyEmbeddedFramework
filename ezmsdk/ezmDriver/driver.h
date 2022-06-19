@@ -80,8 +80,10 @@ typedef struct
     bool                is_busy;                                    /**< busy flag */
     void                *driver_api;                                /**< pointer to the driver api structure*/
     DriverInitFunction  init_function;                              /**< pointer to the initialize  function*/
+    void (*SetConfig)(void * config);                               /**< */
+    void *(*GetConfig)(void);                                       /**< */
     bool (*UnsubscribeEventNotification)(event_observer* observer); /**< */
-    bool (*SubscribeEventNotification)( event_observer * observer);   /**< */
+    bool (*SubscribeEventNotification)( event_observer * observer); /**< */
 }Driver;
 
 /** @brief function pointer of the get driver function
