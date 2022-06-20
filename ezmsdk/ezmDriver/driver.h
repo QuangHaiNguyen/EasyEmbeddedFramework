@@ -62,14 +62,17 @@ typedef bool    (*DriverInitFunction)   (void);
  */
 typedef enum
 {
-    DUMMY_DRIVER,   /**< for testing purpose only */
+    DUMMY_DRIVER,       /**< for testing purpose only */
 #if(HAL_UART)
-    UART0_DRIVER,   /**< uart driver, normally for cli */
+    UART0_DRIVER,       /**< uart driver, normally for cli */
 #endif
 #if (WIFI_CONTROLLER == 1U)
     WIFI_CTRL_DRIVER,   /**< wifi driver */
 #endif
-    NUM_OF_DRIVER   /**< number of available drivers */
+#if (MQTT == 1U)
+    MQTT_DRIVER,        /**< mqtt deriver */
+#endif
+    NUM_OF_DRIVER       /**< number of available drivers */
 }DriverId;
 
 /** @brief CLI notification code

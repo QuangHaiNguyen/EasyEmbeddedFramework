@@ -39,7 +39,7 @@
 #if (MQTT == 1U)
 
 #define DEBUG_LVL   LVL_TRACE   /**< logging level */
-#define MOD_NAME    "mqtt"       /**< module name */
+#define MOD_NAME    "MQTT"       /**< module name */
 
 #include <string.h>
 
