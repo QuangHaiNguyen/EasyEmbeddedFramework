@@ -53,7 +53,7 @@
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
-/* None */
+#define DEFAULT_CONNECT 1U
 
 /******************************************************************************
 * Module Typedefs
@@ -184,6 +184,20 @@ static bool WiFiMgmt_GetWifiDriver(void)
         is_success &= ezmDriver_SubscribeDriverEvent(WIFI_CTRL_DRIVER,
                                                      &observer);
     }
+
+#if (DEFAULT_CONNECT == 1U)
+    if(is_success)
+    {
+        if(wifi_drv->WiFiCtrl_Connect( default_ssid, 
+                                        strlen(default_ssid), 
+                                        default_pwd,
+                                        strlen(default_pwd)) == false)
+        {
+            ERROR("Cannot connect to default ssid");
+            is_success = false;
+        }
+    }
+#endif /* DEFAULT_CONNECT */
 
     return is_success;
 }

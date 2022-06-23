@@ -47,7 +47,7 @@
 #include "utilities/event_notifier/event_notifier.h"
 #include "utilities/ezmAssert/ezmAssert.h"
 #include "ezmDriver/driver.h"
-
+#include "platforms/esp32/network/esp_mqtt/esp32_mqtt.h"
 /*the rest of include go here*/
 
 /******************************************************************************
@@ -133,6 +133,9 @@ void * Mqtt_GetDriver(void)
         client.driver.GetConfig = Mqtt_GetCofig;
 
         /* Calling low level binind function */
+        client.driver.init_function = espMqtt_Initialization;
+        is_success &= espMqtt_BindingDriverApi((void**)&client.driver);
+        is_success &= espMqtt_RegisterEventCallback(Mqtt_EventCallback);
     }
 
     if (is_success)

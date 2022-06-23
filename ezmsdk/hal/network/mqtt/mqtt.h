@@ -57,11 +57,10 @@
  */
 typedef enum
 {
-    EVENT_STARTED,          /**< MQTT started */
-    EVENT_STOPPED,          /**< MQTT stopped */
     EVENT_CONNECTED,        /**< MQTT connected */
     EVENT_DISCONNECTED,     /**< MQTT disconnected */
     EVENT_SUBSCRIBED,       /**< MQTT subscribed */
+    EVENT_UNSUBSCRIBED,     /**< MQTT unsubscribed */
     EVENT_PUBLISHED,        /**< MQTT published */
     EVENT_DATA_RECEIVED,    /**< MQTT data received */
     EVENT_ERROR,            /**< MQTT error */
@@ -89,6 +88,7 @@ typedef struct
     const char * broker_adr;            /**< */
     const char * username;              /**< */
     const char * pwd;                   /**< */
+    const char * client_id;             /**< */
     uint16_t port;                      /**< */
     bool is_tls_activate;               /**< */
     MQTT_TRANSPORT_TYPE transport_type; /**< */
@@ -108,14 +108,12 @@ typedef uint32_t(*MQTT_EVENT_CALLBACK)(uint32_t event_code,
  */
 typedef struct
 {
-    void (*Mqtt_Config)     (MqttConfig * config);  /**< */
-    void (*Mqtt_Start)      (void);                 /**< */
-    void (*Mqtt_Stop)       (void);                 /**< */
-    void (*Mqtt_Connect)    (void);                 /**< */
-    void (*Mqtt_Disconnect) (void);                 /**< */
-    void (*Mqtt_Subscribe)  (const char* topic);    /**< */
-    void (*Mqtt_Unsubscribe)(const char* topic);    /**< */
-    void (*Mqtt_Publish)    (const char* topic,
+    bool (*Mqtt_Config)     (MqttConfig * config); /**< */
+    bool (*Mqtt_Connect)    (void);                 /**< */
+    bool (*Mqtt_Disconnect) (void);                 /**< */
+    bool (*Mqtt_Subscribe)  (const char* topic);    /**< */
+    bool (*Mqtt_Unsubscribe)(const char* topic);    /**< */
+    bool (*Mqtt_Publish)    (const char* topic,
                              void* data,
                              uint32_t size);        /**< */
 }MqttDriverApi;

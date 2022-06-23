@@ -49,7 +49,7 @@
 
 #include "hal/uart/uart.h"
 #include "hal/wifi_controller/wifi_controller.h"
-
+#include "hal/network/mqtt/mqtt.h"
 #include "dummy_driver.h"
 
 /******************************************************************************
@@ -69,6 +69,9 @@ GetDriverFunction get_driver[NUM_OF_DRIVER] =
 #endif
 #if(WIFI_CONTROLLER == 1U)
     (GetDriverFunction)WifiCtrl_GetWifiControllerDriver,
+#endif
+#if(MQTT == 1U)
+    (GetDriverFunction)Mqtt_GetDriver,
 #endif
 };
 

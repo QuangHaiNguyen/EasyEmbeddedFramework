@@ -10,6 +10,3 @@ add_subdirectory(ezmsdk)
 add_executable(main ezmsdk/app/main.c)
 target_include_directories(main PRIVATE ezmsdk)
 target_link_libraries(main PRIVATE sdk)
-
-
-    

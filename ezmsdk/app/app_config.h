@@ -46,7 +46,7 @@
 #define ESP32               4U
 #define STM32               5U
 
-#define SUPPORTED_CHIP      WIN
+#define SUPPORTED_CHIP      ESP32
 
 /*Module ID section*/
 

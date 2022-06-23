@@ -58,7 +58,8 @@ data_model/data_model.c)
 # hal module
 target_sources(sdk PRIVATE
 hal/uart/uart.c
-hal/wifi_controller/wifi_controller.c)
+hal/wifi_controller/wifi_controller.c
+hal/network/mqtt/mqtt.c)
 
 # platforms module
 # PC target
@@ -70,7 +71,13 @@ platforms/simulator/wifi_controller/wifi_controller_sim.c)
 #esp32 target
 target_sources(sdk PRIVATE
 platforms/esp32/uart/esp32_uart.c
-platforms/esp32/wifi_controller/esp32_wifi_controller.c)
+platforms/esp32/wifi_controller/esp32_wifi_controller.c
+platforms/esp32/network/esp_mqtt/esp32_mqtt.c)
+
+if(ESP_PLATFORM)
+  # On ESP-IDF, bar.c needs to include esp_spi_flash.h from the spi_flash component
+  target_link_libraries(sdk PRIVATE idf::mqtt)
+endif()
 
 #include directory
 target_include_directories(sdk PUBLIC .)
