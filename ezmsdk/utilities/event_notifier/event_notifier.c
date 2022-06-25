@@ -37,7 +37,7 @@
 #include "event_notifier.h"
 
 
-#define DEBUG_LVL   LVL_ERROR       /**< logging level */
+#define DEBUG_LVL   LVL_TRACE       /**< logging level */
 #define MOD_NAME    "EVENT_NOTI"    /**< module name */
 
 #if(EVENT_NOTIFIER == 1U)

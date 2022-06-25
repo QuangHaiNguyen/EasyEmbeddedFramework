@@ -199,6 +199,8 @@ static bool WiFiMgmt_GetWifiDriver(void)
     }
 #endif /* DEFAULT_CONNECT */
 
+    ezmDriver_ReleaseDriverInstance(WIFI_CTRL_DRIVER);
+
     return is_success;
 }
 
@@ -397,10 +399,12 @@ static CLI_NOTIFY_CODE WiFiMgmt_ConnCmdHandle(const char * pu8Command,
             pwd = (char*)(*pu32Params);
             TRACE("[pwd = %s]", pwd);
 
+            ezmDriver_GetDriverInstance(WIFI_CTRL_DRIVER, (void**)(&wifi_drv));
             if(wifi_drv)
             {
                 wifi_drv->WiFiCtrl_Connect(ssid, strlen(ssid), pwd, strlen(pwd));
             }
+            ezmDriver_ReleaseDriverInstance(WIFI_CTRL_DRIVER);
         }
     }
 
@@ -434,6 +438,7 @@ static CLI_NOTIFY_CODE WiFiMgmt_ConnDefaultCmdHandle(const char * pu8Command,
 
     if(is_success)
     {
+        ezmDriver_GetDriverInstance(WIFI_CTRL_DRIVER, (void**)(&wifi_drv));
         if(wifi_drv)
         {
             wifi_drv->WiFiCtrl_Connect( default_ssid, 
@@ -441,6 +446,7 @@ static CLI_NOTIFY_CODE WiFiMgmt_ConnDefaultCmdHandle(const char * pu8Command,
                                         default_pwd,
                                         strlen(default_pwd));
         }
+        ezmDriver_ReleaseDriverInstance(WIFI_CTRL_DRIVER);
     }
 
     return ret_code;
@@ -474,10 +480,12 @@ static CLI_NOTIFY_CODE WiFiMgmt_DisconnCmdHandle(const char * pu8Command,
 
     if(is_success)
     {
+        ezmDriver_GetDriverInstance(WIFI_CTRL_DRIVER, (void**)(&wifi_drv));
         if(wifi_drv)
         {
             wifi_drv->WifiCtrl_Disconnect();
         }
+        ezmDriver_ReleaseDriverInstance(WIFI_CTRL_DRIVER);
     }
 
     return ret_code;
@@ -511,11 +519,13 @@ static CLI_NOTIFY_CODE WiFiMgmt_ScanCmdHandle(const char * pu8Command,
 
     if(is_success)
     {
+        ezmDriver_GetDriverInstance(WIFI_CTRL_DRIVER, (void**)(&wifi_drv));
         if(wifi_drv)
         {
             ezmCli_Printf("Scanning...\n");
             wifi_drv->WifiCtrl_Scan();
         }
+        ezmDriver_ReleaseDriverInstance(WIFI_CTRL_DRIVER);
     }
 
     return ret_code;

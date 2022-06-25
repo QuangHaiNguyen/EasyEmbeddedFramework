@@ -251,7 +251,7 @@ bool DataModel_WriteDataPoint(DataPoint data_point,
                               void* data,
                               uint32_t size)
 {
-    TRACE("DataModel_WriteDataElement()");
+    TRACE("DataModel_WriteDataPoint()");
 
     bool is_success = false;
 
@@ -259,9 +259,17 @@ bool DataModel_WriteDataPoint(DataPoint data_point,
         data_model[data_point].is_avail == false &&
         data != NULL)
     {
+        TRACE("params sanity check OK");
+
         if (size == data_model[data_point].data_size &&
             data_model[data_point].is_locked == false)
         {
+            TRACE("internal data check OK");
+
+#if (DEBUG_LVL > LVL_DEBUG)
+            HEXDUMP(data, size);
+#endif /* (DEBUG_LVL > LVL_DEBUG) */
+
             data_model[data_point].is_locked = true;
 
             if (memcmp(data_model[data_point].data, data, size) != 0)
@@ -273,6 +281,10 @@ bool DataModel_WriteDataPoint(DataPoint data_point,
                                      DATA_MODIFY,
                                      data_model[data_point].data,
                                      &data_model[data_point].data_size);
+            }
+            else
+            {
+                TRACE("data unchanged");
             }
 
             data_model[data_point].is_locked = false;
@@ -366,7 +378,6 @@ bool DataModel_SubscribeDataPointEvent(DataPoint data_point,
         data_model[data_point].is_avail == false &&
         observer != NULL)
     {
-
         is_success = evntNoti_SubscribeEvent(&data_model[data_point].subject, observer);
     }
     return is_success;

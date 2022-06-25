@@ -46,7 +46,7 @@
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
-#define A_MACRO     1   /**< a macro*/
+/* None */
 
 /******************************************************************************
 * Module Typedefs
@@ -85,15 +85,24 @@ typedef enum
  */
 typedef struct
 {
-    const char * broker_adr;            /**< */
-    const char * username;              /**< */
-    const char * pwd;                   /**< */
-    const char * client_id;             /**< */
-    uint16_t port;                      /**< */
-    bool is_tls_activate;               /**< */
-    MQTT_TRANSPORT_TYPE transport_type; /**< */
-    void * tls_config;                  /**< */
+    const char  *broker_adr;            /**< Address of the mqtt broker */
+    const char  *username;              /**< username for login if applied */
+    const char  *pwd;                   /**< password for login if applied */
+    const char  *client_id;             /**< id of the mqtt client */
+    uint16_t    port;                   /**< port */
+    bool        is_tls_activate;        /**< flag if tls is used */
+    MQTT_TRANSPORT_TYPE transport_type; /**< transport protocol: ws, http, tcp */
+    void        *tls_config;            /**< store tls config, future feafute */
 }MqttConfig;
+
+/** @brief Hold data to notify the upper layer in EVENT_DATA_RECEIVED event 
+ *
+ */
+typedef struct
+{
+    void * data;    /**< pointer to the data */
+    uint32_t size;  /**< size of the data */
+}DataEvent;
 
 
 /** @brief event callback function pointer
@@ -108,14 +117,14 @@ typedef uint32_t(*MQTT_EVENT_CALLBACK)(uint32_t event_code,
  */
 typedef struct
 {
-    bool (*Mqtt_Config)     (MqttConfig * config); /**< */
-    bool (*Mqtt_Connect)    (void);                 /**< */
-    bool (*Mqtt_Disconnect) (void);                 /**< */
-    bool (*Mqtt_Subscribe)  (const char* topic);    /**< */
-    bool (*Mqtt_Unsubscribe)(const char* topic);    /**< */
+    bool (*Mqtt_Config)     (MqttConfig * config);  /**< config function */
+    bool (*Mqtt_Connect)    (void);                 /**< connect to broker */
+    bool (*Mqtt_Disconnect) (void);                 /**< disconnect from the broker */
+    bool (*Mqtt_Subscribe)  (const char* topic);    /**< subscribe to a topic */
+    bool (*Mqtt_Unsubscribe)(const char* topic);    /**< unsubscribe from a topic */
     bool (*Mqtt_Publish)    (const char* topic,
                              void* data,
-                             uint32_t size);        /**< */
+                             uint32_t size);        /**< publish data to a topic */
 }MqttDriverApi;
 
 /******************************************************************************
