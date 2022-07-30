@@ -39,6 +39,8 @@
 #define DEBUG_LVL   LVL_TRACE   /**< logging level */
 #define MOD_NAME    "APP_MQTT"       /**< module name */
 
+#include <string.h>
+
 #include "utilities/logging/logging.h"
 #include "utilities/event_notifier/event_notifier.h"
 
@@ -46,6 +48,7 @@
 #include "hal/wifi_controller/wifi_controller.h"
 
 #include "ezmDriver/driver.h"
+#include "ezmKernel/ezmKernel.h"
 
 /******************************************************************************
 * Module Preprocessor Macros
@@ -64,28 +67,27 @@ typedef struct
 {
     const char * topic;     /**< */
     DataPoint data_point;   /**< */
+    bool(*SetData)(char *in);
 }MqttDataPoint;
 
 
 /******************************************************************************
 * Module Variable Definitions
 *******************************************************************************/
-static const char * broker = "mqtt.eclipseprojects.io";
+static const char * broker = "pi-app-server";
 
 static MqttConfig mqtt_config = {0};
 static event_observer wifi_observer;
 static event_observer mqtt_observer;
 static MqttDriverApi * mqtt_drv;
-
-
-MqttDataPoint database[] = {
-    {"system/test", DATA_POINT_INVALID},
-};
+static EzmProcess mqtt_start_proc;
+static EzmProcess mqtt_stop_proc;
 
 /******************************************************************************
 * Function Definitions
 *******************************************************************************/
 static bool appMqtt_SubscribeAllTopics(void);
+static DATABASE_INDEX appMqtt_GetIndexFromTopic(const char * topic);
 
 static int appMqtt_WifiEventHandle(uint32_t event_code,
                                     void * param1,
@@ -95,6 +97,22 @@ static int appMqtt_MqttEventHandle(uint32_t event_code,
                                     void * param1,
                                     void * param2);
 
+static bool appMqtt_SetDataOnOff(char *in);
+static bool appMqtt_SetDataWaterLevel(char *in);
+static bool appMqtt_SetDataLastWater(char *in);
+
+static uint8_t appMqtt_MqttStopProcess(void);
+static uint8_t appMqtt_MqttStartProcess(void);
+/******************************************************************************
+* Lookup table
+*******************************************************************************/
+MqttDataPoint database[] = {
+    {"smarthome/balcony/water_sys/onoff/", DATA_POINT_INVALID, appMqtt_SetDataOnOff},
+    {"smarthome/balcony/water_sys/water_level/", DATA_POINT_INVALID, appMqtt_SetDataWaterLevel},
+    {"smarthome/balcony/water_sys/last_water/", DATA_POINT_INVALID, appMqtt_SetDataLastWater},
+    {"smarthome/balcony/water_sys/sys_temperature/", DATA_POINT_INVALID, NULL},
+    {"smarthome/balcony/water_sys/heartbeat/", DATA_POINT_INVALID, NULL},
+};
 /******************************************************************************
 * External functions
 *******************************************************************************/
@@ -158,7 +176,7 @@ bool appMqtt_Initialization(void)
             is_success &= mqtt_drv->Mqtt_Config(&mqtt_config);
         }
 
-        ezmDriver_ReleaseDriverInstance(WIFI_CTRL_DRIVER);
+        ezmDriver_ReleaseDriverInstance(MQTT_DRIVER);
     }
 
     if(is_success)
@@ -198,6 +216,7 @@ bool appMqtt_WriteData(DATABASE_INDEX index, void* data, uint32_t size)
     char set_topic[128] = {0};
 
     TRACE("appMqtt_WriteData()");
+    TRACE("[index = %d]", index);
 
     if(index < NUM_OF_INDEX && 
        database[index].data_point != DATA_POINT_INVALID)
@@ -206,24 +225,36 @@ bool appMqtt_WriteData(DATABASE_INDEX index, void* data, uint32_t size)
                                               data, 
                                               size);
         
-        ezmDriver_GetDriverInstance(MQTT_DRIVER, (void**)&mqtt_drv);
-        
-        if(mqtt_drv != NULL)
+        if(is_success)
         {
-            sprintf(set_topic, "%s%s", TOPIC_STATUS, database[index].topic);
-            is_success &= mqtt_drv->Mqtt_Publish(set_topic, data, size);
-            DEBUG("send data to [topic = %s]", set_topic);
+            ezmDriver_GetDriverInstance(MQTT_DRIVER, (void**)&mqtt_drv);
+        
+            if(mqtt_drv != NULL)
+            {
+                TRACE("got driver, try to publish data...");
+                sprintf(set_topic, "%s%s", TOPIC_STATUS, database[index].topic);
+                is_success &= mqtt_drv->Mqtt_Publish(set_topic, data, size);
+                DEBUG("send data to [topic = %s]", set_topic);
 #if DEBUG_LVL > LVL_DEBUG
-            TRACE("data:");
-            HEXDUMP(data, size);
+                TRACE("data:");
+                HEXDUMP(data, size);
 #endif
+            }
+            else
+            {
+                ERROR("cannot publish data");
+            }
+
+            ezmDriver_ReleaseDriverInstance(MQTT_DRIVER);
         }
         else
         {
-            ERROR("cannot publish data");
+            ERROR("cannot write data");
         }
-
-        ezmDriver_ReleaseDriverInstance(MQTT_DRIVER);
+    }
+    else
+    {
+        ERROR("Sanity check failed");
     }
 
     return is_success;
@@ -243,6 +274,35 @@ bool appMqtt_SubscribeDataChangeEvent(DATABASE_INDEX index,
 
     return is_success;
 }
+
+
+bool appMqtt_SetDataByTopic(const char * topic, void* data, uint32_t size)
+{
+    bool is_success = false;
+
+    TRACE("appMqtt_SetDataByTopic()");
+
+    if(topic != NULL && data != NULL && size > 0)
+    {
+        for(uint32_t i = 0; i < NUM_OF_INDEX; i++)
+        {
+            if(strcmp(topic, database[i].topic) == 0 && 
+                database[i].data_point != DATA_POINT_INVALID)
+            {
+                is_success = DataModel_WriteDataPoint(database[i].data_point, 
+                                                        data, 
+                                                        size);
+
+                DEBUG("write data at [topic = %s], data:", topic);
+                HEXDUMP(data, size);
+                break;
+            }
+        }
+    }
+    return is_success;
+}
+
+
 /******************************************************************************
 * Internal functions
 *******************************************************************************/
@@ -251,7 +311,7 @@ static bool appMqtt_SubscribeAllTopics(void)
 {
     TRACE("appMqtt_SubscribeAllTopics()");
 
-    char status_topic[128] = {0};
+    char set_topic[128] = {0};
     bool is_success = true;
 
     ezmDriver_GetDriverInstance(MQTT_DRIVER, (void**)&mqtt_drv);
@@ -260,9 +320,17 @@ static bool appMqtt_SubscribeAllTopics(void)
     {
         for (uint32_t i = 0; i < NUM_OF_INDEX; i++)
         {
-            sprintf(status_topic, "%s%s\0", TOPIC_SET, database[i].topic);
-            is_success &=  mqtt_drv->Mqtt_Subscribe(status_topic); 
-            
+            sprintf(set_topic, "%s%s\0", TOPIC_SET, database[i].topic);
+            is_success &=  mqtt_drv->Mqtt_Subscribe(set_topic);
+ 
+            if(is_success)
+            {
+                TRACE("success subscribe [topic = %s]", set_topic);
+            }
+            else
+            {
+                ERROR("subscribe fail");
+            }
         }
     }
     else
@@ -282,8 +350,6 @@ static int appMqtt_WifiEventHandle(uint32_t event_code,
 
     TRACE("WiFiMgmt_WifiEventHandle()");
     DEBUG("[event code = %d]", event_code);
-    
-    bool is_success = true;
 
     switch((HAL_WIFI_EVENT)event_code)
     {
@@ -300,7 +366,10 @@ static int appMqtt_WifiEventHandle(uint32_t event_code,
         ezmDriver_GetDriverInstance(MQTT_DRIVER, (void**)&mqtt_drv);
         if(mqtt_drv != NULL)
         {
-            is_success &= mqtt_drv->Mqtt_Connect();
+            if(mqtt_drv->Mqtt_Connect() == false)
+            {
+                ERROR("MQTT connect fail");
+            }
         }
         else
         {
@@ -308,13 +377,22 @@ static int appMqtt_WifiEventHandle(uint32_t event_code,
         }
         ezmDriver_ReleaseDriverInstance(MQTT_DRIVER);
 
-        if(is_success)
-        {
-            is_success &= appMqtt_SubscribeAllTopics();
-        }
         break;
 
     case WIFI_DISCONNECTED:
+        ezmDriver_GetDriverInstance(MQTT_DRIVER, (void**)&mqtt_drv);
+        if(mqtt_drv != NULL)
+        {
+            if(mqtt_drv->Mqtt_Disconnect() == false)
+            {
+                ERROR("MQTT disconnect fail");
+            }
+        }
+        else
+        {
+            ERROR("cannot connect to the broker");
+        }
+        ezmDriver_ReleaseDriverInstance(MQTT_DRIVER);
         break;
 
     default:
@@ -328,15 +406,24 @@ static int appMqtt_MqttEventHandle(uint32_t event_code,
                                     void * param1,
                                     void * param2)
 {
-    uint32_t test_data = 0xbeefcafe;
     switch((MQTT_EVENT)event_code)
     {
     case EVENT_CONNECTED:
+    {
         TRACE("EVENT_CONNECTED");
+        if(appMqtt_SubscribeAllTopics() == false)
+        {
+            ERROR("subscribe failed");
+        }
         break;
+    }
+
+        
     case EVENT_DISCONNECTED:
         TRACE("EVENT_DISCONNECTED");
+        ezmKernel_AddProcess(&mqtt_stop_proc, PROC_ONCE, 200, appMqtt_MqttStopProcess);
         break;
+
     case EVENT_SUBSCRIBED:
         TRACE("EVENT_SUBSCRIBED");
         break;
@@ -347,18 +434,185 @@ static int appMqtt_MqttEventHandle(uint32_t event_code,
         TRACE("EVENT_PUBLISHED");
         break;
     case EVENT_DATA_RECEIVED:
+    {
         TRACE("EVENT_DATA_RECEIVED");
+        char topic[128] = {0};
+        char value[128] = {0};
+        uint32_t string_len = 0;
+        DATABASE_INDEX index = NUM_OF_INDEX;
+
+        DataEvent * event = (DataEvent *)param1;
+
+        /* Get topic string */
+        string_len =  event->topic_size;
+        if(string_len > sizeof(topic))
+        {
+            string_len =  sizeof(topic) - 1;
+        }
+        memcpy(topic, event->topic, string_len);
+        TRACE("[topic = %s]", topic);
+
+        /* Get value string */
+        string_len =  event->data_size;
+        if(string_len > sizeof(value))
+        {
+            string_len =  sizeof(topic) - 1;
+        }
+        memcpy(value, event->data, string_len);
+        TRACE("[value = %s]", value);
+
+        /* omit the characters SET/*/
+        index = appMqtt_GetIndexFromTopic(&topic[4]);
+        if(index < NUM_OF_INDEX && database[index].SetData != NULL)
+        {
+            TRACE("OK, [topic = %s] found", topic);
+            if(database[index].SetData(value) == false)
+            {
+                WARNING("Cannot set data, are u sure data point is avail");
+            }
+        }
+
         break;
+    }
+
     case EVENT_ERROR:
         TRACE("EVENT_ERROR");
         break;
+
     case EVENT_UNKNOWN:
         TRACE("EVENT_UNKNOWN");
         break;
+
     default:
         break;
     }
 
+    return 0;
+}
+
+static DATABASE_INDEX appMqtt_GetIndexFromTopic(const char * topic)
+{
+    DATABASE_INDEX index = NUM_OF_INDEX;
+
+    TRACE("appMqtt_GetIndexFromTopic()");
+
+    if(topic != NULL)
+    {
+        for(uint32_t i = 0; i < NUM_OF_INDEX; i++)
+        {
+            if(strcmp(topic, database[i].topic) == 0)
+            {
+                index = i;
+                break;
+            }
+        }
+    }
+
+    return index;
+}
+
+static bool appMqtt_SetDataOnOff(char * in)
+{
+    bool is_success = false;
+    uint32_t result = 0;
+    char set_topic[128] = {0};
+
+    TRACE("appMqtt_SetDataOnOff()");
+
+    if(in != NULL)
+    {
+        result = atoi(in);
+        is_success = DataModel_WriteDataPoint(database[WATER_SYS_ONOFF].data_point, 
+                                                (void*)&result, 
+                                                sizeof(result));
+    }
+
+    if(is_success)
+    {
+        ezmDriver_GetDriverInstance(MQTT_DRIVER, (void**)&mqtt_drv);
+        if(mqtt_drv != NULL)
+        {
+            sprintf(set_topic, "%s%s", TOPIC_STATUS, database[WATER_SYS_ONOFF].topic);
+            is_success &= mqtt_drv->Mqtt_Publish(set_topic, &result, sizeof(result));
+        }
+        else
+        {
+            ERROR("cannot publish data");
+        }
+        ezmDriver_ReleaseDriverInstance(MQTT_DRIVER);
+    }
+
+    return is_success;
+}
+
+static bool appMqtt_SetDataWaterLevel(char *in)
+{
+    bool is_success = false;
+
+
+    TRACE("appMqtt_SetDataWaterLevel()");
+
+    if(in != NULL)
+    {
+        WARNING("someone want to change the water level, reject anyway");
+    }
+
+    return is_success;
+}
+
+
+static bool appMqtt_SetDataLastWater(char *in)
+{
+    bool is_success = false;
+
+    TRACE("appMqtt_SetDataWaterLevel()");
+
+    if(in != NULL)
+    {
+        WARNING("someone want to change the last time water, reject anyway");
+    }
+
+    return is_success;
+}
+
+static uint8_t appMqtt_MqttStopProcess(void)
+{
+    DEBUG("Stop mqtt, try to reconnect in 10s");
+    ezmDriver_GetDriverInstance(MQTT_DRIVER, (void**)&mqtt_drv);
+    if(mqtt_drv != NULL)
+    {
+        if(mqtt_drv->Mqtt_Disconnect() == false)
+        {
+            ERROR("MQTT disconnect fail");
+        }
+    }
+    else
+    {
+        ERROR("cannot get driver");
+    }
+    ezmDriver_ReleaseDriverInstance(MQTT_DRIVER);
+
+    ezmKernel_AddProcess(&mqtt_start_proc, PROC_ONCE, 10000, appMqtt_MqttStartProcess);
+
+    return 0;
+}
+
+static uint8_t appMqtt_MqttStartProcess(void)
+{
+    DEBUG("restart mqtt");
+    ezmDriver_GetDriverInstance(MQTT_DRIVER, (void**)&mqtt_drv);
+    if(mqtt_drv != NULL)
+    {
+        if(mqtt_drv->Mqtt_Connect() == false)
+        {
+            ERROR("MQTT connect fail");
+        }
+    }
+    else
+    {
+        ERROR("cannot get driver");
+    }
+    ezmDriver_ReleaseDriverInstance(MQTT_DRIVER);
     return 0;
 }
 /* End of file*/

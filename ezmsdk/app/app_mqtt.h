@@ -55,7 +55,11 @@
 *******************************************************************************/
 typedef enum
 {
-    TEST_INDEX = 0,
+    WATER_SYS_ONOFF,
+    WATER_SYS_WATER_LVL,
+    WATER_SYS_LAST_WATER,
+    WATER_SYS_INTERNAL_TEMP,
+    WATER_SYS_HEARTBEAT,
     NUM_OF_INDEX,
 }DATABASE_INDEX;
 
@@ -75,6 +79,8 @@ bool appMqtt_BindDataToDataPoint(DATABASE_INDEX index,
 bool appMqtt_WriteData(DATABASE_INDEX index, void* data, uint32_t size);
 bool appMqtt_SubscribeDataChangeEvent(DATABASE_INDEX index,
                                       event_observer * observer);
+
+bool appMqtt_SetDataByTopic(const char * topic, void* data, uint32_t size);
 #endif /* _APP_MQTT_H */
 
 /* End of file */

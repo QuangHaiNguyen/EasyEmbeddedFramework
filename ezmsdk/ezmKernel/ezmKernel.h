@@ -61,10 +61,12 @@ struct Process
 * Function Prototypes
 *******************************************************************************/
 bool    ezmKernel_AddProcess(EzmProcess* proc, PROCESS_TYPE proc_type, uint32_t period_ms, process_handler handler);
+bool    ezmKernel_RemoveProcess(EzmProcess* proc);
 void    ezmKernel_UpdateClock(void);
 void    ezmKernel_Run(void);
 uint8_t ezmKernel_GetLoad(void);
-
+int     ezmKernel_GetTickMillis(void);
+int     ezmKernel_GetNumOfActiveProc(void);
 #endif /* CLI */
 #endif /* _EZM_KERNEL_H */
 

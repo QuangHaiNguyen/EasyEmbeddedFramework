@@ -61,7 +61,7 @@ struct ProcessAnalysis
 *******************************************************************************/
 static struct Node proc_list_head = EZMLL_INIT_NODE(proc_list_head);
 static struct ProcessAnalysis kernel_load = {0};
-
+static int current_tick = 0U;
 /******************************************************************************
 * Function Prototypes
 *******************************************************************************/
@@ -94,7 +94,7 @@ bool ezmKernel_AddProcess(EzmProcess* proc, PROCESS_TYPE proc_type, uint32_t per
 
         PROCESS(proc)->handler = handler;
         PROCESS(proc)->period = period_ms;
-        PROCESS(proc)->exec_cnt_down = 0;
+        PROCESS(proc)->exec_cnt_down = period_ms;
         PROCESS(proc)->proc_type = proc_type;
         is_success = true;
         KERNELPRINT("add process successfully");
@@ -103,6 +103,31 @@ bool ezmKernel_AddProcess(EzmProcess* proc, PROCESS_TYPE proc_type, uint32_t per
     return is_success;
 }
 
+/******************************************************************************
+* Function : ezmKernel_RemoveProcess
+*//**
+* \b Description:
+*
+* renove a process from the kernel
+*
+* PRE-CONDITION: None
+*
+* POST-CONDITION: None
+*
+* @param    *proc: (IN)pointer to the new process
+* @return   true if suceess
+*
+*******************************************************************************/
+bool ezmKernel_RemoveProcess(EzmProcess* proc)
+{
+    bool is_success = false;
+    if(proc)
+    {
+        EZMLL_UNLINK_NODE(&PROCESS(proc)->node);
+        is_success = true;
+    }
+    return is_success;
+}
 
 /******************************************************************************
 * Function : ezmKernel_Run
@@ -194,6 +219,28 @@ void ezmKernel_UpdateClock(void)
         }
     }
     kernel_load.sampling_time++;
+    current_tick++;
+}
+
+
+/******************************************************************************
+* Function : ezmKernel_GetTick
+*//**
+* \b Description:
+*
+* return the current tick of the system
+*
+* PRE-CONDITION: None
+*
+* POST-CONDITION: None
+*
+* @param    None
+* @return   current tick in millisecond
+*
+*******************************************************************************/
+int ezmKernel_GetTickMillis(void)
+{
+    return current_tick;
 }
 
 /******************************************************************************
@@ -214,6 +261,26 @@ void ezmKernel_UpdateClock(void)
 uint8_t ezmKernel_GetLoad(void)
 {
     return kernel_load.load;
+}
+
+/******************************************************************************
+* Function : ezmKernel_GetNumOfActiveProc
+*//**
+* \b Description:
+*
+* Get the number of active process
+*
+* PRE-CONDITION: None
+*
+* POST-CONDITION: None
+*
+* @param    None
+* @return   number of active process
+*
+*******************************************************************************/
+int ezmKernel_GetNumOfActiveProc(void)
+{
+    return ezmLL_GetListSize(&proc_list_head);
 }
 #endif /* CLI */
 

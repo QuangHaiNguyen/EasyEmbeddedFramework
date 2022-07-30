@@ -111,7 +111,7 @@ void* WifiCtrl_GetWifiControllerDriver(void)
 
     TRACE("WifiCtrl_GetWifiControllerDriver()");
 
-    is_success = evntNoti_CreateSubject(&controller_instance.event, 3);
+    is_success = evntNoti_CreateSubject(&controller_instance.event, 5);
 
     if (!is_success)
     {
