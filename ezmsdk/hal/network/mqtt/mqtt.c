@@ -122,11 +122,15 @@ void * Mqtt_GetDriver(void)
         client.driver.is_busy = false;
         client.driver.SubscribeEventNotification = Mqtt_ReceiveEventNotification;
         client.driver.UnsubscribeEventNotification = Mqtt_StopEventNotification;
-
+#if SUPPORTED_CHIP == WIN
+        WARNING("No supported mqtt for window platform");
+        is_success = false;
+#elif
         /* Calling low level binind function */
         client.driver.init_function = espMqtt_Initialization;
         is_success &= espMqtt_BindingDriverApi((void**)&client.driver.driver_api);
         is_success &= espMqtt_RegisterEventCallback(Mqtt_EventCallback);
+#endif
     }
 
     if (is_success)

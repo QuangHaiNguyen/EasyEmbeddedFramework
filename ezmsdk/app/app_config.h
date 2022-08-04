@@ -37,7 +37,7 @@
 #define EVENT_NOTIFIER          1U
 #define WIFI_CONTROLLER         1U
 #define DATA_MODEL              1U
-#define MQTT                    1U
+#define MQTT                    0U
 
 /* MICROCONTROLER SECTION *****************************************************/
 #define NO_CHIP             1U
@@ -46,7 +46,7 @@
 #define ESP32               4U
 #define STM32               5U
 
-#define SUPPORTED_CHIP      ESP32
+#define SUPPORTED_CHIP      WIN
 
 /*Module ID section*/
 
