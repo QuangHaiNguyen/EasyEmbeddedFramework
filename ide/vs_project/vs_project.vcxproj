@@ -160,7 +160,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ezmsdk\app\app.c" />
-    <ClCompile Include="..\..\ezmsdk\app\app_wifi_management.c" />
     <ClCompile Include="..\..\ezmsdk\app\main.c" />
     <ClCompile Include="..\..\ezmsdk\binCmdParser\binCmdParser.c" />
     <ClCompile Include="..\..\ezmsdk\cli\cli.c" />
@@ -191,7 +190,6 @@
   <ItemGroup>
     <ClInclude Include="..\..\ezmsdk\app\app.h" />
     <ClInclude Include="..\..\ezmsdk\app\app_config.h" />
-    <ClInclude Include="..\..\ezmsdk\app\app_wifi_management.h" />
     <ClInclude Include="..\..\ezmsdk\binCmdParser\binCmdParser.h" />
     <ClInclude Include="..\..\ezmsdk\cli\cli.h" />
     <ClInclude Include="..\..\ezmsdk\data_model\data_model.h" />
