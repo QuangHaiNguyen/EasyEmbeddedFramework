@@ -121,9 +121,21 @@ bool ezmDriver_Init(void)
         {
             driver_list[i] = get_driver[i]();
 
-            if (driver_list[i] != NULL && driver_list[i]->init_function != NULL)
+            if (driver_list[i] != NULL
+                && driver_list[i]->init_function != NULL
+                && driver_list[i]->driver_api != NULL)
             {
-                if (false == driver_list[i]->init_function())
+                if (driver_list[i]->init_function())
+                {
+                    is_success = true;
+                    INFO("[driver id = %d] init success", i);
+
+                    if (driver_list[i]->driver_name)
+                    {
+                        INFO("[driver name = %s]", driver_list[i]->driver_name);
+                    }
+                }
+                else
                 {
                     is_success = false;
                     ERROR("[driver id = %d] init failed", i);

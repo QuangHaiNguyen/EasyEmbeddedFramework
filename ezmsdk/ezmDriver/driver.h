@@ -81,6 +81,7 @@ typedef enum
 typedef struct
 {
     bool                is_busy;                                    /**< busy flag */
+    const char          *driver_name;                               /**< name of the driver */
     void                *driver_api;                                /**< pointer to the driver api structure*/
     DriverInitFunction  init_function;                              /**< pointer to the initialize  function*/
     bool (*UnsubscribeEventNotification)(event_observer* observer); /**< */
@@ -97,9 +98,7 @@ typedef Driver* (*GetDriverFunction)    (void);
 *******************************************************************************/
 bool ezmDriver_Init                     (void);
 void ezmDriver_GetDriverInstance        (DriverId id, void **driver_api);
-bool ezmDriver_SubscribeDriverEvent     (DriverId id,
-                                         event_observer * observer);
-
+bool ezmDriver_SubscribeDriverEvent     (DriverId id, event_observer * observer);
 bool ezmDriver_UnsubscribeDriverEvent   (DriverId id, event_observer * observer);
 bool ezmDriver_ReleaseDriverInstance    (DriverId id);
 bool ezmDriver_IsDriverBusy             (DriverId id);
