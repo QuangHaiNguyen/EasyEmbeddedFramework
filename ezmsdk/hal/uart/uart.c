@@ -16,11 +16,15 @@
 *******************************************************************************/
 #include "uart.h"
 
+#define DEBUG_LVL   LVL_INFO       /**< logging level */
+#define MOD_NAME    "UART"
+
 #if (NUM_OF_SUPPORTED_UART > 0U)
 #include "ezmDriver/driver.h"
 #include "ezmDebug/config.h"
 #include "ezmDebug/ezmDebug.h"
 #include "utilities/hexdump/hexdump.h"
+#include "utilities/logging/logging.h"
 
 #if (SUPPORTED_CHIP == ESP32)
 #include "platforms/esp32/uart/esp32_uart.h"
@@ -29,23 +33,6 @@
 #elif (SUPPORTED_CHIP == WIN)
 #include "platforms/simulator/uart/uart_sim.h"
 #endif /* SUPPORTED_CHIP == ESP32 */
-
-#define MOD_NAME    "UART"
-#if (MODULE_DEBUG == 1U) && (UART_DEBUG == 1U)
-    #define UARTPRINT(a)                        PRINT_DEBUG(MOD_NAME,a)
-    #define UARTPRINT1(a,b)                     PRINT_DEBUG1(MOD_NAME,a,b)
-    #define UARTPRINT2(a,b,c)                   PRINT_DEBUG2(MOD_NAME,a,b,c)
-    #define UARTPRINT3(a,b,c,d)                 PRINT_DEBUG3(MOD_NAME,a,b,c,d)
-    #define UARTPRINT4(a,b,c,d,e)               PRINT_DEBUG4(MOD_NAME,a,b,c,d,e)
-    #define UARTHEXDUMP(a,b)                    ezmHexdump(a, b)
-#else 
-    #define UARTPRINT(a)
-    #define UARTPRINT1(a,b)
-    #define UARTPRINT2(a,b,c)
-    #define UARTPRINT3(a,b,c,d)
-    #define UARTPRINT4(a,b,c,d,e)
-    #define UARTHEXDUMP(a,b)
-#endif
 
 
 /******************************************************************************
@@ -56,6 +43,7 @@
 /******************************************************************************
 * Module Variable Definitions
 *******************************************************************************/
+static const char *cli_uart_name = "cli uart";
 static Driver aszSupportedUart[NUM_OF_SUPPORTED_UART] = { 0 };
 
 /******************************************************************************
@@ -73,20 +61,21 @@ void* GetUart0Driver(void)
         aszSupportedUart[CLI_UART].init_function = EspUart0_Init;
         aszSupportedUart[CLI_UART].is_busy = false;
         ret_driver = &aszSupportedUart[CLI_UART];
-        UARTPRINT("UART0 init complete");
+        INFO("UART0 init complete");
     }
 #elif(SUPPORTED_CHIP == STM32)
     aszSupportedUart[CLI_UART].is_busy = false;
     aszSupportedUart[CLI_UART].init_function = stmUart1_Init;
     aszSupportedUart[CLI_UART].driver_api = stmUart_GetApi(CLI_UART);
     ret_driver = &aszSupportedUart[CLI_UART];
-    UARTPRINT("UART0 init complete");
+    INFO("UART0 init complete");
 #elif(SUPPORTED_CHIP == WIN)
     aszSupportedUart[CLI_UART].is_busy = false;
     aszSupportedUart[CLI_UART].init_function = simUart_Init;
     aszSupportedUart[CLI_UART].driver_api = simUart_GetApi(CLI_UART);
+    aszSupportedUart[CLI_UART].driver_name = cli_uart_name;
     ret_driver = &aszSupportedUart[CLI_UART];
-    UARTPRINT("UART0 init complete");
+    INFO("UART0 init complete");
 #endif /* SUPPORTED_CHIP */
     return (void*)ret_driver;
 }

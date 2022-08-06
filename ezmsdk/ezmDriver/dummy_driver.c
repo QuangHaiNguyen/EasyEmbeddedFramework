@@ -16,29 +16,16 @@
 *******************************************************************************/
 #include "dummy_driver.h"
 
+#define DEBUG_LVL       LVL_INFO       /**< logging level */
+#define MOD_NAME        "DUMMY_DRIVER"
+
 #if (DRIVERINF == 1U)
 #include "driver.h"
 #include "string.h"
 #include "utilities/hexdump/hexdump.h"
+#include "utilities/logging/logging.h"
 #include "utilities/linked_list/linked_list.h"
-#include "ezmDebug/ezmDebug.h"
 
-#define MOD_NAME        "DUMMY_DRIVER"
-
-
-#if (MODULE_DEBUG == 1U) && (KERNEL_DEBUG == 1U)
-#define DRIVERPRINT(a)                     PRINT_DEBUG(MOD_NAME,a)
-#define DRIVERPRINT1(a,b)                  PRINT_DEBUG1(MOD_NAME,a,b)
-#define DRIVERPRINT2(a,b,c)                PRINT_DEBUG2(MOD_NAME,a,b,c)
-#define DRIVERPRINT3(a,b,c,d)              PRINT_DEBUG3(MOD_NAME,a,b,c,d)
-#define DRIVERPRINT4(a,b,c,d,e)            PRINT_DEBUG4(MOD_NAME,a,b,c,d,e)
-#else 
-#define DRIVERPRINT(a)
-#define DRIVERPRINT(a,b)
-#define DRIVERPRINT2(a,b,c)
-#define DRIVERPRINT3(a,b,c,d)
-#define DRIVERPRINT4(a,b,c,d,e)
-#endif
 
 /******************************************************************************
 * Module Preprocessor Macros
@@ -50,6 +37,8 @@
 *******************************************************************************/
 static Driver dummy_driver = { 0 };
 static DummyApi api = { 0 };
+static const char* driver_name = "dummy driver";
+
 /******************************************************************************
 * Module Variable Definitions
 *******************************************************************************/
@@ -74,34 +63,35 @@ void* DummyDriver_GetDriver(void)
     dummy_driver.is_busy = false;
     dummy_driver.driver_api = (void*)&api;
     dummy_driver.init_function = dummy_init;
+    dummy_driver.driver_name = driver_name;
 
     return &dummy_driver;
 }
 
 static bool dummy_init(void)
 {
-    DRIVERPRINT("dummy driver is init");
+    INFO("dummy driver is init");
 
     return true;
 }
 static void open(void)
 {
-    DRIVERPRINT("dummy driver is open");
+    INFO("dummy driver is open");
 }
 
 static void close(void)
 {
-    DRIVERPRINT("dummy driver is close");
+    INFO("dummy driver is close");
 }
 
 static void write(void)
 {
-    DRIVERPRINT("dummy driver writes");
+    INFO("dummy driver writes");
 }
 
 static void read(void)
 {
-    DRIVERPRINT("dummy driver reads");
+    INFO("dummy driver reads");
 }
 
 #endif /* DRIVERINF */

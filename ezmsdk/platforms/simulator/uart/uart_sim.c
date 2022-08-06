@@ -25,28 +25,16 @@
 #include "uart_sim.h"
 #include "app/app_config.h"
 
+#define DEBUG_LVL   LVL_INFO       /**< logging level */
+#define MOD_NAME    "HW_UART"
+
 #if(HAL_UART == 1U && SUPPORTED_CHIP == WIN)
 #include <stdint.h>
 #include <stdio.h>
 #include "ezmDebug/ezmDebug.h"
 #include "utilities/hexdump/hexdump.h"
+#include "utilities/logging/logging.h"
 
-#define MOD_NAME    "HW_UART"
-#if (MODULE_DEBUG == 1U) && (UART_DEBUG == 1U)
-#define UARTPRINT(a)                        PRINT_DEBUG(MOD_NAME,a)
-#define UARTPRINT1(a,b)                     PRINT_DEBUG1(MOD_NAME,a,b)
-#define UARTPRINT2(a,b,c)                   PRINT_DEBUG2(MOD_NAME,a,b,c)
-#define UARTPRINT3(a,b,c,d)                 PRINT_DEBUG3(MOD_NAME,a,b,c,d)
-#define UARTPRINT4(a,b,c,d,e)               PRINT_DEBUG4(MOD_NAME,a,b,c,d,e)
-#define UARTHEXDUMP(a,b)                    ezmHexdump(a, b)
-#else 
-#define UARTPRINT(a)
-#define UARTPRINT1(a,b)
-#define UARTPRINT2(a,b,c)
-#define UARTPRINT3(a,b,c,d)
-#define UARTPRINT4(a,b,c,d,e)
-#define UARTHEXDUMP(a,b)
-#endif
 
 /******************************************************************************
 * Module Typedefs
@@ -79,7 +67,7 @@ bool simUart_Init(void)
     hw_uarts[CLI_UART].uart_api.ezmUart_Send = UartSim_Write;
     hw_uarts[CLI_UART].uart_api.ezmUart_RegisterCallback = UartSim_RegisterCallback;
     hw_uarts[CLI_UART].uart_api.ezmUart_UnregisterCallback = UartSim_UnRegisterCallback;
-    UARTPRINT("init complete");
+    INFO("init complete");
     return true;
 }
 
