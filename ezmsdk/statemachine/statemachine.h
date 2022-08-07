@@ -18,8 +18,8 @@
  */
 
 
-#ifndef _MODULE_H
-#define _MODULE_H
+#ifndef _STATE_MACHINE_H
+#define _STATE_MACHINE_H
 
 /*******************************************************************************
 * Includes
@@ -38,32 +38,44 @@
 * Module Typedefs
 *******************************************************************************/
 
-/** @brief definition of a new type
- *  
+/** @brief
+ *
  */
-typedef struct
-{
-    const char * pcStateName;
-	uint8_t (*pfEventHandling)(uint8_t u8Event, void* pstData);
-	void (*pfEntry)(void);
-	void (*pfExit)(void);
-}ezmState;
+typedef struct SM_StateMachine SM_StateMachine;
 
-/** @brief definition of a new type
+
+/** @brief
+ *
+ */
+typedef uint8_t (*StateFunction)(SM_StateMachine * statemachine);
+
+
+/** @brief
  *  
  */
 typedef struct
 {
-	uint8_t u8CurrEvent;
-	uint8_t u8CurrState;
-    uint8_t u8LastState;
-	uint8_t u8NumOfState;
-	uint8_t u8NumOfEvent;
-	ezmState  * pstState;
-	void (*ErrorHandler)(void);
-	uint8_t (*GetExternalEvent)(void);
-    void* pstData;
-}ezmStateMachine;
+    const char * pcStateName;   /**< */
+    StateFunction StateHandle;  /**< */
+    StateFunction StateEntry;   /**< */
+    StateFunction StateExit;    /**< */
+}SM_State;
+
+
+/** @brief
+ *  
+ */
+struct SM_StateMachine
+{
+    uint8_t current_event;      /**< */
+    uint8_t current_state;      /**< */
+    uint8_t last_state;         /**< */
+    uint8_t num_of_state;       /**< */
+    uint8_t num_of_event;       /**< */
+    SM_State* state_table;      /**< */
+    StateFunction ErrorHandler; /**< */
+    void* data;                 /**< */
+};
 
 /******************************************************************************
 * Module Variable Definitions
@@ -73,19 +85,92 @@ typedef struct
 /******************************************************************************
 * Function Prototypes
 *******************************************************************************/
-void ezmStateMachine_Init(ezmStateMachine * pstStateMachine, 
-                        uint8_t u8StartEvent,
-                        uint8_t u8StartState,
-                        uint8_t u8NumOfEvent,
-                        uint8_t u8NumOfState,
-                        ezmState * pstArrayOfstate,
-                        void (*ErrorHandler)(void),
-                        uint8_t (*GetExternalEvent)(void),
-                        void * pstStatemachineData);
 
-void ezmStateMachine_Execution(ezmStateMachine * pstStateMachine);
+/******************************************************************************
+* Function : sum
+*//**
+* \b Description:
+*
+* This function initializes the ring buffer
+*
+* @param    a: (IN)pointer to the ring buffer
+* @param    b: (IN)size of the ring buffer
+* @return   None
+*
+*
+*******************************************************************************/
+void SM_Initialization(SM_StateMachine* statemachine,
+                       uint8_t num_of_event,
+                       uint8_t num_of_state,
+                       SM_State *state_table,
+                       StateFunction ErrorHandler,
+                       void *statemachine_data);
+
+
+/******************************************************************************
+* Function : sum
+*//**
+* \b Description:
+*
+* This function initializes the ring buffer
+*
+* @param    a: (IN)pointer to the ring buffer
+* @param    b: (IN)size of the ring buffer
+* @return   None
+*
+*
+*******************************************************************************/
+void SM_Execution(SM_StateMachine *statemachine);
+
+
+/******************************************************************************
+* Function : sum
+*//**
+* \b Description:
+*
+* This function initializes the ring buffer
+*
+* @param    a: (IN)pointer to the ring buffer
+* @param    b: (IN)size of the ring buffer
+* @return   None
+*
+*
+*******************************************************************************/
+void SM_SetState(SM_StateMachine *statemachine, uint8_t new_state);
+
+
+/******************************************************************************
+* Function : sum
+*//**
+* \b Description:
+*
+* This function initializes the ring buffer
+*
+* @param    a: (IN)pointer to the ring buffer
+* @param    b: (IN)size of the ring buffer
+* @return   None
+*
+*
+*******************************************************************************/
+void SM_SetEvent(SM_StateMachine* statemachine, uint8_t new_event);
+
+
+/******************************************************************************
+* Function : sum
+*//**
+* \b Description:
+*
+* This function initializes the ring buffer
+*
+* @param    a: (IN)pointer to the ring buffer
+* @param    b: (IN)size of the ring buffer
+* @return   None
+*
+*
+*******************************************************************************/
+void SM_SetData(SM_StateMachine* statemachine, void *new_data);
 
 #endif /* STATEMACHINE */
-#endif /* _MODULE_H */
+#endif /* _STATE_MACHINE_H */
 
 /* End of file*/

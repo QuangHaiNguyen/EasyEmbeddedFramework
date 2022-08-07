@@ -27,102 +27,128 @@
 #if ( STATEMACHINE == 1U )
 
 #define DEBUG_LVL   LVL_TRACE       /**< logging level */
-#define MOD_NAME    "STATE"     /**< module name */
+#define MOD_NAME    "STATEMACHINE"  /**< module name */
 
 #include "utilities/logging/logging.h"
-#include "utilities/ezmAssert/ezmAssert.h"
 
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
 /* None */
 
+
 /******************************************************************************
 * Module Variable Definitions
 *******************************************************************************/
 /* None */
+
 
 /******************************************************************************
 * Function Definitions
 *******************************************************************************/
 /* None */
 
+
 /******************************************************************************
-* Function : sum
-*//** 
-* \b Description:
-*
-* This function initializes the ring buffer
-*
-* PRE-CONDITION: None
-*
-* POST-CONDITION: None
-* 
-* @param    a: (IN)pointer to the ring buffer
-* @param    b: (IN)size of the ring buffer
-* @return   None
-*
-* \b Example Example:
-* @code
-* sum(a, b);
-* @endcode
-*
-* @see sum
-*
+* External functions
 *******************************************************************************/
 
-
-void ezmStateMachine_Execution(ezmStateMachine * pstStateMachine)
+void SM_Execution(SM_StateMachine *statemachine)
 {
-    uint8_t u8CurrState = pstStateMachine->u8CurrState;
+    uint8_t current_state = statemachine->current_state;
 
-    pstStateMachine->u8CurrEvent = pstStateMachine->GetExternalEvent();
-
-    if(pstStateMachine->u8CurrEvent < pstStateMachine->u8NumOfEvent)
+    if(statemachine->current_event < statemachine->num_of_event 
+        && current_state < statemachine->num_of_state)
     {
-        if(pstStateMachine->pstState[u8CurrState].pfEntry != NULL)
+        if(statemachine->state_table[current_state].StateEntry != NULL)
         {
-            TRACE("Enter state: %s", pstStateMachine->pstState[u8CurrState].pcStateName);
-            pstStateMachine->pstState[u8CurrState].pfEntry();
+            TRACE("Enter state: %s", statemachine->state_table[current_state].pcStateName);
+            statemachine->state_table[current_state].StateEntry(statemachine);
         }
 
         TRACE("Handling...");
-        pstStateMachine->u8CurrState = pstStateMachine->pstState[u8CurrState].pfEventHandling(pstStateMachine->u8CurrEvent, pstStateMachine->pstData);
-        TRACE("Next state %d", pstStateMachine->u8CurrState);
-
-        if(pstStateMachine->pstState[u8CurrState].pfExit != NULL)
+        if (statemachine->state_table[current_state].StateHandle != NULL)
         {
-            pstStateMachine->pstState[u8CurrState].pfExit();
-            TRACE("Leave state: %s", pstStateMachine->pstState[u8CurrState].pcStateName);
+            statemachine->current_state = statemachine->state_table[current_state].StateHandle(statemachine);
+            TRACE("Next state %d", statemachine->current_state);
+        }
+        else
+        {
+            ERROR("no handling function");
+            statemachine->ErrorHandler(statemachine);
+        }
+        
+
+        if(statemachine->state_table[current_state].StateExit != NULL)
+        {
+            statemachine->state_table[current_state].StateExit(statemachine);
+            TRACE("Leave state: %s", statemachine->state_table[current_state].pcStateName);
         }
 
-        pstStateMachine->u8LastState = u8CurrState;
+        statemachine->last_state = current_state;
     }
     else
     {
-        pstStateMachine->ErrorHandler();
+        ERROR("unknown event");
+        statemachine->ErrorHandler(statemachine);
     }
 }
 
-void ezmStateMachine_Init(ezmStateMachine * pstStateMachine, 
-                        uint8_t u8StartEvent,
-                        uint8_t u8StartState,
-                        uint8_t u8NumOfEvent,
-                        uint8_t u8NumOfState,
-                        ezmState * pstArrayOfstate,
-                        void (*ErrorHandler)(void),
-                        uint8_t (*GetExternalEvent)(void),
-                        void * pstStatemachineData)
+void SM_Initialization(SM_StateMachine *statemachine,
+                       uint8_t num_of_event,
+                       uint8_t num_of_state,
+                       SM_State *state_table,
+                       StateFunction ErrorHandler,
+                       void *statemachine_data)
 {
-    pstStateMachine->u8CurrEvent = u8StartEvent;
-    pstStateMachine->u8CurrState = u8StartState;
-    pstStateMachine->u8NumOfEvent = u8NumOfEvent;
-    pstStateMachine->u8NumOfState = u8NumOfState;
-    pstStateMachine->pstState = pstArrayOfstate;
-    pstStateMachine->ErrorHandler = ErrorHandler;
-    pstStateMachine->GetExternalEvent = GetExternalEvent;
-    pstStateMachine->pstData = pstStatemachineData;
+
+    /**statemachine_data can be NULL be cause we dont need to pass around data
+     * in every use case
+     */
+
+    if (statemachine != NULL
+        && state_table != NULL
+        && ErrorHandler != NULL)
+    {
+        statemachine->num_of_event = num_of_event;
+        statemachine->num_of_state = num_of_state;
+        statemachine->state_table = state_table;
+        statemachine->ErrorHandler = ErrorHandler;
+        statemachine->data = statemachine_data;
+    }
 }
 
+
+void SM_SetState(SM_StateMachine *statemachine, uint8_t new_state)
+{
+    if (statemachine)
+    {
+        statemachine->current_state = new_state;
+    }
+}
+
+void SM_SetEvent(SM_StateMachine* statemachine, uint8_t new_event)
+{
+    if (statemachine)
+    {
+        statemachine->current_event = new_event;
+    }
+}
+
+void SM_SetData(SM_StateMachine* statemachine, void* new_data)
+{
+    if (statemachine)
+    {
+        statemachine->data = new_data;
+    }
+}
+
+
+/******************************************************************************
+* Internal functions
+*******************************************************************************/
+/* None */
+
 #endif /* STATEMACHINE */
+
 /* End of file ****************************************************************/
