@@ -201,8 +201,8 @@ void ezmApp_SdkInit(void)
 
 #if (STATEMACHINE == 1U)
     /* DEBUG module has no init function*/
-    APPPRINT1("Initialize state machine module");
-    APPPRINT2("Module Id: 0x%02x", STATEMACHINE_MOD_ID);
+    INFO("Initialize state machine module");
+    INFO("Module Id: 0x%02x", STATEMACHINE_MOD_ID);
 #endif
 
 #if (IPC == 1U)

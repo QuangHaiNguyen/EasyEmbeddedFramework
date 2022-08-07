@@ -26,15 +26,11 @@
 
 #if ( STATEMACHINE == 1U )
 
-#if (MODULE_DEBUG == 1U) && (STATEMACHINE_DEBUG == 1U)
-    #define SMPRINT1(a)              PRINT_DEBUG1(a)               
-    #define SMPRINT2(a,b)            PRINT_DEBUG2(a,b)             
-    #define SMPRINT3(a,b,c)          PRINT_DEBUG3(a,b,c)
-#else 
-    #define SMPRINT1(a)           
-    #define SMPRINT2(a,b)           
-    #define SMPRINT3(a,b,c)
-#endif
+#define DEBUG_LVL   LVL_TRACE       /**< logging level */
+#define MOD_NAME    "STATE"     /**< module name */
+
+#include "utilities/logging/logging.h"
+#include "utilities/ezmAssert/ezmAssert.h"
 
 /******************************************************************************
 * Module Typedefs
@@ -86,18 +82,18 @@ void ezmStateMachine_Execution(ezmStateMachine * pstStateMachine)
     {
         if(pstStateMachine->pstState[u8CurrState].pfEntry != NULL)
         {
-            SMPRINT2("Enter state: %s", pstStateMachine->pstState[u8CurrState].pcStateName);
+            TRACE("Enter state: %s", pstStateMachine->pstState[u8CurrState].pcStateName);
             pstStateMachine->pstState[u8CurrState].pfEntry();
         }
 
-        SMPRINT1("Handling...");
+        TRACE("Handling...");
         pstStateMachine->u8CurrState = pstStateMachine->pstState[u8CurrState].pfEventHandling(pstStateMachine->u8CurrEvent, pstStateMachine->pstData);
-        SMPRINT2("Next state %d", pstStateMachine->u8CurrState);       
+        TRACE("Next state %d", pstStateMachine->u8CurrState);
 
         if(pstStateMachine->pstState[u8CurrState].pfExit != NULL)
         {
             pstStateMachine->pstState[u8CurrState].pfExit();
-            SMPRINT2("Leave state: %s", pstStateMachine->pstState[u8CurrState].pcStateName);
+            TRACE("Leave state: %s", pstStateMachine->pstState[u8CurrState].pcStateName);
         }
 
         pstStateMachine->u8LastState = u8CurrState;
