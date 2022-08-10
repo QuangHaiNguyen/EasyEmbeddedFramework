@@ -1,0 +1,82 @@
+
+/*******************************************************************************
+* Filename:         virtual_com_driver.h
+* Author:           Hai Nguyen
+* Original Date:    07.08.2022
+* Last Update:      07.08.2022
+*
+* -----------------------------------------------------------------------------
+* Comany:           Easy Embedded
+*                   Address Line 1
+*                   Address Line 2
+*
+* -----------------------------------------------------------------------------
+* Contact:          Easy Embedded
+*                   hainguyen.ezm@gmail.com
+*
+* -----------------------------------------------------------------------------
+* Copyright Hai Nguyen - All Rights Reserved
+* Unauthorized copying of this file, via any medium is strictly prohibited
+* Proprietary and confidential
+* Written by Hai Nguyen 07.08.2022
+*
+*******************************************************************************/
+
+/** @file   virtual_com_driver.h
+ *  @author Hai Nguyen
+ *  @date   07.08.2022
+ *  @brief  This is the source for a module
+ *  
+ *  @details
+ * 
+ */
+
+#ifndef _VIRTUAL_COM_DRIVER_H
+#define _VIRTUAL_COM_DRIVER_H
+
+/*******************************************************************************
+* Includes
+*******************************************************************************/
+#include "app/app_config.h"
+
+#if (VIRTUAL_COM == 1U)
+#include <stdbool.h>
+#include <stdint.h>
+
+/******************************************************************************
+* Module Preprocessor Macros
+*******************************************************************************/
+#define A_MACRO     1   /**< a macro*/
+
+/******************************************************************************
+* Module Typedefs
+*******************************************************************************/
+
+/** @brief definition of a new type
+ *  
+ */
+typedef struct
+{
+    int a;  /**< an integer */
+    int b;  /**< an integer */
+}VirtualCom_Interface;
+
+
+/******************************************************************************
+* Module Variable Definitions
+*******************************************************************************/
+/* None */
+
+/******************************************************************************
+* Function Prototypes
+*******************************************************************************/
+
+
+bool VirtualCom_Initialization(void);
+VirtualCom_Interface *VirtualCom_GetInterface(void);
+
+#endif /* VIRTUAL_COM */
+#endif /* _VIRTUAL_COM_DRIVER_H */
+
+/* End of file */
+

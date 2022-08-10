@@ -5,7 +5,7 @@
 
 #define TEST_IPC                0U
 #define TEST_BIN_PARSER         0U
-#define TEST_ASSERT             0U
+#define TEST_ASSERT             1U
 #define TEST_HEXDUMP            0U
 #define TEST_CLI                0U
 #define TEST_LINKEDLIST         0U
@@ -19,7 +19,7 @@
 #define TEST_LOGGING            0U
 #define TEST_EVENT_NOTIFIER     0U
 #define TEST_WIFI_CONTROLLER    0U
-#define TEST_DATA_MODEL         1U
+#define TEST_DATA_MODEL         0U
 
 #if (TEST_IPC == 1U)
 #include "../unit_test_ipc.h"

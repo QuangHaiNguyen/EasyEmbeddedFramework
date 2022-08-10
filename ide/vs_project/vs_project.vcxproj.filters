@@ -95,6 +95,9 @@
     <Filter Include="Source Files\hal\network\mqtt">
       <UniqueIdentifier>{498cd2f0-144a-4735-ad03-c76321eb65ac}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\platforms\simulator\virtual_com">
+      <UniqueIdentifier>{b68afd2d-9d83-480e-b6b5-04900f630c47}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ezmsdk\app\app.c">
@@ -177,6 +180,9 @@
     </ClCompile>
     <ClCompile Include="..\..\ezmsdk\hal\network\mqtt\mqtt.c">
       <Filter>Source Files\hal\network\mqtt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\platforms\simulator\virtual_com\virtual_com_driver.c">
+      <Filter>Source Files\platforms\simulator\virtual_com</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -269,6 +275,9 @@
     </ClInclude>
     <ClInclude Include="..\..\ezmsdk\hal\network\mqtt\mqtt.h">
       <Filter>Source Files\hal\network\mqtt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ezmsdk\platforms\simulator\virtual_com\virtual_com_driver.h">
+      <Filter>Source Files\platforms\simulator\virtual_com</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

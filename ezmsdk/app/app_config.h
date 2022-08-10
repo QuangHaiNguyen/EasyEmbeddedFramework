@@ -38,6 +38,7 @@
 #define WIFI_CONTROLLER         1U
 #define DATA_MODEL              1U
 #define MQTT                    0U
+#define VIRTUAL_COM             1U
 
 /* MICROCONTROLER SECTION *****************************************************/
 #define NO_CHIP             1U
@@ -239,7 +240,15 @@
 
 /* WIFI_CONTROLLER SECTION ****************************************************/
 #if WIFI_CONTROLLER == 1U
+#define WIFI_CONTROLLER_ID      0x31U
 
 #endif /* WIFI_CONTROLLER */
+
+
+/* VIRTUAL_COM SECTION ********************************************************/
+#if VIRTUAL_COM == 1U
+#define VIRTUAL_COM_MOD_ID      0x32U
+#endif
+
 
 #endif /* _APP_CONFIG_H */
