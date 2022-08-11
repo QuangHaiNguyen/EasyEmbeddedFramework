@@ -22,6 +22,8 @@
 /******************************************************************************
 * Includes
 *******************************************************************************/
+#include <string.h>
+
 #include "app.h"
 #include "app_config.h"
 #include "ezmDebug/ezmDebug.h"
@@ -268,6 +270,14 @@ void ezmApp_SdkInit(void)
     if (VirtualCom_Initialization() == false)
     {
         ERROR("Virtual com init fail");
+    }
+    else
+    {
+        char temp[32] = { 0 };
+        VirtualCom_Configure(0, "COM15");
+        VirtualCom_SendBlocking(0, "hello world\n", sizeof(temp));
+        VirtualCom_RecvBlocking(0, temp, sizeof(temp));
+        INFO("echo = %s", temp);
     }
 #endif
 

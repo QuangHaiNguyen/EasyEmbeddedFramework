@@ -46,21 +46,13 @@
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
-#define A_MACRO     1   /**< a macro*/
+/* None */
+
 
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
-
-/** @brief definition of a new type
- *  
- */
-typedef struct
-{
-    int a;  /**< an integer */
-    int b;  /**< an integer */
-}VirtualCom_Interface;
-
+/* None */
 
 /******************************************************************************
 * Module Variable Definitions
@@ -73,7 +65,7 @@ typedef struct
 
 
 bool VirtualCom_Initialization(void);
-VirtualCom_Interface *VirtualCom_GetInterface(void);
+//irtualCom_Interface *VirtualCom_GetInterface(void);
 
 #endif /* VIRTUAL_COM */
 #endif /* _VIRTUAL_COM_DRIVER_H */
