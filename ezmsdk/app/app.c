@@ -94,9 +94,6 @@
 #include "hal/uart/uart.h"
 #endif /* NUM_OF_SUPPORTED_UART */
 
-#if (VIRTUAL_COM == 1U)
-#include "platforms/simulator/virtual_com/virtual_com_driver.h"
-#endif /* VIRTUAL_COM */
 
 #if (DRIVERINF == 1U)
 #include "ezmDriver/driver.h"
@@ -263,23 +260,6 @@ void ezmApp_SdkInit(void)
     INFO("Initialize UART Driver");
     INFO("Module Id: 0x%02x", UART_MOD_ID);
 #endif /* NUM_OF_SUPPORTED_UART */
-
-#if (VIRTUAL_COM == 1U)
-    INFO("Initialize virtual com driver");
-    INFO("Module Id: 0x%02x", VIRTUAL_COM_MOD_ID);
-    if (VirtualCom_Initialization() == false)
-    {
-        ERROR("Virtual com init fail");
-    }
-    else
-    {
-        char temp[32] = { 0 };
-        VirtualCom_Configure(0, "COM15");
-        VirtualCom_SendBlocking(0, "hello world\n", sizeof(temp));
-        VirtualCom_RecvBlocking(0, temp, sizeof(temp));
-        INFO("echo = %s", temp);
-    }
-#endif
 
 #if (LOGGING == 1U)
     INFO("Initialize Logging module");

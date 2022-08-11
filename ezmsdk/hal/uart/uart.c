@@ -32,6 +32,11 @@
 //#include "../../Core/target_driver/stm32_uart.h"
 #elif (SUPPORTED_CHIP == WIN)
 #include "platforms/simulator/uart/uart_sim.h"
+
+#if(VIRTUAL_COM == 1U)
+#include "platforms/simulator/virtual_com/virtual_com_driver.h"
+#endif
+
 #endif /* SUPPORTED_CHIP == ESP32 */
 
 
@@ -44,6 +49,11 @@
 * Module Variable Definitions
 *******************************************************************************/
 static const char *cli_uart_name = "cli uart";
+
+#if (VIRTUAL_COM == 1U)
+static const char *virtual_com_name = "virtual com";
+#endif /* VIRTUAL_COM == 1U */
+
 static Driver aszSupportedUart[NUM_OF_SUPPORTED_UART] = { 0 };
 
 /******************************************************************************
@@ -80,6 +90,21 @@ void* GetUart0Driver(void)
     return (void*)ret_driver;
 }
 
+#if (VIRTUAL_COM == 1U)
+void *GetVirtualComDriver(void)
+{
+    Driver* ret_driver = NULL;
+
+    aszSupportedUart[VCP_UART].is_busy = false;
+    aszSupportedUart[VCP_UART].init_function = VirtualCom_Initialization;
+    aszSupportedUart[VCP_UART].driver_api = VirtualCom_GetInterface();
+    aszSupportedUart[VCP_UART].driver_name = virtual_com_name;
+    ret_driver = &aszSupportedUart[VCP_UART];
+    INFO("virtual com init complete");
+
+    return ret_driver;
+}
+#endif /* VIRTUAL_COM */
 
 #endif /* NUM_OF_SUPPORTED_UART > 0U */
 /* End of file*/

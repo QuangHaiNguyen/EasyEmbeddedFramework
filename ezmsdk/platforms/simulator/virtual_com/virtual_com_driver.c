@@ -77,62 +77,81 @@ typedef struct
 /******************************************************************************
 * Module Variable Definitions
 *******************************************************************************/
-static HwVirtualComDrv drv[1] = {0};
+static HwVirtualComDrv driver = {0};
+static UartDrvApi drv_api;
 
 /******************************************************************************
 * Function Definitions
 *******************************************************************************/
-static bool VirtualCom_Configure(uint8_t drv_index, char *port_name);
-static bool VirtualCom_SendBlocking(uint8_t drv_index, uint8_t *buff, uint32_t buff_size);
-static bool VirtualCom_RecvBlocking(uint8_t drv_index, uint8_t* buff, uint32_t buff_size);
+static bool     VirtualCom_Configure(UartConfiguration *config);
+static uint16_t VirtualCom_SendBlocking(uint8_t *buff, uint16_t buff_size);
+static uint16_t VirtualCom_RecvBlocking(uint8_t *buff, uint16_t buff_size);
+
 
 /******************************************************************************
 * External functions
 *******************************************************************************/
-
-
 bool VirtualCom_Initialization(void)
 {
     bool success = true;
 
     PRNT_DBG("VirtualCom_Initialization()");
 
+    drv_api.ezmUart_Configure = VirtualCom_Configure;
+    drv_api.ezmUart_Receive = NULL;
+    drv_api.ezmUart_ReceiveBlocking = VirtualCom_RecvBlocking;
+    drv_api.ezmUart_Send = NULL;
+    drv_api.ezmUart_SendBlocking = VirtualCom_SendBlocking;
+    drv_api.ezmUart_RegisterCallback = NULL;
+    drv_api.ezmUart_UnregisterCallback = NULL;
+
     return success;
 }
 
-#if 0
-VirtualCom_Interface *VirtualCom_GetInterface(void)
-{
-    VirtualCom_Interface *ret_interface = NULL;
 
-    return ret_interface;
+UartDrvApi *VirtualCom_GetInterface(void)
+{
+    return &drv_api;
 }
-#endif
+
+
 
 /******************************************************************************
 * Internal functions
 *******************************************************************************/
-static bool VirtualCom_Configure(uint8_t drv_index, char* port_name)
+
+
+/******************************************************************************
+* Function : VirtualCom_Configure
+*//**
+* @Description:
+*
+* @param
+* @return
+*
+* @Example Example:
+* @code
+*
+* @endcode
+*
+*******************************************************************************/
+static bool VirtualCom_Configure(UartConfiguration* config)
 {
     bool            success = true;
     size_t          byte_converted = 0;
     char            helper[32] = { 0 };
-    HwVirtualComDrv *hw_drv = NULL;
  
-    PRNT_DBG("VirtualCom_Configure(%s)", port_name);
+    PRNT_DBG("VirtualCom_Configure(%s)", config->port_name);
 
-    if (port_name != NULL
-        && drv_index < sizeof(drv)/sizeof(HwVirtualComDrv))
+    if (config != NULL)
     {
-        hw_drv = &drv[drv_index];
-
         /* Convert from char to wchar_t thingy */
-        snprintf(helper, sizeof(helper), "\\\\.\\%s", port_name);
-        mbstowcs_s(&byte_converted, hw_drv->port_name, 32, helper, 31);
+        snprintf(helper, sizeof(helper), "\\\\.\\%s", config->port_name);
+        mbstowcs_s(&byte_converted, driver.port_name, 32, helper, 31);
 
 
 
-        hw_drv->driver_h = CreateFile((wchar_t*)hw_drv->port_name,    // port name
+        driver.driver_h = CreateFile((wchar_t*)driver.port_name,    // port name
                                         GENERIC_READ | GENERIC_WRITE,               // Read/Write
                                         0,                                          // No Sharing
                                         NULL,                                       // No Security
@@ -140,36 +159,80 @@ static bool VirtualCom_Configure(uint8_t drv_index, char* port_name)
                                         0,                                          // Non Overlapped I/O
                                         NULL);
 
-        if (hw_drv->driver_h == INVALID_HANDLE_VALUE)
+        if (driver.driver_h == INVALID_HANDLE_VALUE)
         {
             success = false;
         }
 
         if (success)
         {
-            hw_drv->config.DCBlength = sizeof(DCB);
-            success &= GetCommState(hw_drv->driver_h, &hw_drv->config);
+            driver.config.DCBlength = sizeof(DCB);
+            success &= GetCommState(driver.driver_h, &driver.config);
         }
 
         if (success)
         {
-            hw_drv->config.BaudRate = 1500000;      //BaudRate = 9600
-            hw_drv->config.ByteSize = 8;            //ByteSize = 8
-            hw_drv->config.StopBits = ONESTOPBIT;   //StopBits = 1
-            hw_drv->config.Parity = NOPARITY;       //Parity = None
+            driver.config.BaudRate = config->baudrate;
+            driver.config.ByteSize = config->byte_size;
 
-            success &= SetCommState(hw_drv->driver_h, &hw_drv->config);
+            if (config->parity == NONE)
+            {
+                driver.config.Parity = NOPARITY;
+            }
+            else if (config->parity == EVEN)
+            {
+                driver.config.Parity = EVENPARITY;
+            }
+            else if (config->parity == ODD)
+            {
+                driver.config.Parity = ODDPARITY;
+            }
+            else if (config->parity == MARK)
+            {
+                driver.config.Parity = MARKPARITY;
+            }
+            else if (config->parity == SPACE)
+            {
+                driver.config.Parity = SPACEPARITY;
+            }
+            else
+            {
+                success = false;
+            }
+
+
+            if (config->stop_bit == ONE_BIT)
+            {
+                driver.config.StopBits = ONESTOPBIT;
+            }
+            else if (config->stop_bit == ONE_AND_HALF_BIT)
+            {
+                driver.config.StopBits = ONE5STOPBITS;
+            }
+            else if (config->stop_bit == TWO_BITS)
+            {
+                driver.config.StopBits = TWOSTOPBITS;
+            }
+            else
+            {
+                success = false;
+            }
         }
 
         if (success)
         {
-            hw_drv->timeouts.ReadIntervalTimeout = 50;
-            hw_drv->timeouts.ReadTotalTimeoutConstant = 50;
-            hw_drv->timeouts.ReadTotalTimeoutMultiplier = 10;
-            hw_drv->timeouts.WriteTotalTimeoutConstant = 50;
-            hw_drv->timeouts.WriteTotalTimeoutMultiplier = 10;
+            success &= SetCommState(driver.driver_h, &driver.config);
+        }
 
-            success &= SetCommTimeouts(hw_drv->driver_h, &hw_drv->timeouts);
+        if (success)
+        {
+            driver.timeouts.ReadIntervalTimeout = 50;
+            driver.timeouts.ReadTotalTimeoutConstant = 50;
+            driver.timeouts.ReadTotalTimeoutMultiplier = 10;
+            driver.timeouts.WriteTotalTimeoutConstant = 50;
+            driver.timeouts.WriteTotalTimeoutMultiplier = 10;
+
+            success &= SetCommTimeouts(driver.driver_h, &driver.timeouts);
         }
     }
     else
@@ -180,25 +243,38 @@ static bool VirtualCom_Configure(uint8_t drv_index, char* port_name)
     return success;
 }
 
-static bool VirtualCom_SendBlocking(uint8_t drv_index, uint8_t *buff, uint32_t buff_size)
+
+
+
+/******************************************************************************
+* Function : VirtualCom_SendBlocking
+*//**
+* @Description: 
+*
+* @param
+* @return
+*
+* @Example Example:
+* @code
+* 
+* @endcode
+*
+*******************************************************************************/
+static uint16_t VirtualCom_SendBlocking(uint8_t *buff, uint16_t buff_size)
 {
     bool            success = true;
-    HwVirtualComDrv *hw_drv = NULL;
     uint32_t        num_byte_writen = 0;
     uint32_t        remain_bytes = buff_size;
     uint8_t         *write_ptr = buff;
 
     PRNT_DBG("VirtualCom_SendBlocking(%lu bytes)", buff_size);
 
-    if (drv_index < sizeof(drv) / sizeof(HwVirtualComDrv)
-        && buff != NULL
+    if (buff != NULL
         && buff_size > 0)
     {
-        hw_drv = &drv[drv_index];
-
         do
         {
-            success &= WriteFile(hw_drv->driver_h,
+            success &= WriteFile(driver.driver_h,
                                     write_ptr,
                                     buff_size,
                                     &num_byte_writen,
@@ -222,28 +298,41 @@ static bool VirtualCom_SendBlocking(uint8_t drv_index, uint8_t *buff, uint32_t b
         success = false;
     }
 
-    return success;
+    return buff_size - remain_bytes;
 }
 
-static bool VirtualCom_RecvBlocking(uint8_t drv_index, uint8_t* buff, uint32_t buff_size)
+
+
+
+/******************************************************************************
+* Function : VirtualCom_RecvBlocking
+*//**
+* @Description:
+*
+* @param
+* @return
+*
+* @Example Example:
+* @code
+*
+* @endcode
+*
+*******************************************************************************/
+static uint16_t VirtualCom_RecvBlocking(uint8_t* buff, uint16_t buff_size)
 {
     bool            success = true;
-    HwVirtualComDrv *hw_drv = NULL;
     uint32_t        num_byte_read = 0;
     uint32_t        remain_bytes = buff_size;
     uint8_t         *read_ptr = buff;
 
     PRNT_DBG("VirtualCom_RecvBlocking(%lu bytes)", buff_size);
 
-    if (drv_index < sizeof(drv) / sizeof(HwVirtualComDrv)
-        && buff != NULL
+    if (buff != NULL
         && buff_size > 0)
     {
-        hw_drv = &drv[drv_index];
-
         do
         {
-            success &= ReadFile(hw_drv->driver_h,
+            success &= ReadFile(driver.driver_h,
                                     read_ptr,
                                     buff_size,
                                     &num_byte_read,
@@ -268,7 +357,7 @@ static bool VirtualCom_RecvBlocking(uint8_t drv_index, uint8_t* buff, uint32_t b
         success = false;
     }
 
-    return success;
+    return buff_size - remain_bytes;
 }
 /* End of file*/
 

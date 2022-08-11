@@ -64,12 +64,19 @@
 GetDriverFunction get_driver[NUM_OF_DRIVER] =
 {
     (GetDriverFunction)DummyDriver_GetDriver,
+
 #if(HAL_UART == 1U)
     (GetDriverFunction)GetUart0Driver,
 #endif
+
+#if (VIRTUAL_COM == 1U)
+    (GetDriverFunction)GetVirtualComDriver,
+#endif /*VIRTUAL_COM*/
+
 #if(WIFI_CONTROLLER == 1U)
     (GetDriverFunction)WifiCtrl_GetWifiControllerDriver,
 #endif
+
 #if(MQTT == 1U)
     (GetDriverFunction)Mqtt_GetDriver,
 #endif

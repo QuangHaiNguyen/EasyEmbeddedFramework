@@ -223,11 +223,21 @@
 #if (HAL_UART == 1U)
 #define UART_MOD_ID             0x30U
 #if(SUPPORTED_CHIP == WIN)
-    #define NUM_OF_SUPPORTED_UART   1U    /**< Number of supported Uart*/
-    #define SIM_UART0               0U
+    #if(VIRTUAL_COM == 1)
+        #define NUM_OF_SUPPORTED_UART   2U    /**< Number of supported Uart*/
+        #define SIM_UART0               0U
+        #define VCP_UART                1U
 
-    /* Alias name, easy to use */
-    #define CLI_UART                SIM_UART0
+        /* Alias name, easy to use */
+        #define CLI_UART                SIM_UART0
+    #else
+        #define NUM_OF_SUPPORTED_UART   1U    /**< Number of supported Uart*/
+        #define SIM_UART0               0U
+
+        /* Alias name, easy to use */
+        #define CLI_UART                SIM_UART0
+    #endif
+
 #else
     #define NUM_OF_SUPPORTED_UART   1U    /**< Number of supported Uart*/
     #define HAL_UART0               0U

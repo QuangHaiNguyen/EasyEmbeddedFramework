@@ -52,6 +52,41 @@ typedef enum
     UART_UNSUPPORTED,   /**< UART unsupported callback */
 }UART_NOTIFY_CODE;
 
+
+/** @brief Number of stop bit
+ *
+ */
+typedef enum
+{
+    ONE_BIT,            /**< */
+    ONE_AND_HALF_BIT,   /**< */
+    TWO_BITS,           /**< */
+}UART_STOP_BIT;
+
+
+/** @brief Parity value
+ *
+ */
+typedef enum
+{
+    NONE,               /**< */
+    ODD,                /**< */
+    EVEN,               /**< */
+    MARK,               /**< */
+    SPACE,              /**< */
+}UART_PARITY;
+
+
+typedef struct
+{
+    char            *port_name;
+    uint8_t         byte_size;
+    uint32_t        baudrate;
+    UART_PARITY     parity;
+    UART_STOP_BIT   stop_bit;
+}UartConfiguration;
+
+
 /** @brief definition the callback function pointer 
  *  
  */
@@ -63,7 +98,10 @@ typedef uint8_t (*UART_CALLBACK)(uint8_t eCode, void *param1);
 typedef struct
 {
     uint16_t(*ezmUart_Send)             (uint8_t *au8Buffer, uint16_t u16Size);
-    uint16_t(*ezmUart_Receive)          (uint8_t * au8Buffer, uint16_t u16Size);
+    uint16_t(*ezmUart_Receive)          (uint8_t *au8Buffer, uint16_t u16Size);
+    uint16_t(*ezmUart_SendBlocking)     (uint8_t* au8Buffer, uint16_t u16Size);
+    uint16_t(*ezmUart_ReceiveBlocking)  (uint8_t* au8Buffer, uint16_t u16Size);
+    bool(*ezmUart_Configure)            (UartConfiguration *config);
     void(*ezmUart_RegisterCallback)     (UART_CALLBACK pfnCallback);
     void(*ezmUart_UnregisterCallback)   (void);
 }UartDrvApi;
@@ -79,6 +117,9 @@ typedef struct
 *******************************************************************************/
 void* GetUart0Driver(void);
 
+#if (VIRTUAL_COM == 1U)
+void *GetVirtualComDriver(void);
+#endif /* VIRTUAL_COM */
 
 #endif /* NUM_OF_SUPPORTED_UART > 0U */
 #endif /* _HAL_UART_H */
