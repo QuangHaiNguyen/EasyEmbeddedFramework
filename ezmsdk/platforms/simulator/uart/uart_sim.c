@@ -54,8 +54,8 @@ typedef struct
 /******************************************************************************
 * Function Definitions
 *******************************************************************************/
-static uint16_t UartSim_Read                (uint8_t*buff, uint16_t size);
-static uint16_t UartSim_Write               (uint8_t *buff, uint16_t size);
+static uint16_t UartSim_Read                (uint8_t*buff, uint32_t size);
+static uint16_t UartSim_Write               (uint8_t *buff, uint32_t size);
 static void     UartSim_RegisterCallback    (UART_CALLBACK call_back);
 static void     UartSim_UnRegisterCallback  (void);
 
@@ -82,9 +82,9 @@ UartDrvApi*simUart_GetApi(uint8_t hw_uart_index)
 }
 
 
-static uint16_t UartSim_Read(uint8_t* buff, uint16_t size)
+static uint16_t UartSim_Read(uint8_t* buff, uint32_t size)
 {
-    for (uint16_t i = 0; i < size; i++)
+    for (uint32_t i = 0; i < size; i++)
     {
         buff[i] = (uint8_t)_getchar_nolock();
     }
@@ -97,9 +97,9 @@ static uint16_t UartSim_Read(uint8_t* buff, uint16_t size)
     return size;
 }
 
-static uint16_t UartSim_Write(uint8_t* buff, uint16_t size)
+static uint16_t UartSim_Write(uint8_t* buff, uint32_t size)
 {
-    for (uint16_t i = 0; i < size; i++)
+    for (uint32_t i = 0; i < size; i++)
     {
         putchar(buff[i]);
     }

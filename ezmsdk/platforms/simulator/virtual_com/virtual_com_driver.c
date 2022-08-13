@@ -84,8 +84,8 @@ static UartDrvApi drv_api;
 * Function Definitions
 *******************************************************************************/
 static bool     VirtualCom_Configure(UartConfiguration *config);
-static uint16_t VirtualCom_SendBlocking(uint8_t *buff, uint16_t buff_size);
-static uint16_t VirtualCom_RecvBlocking(uint8_t *buff, uint16_t buff_size);
+static uint16_t VirtualCom_SendBlocking(uint8_t *buff, uint32_t buff_size);
+static uint16_t VirtualCom_RecvBlocking(uint8_t *buff, uint32_t buff_size);
 
 
 /******************************************************************************
@@ -260,7 +260,7 @@ static bool VirtualCom_Configure(UartConfiguration* config)
 * @endcode
 *
 *******************************************************************************/
-static uint16_t VirtualCom_SendBlocking(uint8_t *buff, uint16_t buff_size)
+static uint16_t VirtualCom_SendBlocking(uint8_t *buff, uint32_t buff_size)
 {
     bool            success = true;
     uint32_t        num_byte_writen = 0;
@@ -318,7 +318,7 @@ static uint16_t VirtualCom_SendBlocking(uint8_t *buff, uint16_t buff_size)
 * @endcode
 *
 *******************************************************************************/
-static uint16_t VirtualCom_RecvBlocking(uint8_t* buff, uint16_t buff_size)
+static uint16_t VirtualCom_RecvBlocking(uint8_t* buff, uint32_t buff_size)
 {
     bool            success = true;
     uint32_t        num_byte_read = 0;

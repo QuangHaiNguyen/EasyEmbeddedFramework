@@ -97,10 +97,10 @@ typedef uint8_t (*UART_CALLBACK)(uint8_t eCode, void *param1);
  */
 typedef struct
 {
-    uint16_t(*ezmUart_Send)             (uint8_t *au8Buffer, uint16_t u16Size);
-    uint16_t(*ezmUart_Receive)          (uint8_t *au8Buffer, uint16_t u16Size);
-    uint16_t(*ezmUart_SendBlocking)     (uint8_t* au8Buffer, uint16_t u16Size);
-    uint16_t(*ezmUart_ReceiveBlocking)  (uint8_t* au8Buffer, uint16_t u16Size);
+    uint16_t(*ezmUart_Send)             (uint8_t *au8Buffer, uint32_t u16Size);
+    uint16_t(*ezmUart_Receive)          (uint8_t *au8Buffer, uint32_t u16Size);
+    uint16_t(*ezmUart_SendBlocking)     (uint8_t* au8Buffer, uint32_t u16Size);
+    uint16_t(*ezmUart_ReceiveBlocking)  (uint8_t* au8Buffer, uint32_t u16Size);
     bool(*ezmUart_Configure)            (UartConfiguration *config);
     void(*ezmUart_RegisterCallback)     (UART_CALLBACK pfnCallback);
     void(*ezmUart_UnregisterCallback)   (void);
