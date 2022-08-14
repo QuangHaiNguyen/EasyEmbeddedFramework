@@ -1,0 +1,238 @@
+mainmenu "Configuration for the Embedded Easy SDK"
+
+config APP_VERSION_NUMBER
+    string "Application revision"
+    default "00.00.00"
+
+config SDK_VERSION_NUMBER
+    string "SDK revision"
+    default "00.00.99"
+
+choice
+    prompt  "Choosing supported platform"
+    config NO_CHIP
+        bool "no platform"
+    config WIN
+        bool "Windows"
+    config LINUX
+        bool "Linux"
+    config ESP32
+        bool "ESP32"
+    config STM32
+        bool "STM32"
+endchoice
+
+menu "helper module"
+
+config HELPER_LINKEDLIST
+    bool "Enable linked list support"
+    default y
+
+menu "logging configuration"    
+config LOGGING
+    bool "Enable logging support"
+    default n
+
+config USING_COLOR
+    bool "Enable using color for logging priority"
+    default y
+    depends on LOGGING
+endmenu
+
+config HELPER_HEXDUMP
+    bool "Enable memory dump support"
+    depends on LOGGING
+    default n
+
+comment "memory dump support disable. Depend on LOGGING"
+    depends on !LOGGING    
+
+config RING_BUFFER
+    bool "Enable ring buffer support"
+    default n
+
+config HELPER_ASSERT
+    bool "Enable assert support"
+    default n
+
+config EVENT_NOTIFIER
+    bool "Enable event notfication support"
+    depends on HELPER_LINKEDLIST
+    default n
+
+comment "Event notfication support disable. Depend on HELPER_LINKEDLIST"
+    depends on !HELPER_LINKEDLIST
+
+menu "Static memory configuration"    
+config STCMEM
+    bool "Enable static memory allocation support"
+    depends on HELPER_LINKEDLIST
+    default n
+
+comment "Static memory allocation support disable. Depend on HELPER_LINKEDLIST"
+    depends on !HELPER_LINKEDLIST
+
+config NUM_OF_MEM_BLOCK
+    int "maximum number of memory header"
+    default 128
+    depends on STCMEM
+endmenu
+
+endmenu
+
+menu "application module"
+
+menu "Command Line Interface Configuration"
+config CLI
+    bool "Enable command line interface support"
+    default n
+
+config NUM_OF_ARGUMENT
+    int "Number of supported arguments in one command"
+    default 4
+    depends on CLI
+
+comment "Number of arguments support disable. Depend on CLI"
+    depends on !CLI
+
+config NUM_OF_CMD
+    int "Number of maximum command supported"
+    default 10
+    depends on CLI
+
+comment "Number of command support disable. Depend on CLI"
+    depends on !CLI
+
+endmenu
+
+config SCHEDULER
+    bool "(Legacy)Enable task scheduler support"
+    default n
+
+config SMALLOC
+    bool "(Legacy)Enable static mem allocation support"
+    depends on HELPER_LINKEDLIST
+    default n
+
+comment "(Legacy) Static mem allocation support disable. Depend on HELPER_LINKEDLIST"
+    depends on !HELPER_LINKEDLIST
+
+menu "Binary parser configuration module"
+
+config BIN_PARSER
+    bool "Enable binary parser support"
+    depends on STCMEM
+    default n
+
+comment "Binary parser support disable. Depend on STCMEM"
+    depends on !STCMEM
+
+config PAYLOAD_MAX_SIZE
+    int "maximum size of the payload"
+    depends on BIN_PARSER
+    default 32
+
+config CRC_SIZE
+    int "size of the checksum buffer"
+    depends on BIN_PARSER
+    default 2
+
+endmenu
+
+menu "Inter process communication module configuration"
+config IPC
+    bool "Enable interprocess communication support"
+    default n
+    depends on HELPER_LINKEDLIST
+
+comment "inter process communication support disable. Depend on HELPER_LINKEDLIST"
+    depends on !HELPER_LINKEDLIST
+
+config NUM_OF_IPC_INSTANCE
+    int "Number of supported IPC instance"
+    default 5
+    depends on IPC
+
+config USING_MODULE_NAME
+    bool  "IPC instane name support"
+    default n
+    depends on IPC
+endmenu
+
+menu "Kernel configuration"
+config KERNEL
+    bool "Enable kernel support"
+    depends on HELPER_LINKEDLIST
+    default n
+
+comment "Kernel support disable. Depend on HELPER_LINKEDLIST"
+    depends on !HELPER_LINKEDLIST
+
+config NUM_OF_PROCESS
+    int "Maximum number of supported process"
+    default 5
+    depends on KERNEL
+endmenu
+
+config DRIVERINF
+    bool "Enable common driver support"
+    depends on HELPER_LINKEDLIST
+    default n
+
+comment "Common driver support support disable. Depend on HELPER_LINKEDLIST"
+    depends on !HELPER_LINKEDLIST
+
+config EZM_PRINTF
+    bool "Enable own printf support"
+    default n
+
+config DATA_MODEL
+    bool "Enable data model support"
+    depends on HELPER_LINKEDLIST && EVENT_NOTIFIER
+    default n
+
+comment "Data model support disable. Depend on HELPER_LINKEDLIST"
+    depends on !HELPER_LINKEDLIST || !EVENT_NOTIFIER
+
+endmenu
+
+menu "driver module"
+
+menu "HAL UART configuration"
+config HAL_UART
+    bool "Enable HAL uart support"
+    default n
+
+comment "Window platform options:"    
+if WIN
+config SIM_UART
+    bool "Enable simulated uart driver support"
+    default n
+
+config VIRTUAL_COM
+    bool "Enable virtual com driver support"
+    default n
+endif
+
+endmenu
+
+config SYSTEM_ERROR
+    bool "Enable systme-wide error notification"
+    default n
+
+config FLASH_SIM
+    bool "Enable flash driver support"
+    depends on WIN
+    default n
+
+comment "flash driver disable. Depend on WIN"
+    depends on !WIN
+
+config WIFI_CONTROLLER
+    bool "Enable wifi controller support"
+    default n
+
+config MQTT
+    bool "Enable mqtt support support"
+    default n
+endmenu

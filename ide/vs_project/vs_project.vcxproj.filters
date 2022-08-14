@@ -98,6 +98,9 @@
     <Filter Include="Source Files\platforms\simulator\virtual_com">
       <UniqueIdentifier>{b68afd2d-9d83-480e-b6b5-04900f630c47}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\configuration">
+      <UniqueIdentifier>{3b175494-d5cb-4d6c-a0b1-7c7e3feb7725}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ezmsdk\app\app.c">
@@ -279,5 +282,13 @@
     <ClInclude Include="..\..\ezmsdk\platforms\simulator\virtual_com\virtual_com_driver.h">
       <Filter>Source Files\platforms\simulator\virtual_com</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\ezmsdk\configuration\sdkconfig.h">
+      <Filter>Source Files\configuration</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\ezmsdk\configuration\Kconfig">
+      <Filter>Source Files\configuration</Filter>
+    </None>
   </ItemGroup>
 </Project>

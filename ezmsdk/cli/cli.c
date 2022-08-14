@@ -33,7 +33,7 @@
 #define DEBUG_LVL   LVL_ERROR    /**< logging level */
 #define MOD_NAME    "CLI"        /**< module name */
 
-#if (CLI == 1U)
+#if (CONFIG_CLI == 1U)
 
 #include <string.h>
 #include <stdarg.h>
@@ -41,7 +41,7 @@
 
 #define STR_TERMINATE                   '\0'
 #define SPACE                           ' '
-#define ARG_INVALID                     NUM_OF_ARG
+#define ARG_INVALID                     CONFIG_NUM_OF_ARGUMENT
 #define SKIP_NULL_SPACE(pointer, end)   while((*pointer == ' ' || *pointer == '\0')\
                                                 && pointer != end)\
                                         {pointer++;}
@@ -61,10 +61,10 @@ typedef struct
     const char      *command;                        /**< Pointer to the command */
     const char      *description;                    /**< Pointer to the command description */
     CLI_CALLBACK    callback;                       /**< Pointer to the command callback function */
-    uint32_t        *long_arg_list[NUM_OF_ARG];      /**< Pointer to the list of argument in long form */
-    uint32_t        *short_arg_list[NUM_OF_ARG];     /**< Pointer to the list of argument in short form */
-    uint32_t        *description_list[NUM_OF_ARG];   /**< Pointer to the command description */
-    char            *value_list[NUM_OF_ARG];         /**< Pointer to the list of values */
+    uint32_t        *long_arg_list[CONFIG_NUM_OF_ARGUMENT];      /**< Pointer to the list of argument in long form */
+    uint32_t        *short_arg_list[CONFIG_NUM_OF_ARGUMENT];     /**< Pointer to the list of argument in short form */
+    uint32_t        *description_list[CONFIG_NUM_OF_ARGUMENT];   /**< Pointer to the command description */
+    char            *value_list[CONFIG_NUM_OF_ARGUMENT];         /**< Pointer to the list of values */
 }CommandMetadata;
 
 
@@ -108,7 +108,7 @@ struct CliInstance
 /******************************************************************************
 * Module Variable Definitions
 *******************************************************************************/
-static CommandMetadata  astMetaData[NUM_OF_CMD] = { 0 }; /**< holding commands metadata */
+static CommandMetadata  astMetaData[CONFIG_NUM_OF_CMD] = { 0 }; /**< holding commands metadata */
 static ENUM_CLI_STATE   eState = STATE_COMMAND; /**< Holding the current state of the parser */
 static const char       cmd_help[] = "help";
 static const char       cmd_help_desc[] = "show help";
@@ -169,7 +169,7 @@ bool ezmCli_Init(UartDrvApi* uart_driver)
 {
     bool success = true;
 
-    for (uint8_t i = 0; i < NUM_OF_CMD; i++)
+    for (uint8_t i = 0; i < CONFIG_NUM_OF_CMD; i++)
     {
         if (!ezmCli_ResetMetaData(i))
         {
@@ -387,7 +387,7 @@ bool ezmCli_AddArgument (CommandHandle cmd_handle,
         if (ezmCli_IsLongFormArgumentExist(cmd_handle, long_arg) == ARG_INVALID
             && ezmCli_IsShortFormArgumentExist(cmd_handle, short_arg) == ARG_INVALID)
         {
-            for (uint8_t i = 0; i < NUM_OF_ARG; i++)
+            for (uint8_t i = 0; i < CONFIG_NUM_OF_ARGUMENT; i++)
             {
                 if (astMetaData[cmd_handle].long_arg_list[i] == NULL)
                 {
@@ -625,7 +625,7 @@ void ezmCli_Printf (char* fmt, ...)
 void ezmCli_PrintMenu(void)
 {
     ezmCli_Printf("\nList of commands:\n");
-    for (uint8_t i = 0; i < NUM_OF_CMD; i++)
+    for (uint8_t i = 0; i < CONFIG_NUM_OF_CMD; i++)
     {
         ezmCli_PrintCommandHelp(i);
     }
@@ -660,12 +660,12 @@ static bool ezmCli_ResetMetaData (uint8_t index)
 {
     bool bResult = false;
 
-    if(index < NUM_OF_CMD)
+    if(index < CONFIG_NUM_OF_CMD)
     {
         astMetaData[index].callback = NULL;
         astMetaData[index].command = NULL;
         astMetaData[index].description = NULL;
-        for(uint8_t i = 0; i < NUM_OF_ARG; i++)
+        for(uint8_t i = 0; i < CONFIG_NUM_OF_ARGUMENT; i++)
         {
             astMetaData[index].description_list[i] = NULL;
             astMetaData[index].long_arg_list[i] = NULL;
@@ -703,7 +703,7 @@ static uint8_t ezmCli_GetFreeInstance (void)
 {
     uint8_t u8FreeInstanceIndex = CLI_HANDLE_INVALID;
 
-    for(uint8_t i = 0; i < NUM_OF_CMD; i++)
+    for(uint8_t i = 0; i < CONFIG_NUM_OF_CMD; i++)
     {
         if(astMetaData[i].command == NULL)
         {
@@ -746,7 +746,7 @@ static bool ezmCli_IsCommandExist   (const char *command, uint8_t *index)
 {
     bool cmd_exist = false;
 
-    for(uint8_t i = 0; i < NUM_OF_CMD; i++)
+    for(uint8_t i = 0; i < CONFIG_NUM_OF_CMD; i++)
     {
         if(astMetaData[i].command != NULL && 
             strcmp(astMetaData[i].command, command) == 0)
@@ -783,13 +783,13 @@ static bool ezmCli_IsCommandExist   (const char *command, uint8_t *index)
 *******************************************************************************/
 static void ezmCli_PrintCommandHelp (uint8_t index)
 {
-    if(index < NUM_OF_CMD && astMetaData[index].command != NULL)
+    if(index < CONFIG_NUM_OF_CMD && astMetaData[index].command != NULL)
     {
         ezmCli_Printf("%s\n", "-----------------------------------------");
         ezmCli_Printf("%s", "usage: ");
         ezmCli_Printf("%s ", astMetaData[index].command);
 
-        for(uint8_t i = 0; i < NUM_OF_ARG; i++)
+        for(uint8_t i = 0; i < CONFIG_NUM_OF_ARGUMENT; i++)
         {
             if(astMetaData[index].short_arg_list[i] != NULL)
             {
@@ -803,7 +803,7 @@ static void ezmCli_PrintCommandHelp (uint8_t index)
         ezmCli_Printf("\n\t%s", astMetaData[index].description);
         ezmCli_Printf("\n");
         ezmCli_Printf("Argument options:\n");
-        for(uint8_t i = 0; i < NUM_OF_ARG; i++)
+        for(uint8_t i = 0; i < CONFIG_NUM_OF_ARGUMENT; i++)
         {
             if(astMetaData[index].short_arg_list[i] != NULL)
             {
@@ -891,7 +891,7 @@ static uint8_t  ezmCli_IsLongFormArgumentExist(uint8_t command_index,
                                                 const char* long_arg)
 {
     uint8_t index = ARG_INVALID;
-    for(uint8_t i = 0; i < NUM_OF_ARG; i++)
+    for(uint8_t i = 0; i < CONFIG_NUM_OF_ARGUMENT; i++)
     {
         if(astMetaData[command_index].long_arg_list[i] != NULL &&
                 strcmp((char *)astMetaData[command_index].long_arg_list[i], long_arg) == 0)
@@ -925,7 +925,7 @@ static uint8_t  ezmCli_IsShortFormArgumentExist(uint8_t command_index,
                                                     const char* short_arg)
 {
     uint8_t index = ARG_INVALID;
-    for(uint8_t i = 0; i < NUM_OF_ARG; i++)
+    for(uint8_t i = 0; i < CONFIG_NUM_OF_ARGUMENT; i++)
     {
         if(astMetaData[command_index].short_arg_list[i] != NULL &&
             strcmp((char *)astMetaData[command_index].short_arg_list[i], short_arg) == 0)
@@ -956,9 +956,9 @@ static uint8_t  ezmCli_IsShortFormArgumentExist(uint8_t command_index,
 *******************************************************************************/
 static void ezmCli_ResetValueList(uint8_t index)
 {
-    if(index < NUM_OF_CMD)
+    if(index < CONFIG_NUM_OF_CMD)
     {
-        for(uint8_t i = 0; i < NUM_OF_ARG; i++)
+        for(uint8_t i = 0; i < CONFIG_NUM_OF_ARGUMENT; i++)
         {
             astMetaData[index].value_list[i] = NULL;
         }

@@ -193,6 +193,7 @@
     <ClInclude Include="..\..\ezmsdk\app\app_config.h" />
     <ClInclude Include="..\..\ezmsdk\binCmdParser\binCmdParser.h" />
     <ClInclude Include="..\..\ezmsdk\cli\cli.h" />
+    <ClInclude Include="..\..\ezmsdk\configuration\sdkconfig.h" />
     <ClInclude Include="..\..\ezmsdk\data_model\data_model.h" />
     <ClInclude Include="..\..\ezmsdk\ezmDebug\config.h" />
     <ClInclude Include="..\..\ezmsdk\ezmDebug\ezmDebug.h" />
@@ -220,6 +221,9 @@
     <ClInclude Include="..\..\ezmsdk\utilities\stcmem\stcmem.h" />
     <ClInclude Include="..\..\ezmsdk\utilities\system_error\system_error.h" />
     <ClInclude Include="..\..\ezmsdk\utilities\system_error\system_error_table.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\ezmsdk\configuration\Kconfig" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

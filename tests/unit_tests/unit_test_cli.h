@@ -8,7 +8,7 @@ extern "C" {
 #include "../../ezmsdk/app/app_config.h"
 #include "string.h"
 
-#if (CLI == 1U)
+#if (CONFIG_CLI == 1U)
 #include "../../ezmsdk/cli/cli.h"
 
 char  au8CommandBuffer[512];
@@ -90,7 +90,7 @@ CLI_NOTIFY_CODE DoNothing(const char* pu8Command, void* pValueList)
 namespace 
 {
 
-#if (CLI == 1U)
+#if (CONFIG_CLI == 1U)
     TEST(cli, add_command) 
     {
         uint8_t u8Result;

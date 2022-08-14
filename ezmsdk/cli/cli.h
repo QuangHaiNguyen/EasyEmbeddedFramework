@@ -34,7 +34,7 @@
 *******************************************************************************/
 #include "app/app_config.h"
 
-#if (CLI == 1U)
+#if (CONFIG_CLI == 1U)
 #include "stdint.h"
 #include "stdbool.h"
 #include "ezmDriver/driver.h"
@@ -43,7 +43,7 @@
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
-#define CLI_HANDLE_INVALID       NUM_OF_CMD
+#define CLI_HANDLE_INVALID       CONFIG_NUM_OF_CMD
 
 /******************************************************************************
 * Module Typedefs

@@ -32,7 +32,7 @@
 #include <time.h>
 #endif
 
-#if (CLI == 1U)
+#if (CONFIG_CLI == 1U)
 #include "cli/cli.h"
 #endif
 
@@ -266,7 +266,7 @@ void ezmApp_SdkInit(void)
     Logging_DemoFeatures();
 #endif /* LOGGING == 1U */
 
-#if (CLI == 1U && HAL_UART == 1U)
+#if (CONFIG_CLI == 1U && HAL_UART == 1U)
     UartDrvApi* uart_driver;
     ezmDriver_GetDriverInstance(UART0_DRIVER, (void*)(&uart_driver));
     if (uart_driver == NULL)
@@ -277,7 +277,7 @@ void ezmApp_SdkInit(void)
     {
         INFO("Initialize command line interface");
         INFO("Module Id: 0x%02x", CLI_MOD_ID);
-        INFO("Number of supported command: [command = %d]", NUM_OF_CMD);
+        INFO("Number of supported command: [command = %d]", CONFIG_NUM_OF_CMD);
         ezmCli_Init(uart_driver);
     }
 #endif
@@ -286,7 +286,7 @@ void ezmApp_SdkInit(void)
     uint64_t execute_time_stamp = ezmApp_ReturnTimestampMillisvoid();
     do
     {
-#if (CLI == 1U)
+#if (CONFIG_CLI == 1U)
         ezmCli_Run();
 #endif
         if (ezmApp_ReturnTimestampMillisvoid() - execute_time_stamp > 1)
@@ -324,7 +324,7 @@ static void ezm_AppPrintActiveModule(void)
 {
     INFO("ACTIVE MODULES:");
 
-#if (CLI == 1U)
+#if (CONFIG_CLI == 1U)
     INFO("[x] CLI");
 #else
     INFO("[ ] CLI");
