@@ -22,217 +22,232 @@ choice
         bool "STM32"
 endchoice
 
-menu "helper module"
+menu "Helper modules"
 
 config HELPER_LINKEDLIST
-    bool "Enable linked list support"
+    bool "Enable HELPER_LINKEDLIST support"
     default y
+    help
+        Linked list implementation. One of the most important module.
+        Losts of modules based on it to operate.
 
-menu "logging configuration"    
+menu "LOGGING configuration"    
 config LOGGING
-    bool "Enable logging support"
-    default n
+    bool "Enable LOGGING support"
+    help
+        Print debug output on the terminal. It supports multi-level features
+        such as: multi-level logging, module name, function name and line,
+        color
 
 config USING_COLOR
-    bool "Enable using color for logging priority"
+    bool "Enable USING_COLOR for LOGGING"
     default y
     depends on LOGGING
+    help
+        Activate color support for logging module
 endmenu
 
 config HELPER_HEXDUMP
-    bool "Enable memory dump support"
+    bool "Enable HELPER_HEXDUMP support"
     depends on LOGGING
-    default n
 
-comment "memory dump support disable. Depend on LOGGING"
+comment "HELPER_HEXDUMP support disable. Depend on LOGGING"
     depends on !LOGGING    
 
 config RING_BUFFER
-    bool "Enable ring buffer support"
-    default n
+    bool "Enable RING_BUFFER support"
 
 config HELPER_ASSERT
-    bool "Enable assert support"
-    default n
+    bool "Enable HELPER_ASSERT support"
 
 config EVENT_NOTIFIER
-    bool "Enable event notfication support"
+    bool "Enable EVENT_NOTIFIER support"
     depends on HELPER_LINKEDLIST
-    default n
+    help
+        This module allows events can be notified between modules based on pub/sub
+        pattern
 
-comment "Event notfication support disable. Depend on HELPER_LINKEDLIST"
+comment "EVENT_NOTIFIER support disable. Depend on HELPER_LINKEDLIST"
     depends on !HELPER_LINKEDLIST
 
-menu "Static memory configuration"    
+menu "STCMEM configuration"    
 config STCMEM
-    bool "Enable static memory allocation support"
+    bool "Enable STCMEM support"
     depends on HELPER_LINKEDLIST
-    default n
+    help
+        Static memory allocation. This modules allows the developers to allocate
+        memory on a fixed memory buffer.
 
-comment "Static memory allocation support disable. Depend on HELPER_LINKEDLIST"
+comment "STCMEM support disable. Depend on HELPER_LINKEDLIST"
     depends on !HELPER_LINKEDLIST
 
 config NUM_OF_MEM_BLOCK
-    int "maximum number of memory header"
+    int "NUM_OF_MEM_BLOCK"
     default 128
     depends on STCMEM
 endmenu
 
-endmenu
-
-menu "application module"
-
-menu "Command Line Interface Configuration"
-config CLI
-    bool "Enable command line interface support"
-    default n
-
-config NUM_OF_ARGUMENT
-    int "Number of supported arguments in one command"
-    default 4
-    depends on CLI
-
-comment "Number of arguments support disable. Depend on CLI"
-    depends on !CLI
-
-config NUM_OF_CMD
-    int "Number of maximum command supported"
-    default 10
-    depends on CLI
-
-comment "Number of command support disable. Depend on CLI"
-    depends on !CLI
+config SYSTEM_ERROR
+    bool "Enable SYSTEM_ERROR notification"
+    help
+        This module allows the errors can be managed and handled centralized
 
 endmenu
 
-config SCHEDULER
-    bool "(Legacy)Enable task scheduler support"
-    default n
+menu "Driver modules"
 
-config SMALLOC
-    bool "(Legacy)Enable static mem allocation support"
-    depends on HELPER_LINKEDLIST
-    default n
-
-comment "(Legacy) Static mem allocation support disable. Depend on HELPER_LINKEDLIST"
-    depends on !HELPER_LINKEDLIST
-
-menu "Binary parser configuration module"
-
-config BIN_PARSER
-    bool "Enable binary parser support"
-    depends on STCMEM
-    default n
-
-comment "Binary parser support disable. Depend on STCMEM"
-    depends on !STCMEM
-
-config PAYLOAD_MAX_SIZE
-    int "maximum size of the payload"
-    depends on BIN_PARSER
-    default 32
-
-config CRC_SIZE
-    int "size of the checksum buffer"
-    depends on BIN_PARSER
-    default 2
-
-endmenu
-
-menu "Inter process communication module configuration"
-config IPC
-    bool "Enable interprocess communication support"
-    default n
-    depends on HELPER_LINKEDLIST
-
-comment "inter process communication support disable. Depend on HELPER_LINKEDLIST"
-    depends on !HELPER_LINKEDLIST
-
-config NUM_OF_IPC_INSTANCE
-    int "Number of supported IPC instance"
-    default 5
-    depends on IPC
-
-config USING_MODULE_NAME
-    bool  "IPC instane name support"
-    default n
-    depends on IPC
-endmenu
-
-menu "Kernel configuration"
-config KERNEL
-    bool "Enable kernel support"
-    depends on HELPER_LINKEDLIST
-    default n
-
-comment "Kernel support disable. Depend on HELPER_LINKEDLIST"
-    depends on !HELPER_LINKEDLIST
-
-config NUM_OF_PROCESS
-    int "Maximum number of supported process"
-    default 5
-    depends on KERNEL
-endmenu
-
-config DRIVERINF
-    bool "Enable common driver support"
-    depends on HELPER_LINKEDLIST
-    default n
-
-comment "Common driver support support disable. Depend on HELPER_LINKEDLIST"
-    depends on !HELPER_LINKEDLIST
-
-config EZM_PRINTF
-    bool "Enable own printf support"
-    default n
-
-config DATA_MODEL
-    bool "Enable data model support"
-    depends on HELPER_LINKEDLIST && EVENT_NOTIFIER
-    default n
-
-comment "Data model support disable. Depend on HELPER_LINKEDLIST"
-    depends on !HELPER_LINKEDLIST || !EVENT_NOTIFIER
-
-endmenu
-
-menu "driver module"
-
-menu "HAL UART configuration"
+menu "HAL_UART configuration"
 config HAL_UART
-    bool "Enable HAL uart support"
-    default n
+    bool "Enable HAL_UART support"
+    help
+        Hardware abstaction layer for UART interface. It provides a common api
+        to interact with the hardware UART bus
 
-comment "Window platform options:"    
-if WIN
+if WIN && HAL_UART
 config SIM_UART
-    bool "Enable simulated uart driver support"
-    default n
+    bool "Enable SIM_UART support"
+    help
+        simulated uart peripheral for windows, based on stdio
 
 config VIRTUAL_COM
-    bool "Enable virtual com driver support"
-    default n
+    bool "Enable VIRTUAL_COM support"
+    help
+        Virtual com interface for windows
 endif
 
 endmenu
 
-config SYSTEM_ERROR
-    bool "Enable systme-wide error notification"
-    default n
-
 config FLASH_SIM
-    bool "Enable flash driver support"
+    bool "Enable FLASH_SIM support"
     depends on WIN
-    default n
+    help
+        simulated non volatile memory
 
-comment "flash driver disable. Depend on WIN"
+comment "FLASH_SIM support disable. Depend on WIN"
     depends on !WIN
 
 config WIFI_CONTROLLER
-    bool "Enable wifi controller support"
-    default n
+    bool "Enable WIFI_CONTROLLER support"
 
 config MQTT
-    bool "Enable mqtt support support"
-    default n
+    bool "Enable MQTT support"
+endmenu
+
+menu "Application modules"
+
+menu "CLI configuration"
+config CLI
+    bool "Enable CLI support"
+    depends on HAL_UART
+    help
+        Command Line Interface
+
+comment "CLI support disable. Depend on HAL_UART"
+    depends on !HAL_UART
+
+if CLI
+config NUM_OF_ARGUMENT
+    int "NUM_OF_ARGUMENT"
+    default 4
+
+config NUM_OF_CMD
+    int "NUM_OF_CMD"
+    default 10
+endif
+
+endmenu
+
+config SCHEDULER
+    bool "(Legacy)Enable SCHEDULER support"
+
+config SMALLOC
+    bool "(Legacy)Enable SMALLOC support"
+    depends on HELPER_LINKEDLIST
+
+comment "(Legacy)SMALLOC support disable. Depend on HELPER_LINKEDLIST"
+    depends on !HELPER_LINKEDLIST
+
+menu "BIN_PARSER configuration"
+config BIN_PARSER
+    bool "Enable BIN_PARSER support"
+    depends on STCMEM
+    help
+        This module provides a generic way to parse data in binary format
+        and reponse to the data
+
+comment "BIN_PARSER support disable. Depend on STCMEM"
+    depends on !STCMEM
+
+if BIN_PARSER
+config PAYLOAD_MAX_SIZE
+    int "PAYLOAD_MAX_SIZE"
+    default 32
+
+config CRC_SIZE
+    int "CRC_SIZE"
+    default 2
+endif
+endmenu
+
+menu "IPC configuration"
+config IPC
+    bool "Enable IPC support"
+    depends on HELPER_LINKEDLIST
+    help
+        This module provides a way for process to communicate with each other
+
+comment "IPC support disable. Depend on HELPER_LINKEDLIST"
+    depends on !HELPER_LINKEDLIST
+
+if IPC
+config NUM_OF_IPC_INSTANCE
+    int "NUM_OF_IPC_INSTANCE"
+    default 5
+
+config USING_MODULE_NAME
+    bool  "USING_MODULE_NAME"
+endif
+endmenu
+
+menu "KERNEL configuration"
+config KERNEL
+    bool "Enable KERNEL support"
+    depends on HELPER_LINKEDLIST
+    help
+        This module provides a way to scheduling and executing tasks
+
+comment "KERNEL support disable. Depend on HELPER_LINKEDLIST"
+    depends on !HELPER_LINKEDLIST
+
+if KERNEL
+config NUM_OF_PROCESS
+    int "NUM_OF_PROCESS"
+    default 5
+endif
+endmenu
+
+config DRIVERINF
+    bool "Enable DRIVERINF support"
+    depends on HELPER_LINKEDLIST
+    help
+        This modules provides the methods to initializing, managing HAL drivers
+        component
+
+comment "DRIVERINF support disable. Depend on HELPER_LINKEDLIST"
+    depends on !HELPER_LINKEDLIST
+
+config EZM_PRINTF
+    bool "Enable EZM_PRINTF support"
+
+
+config DATA_MODEL
+    bool "Enable DATA_MODEL support"
+    depends on HELPER_LINKEDLIST && EVENT_NOTIFIER
+    help
+        This module provides methods to manage data in a centralized way, to notify
+        when data is changing
+
+comment "DATA_MODEL support disable. Depend on HELPER_LINKEDLIST"
+    depends on !HELPER_LINKEDLIST || !EVENT_NOTIFIER
+
 endmenu
