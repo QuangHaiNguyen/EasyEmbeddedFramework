@@ -31,7 +31,7 @@
 *******************************************************************************/
 #include "app/app_config.h"
 
-#if (HELPER_ASSERT == 1U)
+#if (CONFIG_HELPER_ASSERT == 1U)
 #include "utilities/logging/logging.h"
 #define ASSERT(expr)            if(!(expr)) {dbg_print("assert:%s:%d\n", __func__ , __LINE__);}
 #define ASSERT_MSG(expr, msg)   if(!(expr)) {dbg_print("assert:%s:%d - %s\n", __func__ , __LINE__, msg);}

@@ -16,7 +16,7 @@
 *******************************************************************************/
 #include "ezmKernel.h"
 
-#if (KERNEL == 1U)
+#if (CONFIG_KERNEL == 1U)
 #include "string.h"
 #include "utilities/hexdump/hexdump.h"
 #include "ezmDebug/ezmDebug.h"

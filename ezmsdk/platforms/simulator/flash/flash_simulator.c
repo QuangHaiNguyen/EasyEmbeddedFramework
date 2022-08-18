@@ -33,19 +33,24 @@
 *******************************************************************************/
 #include "flash_simulator.h"
 
-#define DEBUG_LVL   LVL_TRACE       /**< logging level */
+#define DEBUG_LVL   LVL_INFO       /**< logging level */
 #define MOD_NAME    "FLASH_SIM"     /**< module name */
 
-#if (FLASH_SIM == 1U) && (SUPPORTED_CHIP == WIN)
+#if (CONFIG_FLASH_SIM == 1U) && (CONFIG_WIN == 1U)
 #include "ezmDebug/ezmDebug.h"
 #include "utilities/hexdump/hexdump.h"
 #include "utilities/ezmAssert/ezmAssert.h"
 #include <string.h>
+#include <stdio.h>
 
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
 #pragma warning(disable : 4996)
+
+#ifndef FLASH_LOCATION
+#define FLASH_LOCATION          "G:/SDK/ezmSDK/ezmsdk/platforms/simulator/flash/"
+#endif
 
 #define GET_PAGE_SIZE(handle)   (flash_list[handle].page_size_byte)
 #define GET_NUM_PAGE(handle)    (flash_list[handle].num_page)
@@ -75,7 +80,7 @@ struct FlashMetaData
  * 
  * @see 0002-flash-sim-initialization.md
  */
-static struct FlashMetaData flash_list[NUM_OF_FLASH] = {
+static struct FlashMetaData flash_list[CONFIG_NUM_OF_FLASH] = {
     {"default_flash", 4U, 4U, 4U, 256U, 0x00000000},
 };
 
@@ -129,7 +134,7 @@ bool FlashSim_Initialization(void)
 {
     INFO("FlashSim_Initialization()");
 
-    for (uint8_t i = 0; i < NUM_OF_FLASH; i++)
+    for (uint8_t i = 0; i < CONFIG_NUM_OF_FLASH; i++)
     {
         INFO("Initialize [flash name = %s]", flash_list[i].name);
         if (FlashSim_IsFlashExisting(i) == false)
@@ -173,7 +178,7 @@ FlashHandle FlashSim_GetFlash(char const* name)
 {
     FlashHandle handle = INVALID_HANDLE;
 
-    for (uint8_t i = 0; i < NUM_OF_FLASH; i++)
+    for (uint8_t i = 0; i < CONFIG_NUM_OF_FLASH; i++)
     {
         if (strncmp(name, flash_list[i].name, sizeof(flash_list[i].name)) == 0U)
         {
@@ -198,7 +203,7 @@ FlashHandle FlashSim_GetFlash(char const* name)
 uint32_t FlashSim_GetFlashSizeInBytes(FlashHandle handle)
 {
     uint32_t ret = 0;
-    if (handle < NUM_OF_FLASH)
+    if (handle < CONFIG_NUM_OF_FLASH)
     {
         ret = flash_list[handle].page_size_byte * flash_list[handle].num_page *\
                 flash_list[handle].num_sector * flash_list[handle].num_block;
@@ -568,7 +573,7 @@ static char* FlashSim_GetFullPath(FlashHandle handle)
     char* ret = NULL;
     struct FlashMetaData* flash = NULL;
 
-    if (handle < NUM_OF_FLASH)
+    if (handle < CONFIG_NUM_OF_FLASH)
     {
         memset(full_path, '\0', sizeof(full_path));
         flash = &flash_list[handle];
@@ -601,7 +606,7 @@ static bool FlashSim_IsFlashExisting(FlashHandle handle)
     char* path = NULL;
     bool existing = false;
 
-    if (handle < NUM_OF_FLASH)
+    if (handle < CONFIG_NUM_OF_FLASH)
     {
         path = FlashSim_GetFullPath(handle);
         file = fopen(path, "rb");
@@ -635,7 +640,7 @@ static bool FlashSim_CreateNewBinFile(FlashHandle handle)
     bool success = false;
     char* path = NULL;
 
-    if (handle < NUM_OF_FLASH)
+    if (handle < CONFIG_NUM_OF_FLASH)
     {
         path = FlashSim_GetFullPath(handle);
         file = fopen(path, "wb");
@@ -670,7 +675,7 @@ static bool FlashSim_IsAddressValid(FlashHandle handle, uint32_t address)
 {
     bool valid = false;
     struct FlashMetaData* flash = NULL;
-    if (handle < NUM_OF_FLASH)
+    if (handle < CONFIG_NUM_OF_FLASH)
     {
         flash = &flash_list[handle];
         
@@ -697,7 +702,7 @@ static uint32_t FlashSim_GetPageSize(FlashHandle handle)
 {
     uint32_t size = 0;
 
-    if (handle < NUM_OF_FLASH)
+    if (handle < CONFIG_NUM_OF_FLASH)
     {
         size = flash_list[handle].page_size_byte;
     }
@@ -719,7 +724,7 @@ static uint32_t FlashSim_GetSectorSize(FlashHandle handle)
 {
     uint32_t size = 0;
 
-    if (handle < NUM_OF_FLASH)
+    if (handle < CONFIG_NUM_OF_FLASH)
     {
         size = GET_NUM_PAGE(handle) * GET_PAGE_SIZE(handle);
     }
@@ -741,7 +746,7 @@ static uint32_t FlashSim_GetBlockSize(FlashHandle handle)
 {
     uint32_t size = 0;
 
-    if (handle < NUM_OF_FLASH)
+    if (handle < CONFIG_NUM_OF_FLASH)
     {
         size = GET_NUM_SECTOR(handle) * FlashSim_GetSectorSize(handle);
     }
@@ -763,14 +768,14 @@ static uint32_t FlashSim_GetFlashSize(FlashHandle handle)
 {
     uint32_t size = 0;
 
-    if (handle < NUM_OF_FLASH)
+    if (handle < CONFIG_NUM_OF_FLASH)
     {
         size = GET_NUM_BLOCK(handle) * FlashSim_GetBlockSize(handle);
     }
 
     return size;
 }
-#endif /* (FLASH_SIM == 1U) && SUPPORTED_CHIP == WIN */
+#endif /* (CONFIG_FLASH_SIM == 1U) && SUPPORTED_CHIP == WIN */
 
 /* End of file*/
 

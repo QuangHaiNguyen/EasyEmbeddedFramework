@@ -39,7 +39,7 @@
 *******************************************************************************/
 #include "app/app_config.h"
 
-#if (DRIVERINF == 1U)
+#if (CONFIG_DRIVERINF == 1U)
 #include "stdint.h"
 #include "stdbool.h"
 #include "utilities/event_notifier/event_notifier.h"
@@ -64,13 +64,13 @@ typedef enum
 {
     DUMMY_DRIVER,       /**< for testing purpose only */
 
-#if(HAL_UART)
+#if(CONFIG_HAL_UART)
     UART0_DRIVER,       /**< uart driver, normally for cli */
 #endif
 
-#if (VIRTUAL_COM == 1U)
+#if (CONFIG_VIRTUAL_COM == 1U)
     VIRTUAL_COM_DRIVER,
-#endif /*VIRTUAL_COM*/
+#endif /*CONFIG_VIRTUAL_COM*/
 
 #if (WIFI_CONTROLLER == 1U)
     WIFI_CTRL_DRIVER,   /**< wifi driver */
@@ -115,7 +115,7 @@ bool ezmDriver_IsDriverBusy             (DriverId id);
 * Function Prototypes
 *******************************************************************************/
 
-#endif /* DRIVERINF */
+#endif /* CONFIG_DRIVERINF */
 #endif /* _DRIVER_H */
 
 /* End of file*/

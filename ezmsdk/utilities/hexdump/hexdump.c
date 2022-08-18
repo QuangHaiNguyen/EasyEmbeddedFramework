@@ -24,7 +24,7 @@
 *******************************************************************************/
 #include "app/app_config.h"
 
-#if(HELPER_HEXDUMP == 1U)
+#if(CONFIG_HELPER_HEXDUMP == 1U)
 #include "hexdump.h"
 #include "stdio.h"
 #include "ezmDebug/ezmDebug.h"
@@ -119,5 +119,5 @@ static void PrintAscii(char c)
         PRINTF_NO_NL("%s", ".");
     }
 }
-#endif /* HELPER_HEXDUMP */
+#endif /* CONFIG_HELPER_HEXDUMP */
 /* End of file*/

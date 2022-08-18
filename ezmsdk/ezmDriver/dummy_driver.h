@@ -27,7 +27,7 @@
 #include "app/app_config.h"
 
 
-#if (DRIVERINF == 1U)
+#if (CONFIG_DRIVERINF == 1U)
 
 #include "stdint.h"
 #include "stdbool.h"
@@ -59,7 +59,7 @@ typedef struct
 *******************************************************************************/
 void * DummyDriver_GetDriver(void);
 
-#endif /* DRIVERINF */
+#endif /* CONFIG_DRIVERINF */
 #endif /* _DUMMY_DRIVER_H */
 
 /* End of file*/

@@ -24,11 +24,11 @@
 *******************************************************************************/
 #include "app/app_config.h"
 
-#if (BIN_PARSER == 1U)
+#if (CONFIG_BIN_PARSER == 1U)
 #include "stdint.h"
 #include "stdbool.h"
 
-#if(STCMEM == 1U)
+#if(CONFIG_STCMEM == 1U)
 #include "utilities/stcmem/stcmem.h"
 #else
 #error STCMEM must be activated
@@ -37,7 +37,13 @@
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
+#ifndef CONFIG_CRC_SIZE
+#define CONFIG_CRC_SIZE     2U
+#endif /* CONFIG_CRC_SIZE */
 
+#ifndef CONFIG_PAYLOAD_MAX_SIZE
+define CONFIG_PAYLOAD_MAX_SIZE  32U
+#endif /* CONFIG_PAYLOAD_MAX_SIZE */
 
 /******************************************************************************
 * Module Typedefs
@@ -63,7 +69,7 @@ struct BinaryFrame
 {
     struct BinaryHeader header;             /**< header of the frame */
     uint8_t             *payload;           /**< pointer to the payload */
-    uint8_t             checksum[CRC_SIZE]; /**< buffer to store checksum */
+    uint8_t             checksum[CONFIG_CRC_SIZE]; /**< buffer to store checksum */
 };
 
 /**
@@ -118,6 +124,6 @@ struct BinCmdParser
 bool ezmParser_Init         (struct BinCmdParser* parser, uint8_t *buffer, uint16_t buffer_size_byte, StatusHandler handler);
 void ezmParser_RunBinParser (struct BinCmdParser* parser, uint8_t data_byte);
 
-#endif /* BIN_PARSER */
+#endif /* CONFIG_BIN_PARSER */
 #endif /* _BIN_PARSER_H */
 /* End of file*/

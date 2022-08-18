@@ -33,7 +33,7 @@
 
 #define MOD_NAME    "SYS_ERR"
 #define DEBUG_LVL   LVL_ERROR
-#if (SYSTEM_ERROR == 1U)
+#if (CONFIG_SYSTEM_ERROR == 1U)
 
 #include "utilities/logging/logging.h"
 #include "system_error_table.h"

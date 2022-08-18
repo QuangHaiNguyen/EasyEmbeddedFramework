@@ -36,7 +36,7 @@
 *******************************************************************************/
 #include "app/app_config.h"
 
-#if (SYSTEM_ERROR == 1U)
+#if (CONFIG_SYSTEM_ERROR == 1U)
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -91,7 +91,7 @@ void SystemError_HandleTestAttentionError(void);    /*demo function*/
 void SystemError_HandleTestCriticalError(void);     /*demo function*/
 void SystemError_HandleTestCastatrophicError(void); /*demo function*/
 
-#endif /* SYSTEM_ERROR */
+#endif /* CONFIG_SYSTEM_ERROR */
 
 #endif /* _SYSTEM_ERROR_H */
 

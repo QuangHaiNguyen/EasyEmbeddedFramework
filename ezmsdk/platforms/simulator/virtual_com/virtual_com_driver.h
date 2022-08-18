@@ -39,7 +39,7 @@
 *******************************************************************************/
 #include "app/app_config.h"
 
-#if (VIRTUAL_COM == 1U)
+#if (CONFIG_VIRTUAL_COM == 1U)
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -104,7 +104,7 @@ bool VirtualCom_Initialization(void);
 UartDrvApi *VirtualCom_GetInterface(void);
 
 
-#endif /* VIRTUAL_COM */
+#endif /* CONFIG_VIRTUAL_COM */
 #endif /* _VIRTUAL_COM_DRIVER_H */
 
 /* End of file */

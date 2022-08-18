@@ -76,7 +76,7 @@ extern "C" {
 
 namespace
 {
-#if (FLASH_SIM == 1U) && (SUPPORTED_CHIP == WIN)
+#if (CONFIG_FLASH_SIM == 1U) && (CONFIG_WIN == 1U)
     
     TEST(flash_simulator, WarningMessge)
     {
@@ -338,6 +338,6 @@ namespace
         ASSERT_EQ(num_of_byte, 0);
 
     }
-#endif /* FLASH_SIM */
+#endif /* CONFIG_FLASH_SIM */
 #endif /* UNIT_TEST_FLASH_SIMULATOR */
 }

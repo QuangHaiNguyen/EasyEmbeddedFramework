@@ -24,7 +24,7 @@
 *******************************************************************************/
 #include "ezmAssert.h"
 
-#if (HELPER_ASSERT == 1U)
+#if (CONFIG_HELPER_ASSERT == 1U)
 
 #if (MODULE_DEBUG == 1U) && (ASSERT_DBG == 1U)
     #define ASSERTPRINT1(a)             PRINT_DEBUG1(a)               
@@ -52,5 +52,5 @@
 *******************************************************************************/
 /* None */
 
-#endif /* HELPER_ASSERT */
+#endif /* CONFIG_HELPER_ASSERT */
 /* End of file*/

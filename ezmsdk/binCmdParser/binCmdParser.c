@@ -16,7 +16,7 @@
 *******************************************************************************/
 #include "binCmdParser.h"
 
-#if (BIN_PARSER == 1U)
+#if (CONFIG_BIN_PARSER == 1U)
 #include "string.h"
 #include "../ezmDebug/ezmDebug.h"
 #include "../utilities/hexdump/hexdump.h"
@@ -233,7 +233,7 @@ void ezmParser_RunBinParser(struct BinCmdParser* parser, uint8_t data_byte)
 
             if (parser->CrcVerify)
             {
-                parser->buff_index = CRC_SIZE;
+                parser->buff_index = CONFIG_CRC_SIZE;
                 parser->parser_state = CHECKSUM;
             }
             else
@@ -323,5 +323,5 @@ static void ezmParser_RunCommand(struct BinCmdParser* parser)
     }
 }
 
-#endif /* BIN_PARSER == 1U */
+#endif /* CONFIG_BIN_PARSER == 1U */
 /* End of file*/

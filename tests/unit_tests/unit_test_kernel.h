@@ -56,7 +56,7 @@ extern "C" {
 
 namespace
 {
-#if (KERNEL == 1U)
+#if (CONFIG_KERNEL == 1U)
     TEST(kernel, basic)
     {
         ezmLL_Initialization();
@@ -88,6 +88,6 @@ namespace
         }
 #endif
     }
-#endif /* KERNEL */
+#endif /* CONFIG_KERNEL */
 #endif /* UNIT_TEST_STCMEM */
 }

@@ -7,7 +7,7 @@
 extern "C"
 {
 #include "../../ezmsdk/ezmIpc/ezmIpc.h"
-#include "../../ezmsdk/helper/stcmem/stcmem.h"
+#include "../../ezmsdk/utilities/stcmem/stcmem.h"
 
     uint8_t ipc_buffer[32U] = { 0 };
     uint8_t callback_count = 0;
@@ -20,7 +20,7 @@ extern "C"
 
 namespace 
 {
-#if (IPC == 1U)
+#if (CONFIG_IPC == 1U)
     TEST(Ipc, main) 
     {
         ezmStcMem_Initialization();

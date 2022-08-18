@@ -7,7 +7,7 @@
 extern "C" {
 #include "../../ezmsdk/app/app_config.h"
 
-#if (BIN_PARSER == 1U)
+#if (CONFIG_BIN_PARSER == 1U)
 #include "../../ezmsdk/binCmdParser/binCmdParser.h"
 #include "../../ezmsdk/ezmDebug/ezmDebug.h"
 #include "../../ezmsdk/helper/hexdump/hexdump.h"
@@ -79,12 +79,12 @@ void CrCCalculate(BinaryFrame* frame)
     return;
 }
 
-#endif /* BIN_PARSER */
+#endif /* CONFIG_BIN_PARSER */
 }
 
 namespace 
 {
-#if (BIN_PARSER == 1U)
+#if (CONFIG_BIN_PARSER == 1U)
     TEST(Parser, Basic) 
     {
         BinCmdParser test_parser = {0};
@@ -218,7 +218,7 @@ namespace
         ezmParser_RunBinParser(&test_parser, 0x02);
 
     }
-#endif /* BIN_PARSER */
+#endif /* CONFIG_BIN_PARSER */
 }
 
 #endif /* UNIT_TEST_BIN_PARSER */

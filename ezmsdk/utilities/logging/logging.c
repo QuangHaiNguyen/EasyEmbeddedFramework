@@ -42,7 +42,7 @@
 #define MOD_NAME    "LOGGING"   /**< module name */
 #include "logging.h"
 
-#if (LOGGING == 1U)
+#if (CONFIG_LOGGING == 1U)
 
 /******************************************************************************
 * Module Preprocessor Macros
@@ -102,6 +102,6 @@ void Logging_DemoFeatures(void)
 * Internal functions
 *******************************************************************************/
 
-#endif /* LOGGING == 1U */
+#endif /* CONFIG_LOGGING */
 /* End of file*/
 

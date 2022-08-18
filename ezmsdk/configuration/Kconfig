@@ -117,6 +117,7 @@ endif
 
 endmenu
 
+menu "FLASH_SIM configuration"
 config FLASH_SIM
     bool "Enable FLASH_SIM support"
     depends on WIN
@@ -125,6 +126,20 @@ config FLASH_SIM
 
 comment "FLASH_SIM support disable. Depend on WIN"
     depends on !WIN
+
+if FLASH_SIM
+config NUM_OF_FLASH
+    int "number of supported flash"
+    default 1
+
+config FLASH_LOCATION
+    string "location of the file to simulate flash data"
+    depends on FLASH_SIM
+    help
+        The location to create the file to simulate flash data. It must be an 
+        absolute path to guarantee normal operation
+endif
+endmenu
 
 config WIFI_CONTROLLER
     bool "Enable WIFI_CONTROLLER support"
@@ -249,5 +264,10 @@ config DATA_MODEL
 
 comment "DATA_MODEL support disable. Depend on HELPER_LINKEDLIST"
     depends on !HELPER_LINKEDLIST || !EVENT_NOTIFIER
+
+config STATEMACHINE
+    bool "Enable state machine module"
+    help
+        This modules is the implementation for the state machine
 
 endmenu

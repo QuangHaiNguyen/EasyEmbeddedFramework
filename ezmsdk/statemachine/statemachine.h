@@ -29,7 +29,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-#if (STATEMACHINE == 1U)
+#if (CONFIG_STATEMACHINE == 1U)
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
@@ -170,7 +170,7 @@ void SM_SetEvent(SM_StateMachine* statemachine, uint8_t new_event);
 *******************************************************************************/
 void SM_SetData(SM_StateMachine* statemachine, void *new_data);
 
-#endif /* STATEMACHINE */
+#endif /* CONFIG_STATEMACHINE */
 #endif /* _STATE_MACHINE_H */
 
 /* End of file*/

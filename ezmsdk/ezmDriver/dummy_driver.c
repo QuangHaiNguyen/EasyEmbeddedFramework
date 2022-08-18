@@ -19,7 +19,7 @@
 #define DEBUG_LVL       LVL_INFO       /**< logging level */
 #define MOD_NAME        "DUMMY_DRIVER"
 
-#if (DRIVERINF == 1U)
+#if (CONFIG_DRIVERINF == 1U)
 #include "driver.h"
 #include "string.h"
 #include "utilities/hexdump/hexdump.h"
@@ -94,6 +94,6 @@ static void read(void)
     INFO("dummy driver reads");
 }
 
-#endif /* DRIVERINF */
+#endif /* CONFIG_DRIVERINF */
 
 /* End of file*/

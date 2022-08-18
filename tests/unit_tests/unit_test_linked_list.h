@@ -14,7 +14,7 @@ extern "C" {
 namespace
 {
 
-#if (HELPER_LINKEDLIST == 1U)
+#if (CONFIG_HELPER_LINKEDLIST == 1U)
     TEST(Linked_List, Test_Macro)
     {
         struct test_struct1
@@ -294,6 +294,6 @@ namespace
         ASSERT_EQ(true, ezmLL_IsNodeInList(head, &node3));
     }
 
-#endif /* HELPER_LINKEDLIST */
+#endif /* CONFIG_HELPER_LINKEDLIST */
 #endif /* UNIT_TEST_LINKEDLIST */
 }

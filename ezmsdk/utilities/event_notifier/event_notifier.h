@@ -39,7 +39,7 @@
 *******************************************************************************/
 #include "app/app_config.h"
 
-#if(EVENT_NOTIFIER == 1U)
+#if(CONFIG_EVENT_NOTIFIER == 1U)
 
 #include <stdint.h>
 #include <stdbool.h>

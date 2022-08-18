@@ -35,7 +35,7 @@
 #include "app/app_config.h"
 #include "ring_buffer.h"
 
-#if (RING_BUFFER == 1U)
+#if (CONFIG_RING_BUFFER == 1U)
 #include "string.h"
 
 
@@ -355,6 +355,6 @@ uint16_t ezmRingBuffer_GetAvailableMemory( RingBuffer * pstBuff)
     return pstBuff->u16Capacity - pstBuff->u16Count;
 }
 
-#endif /* RING_BUFFER */
+#endif /* CONFIG_RING_BUFFER */
 
 /* End of file*****************************************************************/

@@ -15,11 +15,21 @@
 *******************************************************************************/
 #include "ezmIpc.h"
 
-#if (IPC == 1U)
+#if (CONFIG_IPC == 1U)
+
 #include "utilities/linked_list/linked_list.h"
 #include "utilities/stcmem/stcmem.h"
 #include "ezmIpc_conf.h"
 #include "string.h"
+
+#ifndef CONFIG_NUM_OF_IPC_INSTANCE
+#define CONFIG_NUM_OF_IPC_INSTANCE      5U
+#endif /* CONFIG_NUM_OF_IPC_INSTANCE */
+
+#ifndef CONFIG_USING_MODULE_NAME
+#define CONFIG_USING_MODULE_NAME     1U
+#endif /* CONFIG_USING_MODULE_NAME */
+
 
 #define MOD_NAME        "IPC"
 
@@ -45,7 +55,7 @@
 /**@brief Get the instance from the ezmIpc type
  *
  */
-#define GET_INSTANCE(ipc) ((ipc<NUM_OF_IPC_INSTANCE) ? &instance_pool[ipc] : NULL)
+#define GET_INSTANCE(ipc) ((ipc<CONFIG_NUM_OF_IPC_INSTANCE) ? &instance_pool[ipc] : NULL)
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
@@ -64,7 +74,7 @@ typedef struct
 /******************************************************************************
 * Module Variable Definitions
 *******************************************************************************/
-static IpcInstance instance_pool[NUM_OF_IPC_INSTANCE] = {0};    /**< pool of ipc intance*/
+static IpcInstance instance_pool[CONFIG_NUM_OF_IPC_INSTANCE] = {0};    /**< pool of ipc intance*/
 
 /******************************************************************************
 * Function Definitions
@@ -96,7 +106,7 @@ static void                     ezmIpc_ResetInstance    (uint8_t instance_index)
 *******************************************************************************/
 void ezmIpc_InitModule(void)
 {
-    for (uint8_t i = 0; i < NUM_OF_IPC_INSTANCE; i++)
+    for (uint8_t i = 0; i < CONFIG_NUM_OF_IPC_INSTANCE; i++)
     {
         ezmIpc_ResetInstance(i);
     }
@@ -122,8 +132,8 @@ void ezmIpc_InitModule(void)
 *******************************************************************************/
 ezmMailBox ezmIpc_GetInstance(uint8_t* ipc_buffer, uint16_t buffer_size, ezmIpc_MessageCallback fnCallback)
 {
-    ezmMailBox free_instance = NUM_OF_IPC_INSTANCE;
-    for (uint8_t i = 0; i < NUM_OF_IPC_INSTANCE; i++)
+    ezmMailBox free_instance = CONFIG_NUM_OF_IPC_INSTANCE;
+    for (uint8_t i = 0; i < CONFIG_NUM_OF_IPC_INSTANCE; i++)
     {
         if (instance_pool[i].is_busy == false)
         {
@@ -165,7 +175,7 @@ void* ezmIpc_InitMessage(ezmMailBox send_to, uint16_t size_in_byte)
     IpcInstance     *send_to_instance = NULL;
     struct Node     *pending_node = NULL;
 
-    if (size_in_byte > 0 && send_to < NUM_OF_IPC_INSTANCE)
+    if (size_in_byte > 0 && send_to < CONFIG_NUM_OF_IPC_INSTANCE)
     {
         send_to_instance = GET_INSTANCE(send_to);
         pending_node = ezmStcMem_ReserveMemoryBlock(&send_to_instance->memory_list.free_list_head, size_in_byte);
@@ -206,7 +216,7 @@ bool ezmIpc_SendMessage(ezmMailBox send_to, void *message)
     IpcInstance *send_to_instance = NULL;
     struct Node *it_node = NULL;
 
-    if (NULL != message && send_to < NUM_OF_IPC_INSTANCE)
+    if (NULL != message && send_to < CONFIG_NUM_OF_IPC_INSTANCE)
     {
         send_to_instance = GET_INSTANCE(send_to);
         EZMLL_FOR_EACH(it_node, &send_to_instance->pending_list_head)
@@ -252,7 +262,7 @@ void* ezmIpc_ReceiveMessage(ezmMailBox receive_from, uint16_t *message_size)
     void        *buffer_address = NULL;
     IpcInstance *instance = NULL;
 
-    if (receive_from < NUM_OF_IPC_INSTANCE)
+    if (receive_from < CONFIG_NUM_OF_IPC_INSTANCE)
     {
         instance = GET_INSTANCE(receive_from);
    
@@ -288,7 +298,7 @@ bool ezmIpc_ReleaseMessage(ezmMailBox receive_from, void* message)
     bool        is_success = true;
     IpcInstance *instance = NULL;
 
-    if (message != NULL && receive_from < NUM_OF_IPC_INSTANCE)
+    if (message != NULL && receive_from < CONFIG_NUM_OF_IPC_INSTANCE)
     {
         instance = GET_INSTANCE(receive_from);
         is_success = is_success && ezmStcMem_Free(&instance->memory_list, message);
@@ -314,7 +324,7 @@ bool ezmIpc_ReleaseMessage(ezmMailBox receive_from, void* message)
 *******************************************************************************/
 static void ezmIpc_ResetInstance(uint8_t instance_index)
 {
-    if (instance_index < NUM_OF_IPC_INSTANCE)
+    if (instance_index < CONFIG_NUM_OF_IPC_INSTANCE)
     {
         instance_pool[instance_index].is_busy = false;
         instance_pool[instance_index].fnCallback = NULL;
@@ -326,6 +336,6 @@ static void ezmIpc_ResetInstance(uint8_t instance_index)
     }
 }
 
-#endif /* IPC */
+#endif /* CONFIG_IPC */
 
 /* End of file*/

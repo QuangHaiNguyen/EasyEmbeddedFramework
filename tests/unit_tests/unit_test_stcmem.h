@@ -6,7 +6,7 @@
 
 extern "C" {
 #include "../../ezmsdk/app/app_config.h"
-#include "../../ezmsdk/helper/stcmem/stcmem.h"
+#include "../../ezmsdk/utilities/stcmem/stcmem.h"
 
     uint8_t au8Buffer[512] = {0};
 }
@@ -14,7 +14,7 @@ extern "C" {
 
 namespace
 {
-#if (STCMEM == 1U)
+#if (CONFIG_STCMEM == 1U)
     TEST(stcmem, u8_var)
     {
         ezmStcMem_Initialization();

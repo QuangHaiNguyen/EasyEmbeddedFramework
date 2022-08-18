@@ -15,7 +15,7 @@ extern "C" {
 
 namespace
 {
-#if (RING_BUFFER == 1U)
+#if (CONFIG_RING_BUFFER == 1U)
 
     TEST(Ring_Buffer, Init)
     {
@@ -177,6 +177,6 @@ namespace
         ASSERT_EQ(pop_10[8], 3);
         ASSERT_EQ(pop_10[9], 4);
     }
-#endif /* RING_BUFFER */
+#endif /* CONFIG_RING_BUFFER */
 #endif /* UNIT_TEST_RINGBUFFER */
 }

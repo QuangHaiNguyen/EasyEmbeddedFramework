@@ -28,7 +28,7 @@
 #define DEBUG_LVL   LVL_INFO       /**< logging level */
 #define MOD_NAME    "HW_UART"
 
-#if(HAL_UART == 1U && SUPPORTED_CHIP == WIN)
+#if(CONFIG_SIM_UART == 1U && SUPPORTED_CHIP == WIN)
 #include <stdint.h>
 #include <stdio.h>
 #include "ezmDebug/ezmDebug.h"
@@ -121,5 +121,5 @@ static void UartSim_UnRegisterCallback(void)
     hw_uarts[CLI_UART].callback = NULL;
 }
 
-#endif
+#endif /* CONFIG_SIM_UART */
 /* End of file*/

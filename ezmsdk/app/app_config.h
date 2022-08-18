@@ -18,38 +18,12 @@
 
 #define SCHEDULER               0U
 #define SMALLOC                 0U
-#define BIN_PARSER              1U
-#define HELPER_LINKEDLIST       1U
-#define HELPER_HEXDUMP          1U
-#define LOGGING                 1U
-#define RING_BUFFER             0U
-#define HELPER_ASSERT           1U
-#define STATEMACHINE            0U
-#define IPC                     1U
-#define STCMEM                  1U
-#define KERNEL                  1U
-#define DRIVERINF               1U
 #define EZM_PRINTF              0U
-#define HAL_UART                1U
-#define SYSTEM_ERROR            1U
-#define FLASH_SIM               0U
-#define EVENT_NOTIFIER          1U
-#define WIFI_CONTROLLER         1U
-#define DATA_MODEL              1U
+#define WIFI_CONTROLLER         0U
 #define MQTT                    0U
-#define VIRTUAL_COM             1U
 
-/* MICROCONTROLER SECTION *****************************************************/
-#define NO_CHIP             1U
-#define WIN                 2U
-#define LINUX               3U
-#define ESP32               4U
-#define STM32               5U
-
-#define SUPPORTED_CHIP      WIN
 
 /*Module ID section*/
-
 
 typedef enum
 {
@@ -66,69 +40,69 @@ typedef enum
     SMALLOC_MOD_ID,
 #endif /* SMALLOC */
 
-#if (BIN_PARSER == 1U)
+#if (CONFIG_BIN_PARSER == 1U)
     BIN_PARSER_MOD_ID,
-#endif
+#endif /* CONFIG_BIN_PARSER */
 
-#if (LOGGING == 1U)
+#if (CONFIG_LOGGING == 1U)
     DEBUG_MOD_ID,
-#endif /* LOGGING */
+#endif /* CONFIG_LOGGING */
 
-#if (HELPER_LINKEDLIST == 1U)
+#if (CONFIG_HELPER_LINKEDLIST == 1U)
     HELPER_LINKEDLIST_MOD_ID,
-#endif /* HELPER_LINKEDLIST */
+#endif /* CONFIG_HELPER_LINKEDLIST */
 
-#if (HELPER_HEXDUMP == 1U)
+#if (CONFIG_HELPER_HEXDUMP == 1U)
     HELPER_HEXDUMP_MOD_ID,
-#endif /* HELPER_HEXDUMP */
+#endif /* CONFIG_HELPER_HEXDUMP */
 
-#if (RING_BUFFER == 1U)
+#if (CONFIG_RING_BUFFER == 1U)
     RING_BUFFER_MOD_ID,
-#endif /* RING_BUFFER */
+#endif /* CONFIG_RING_BUFFER */
 
-#if (HELPER_ASSERT == 1U)
+#if (CONFIG_HELPER_ASSERT == 1U)
     HELPER_ASSERT_MOD_ID,
 #endif
 
-#if (STATEMACHINE == 1U)
+#if (CONFIG_STATEMACHINE == 1U)
     STATEMACHINE_MOD_ID,
-#endif /* STATEMACHINE */
+#endif /* CONFIG_STATEMACHINE */
 
-#if (IPC == 1U)
+#if (CONFIG_IPC == 1U)
     IPC_MOD_ID,
-#endif /* IPC */
+#endif /* CONFIG_IPC */
 
-#if (STCMEM == 1U)
+#if (CONFIG_STCMEM == 1U)
     STCMEM_MOD_ID,
-#endif /* STCMEM */
+#endif /* CONFIG_STCMEM */
 
-#if (KERNEL == 1U)
+#if (CONFIG_KERNEL == 1U)
     KERNEL_MOD_ID,
 #endif /* KERNEL */
 
-#if (DRIVERINF)
+#if (CONFIG_DRIVERINF == 1U)
     DRIVERINF_MOD_ID,
-#endif /* DRIVERINF */
+#endif /* CONFIG_DRIVERINF */
 
-#if (SYSTEM_ERROR == 1U)
+#if (CONFIG_SYSTEM_ERROR == 1U)
     SYSTEM_ERROR_MOD_ID,
 #endif /* SYSTEM_ERROR */
 
-#if (FLASH_SIM == 1U)
+#if (CONFIG_FLASH_SIM == 1U)
     FLASH_SIM_MOD_ID,
-#endif /* FLASH_SIM */
+#endif /* CONFIG_FLASH_SIM */
 
-#if (HAL_UART == 1U)
+#if (CONFIG_HAL_UART == 1U)
     UART_MOD_ID,
-#endif
+#endif /* CONFIG_HAL_UART */
 
 #if (WIFI_CONTROLLER == 1U)
     WIFI_CONTROLLER_ID,
 #endif /* WIFI_CONTROLLER */
 
-#if (VIRTUAL_COM == 1U)
+#if (CONFIG_VIRTUAL_COM == 1U)
     VIRTUAL_COM_MOD_ID,
-#endif /* VIRTUAL_COM */
+#endif /* CONFIG_VIRTUAL_COM */
 
     /* Application module */
 
@@ -145,7 +119,7 @@ typedef enum
 
 /* SMALLOC SECTION ************************************************************/
 #if (SMALLOC == 1U)
-#if (HELPER_LINKEDLIST == 0U)
+#if (CONFIG_HELPER_LINKEDLIST == 0U)
 #error module HELPER_LINKEDLIST must be activated
 #endif
 
@@ -154,128 +128,11 @@ typedef enum
 
 #endif /* SMALLOC */
 
-/* BIN_PARSER SECTION *********************************************************/
-#if (BIN_PARSER == 1U)
-
-#if (STCMEM == 0U)
-#error module STCMEM must be activated
-#endif /* STCMEM */
-
-#define PAYLOAD_MAX_SIZE            32U     /**< maximum size of the payload, in binary*/
-#define CRC_SIZE                    0x02U   /**< size of the crc, in byte*/
-
-#endif /* BIN_PARSER */
-
-/* DEBUG SECTION **************************************************************/
-#if (LOGGING == 1U)
-#define DEBUG_MOD_ID                0x05U
-#define USING_COLOR                 1U
-#endif /* DEBUG */
-
-
-/* HELPER_HEXDUMP SECTION *****************************************************/
-#if (HELPER_HEXDUMP == 1U)
-
-#if (LOGGING == 0U)
-#error DEBUG module must be activated
-#endif /* DEBUG */
-
-#endif /* HELPER_HEXDUMP */
-
-/* IPC SECTION ****************************************************************/
-#if (IPC == 1U)
-#define NUM_OF_IPC_INSTANCE         5U  /**< */
-#define USING_MODULE_NAME           1U  /**< turn on/off module name in string*/
-#endif /* IPC */
-
-/* STCMEM SECTION *************************************************************/
-#if (STCMEM == 1U)
-#define NUM_OF_MEM_BLOCK            100U
-
-#if (HELPER_LINKEDLIST == 0U)
-#error module HELPER_LINKEDLIST must be activated
-#endif
-
-#endif /*STCMEM*/
-
-/* KERNEL SECTION *************************************************************/
-#if (KERNEL == 1U)
-#define KERNEL_MOD_ID               0x0DU
-#define NUM_OF_PROC                 5U
-
-#if (HELPER_LINKEDLIST == 0U)
-#error module HELPER_LINKEDLIST must be activated
-#endif
-#endif /* KERNEL */
 
 /* EZM_PRINTF SECTION *********************************************************/
 #if (EZM_PRINTF == 1U)
 #define PRINTF_BUFF_SIZE        256U
 #endif
-
-/* DRIVERINF SECTION***********************************************************/
-#if (DRIVERINF == 1U)
-#define NUM_OF_DRIVERINF            5U
-
-#if (HELPER_LINKEDLIST == 0U)
-#error module HELPER_LINKEDLIST must be activated
-#endif
-
-#endif /* DRIVERINF */
-
-
-/******************************************************************************/
-/* SIMULATOR SECTION                                                          */
-/******************************************************************************/
-
-/* FLASH_SIMULATOR ************************************************************/
-#if (FLASH_SIM == 1U)
-#define NUM_OF_FLASH            1U
-
-#ifndef FLASH_LOCATION
-#define FLASH_LOCATION          "G:/SDK/ezmSDK/ezmsdk/platforms/simulator/flash/"
-#endif
-#endif /* FLASH_SIM */
-
-/******************************************************************************/
-/* DRIVER SECTION                                                             */
-/******************************************************************************/
-
-/* UART SECTION ***************************************************************/
-#if (HAL_UART == 1U)
-
-#if(SUPPORTED_CHIP == WIN)
-    #if(VIRTUAL_COM == 1)
-        #define NUM_OF_SUPPORTED_UART   2U    /**< Number of supported Uart*/
-        #define SIM_UART0               0U
-        #define VCP_UART                1U
-
-        /* Alias name, easy to use */
-        #define CLI_UART                SIM_UART0
-    #else
-        #define NUM_OF_SUPPORTED_UART   1U    /**< Number of supported Uart*/
-        #define SIM_UART0               0U
-
-        /* Alias name, easy to use */
-        #define CLI_UART                SIM_UART0
-    #endif
-
-#else
-    #define NUM_OF_SUPPORTED_UART   1U    /**< Number of supported Uart*/
-    #define HAL_UART0               0U
-
-    /* Alias name, easy to use */
-    #define CLI_UART                HAL_UART0
-#endif /*SUPPORTED_CHIP*/
-
-#endif /* HAL_UART */
-
-/* WIFI_CONTROLLER SECTION ****************************************************/
-#if WIFI_CONTROLLER == 1U
-#define WIFI_CONTROLLER_ID      0x31U
-
-#endif /* WIFI_CONTROLLER */
-
 
 
 #endif /* _APP_CONFIG_H */

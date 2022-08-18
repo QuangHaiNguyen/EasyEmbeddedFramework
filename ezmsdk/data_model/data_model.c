@@ -36,7 +36,7 @@
 *******************************************************************************/
 #include "data_model.h"
 
-#if (DATA_MODEL == 1U)
+#if (CONFIG_DATA_MODEL == 1U)
 
 #define DEBUG_LVL   LVL_TRACE       /**< logging level */
 #define MOD_NAME    "DATA_MODEL"    /**< module name */
@@ -419,6 +419,6 @@ bool DataModel_UnsubscribeDataPointEvent(DataPoint data_point,
 * Internal functions
 *******************************************************************************/
 
-#endif /* (DATA_MODEL == 1U) */
+#endif /* (CONFIG_DATA_MODEL == 1U) */
 
 /* End of file*/

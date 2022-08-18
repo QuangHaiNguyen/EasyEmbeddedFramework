@@ -36,7 +36,7 @@
 *******************************************************************************/
 #include "app/app_config.h"
 
-#if (FLASH_SIM == 1U) && (SUPPORTED_CHIP == WIN)
+#if (CONFIG_FLASH_SIM == 1U) && (CONFIG_WIN == 1U)
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdbool.h>
@@ -76,7 +76,7 @@ uint32_t    FlashSim_Read(FlashHandle handle,
                                 uint16_t num_byte);
 
 
-#endif /* (FLASH_SIM == 1U) && SUPPORTED_CHIP == WIN */
+#endif /* (FLASH_SIM == 1U) && CONFIG_WIN == 1U */
 #endif /* _FLASH_SIMULATOR_H */
 
 /* End of file */

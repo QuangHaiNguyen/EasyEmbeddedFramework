@@ -15,7 +15,7 @@
 *******************************************************************************/
 #include "linked_list.h"
 
-#if (HELPER_LINKEDLIST == 1U)
+#if (CONFIG_HELPER_LINKEDLIST == 1U)
 
 /******************************************************************************
 * Module Preprocessor Macros
@@ -272,5 +272,5 @@ void ezmLL_ResetNode(Node * node)
 }
 #endif
 
-#endif /* HELPER_LINKEDLIST */
+#endif /* CONFIG_HELPER_LINKEDLIST */
 /* End of file*/

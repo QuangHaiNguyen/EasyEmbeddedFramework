@@ -35,6 +35,9 @@
 * Includes
 *******************************************************************************/
 #include "virtual_com_driver.h"
+
+#if (CONFIG_VIRTUAL_COM == 1U)
+
 #include <Windows.h>
 #include <wchar.h>
 #include <stdlib.h>
@@ -359,5 +362,7 @@ static uint16_t VirtualCom_RecvBlocking(uint8_t* buff, uint32_t buff_size)
 
     return buff_size - remain_bytes;
 }
+
+#endif /* CONFIG_VIRTUAL_COM */
 /* End of file*/
 

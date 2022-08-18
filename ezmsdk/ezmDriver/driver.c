@@ -38,7 +38,7 @@
 *******************************************************************************/
 #include "driver.h"
 
-#if (DRIVERINF == 1U)
+#if (CONFIG_DRIVERINF == 1U)
 
 #define DEBUG_LVL   LVL_INFO       /**< logging level */
 #define MOD_NAME    "DRIVER"     /**< module name */
@@ -65,13 +65,13 @@ GetDriverFunction get_driver[NUM_OF_DRIVER] =
 {
     (GetDriverFunction)DummyDriver_GetDriver,
 
-#if(HAL_UART == 1U)
+#if(CONFIG_HAL_UART == 1U)
     (GetDriverFunction)GetUart0Driver,
 #endif
 
-#if (VIRTUAL_COM == 1U)
+#if (CONFIG_VIRTUAL_COM == 1U)
     (GetDriverFunction)GetVirtualComDriver,
-#endif /*VIRTUAL_COM*/
+#endif /*CONFIG_VIRTUAL_COM*/
 
 #if(WIFI_CONTROLLER == 1U)
     (GetDriverFunction)WifiCtrl_GetWifiControllerDriver,
@@ -323,6 +323,6 @@ bool ezmDriver_UnsubscribeDriverEvent(DriverId id, event_observer * observer)
     }
     return is_success;
 }
-#endif /* DRIVERINF */
+#endif /* CONFIG_DRIVERINF */
 
 /* End of file*/

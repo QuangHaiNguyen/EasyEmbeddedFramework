@@ -24,7 +24,7 @@
 *******************************************************************************/
 #include "statemachine.h"
 
-#if ( STATEMACHINE == 1U )
+#if ( CONFIG_STATEMACHINE == 1U )
 
 #define DEBUG_LVL   LVL_TRACE       /**< logging level */
 #define MOD_NAME    "STATEMACHINE"  /**< module name */

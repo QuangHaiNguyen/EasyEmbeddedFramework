@@ -6,13 +6,13 @@
 
 extern "C" {
 #include "app/app_config.h"
-#include "helper/system_error/system_error.h"
+#include "utilities/system_error/system_error.h"
 }
 
 
 namespace
 {
-#if (SYSTEM_ERROR == 1U)
+#if (CONFIG_SYSTEM_ERROR == 1U)
     TEST(system_error, basic)
     {
         bool result;
@@ -29,6 +29,6 @@ namespace
         ASSERT_EQ(result, true);
 
     }
-#endif /* KERNEL */
+#endif /* CONFIG_SYSTEM_ERROR */
 #endif /* UNIT_TEST_SYSTEM_ERROR */
 }

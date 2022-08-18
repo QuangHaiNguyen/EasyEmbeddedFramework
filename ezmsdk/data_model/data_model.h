@@ -39,7 +39,7 @@
 *******************************************************************************/
 #include "app/app_config.h"
 
-#if (DATA_MODEL == 1U)
+#if (CONFIG_DATA_MODEL == 1U)
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -91,7 +91,7 @@ bool DataModel_SubscribeDataPointEvent(DataPoint data_point,
 bool DataModel_UnsubscribeDataPointEvent(DataPoint data_point,
                                          event_observer* observer);
 
-#endif /* DATA_MODEL == 1U */
+#endif /* CONFIG_DATA_MODEL == 1U */
 
 #endif /* _DATA_MODEL_H */
 

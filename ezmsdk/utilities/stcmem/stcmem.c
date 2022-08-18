@@ -18,7 +18,7 @@
 ******************************************************************************/
 #include "app/app_config.h"
 
-#if (STCMEM == 1U)
+#if (CONFIG_STCMEM == 1U)
 #include "ezmDebug/ezmDebug.h"
 #include "utilities/linked_list/linked_list.h"
 #include "utilities/hexdump/hexdump.h"
@@ -49,6 +49,10 @@
     #define STCMEMHEXDUMP(a,b)
 #endif
 
+#ifndef CONFIG_NUM_OF_MEM_BLOCK
+#define CONFIG_NUM_OF_MEM_BLOCK 128
+#endif /*CONFIG_NUM_OF_MEM_BLOCK*/
+
 #define INIT_BLOCK(block, buff_ptr, size) {ezmLL_InitNode(&block->node);block->buff = buff_ptr;block->buff_size = size; }
 #define GET_LIST(x) ((struct MemList*)x)
 #define GET_BLOCK(node_ptr) (EZMLL_GET_PARENT_OF(node_ptr, node, struct MemBlock))
@@ -60,7 +64,7 @@
 /******************************************************************************
  Module Variable Definitions
 *******************************************************************************/
-static struct MemBlock block_pool[NUM_OF_MEM_BLOCK] = { 0U };
+static struct MemBlock block_pool[CONFIG_NUM_OF_MEM_BLOCK] = { 0U };
 
 /******************************************************************************
  Function Definitions
@@ -465,7 +469,7 @@ static void ezmSmalloc_Merge(struct Node* free_list_head)
 static inline struct MemBlock* GetFreeBlock(void)
 {
     struct MemBlock* free_block = NULL;
-    for (uint16_t i = 0; i < NUM_OF_MEM_BLOCK; i++)
+    for (uint16_t i = 0; i < CONFIG_NUM_OF_MEM_BLOCK; i++)
     {
         if (block_pool[i].buff == NULL)
         {
@@ -530,5 +534,5 @@ bool ezmStcMem_MoveBlock(struct Node* move_node, struct Node* from_list_head, st
 
     return is_success;
 }
-#endif /* STCMEM */
+#endif /* CONFIG_STCMEM */
 /* End of file */

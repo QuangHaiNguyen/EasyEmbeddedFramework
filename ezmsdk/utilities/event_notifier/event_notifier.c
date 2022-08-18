@@ -37,10 +37,10 @@
 #include "event_notifier.h"
 
 
-#define DEBUG_LVL   LVL_TRACE       /**< logging level */
+#define DEBUG_LVL   LVL_INFO        /**< logging level */
 #define MOD_NAME    "EVENT_NOTI"    /**< module name */
 
-#if(EVENT_NOTIFIER == 1U)
+#if(CONFIG_EVENT_NOTIFIER == 1U)
 
 
 #include "utilities/logging/logging.h"
@@ -311,6 +311,6 @@ void evntNoti_NotifyEvent(event_subject* subject,
 * Internal functions
 *******************************************************************************/
 
-#endif /* (EVENT_NOTIFIER == 1U) */
+#endif /* (CONFIG_EVENT_NOTIFIER == 1U) */
 /* End of file*/
 

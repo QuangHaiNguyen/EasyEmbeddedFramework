@@ -239,7 +239,7 @@ bool ezmCli_Init(UartDrvApi* uart_driver)
 *******************************************************************************/
 void ezmCli_Run(void)
 {
-#if (SUPPORTED_CHIP == WIN)
+#if (CONFIG_WIN == 1U)
     switch (cli_inst.state)
     {
     case GET_BYTE:
@@ -995,7 +995,7 @@ static uint8_t UartCallbackHandle(uint8_t notify_code, void* param1)
     case UART_RX_COMPLT:
     {
         uint16_t size = *(uint16_t*)param1;
-#if(SUPPORTED_CHIP == WIN)
+#if(CONFIG_WIN == 1U)
         cli_inst.cli_buffer[cli_inst.buff_index] = cli_inst.one_byte;
 
         TRACE("[rx = %c], [size = %x]",

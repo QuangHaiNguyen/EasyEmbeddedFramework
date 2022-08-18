@@ -11,7 +11,7 @@ extern "C" {
 
 namespace 
 {
-#if (HELPER_HEXDUMP == 1U)
+#if (CONFIG_HELPER_HEXDUMP == 1U)
     TEST(Hexdump, Test_Binary) 
     {
         uint8_t au8Data[100];
@@ -54,7 +54,7 @@ namespace
         }
         ezmHexdump((void *)au8SmallLetter, 24);
     } 
-#endif /* HELPER_HEXDUMP */
+#endif /* CONFIG_HELPER_HEXDUMP */
 }
 
 #endif /* UNIT_TEST_HEXDUMPT */

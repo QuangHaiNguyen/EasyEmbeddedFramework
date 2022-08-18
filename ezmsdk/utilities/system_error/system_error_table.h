@@ -34,7 +34,7 @@
 *******************************************************************************/
 #include "app/app_config.h"
 
-#if (SYSTEM_ERROR == 1U)
+#if (CONFIG_SYSTEM_ERROR == 1U)
 #include "system_error.h"
 
 /******************************************************************************
@@ -69,7 +69,7 @@ ErrorObject error_table[] =
 *******************************************************************************/
 /* None */
 
-#endif /* SYSTEM_ERROR */
+#endif /* CONFIG_SYSTEM_ERROR */
 
 #endif /* _SYSTEM_ERROR_TABLEH */
 

@@ -28,14 +28,16 @@
 #include "stdbool.h"
 #include "app/app_config.h"
 
-#if (NUM_OF_SUPPORTED_UART > 0U)
+#if (CONFIG_HAL_UART > 0U)
 
 
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
-/* None */
-
+#define NUM_OF_SUPPORTED_UART   2U    /**< Number of supported Uart*/
+#define SIM_UART0               0U
+#define VCP_UART                1U
+#define CLI_UART                SIM_UART0
 
 /******************************************************************************
 * Module Typedefs
@@ -117,11 +119,11 @@ typedef struct
 *******************************************************************************/
 void* GetUart0Driver(void);
 
-#if (VIRTUAL_COM == 1U)
+#if (CONFIG_VIRTUAL_COM == 1U)
 void *GetVirtualComDriver(void);
-#endif /* VIRTUAL_COM */
+#endif /* CONFIG_VIRTUAL_COM */
 
-#endif /* NUM_OF_SUPPORTED_UART > 0U */
+#endif /* CONFIG_HAL_UART > 0U */
 #endif /* _HAL_UART_H */
 
 /* End of file*/

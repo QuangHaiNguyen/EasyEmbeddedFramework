@@ -61,7 +61,7 @@
 
 #define dbg_print(fmt, ...)     printf(fmt, ##__VA_ARGS__)
 
-#if (USING_COLOR == 1U)
+#if (CONFIG_USING_COLOR == 1U)
 #define black       "\033[0;30m"
 #define red         "\033[0;31m"
 #define green       "\033[0;32m"
@@ -107,7 +107,7 @@
 #define print_func()
 #endif
 
-#if (LOGGING == 1U)
+#if (CONFIG_LOGGING == 1U)
 #if DEBUG_LVL >= LVL_CRITICAL
 #define CRITICAL(fmt, ...)   do {\
                                 dbg_print(purple"[CRITICAL] "reset_color);\

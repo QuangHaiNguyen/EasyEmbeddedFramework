@@ -122,7 +122,7 @@ void * Mqtt_GetDriver(void)
         client.driver.is_busy = false;
         client.driver.SubscribeEventNotification = Mqtt_ReceiveEventNotification;
         client.driver.UnsubscribeEventNotification = Mqtt_StopEventNotification;
-#if SUPPORTED_CHIP == WIN
+#if CONFIG_WIN == 1U
         WARNING("No supported mqtt for window platform");
         is_success = false;
 #elif
