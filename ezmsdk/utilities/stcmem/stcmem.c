@@ -490,6 +490,7 @@ struct Node* ezmStcMem_ReserveMemoryBlock(struct Node* free_list_head, uint16_t 
 {
     struct MemBlock* remain_block = NULL;
     struct Node* iterate_Node = NULL;
+    bool success = false;
 
     STCMEMPRINT("ezmStcMem_ReserveMemoryBlock()");
 
@@ -512,10 +513,18 @@ struct Node* ezmStcMem_ReserveMemoryBlock(struct Node* free_list_head, uint16_t 
                 }
 
                 GET_BLOCK(iterate_Node)->buff_size = block_size_byte;
+
+                success = true;
                 break;
             }
         }
     }
+
+    if (!success)
+    {
+        iterate_Node = NULL;
+    }
+
     return iterate_Node;
 }
 
