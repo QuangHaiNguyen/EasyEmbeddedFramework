@@ -178,9 +178,9 @@
     <ClCompile Include="..\..\ezmsdk\platforms\simulator\wifi_controller\wifi_controller_sim.c" />
     <ClCompile Include="..\..\ezmsdk\scheduler\scheduler.c" />
     <ClCompile Include="..\..\ezmsdk\statemachine\statemachine.c" />
-    <ClCompile Include="..\..\ezmsdk\utilities\eez_queue\eez_queue.c" />
     <ClCompile Include="..\..\ezmsdk\utilities\event_notifier\event_notifier.c" />
     <ClCompile Include="..\..\ezmsdk\utilities\ezmAssert\ezmAssert.c" />
+    <ClCompile Include="..\..\ezmsdk\utilities\ez_queue\ez_queue.c" />
     <ClCompile Include="..\..\ezmsdk\utilities\hexdump\hexdump.c" />
     <ClCompile Include="..\..\ezmsdk\utilities\linked_list\linked_list.c" />
     <ClCompile Include="..\..\ezmsdk\utilities\logging\logging.c" />
@@ -212,9 +212,9 @@
     <ClInclude Include="..\..\ezmsdk\platforms\simulator\wifi_controller\wifi_controller_sim.h" />
     <ClInclude Include="..\..\ezmsdk\scheduler\scheduler.h" />
     <ClInclude Include="..\..\ezmsdk\statemachine\statemachine.h" />
-    <ClInclude Include="..\..\ezmsdk\utilities\eez_queue\eez_queue.h" />
     <ClInclude Include="..\..\ezmsdk\utilities\event_notifier\event_notifier.h" />
     <ClInclude Include="..\..\ezmsdk\utilities\ezmAssert\ezmAssert.h" />
+    <ClInclude Include="..\..\ezmsdk\utilities\ez_queue\ez_queue.h" />
     <ClInclude Include="..\..\ezmsdk\utilities\hexdump\hexdump.h" />
     <ClInclude Include="..\..\ezmsdk\utilities\linked_list\linked_list.h" />
     <ClInclude Include="..\..\ezmsdk\utilities\logging\logging.h" />

@@ -22,6 +22,11 @@
 #define WIFI_CONTROLLER         0U
 #define MQTT                    0U
 
+typedef enum
+{
+    ezFAIL,
+    ezSUCCESS,
+}ezSTATUS;
 
 /*Module ID section*/
 

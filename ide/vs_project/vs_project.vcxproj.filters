@@ -101,7 +101,7 @@
     <Filter Include="Source Files\configuration">
       <UniqueIdentifier>{3b175494-d5cb-4d6c-a0b1-7c7e3feb7725}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\utilities\eez_queue">
+    <Filter Include="Source Files\utilities\ez_queue">
       <UniqueIdentifier>{03beacfa-b5da-4f78-b497-b27e20bf8cb5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -190,8 +190,8 @@
     <ClCompile Include="..\..\ezmsdk\platforms\simulator\virtual_com\virtual_com_driver.c">
       <Filter>Source Files\platforms\simulator\virtual_com</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\ezmsdk\utilities\eez_queue\eez_queue.c">
-      <Filter>Source Files\utilities\eez_queue</Filter>
+    <ClCompile Include="..\..\ezmsdk\utilities\ez_queue\ez_queue.c">
+      <Filter>Source Files\utilities\ez_queue</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -291,8 +291,8 @@
     <ClInclude Include="..\..\ezmsdk\configuration\sdkconfig.h">
       <Filter>Source Files\configuration</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\ezmsdk\utilities\eez_queue\eez_queue.h">
-      <Filter>Source Files\utilities\eez_queue</Filter>
+    <ClInclude Include="..\..\ezmsdk\utilities\ez_queue\ez_queue.h">
+      <Filter>Source Files\utilities\ez_queue</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

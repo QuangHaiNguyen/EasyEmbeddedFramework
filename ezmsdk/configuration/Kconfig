@@ -92,8 +92,8 @@ config SYSTEM_ERROR
     help
         This module allows the errors can be managed and handled centralized
 
-config EEZ_QUEUE
-    bool "Enable EEZ_QUEUE support"
+config EZ_QUEUE
+    bool "Enable EZ_QUEUE support"
     help
         this module is the implementation of the queue data structure
 endmenu
