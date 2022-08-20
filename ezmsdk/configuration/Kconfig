@@ -22,6 +22,11 @@ choice
         bool "STM32"
 endchoice
 
+config UNITY_UNIT_TEST
+    bool "enable UNITY_UNIT_TEST support"
+    help
+        Enable the unity unit test platform
+
 menu "Helper modules"
 
 config HELPER_LINKEDLIST

@@ -104,6 +104,12 @@
     <Filter Include="Source Files\utilities\ez_queue">
       <UniqueIdentifier>{03beacfa-b5da-4f78-b497-b27e20bf8cb5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\unity_test_platform">
+      <UniqueIdentifier>{1983f70a-4112-48a9-8107-edba02b201a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\utilities\ez_queue\test">
+      <UniqueIdentifier>{8397988e-fa5f-4962-8dde-87be7bc776d5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ezmsdk\app\app.c">
@@ -192,6 +198,12 @@
     </ClCompile>
     <ClCompile Include="..\..\ezmsdk\utilities\ez_queue\ez_queue.c">
       <Filter>Source Files\utilities\ez_queue</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\unity_test_platform\unity.c">
+      <Filter>Source Files\unity_test_platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\utilities\ez_queue\test\test_ez_queue.c">
+      <Filter>Source Files\utilities\ez_queue\test</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -290,6 +302,12 @@
     </ClInclude>
     <ClInclude Include="..\..\ezmsdk\configuration\sdkconfig.h">
       <Filter>Source Files\configuration</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ezmsdk\unity_test_platform\unity.h">
+      <Filter>Source Files\unity_test_platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ezmsdk\unity_test_platform\unity_internals.h">
+      <Filter>Source Files\unity_test_platform</Filter>
     </ClInclude>
     <ClInclude Include="..\..\ezmsdk\utilities\ez_queue\ez_queue.h">
       <Filter>Source Files\utilities\ez_queue</Filter>

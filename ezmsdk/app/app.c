@@ -27,6 +27,7 @@
 #include "app.h"
 #include "app_config.h"
 #include "ezmDebug/ezmDebug.h"
+#include "unity_test_platform/unity.h"
 
 #if (CONFIG_WIN == 1U)
 #include <time.h>
@@ -129,6 +130,40 @@ static void     ezmApp_PrintHeader(void);
 #if(CONFIG_WIN == 1U)
 static uint32_t ezmApp_ReturnTimestampMillisvoid(void);
 #endif
+
+void setUp(void)
+{
+}
+
+void tearDown(void)
+{
+}
+
+
+#if (CONFIG_UNITY_UNIT_TEST == 0U)
+void main(void)
+{
+    ezmApp_SdkInit();
+
+#if(CONFIG_WIN == 1U)
+    uint64_t execute_time_stamp = ezmApp_ReturnTimestampMillisvoid();
+    do
+    {
+#if (CONFIG_CLI == 1U)
+        ezmCli_Run();
+#endif
+        if (ezmApp_ReturnTimestampMillisvoid() - execute_time_stamp > 1)
+        {
+            ezmKernel_UpdateClock();
+            ezmKernel_Run();
+            execute_time_stamp = ezmApp_ReturnTimestampMillisvoid();
+        }
+    } while (execute_time_stamp);
+#endif /* CONFIG_WIN */
+
+}
+#endif
+
 /******************************************************************************
 * Function : ezmApp_SdkInit
 *//** 
@@ -281,21 +316,7 @@ void ezmApp_SdkInit(void)
     }
 #endif
 
-#if(CONFIG_WIN == 1U)
-    uint64_t execute_time_stamp = ezmApp_ReturnTimestampMillisvoid();
-    do
-    {
-#if (CONFIG_CLI == 1U)
-        ezmCli_Run();
-#endif
-        if (ezmApp_ReturnTimestampMillisvoid() - execute_time_stamp > 1)
-        {
-            ezmKernel_UpdateClock();
-            ezmKernel_Run();
-            execute_time_stamp = ezmApp_ReturnTimestampMillisvoid();
-        }
-    }while (execute_time_stamp);
-#endif /* CONFIG_WIN */
+    INFO("\n\n\n");
 
 }
 

@@ -38,7 +38,7 @@
 
 #if (CONFIG_EZ_QUEUE == 1U)
 
-#define DEBUG_LVL   LVL_TRACE       /**< logging level */
+#define DEBUG_LVL   LVL_INFO       /**< logging level */
 #define MOD_NAME    "eez_queue"     /**< module name */
 
 #include "utilities/logging/logging.h"
@@ -54,9 +54,9 @@
 *******************************************************************************/
 typedef struct
 {
-    struct Node node;
     void* data;
     uint32_t data_size;
+    struct Node node;
 }ezQueueItem;
 
 /******************************************************************************
@@ -124,7 +124,7 @@ ezSTATUS ezQueue_Pop(ezQueue* queue)
     {
         if (ezQueue_GetNumOfElement(queue) > 0)
         {
-            popped_item = EZMLL_GET_PARENT_OF(&queue->q_item_list.next, node, ezQueueItem);
+            popped_item = EZMLL_GET_PARENT_OF(queue->q_item_list.next, node, ezQueueItem);
             EZMLL_UNLINK_NODE(&popped_item->node);
 
             if (ezmStcMem_Free(&queue->mem_list, popped_item->data) == false)
@@ -160,7 +160,7 @@ ezSTATUS ezQueue_Push(ezQueue* queue, void *data, uint32_t data_size)
 
     if (queue != NULL && data != NULL && data_size > 0)
     {
-        item = (ezQueueItem*)ezmStcMem_Malloc(&queue->mem_list,sizeof(ezQueueItem));
+        item = (ezQueueItem*)ezmStcMem_Malloc(&queue->mem_list, sizeof(ezQueueItem));
 
         if (item == NULL)
         {
@@ -181,17 +181,24 @@ ezSTATUS ezQueue_Push(ezQueue* queue, void *data, uint32_t data_size)
             else
             {
                 memcpy(item->data, data, item->data_size);
-
-#if (DEBUG_LVL == LVL_TRACE)
-                TRACE("pushed data");
-                HEXDUMP(item->data, item->data_size);
-#endif /* DEBUG_LVL == LVL_TRACE */
             }
         }
 
         if (status == ezSUCCESS)
         {
             EZMLL_ADD_TAIL(&queue->q_item_list, &item->node);
+
+#if (DEBUG_LVL == LVL_TRACE)
+            TRACE("pushed data");
+            TRACE("[item address = %p]", (void*)item);
+            TRACE("[item node address = %p]", (void*)&item->node);
+            TRACE("[item data size = %p]", (void*)item->data_size);
+            HEXDUMP(item->data, item->data_size);
+
+            TRACE("complete buffer");
+            HEXDUMP(queue->mem_list.buff, queue->mem_list.buff_size);
+#endif /* DEBUG_LVL == LVL_TRACE */
+
             DEBUG("push item success");
         }
         else
@@ -219,11 +226,15 @@ ezSTATUS ezQueue_GetFront(ezQueue* queue, void **data, uint32_t *data_size)
     {
         if (ezQueue_GetNumOfElement(queue) > 0)
         {
-            front_item = EZMLL_GET_PARENT_OF(&queue->q_item_list.next, node, ezQueueItem);
+            front_item = EZMLL_GET_PARENT_OF(queue->q_item_list.next, node, ezQueueItem);
             *data = front_item->data;
             *data_size = front_item->data_size;
 
 #if (DEBUG_LVL == LVL_TRACE)
+            TRACE("[item address = %p]", (void*)front_item);
+            TRACE("[item node address = %p]", (void*)&front_item->node);
+            TRACE("[item data size = %p]", (void*)front_item->data_size);
+
             TRACE("data of front item");
             HEXDUMP((uint8_t*)*data, *data_size);
 #endif /* DEBUG_LVL == LVL_TRACE */
