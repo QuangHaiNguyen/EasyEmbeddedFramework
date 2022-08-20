@@ -34,6 +34,9 @@
 /******************************************************************************
 * Includes
 *******************************************************************************/
+#include "app/app_config.h"
+
+#if (CONFIG_EZ_QUEUE_TEST == 1U)
 
 #define DEBUG_LVL   LVL_TRACE   /**< logging level */
 #define MOD_NAME    "test_ez_queue"       /**< module name */
@@ -69,6 +72,7 @@ uint8_t item_4[8] = { 1, 2, 3, 4, 5, 6, 7, 8 };
 *******************************************************************************/
 void test_CreateQueueFail(void);
 void test_CreateQueueSuccess(void);
+void test_PopEmptyQueue(void);
 void test_PushQueueFail(void);
 void test_PushQueueSuccess(void);
 void test_GetFrontPop(void);
@@ -80,25 +84,7 @@ void test_OverflowQueue(void);
 * External functions
 *******************************************************************************/
 
-/******************************************************************************
-* Function : sum
-*//** 
-* @Description:
-*
-* This function initializes the ring buffer
-* 
-* @param    a: (IN)pointer to the ring buffer
-* @param    b: (IN)size of the ring buffer
-* @return   None
-*
-* @Example Example:
-* @code
-* sum(a, b);
-* @endcode
-*
-* @see sum
-*
-*******************************************************************************/
+
 int main(void)
 {
     ezmApp_SdkInit();
@@ -108,6 +94,7 @@ int main(void)
     /* Note, must be called in order */
     RUN_TEST(test_CreateQueueFail);
     RUN_TEST(test_CreateQueueSuccess);
+    RUN_TEST(test_PopEmptyQueue);
     RUN_TEST(test_PushQueueFail);
     RUN_TEST(test_PushQueueSuccess);
     RUN_TEST(test_GetFrontPop);
@@ -116,6 +103,7 @@ int main(void)
 
     return (UnityEnd());
 }
+
 
 /******************************************************************************
 * Internal functions
@@ -133,12 +121,27 @@ void test_CreateQueueFail(void)
     TEST_ASSERT_EQUAL(ezFAIL, status);
 }
 
+
 void test_CreateQueueSuccess(void)
 {
     ezSTATUS status = ezSUCCESS;
     status = ezQueue_CreateQueue(&queue, queue_buff, BUFF_SIZE);
     TEST_ASSERT_EQUAL(ezSUCCESS, status);
 }
+
+
+void test_PopEmptyQueue(void)
+{
+    ezSTATUS status = ezSUCCESS;
+    uint32_t queue_size = 0U;
+    uint8_t* test_data = NULL;
+    uint32_t test_data_size = 0U;
+
+    status = ezQueue_GetFront(&queue, &test_data, &test_data_size);
+    TEST_ASSERT_EQUAL(ezFAIL, status);
+    TEST_ASSERT_EQUAL(0, test_data_size);
+}
+
 
 void test_PushQueueFail(void)
 {
@@ -152,6 +155,7 @@ void test_PushQueueFail(void)
     status = ezQueue_Push(&queue, item_1, 0);
     TEST_ASSERT_EQUAL(ezFAIL, status);
 }
+
 
 void test_PushQueueSuccess(void)
 {
@@ -176,6 +180,7 @@ void test_PushQueueSuccess(void)
     queue_size = ezQueue_GetNumOfElement(&queue);
     TEST_ASSERT_EQUAL(queue_size, 4);
 }
+
 
 void test_GetFrontPop(void)
 {
@@ -239,6 +244,7 @@ void test_GetFrontPop(void)
     queue_size = ezQueue_GetNumOfElement(&queue);
     TEST_ASSERT_EQUAL(queue_size, 0);
 }
+
 
 void test_GetBackPop(void)
 {
@@ -342,6 +348,8 @@ void test_OverflowQueue(void)
     queue_size = ezQueue_GetNumOfElement(&queue);
     TEST_ASSERT_EQUAL(1, queue_size);
 }
+
+#endif /* CONFIG_EZ_QUEUE_TEST */
 
 /* End of file*/
 

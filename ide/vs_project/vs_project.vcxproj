@@ -179,6 +179,7 @@
     <ClCompile Include="..\..\ezmsdk\scheduler\scheduler.c" />
     <ClCompile Include="..\..\ezmsdk\statemachine\statemachine.c" />
     <ClCompile Include="..\..\ezmsdk\unity_test_platform\unity.c" />
+    <ClCompile Include="..\..\ezmsdk\unity_test_platform\unity_test_setup.c" />
     <ClCompile Include="..\..\ezmsdk\utilities\event_notifier\event_notifier.c" />
     <ClCompile Include="..\..\ezmsdk\utilities\ezmAssert\ezmAssert.c" />
     <ClCompile Include="..\..\ezmsdk\utilities\ez_queue\ez_queue.c" />
@@ -216,6 +217,7 @@
     <ClInclude Include="..\..\ezmsdk\statemachine\statemachine.h" />
     <ClInclude Include="..\..\ezmsdk\unity_test_platform\unity.h" />
     <ClInclude Include="..\..\ezmsdk\unity_test_platform\unity_internals.h" />
+    <ClInclude Include="..\..\ezmsdk\unity_test_platform\unity_test_setup.h" />
     <ClInclude Include="..\..\ezmsdk\utilities\event_notifier\event_notifier.h" />
     <ClInclude Include="..\..\ezmsdk\utilities\ezmAssert\ezmAssert.h" />
     <ClInclude Include="..\..\ezmsdk\utilities\ez_queue\ez_queue.h" />

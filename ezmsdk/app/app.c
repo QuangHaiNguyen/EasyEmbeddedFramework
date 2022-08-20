@@ -131,14 +131,6 @@ static void     ezmApp_PrintHeader(void);
 static uint32_t ezmApp_ReturnTimestampMillisvoid(void);
 #endif
 
-void setUp(void)
-{
-}
-
-void tearDown(void)
-{
-}
-
 
 #if (CONFIG_UNITY_UNIT_TEST == 0U)
 void main(void)
@@ -160,7 +152,6 @@ void main(void)
         }
     } while (execute_time_stamp);
 #endif /* CONFIG_WIN */
-
 }
 #endif
 
@@ -320,6 +311,7 @@ void ezmApp_SdkInit(void)
 
 }
 
+
 /******************************************************************************
 * Function : ezm_AppPrintActiveModule
 *//** 
@@ -463,6 +455,7 @@ static void ezm_AppPrintActiveModule(void)
     INFO("******************************************************************************\n\n");
 
 }
+
 
 static void ezmApp_PrintHeader(void)
 {

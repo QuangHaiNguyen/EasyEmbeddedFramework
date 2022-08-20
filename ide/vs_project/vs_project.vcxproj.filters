@@ -205,6 +205,9 @@
     <ClCompile Include="..\..\ezmsdk\utilities\ez_queue\test\test_ez_queue.c">
       <Filter>Source Files\utilities\ez_queue\test</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\unity_test_platform\unity_test_setup.c">
+      <Filter>Source Files\unity_test_platform</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\ezmsdk\app\app.h">
@@ -311,6 +314,9 @@
     </ClInclude>
     <ClInclude Include="..\..\ezmsdk\utilities\ez_queue\ez_queue.h">
       <Filter>Source Files\utilities\ez_queue</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ezmsdk\unity_test_platform\unity_test_setup.h">
+      <Filter>Source Files\unity_test_platform</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

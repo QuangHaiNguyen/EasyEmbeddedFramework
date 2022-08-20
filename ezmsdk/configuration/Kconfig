@@ -97,10 +97,24 @@ config SYSTEM_ERROR
     help
         This module allows the errors can be managed and handled centralized
 
+menu "EZ_QUEUE configuration"
 config EZ_QUEUE
     bool "Enable EZ_QUEUE support"
     help
         this module is the implementation of the queue data structure
+
+config EZ_QUEUE_TEST
+    bool "Enable EZ_QUEUE unit test support"
+    depends on UNITY_UNIT_TEST
+    help
+        Enable unit test for EZ_QUEUE module. Note that only one test can be
+        activated at a time
+
+comment "EZ_QUEUE_TEST support disable. Depend on UNITY_UNIT_TEST"
+    depends on !UNITY_UNIT_TEST
+
+endmenu
+
 endmenu
 
 menu "Driver modules"
