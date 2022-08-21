@@ -6,7 +6,7 @@
 * Last Update:      20.08.2022
 *
 * -----------------------------------------------------------------------------
-* Comany:           Easy Embedded
+* Company:          Easy Embedded
 *                   Address Line 1
 *                   Address Line 2
 *
@@ -31,8 +31,8 @@
  * 
  */
 
-#ifndef _EEZ_QUEUE_H
-#define _EEZ_QUEUE_H
+#ifndef _EZ_QUEUE_H
+#define _EZ_QUEUE_H
 
 /*******************************************************************************
 * Includes
@@ -44,24 +44,26 @@
 #include <stdint.h>
 #include "utilities/linked_list/linked_list.h"
 #include "utilities/stcmem/stcmem.h"
+
+
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
-#define A_MACRO     1   /**< a macro*/
+/* None */
 
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
 
-/** @brief definition of a new type
+/** @brief queue structure
  *
  */
 typedef struct ezQueue ezQueue;
 
 struct ezQueue
 {
-    struct Node q_item_list;
-    struct MemList mem_list;
+    struct Node q_item_list;    /**< list of queue element */
+    struct MemList mem_list;    /**< memory list, needed for static memory allocation*/
 };
 /******************************************************************************
 * Module Variable Definitions
@@ -79,135 +81,153 @@ struct ezQueue
 *//**
 * @Description:
 *
-* This function initializes the ring buffer
+* This function creates a data queue
 *
-* @param    a: (IN)pointer to the ring buffer
-* @param    b: (IN)size of the ring buffer
-* @return   None
+* @param    *queue: (IN)pointer to the a queue structure, see ezQueue
+* @param    *buff: (IN) memory buffer providind to the queue to work
+* @param    *buff_size: (IN)size of the memory buffer
+* @return   ezSUCCESS or ezFAIL
 *
 * @Example Example:
 * @code
-* sum(a, b);
+* ezQueue queue;
+* uint8_t queue_buff[32] = {0};
+* ezSTATUS status = ezQueue_CreateQueue(&queue, queue_buff, 32);
+* if(status == ezSUCCESS)
+* {
+*     printf("Success");
+* }
 * @endcode
-*
-* @see sum
 *
 *******************************************************************************/
 ezSTATUS ezQueue_CreateQueue(ezQueue *queue, uint8_t *buff, uint32_t buff_size);
 
 
 /******************************************************************************
-* Function : ezQueue_CreateQueue
+* Function : ezQueue_Pop
 *//**
 * @Description:
 *
-* This function initializes the ring buffer
+* This function pops an element out of the queue
 *
-* @param    a: (IN)pointer to the ring buffer
-* @param    b: (IN)size of the ring buffer
-* @return   None
+* @param    *queue: (IN)pointer to the a queue structure, see ezQueue
+* @return   ezSUCCESS or ezFAIL
 *
 * @Example Example:
 * @code
-* sum(a, b);
+* if(ezQueue_Pop(&queue) == ezSUCCESS)
+* {
+*     printf("Success");
+* }
 * @endcode
-*
-* @see sum
 *
 *******************************************************************************/
 ezSTATUS ezQueue_Pop(ezQueue *queue);
 
 
 /******************************************************************************
-* Function : ezQueue_CreateQueue
+* Function : ezQueue_Push
 *//**
 * @Description:
 *
-* This function initializes the ring buffer
+* This function pushes data to the queue
 *
-* @param    a: (IN)pointer to the ring buffer
-* @param    b: (IN)size of the ring buffer
-* @return   None
+* @param    *queue: (IN)pointer to the a queue structure, see ezQueue
+* @param    *data: (IN)size of the ring buffer
+* @param    data_size: (IN)size of the ring buffer
+* @return   ezSUCCESS if success
+*           ezFAIL: if the queue is full or invalid function arguments
 *
 * @Example Example:
 * @code
-* sum(a, b);
+* uint8_t queue_buff[32] = {0};
+* if(ezQueue_Push(&queue, queue_buff, 32) == ezSUCCESS)
+* {
+*     printf("Success");
+* }
 * @endcode
-*
-* @see sum
 *
 *******************************************************************************/
 ezSTATUS ezQueue_Push(ezQueue* queue, void *data, uint32_t data_size);
 
 
 /******************************************************************************
-* Function : ezQueue_CreateQueue
+* Function : ezQueue_GetFront
 *//**
 * @Description:
 *
-* This function initializes the ring buffer
+* This function let the user access to the front element of the queue.
+* NOTE: since the users have the access to the queue it is NOT SAFE to write
+* more than the size of this element
 *
-* @param    a: (IN)pointer to the ring buffer
-* @param    b: (IN)size of the ring buffer
-* @return   None
+* @param    *queue: (IN)pointer to the a queue structure, see ezQueue
+* @param    **data: (OUT)pointer the the data of the front element
+* @param    *data_size: (OUT)pointer to the size of data
+* @return   ezSUCCESS if success
+*           ezFAIL: if the queue is empty or invalid function arguments
 *
 * @Example Example:
-* @code
-* sum(a, b);
+* uint8_t *front_element_data = NULL;
+* uint32_t *data_size = NULL;
+* if(ezQueue_GetFront(&queue, &front_element_data, &data_size) == ezSUCCESS)
+* {
+*     printf("Success");
+* }
 * @endcode
 *
-* @see sum
-*
 *******************************************************************************/
-ezSTATUS ezQueue_GetFront(ezQueue* queue, void **data, uint32_t *data_size);
+ezSTATUS ezQueue_GetFront(ezQueue *queue, void **data, uint32_t *data_size);
 
 
 /******************************************************************************
-* Function : ezQueue_CreateQueue
+* Function : ezQueue_GetBack
 *//**
 * @Description:
 *
-* This function initializes the ring buffer
+* This function let the user access to the back element of the queue.
+* NOTE: since the users have the access to the queue it is NOT SAFE to write
+* more than the size of this element
 *
-* @param    a: (IN)pointer to the ring buffer
-* @param    b: (IN)size of the ring buffer
-* @return   None
+* @param    *queue: (IN)pointer to the a queue structure, see ezQueue
+* @param    **data: (OUT)pointer the the data of the back element
+* @param    *data_size: (OUT)pointer to the size of data
+* @return   ezSUCCESS if success
+*           ezFAIL: if the queue is empty or invalid function arguments
 *
 * @Example Example:
-* @code
-* sum(a, b);
+* uint8_t *back_element_data = NULL;
+* uint32_t *data_size = NULL;
+* if(ezQueue_GetFront(&queue, &back_element_data, &data_size) == ezSUCCESS)
+* {
+*     printf("Success");
+* }
 * @endcode
-*
-* @see sum
 *
 *******************************************************************************/
 ezSTATUS ezQueue_GetBack(ezQueue* queue, void **data, uint32_t *data_size);
 
 
 /******************************************************************************
-* Function : ezQueue_CreateQueue
+* Function : ezQueue_GetNumOfElement
 *//**
 * @Description:
 *
-* This function initializes the ring buffer
+* This function returns the number of elements of the queue
 *
-* @param    a: (IN)pointer to the ring buffer
-* @param    b: (IN)size of the ring buffer
-* @return   None
+* @param    *queue: (IN)pointer to the a queue structure, see ezQueue
+* @return   Number of elements
 *
 * @Example Example:
 * @code
-* sum(a, b);
+* uint32_t queue_size = ezQueue_GetNumOfElement(&queue);
 * @endcode
-*
-* @see sum
 *
 *******************************************************************************/
 uint32_t ezQueue_GetNumOfElement(ezQueue* queue);
 
 
 #endif /* CONFIG_EZ_QUEUE */
-#endif /* _EEZ_QUEUE_H */
+#endif /* _EZ_QUEUE_H */
 
 /* End of file */
 

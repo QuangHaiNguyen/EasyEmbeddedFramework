@@ -6,7 +6,7 @@
 * Last Update:      20.08.2022
 *
 * -----------------------------------------------------------------------------
-* Comany:           Easy Embedded
+* Company:          Easy Embedded
 *                   Address Line 1
 *                   Address Line 2
 *
@@ -47,16 +47,21 @@
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
-#define A_MACRO     1   /**< a macro*/
+/* None */
 
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
+
+
+/** @brief item of the queue structure
+ *
+ */
 typedef struct
 {
-    void* data;
-    uint32_t data_size;
-    struct Node node;
+    void* data;         /**< pointer to the data of the queue element*/
+    uint32_t data_size; /**< data size */
+    struct Node node;   /**< node of the linked list */
 }ezQueueItem;
 
 /******************************************************************************
@@ -73,25 +78,7 @@ typedef struct
 * External functions
 *******************************************************************************/
 
-/******************************************************************************
-* Function : ezQueue_CreateQueue
-*//** 
-* @Description:
-*
-* This function initializes the ring buffer
-* 
-* @param    a: (IN)pointer to the ring buffer
-* @param    b: (IN)size of the ring buffer
-* @return   None
-*
-* @Example Example:
-* @code
-* sum(a, b);
-* @endcode
-*
-* @see sum
-*
-*******************************************************************************/
+
 ezSTATUS ezQueue_CreateQueue(ezQueue *queue, uint8_t *buff, uint32_t buff_size)
 {
     ezSTATUS status = ezFAIL;
@@ -306,6 +293,8 @@ uint32_t ezQueue_GetNumOfElement(ezQueue* queue)
 /******************************************************************************
 * Internal functions
 *******************************************************************************/
+/* None */
+
 
 #endif /* CONFIG_EZ_QUEUE == 1U */
 /* End of file*/
