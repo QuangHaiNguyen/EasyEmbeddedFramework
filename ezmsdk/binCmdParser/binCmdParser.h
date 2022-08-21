@@ -45,6 +45,9 @@
 define CONFIG_PAYLOAD_MAX_SIZE  32U
 #endif /* CONFIG_PAYLOAD_MAX_SIZE */
 
+#define FRAME_HEADER_SIZE       9U
+#define UUID_SIZE               4U
+#define PAYLOAD_FIELD_SIZE      2U
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/

@@ -27,6 +27,15 @@ config UNITY_UNIT_TEST
     help
         Enable the unity unit test platform
 
+config EMBEDDED_EMULATOR
+    bool "enable EMBEDDED_EMULATOR support"
+    depends on BIN_PARSER && EZ_QUEUE
+    help
+        Enable the embedded emulator application
+
+comment "EMBEDDED_EMULATOR support disable. Depend on LOGBIN_PARSER and EZ_QUEUE"
+    depends on !BIN_PARSER || !EZ_QUEUE
+
 menu "Helper modules"
 
 config HELPER_LINKEDLIST
@@ -57,7 +66,7 @@ config HELPER_HEXDUMP
     depends on LOGGING
 
 comment "HELPER_HEXDUMP support disable. Depend on LOGGING"
-    depends on !LOGGING    
+    depends on !LOGGING
 
 config RING_BUFFER
     bool "Enable RING_BUFFER support"

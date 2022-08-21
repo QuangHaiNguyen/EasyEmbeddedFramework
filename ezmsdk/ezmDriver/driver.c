@@ -40,7 +40,7 @@
 
 #if (CONFIG_DRIVERINF == 1U)
 
-#define DEBUG_LVL   LVL_INFO       /**< logging level */
+#define DEBUG_LVL   LVL_DEBUG       /**< logging level */
 #define MOD_NAME    "DRIVER"     /**< module name */
 
 #include <string.h>

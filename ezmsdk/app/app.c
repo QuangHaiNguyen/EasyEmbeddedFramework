@@ -111,6 +111,11 @@
 #if (MQTT == 1U)
 #include "hal/network/mqtt/mqtt.h"
 #endif
+
+#if(CONFIG_EMBEDDED_EMULATOR == 1U)
+#include "app/app_embedded_emulator.h"
+#endif /* CONFIG_EMBEDDED_EMULATOR */
+
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
@@ -141,8 +146,12 @@ void main(void)
     uint64_t execute_time_stamp = ezmApp_ReturnTimestampMillisvoid();
     do
     {
+#if (CONFIG_EMBEDDED_EMULATOR == 1U)
+        ezMbedEmulator_Run();
+#endif /* CONFIG_EMBEDDED_EMULATOR */
+
 #if (CONFIG_CLI == 1U)
-        ezmCli_Run();
+        // ezmCli_Run();
 #endif
         if (ezmApp_ReturnTimestampMillisvoid() - execute_time_stamp > 1)
         {
@@ -291,6 +300,20 @@ void ezmApp_SdkInit(void)
     Logging_DemoFeatures();
 #endif /* CONFIG_LOGGING */
 
+#if (CONFIG_EMBEDDED_EMULATOR == 1U)
+    INFO("Initialize embedded emulator application");
+    INFO("Module Id: 0x%02x", EMBEDDED_EMULATOR_ID);
+
+    if (ezMbedEmulator_Initialization() == ezSUCCESS)
+    {
+        INFO("Initialize success");
+    }
+    else
+    {
+        INFO("Initialize fail");
+    }
+#endif
+
 #if (CONFIG_CLI == 1U && CONFIG_HAL_UART == 1U)
     UartDrvApi* uart_driver;
     ezmDriver_GetDriverInstance(UART0_DRIVER, (void*)(&uart_driver));
@@ -306,8 +329,6 @@ void ezmApp_SdkInit(void)
         ezmCli_Init(uart_driver);
     }
 #endif
-
-    INFO("\n\n\n");
 
 }
 

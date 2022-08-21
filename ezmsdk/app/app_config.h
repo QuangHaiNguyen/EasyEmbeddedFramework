@@ -109,6 +109,9 @@ typedef enum
     VIRTUAL_COM_MOD_ID,
 #endif /* CONFIG_VIRTUAL_COM */
 
+#if ( CONFIG_EMBEDDED_EMULATOR == 1U)
+    EMBEDDED_EMULATOR_ID,
+#endif /* CONFIG_EMBEDDED_EMULATOR */
     /* Application module */
 
 }MODULE_ID;

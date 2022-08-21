@@ -52,7 +52,7 @@
 *******************************************************************************/
 
 /* Logging module conficts with some macro from win32 api so we hack it here */
-#define DEBUG       1U                      /**< debug activation flag */
+#define DEBUG       0U                      /**< debug activation flag */
 #define MOD_NAME    "VIRTUAL_COM_HW"        /**< module name */
 
 

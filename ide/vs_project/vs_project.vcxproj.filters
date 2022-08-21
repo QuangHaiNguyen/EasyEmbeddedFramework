@@ -208,6 +208,9 @@
     <ClCompile Include="..\..\ezmsdk\unity_test_platform\unity_test_setup.c">
       <Filter>Source Files\unity_test_platform</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\app\app_embedded_emulator.c">
+      <Filter>Source Files\app</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\ezmsdk\app\app.h">
@@ -317,6 +320,9 @@
     </ClInclude>
     <ClInclude Include="..\..\ezmsdk\unity_test_platform\unity_test_setup.h">
       <Filter>Source Files\unity_test_platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ezmsdk\app\app_embedded_emulator.h">
+      <Filter>Source Files\app</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
