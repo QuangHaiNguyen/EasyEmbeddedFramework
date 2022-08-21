@@ -38,12 +38,12 @@ _file_header =\
 * Last Update:      {2}
 *
 * -----------------------------------------------------------------------------
-* Comany:           Easy Embedded
+* Company:          Embedded Easy
 *                   Address Line 1
 *                   Address Line 2
 *
 * -----------------------------------------------------------------------------
-* Contact:          Easy Embedded
+* Contact:          Embedded Easy
 *                   hainguyen.ezm@gmail.com
 *
 * -----------------------------------------------------------------------------
