@@ -138,10 +138,11 @@ ezSTATUS ezQueue_Pop(ezQueue* queue)
     return status;
 }
 
-ezSTATUS ezQueue_Push(ezQueue* queue, void *data, uint32_t data_size)
+
+ezSTATUS ezQueue_ReserveElement(ezQueue *queue, void **data, uint32_t data_size)
 {
     ezSTATUS status = ezSUCCESS;
-    ezQueueItem *item = NULL;
+    ezQueueItem* item = NULL;
 
     TRACE("ezQueue_Push( [@ = %p], [size = %lu])", data, data_size);
 
@@ -167,13 +168,56 @@ ezSTATUS ezQueue_Push(ezQueue* queue, void *data, uint32_t data_size)
             }
             else
             {
-                memcpy(item->data, data, item->data_size);
+                *data = item->data;
             }
         }
 
         if (status == ezSUCCESS)
         {
             EZMLL_ADD_TAIL(&queue->q_item_list, &item->node);
+
+#if (DEBUG_LVL == LVL_TRACE)
+            TRACE("pushed data");
+            TRACE("[item address = %p]", (void*)item);
+            TRACE("[item node address = %p]", (void*)&item->node);
+            TRACE("[item data size = %p]", (void*)item->data_size);
+            HEXDUMP(item->data, item->data_size);
+
+            TRACE("complete buffer");
+            HEXDUMP(queue->mem_list.buff, queue->mem_list.buff_size);
+#endif /* DEBUG_LVL == LVL_TRACE */
+
+            DEBUG("push item success");
+        }
+        else
+        {
+            DEBUG("add item fail");
+        }
+
+    }
+    else
+    {
+        status = ezFAIL;
+    }
+
+    return status;
+}
+
+ezSTATUS ezQueue_Push(ezQueue* queue, void *data, uint32_t data_size)
+{
+    ezSTATUS status = ezSUCCESS;
+    ezQueueItem *item = NULL;
+    void *reserve_data = NULL;
+
+    TRACE("ezQueue_Push( [@ = %p], [size = %lu])", data, data_size);
+
+    if (queue != NULL && data != NULL && data_size > 0)
+    {
+        status = ezQueue_ReserveElement(queue, &reserve_data, data_size);
+
+        if (status == ezSUCCESS)
+        {
+            memcpy(reserve_data, data, data_size);
 
 #if (DEBUG_LVL == LVL_TRACE)
             TRACE("pushed data");

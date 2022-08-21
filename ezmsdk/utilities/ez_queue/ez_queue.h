@@ -126,6 +126,34 @@ ezSTATUS ezQueue_Pop(ezQueue *queue);
 
 
 /******************************************************************************
+* Function : ezQueue_ReserveElement
+*//**
+* @Description:
+*
+* This function reserves an element in the queue and returns the pointer to the
+* memory buff of the element. This function gives the ability to block the
+* memory first, and let the user to write the data into the queue later
+*
+* @param    *queue: (IN)pointer to the a queue structure, see ezQueue
+* @param    **data: (IN)pointer to the reserve memory block
+* @param    data_size: (IN)size of the reserve memeory
+* @return   ezSUCCESS if success
+*           ezFAIL: if the queue is full or invalid function arguments
+*
+* @Example Example:
+* @code
+* uint8_t queue_buff[32] = {0};
+* if(ezQueue_Push(&queue, queue_buff, 32) == ezSUCCESS)
+* {
+*     printf("Success");
+* }
+* @endcode
+*
+*******************************************************************************/
+ezSTATUS ezQueue_ReserveElement(ezQueue* queue, void **data, uint32_t data_size);
+
+
+/******************************************************************************
 * Function : ezQueue_Push
 *//**
 * @Description:
@@ -133,8 +161,8 @@ ezSTATUS ezQueue_Pop(ezQueue *queue);
 * This function pushes data to the queue
 *
 * @param    *queue: (IN)pointer to the a queue structure, see ezQueue
-* @param    *data: (IN)size of the ring buffer
-* @param    data_size: (IN)size of the ring buffer
+* @param    *data: (IN)data to be written in the queue
+* @param    data_size: (IN)size of the data written to the queue
 * @return   ezSUCCESS if success
 *           ezFAIL: if the queue is full or invalid function arguments
 *
