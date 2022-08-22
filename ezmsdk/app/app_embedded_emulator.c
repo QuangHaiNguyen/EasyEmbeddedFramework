@@ -114,7 +114,7 @@ ezSTATUS ezMbedEmulator_Initialization(void)
     parser.command_table = CommandTable;
     parser.command_table_size = sizeof(CommandTable) / sizeof(struct Command);
 
-    if (ezmParser_Init(&parser, parser_buff, PARSER_BUFF_SIZE,
+    if (ezParser_Init(&parser, parser_buff, PARSER_BUFF_SIZE,
                         ezMbedEmulator_ParserStatusHandlerCallback))
     {
         status = ezQueue_CreateQueue(&tx_queue, queue_buff, QUEUE_BUFF_SIZE);
@@ -200,7 +200,7 @@ void ezMbedEmulator_Run(void)
             if (virtual_com_drv->ezmUart_ReceiveBlocking(&one_byte, 1) == 1)
             {
                 TRACE("byte = 0x%x", one_byte);
-                ezmParser_RunBinParser(&parser, one_byte);
+                ezParser_RunBinParser(&parser, one_byte);
             }
             emulator_state = STATE_TX;
             break;

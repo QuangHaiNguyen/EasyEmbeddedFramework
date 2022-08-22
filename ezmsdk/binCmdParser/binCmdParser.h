@@ -124,8 +124,47 @@ struct BinCmdParser
 * Function Prototypes
 *******************************************************************************/
 
-bool ezmParser_Init         (struct BinCmdParser* parser, uint8_t *buffer, uint16_t buffer_size_byte, StatusHandler handler);
-void ezmParser_RunBinParser (struct BinCmdParser* parser, uint8_t data_byte);
+
+/******************************************************************************
+* Function : ezParser_Init
+*
+* This function initializes a parser
+*
+* PRE-CONDITION: Static memory module must be initialized first
+*
+* POST-CONDITION: None
+*
+* @param    *parser:            (IN)pointer to the parser structure
+* @param    *buffer:            (IN)pointer to the buffer, which parser will use to run
+* @param    buffer_size_byte:   (IN)size of the buffer, in byte
+* @param    handler:            (IN)handler to handle the status of the parser
+*
+* @return   ezSUCCESS or ezFAIL
+*
+*******************************************************************************/
+ezSTATUS ezParser_Init(struct BinCmdParser* parser,
+                        uint8_t *buffer,
+                        uint16_t buffer_size_byte,
+                        StatusHandler handler);
+
+
+/******************************************************************************
+* Function : ezParser_RunBinParser
+*
+* This function initializes a parser
+*
+* PRE-CONDITION: parser must be initialized first
+*
+* POST-CONDITION: None
+*
+* @param    *parser:    (IN)pointer to the parser structure
+* @param    data_byte:  (IN)data byte feed to the parser
+*
+* @return   None
+*
+*******************************************************************************/
+void ezParser_RunBinParser (struct BinCmdParser* parser, uint8_t data_byte);
+
 
 #endif /* CONFIG_BIN_PARSER */
 #endif /* _BIN_PARSER_H */
