@@ -166,6 +166,24 @@ ezSTATUS ezParser_Init(struct BinCmdParser* parser,
 void ezParser_RunBinParser (struct BinCmdParser* parser, uint8_t data_byte);
 
 
+/******************************************************************************
+* Function : ezParser_SerializeHeader
+*
+* This function serializes the header to a stream of binary data
+*
+* PRE-CONDITION: parser must be initialized first
+*
+* POST-CONDITION: None
+*
+* @param    *parser:    (IN)pointer to the parser structure
+* @param    *buff:      (OUT)buffer to store serialized data
+* @param    buff_size:  (IN)size of the buffer
+*
+* @return   address of the buffer after header is serialized or NULL if fail
+*
+*******************************************************************************/
+uint8_t* ezParser_SerializeHeader(struct BinaryHeader *header, uint8_t *buff, uint32_t buff_size);
+
 #endif /* CONFIG_BIN_PARSER */
 #endif /* _BIN_PARSER_H */
 /* End of file*/

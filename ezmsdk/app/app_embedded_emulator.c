@@ -226,6 +226,12 @@ ezSTATUS ezMbedEmulator_SendData(uint8_t opcode, void* data, uint32_t data_size)
 }
 
 
+ezSTATUS ezMbedEmulator_GetQueueElement(void **queue_buffer, uint32_t data_size)
+{
+    return ezQueue_ReserveElement(&tx_queue, queue_buffer, data_size);
+}
+
+
 /******************************************************************************
 * Internal functions
 *******************************************************************************/

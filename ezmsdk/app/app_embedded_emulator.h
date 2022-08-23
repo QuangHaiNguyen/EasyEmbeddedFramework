@@ -146,6 +146,32 @@ void ezMbedEmulator_Run(void);
 ezSTATUS ezMbedEmulator_SendData(uint8_t opcode, void *data, uint32_t data_size);
 
 
+/******************************************************************************
+* Function : ezMbedEmulator_GetQueueElement
+*//**
+* @Description:
+*
+* This function creates an element in the queue with a defined size and returns
+* the pointer to the buffer for writting data.
+*
+* @param    *queue_buffer: (OUT) pointer to the buffer of the element
+* @param    data_size: (IN)size of the data
+* @return   ezSUCCESS:success
+*           ezFAIL: internal queue is full
+*
+* @Example Example:
+* @code
+* uint8_t *data = NULL;
+* if(ezMbedEmulator_GetQueueElement(&(void*)data, 32) == ezSUCCESS)
+* {
+*     do something
+* }
+* @endcode
+*
+*******************************************************************************/
+ezSTATUS ezMbedEmulator_GetQueueElement(void **queue_buffer, uint32_t data_size);
+
+
 #endif /* CONFIG_EMBEDDED_EMULATOR */
 #endif /* _APP_EMBEDDED_EMULATOR_H */
 

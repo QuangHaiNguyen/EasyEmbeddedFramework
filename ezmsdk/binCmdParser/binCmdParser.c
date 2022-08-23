@@ -18,7 +18,7 @@
 
 #if (CONFIG_BIN_PARSER == 1U)
 
-#define DEBUG_LVL   LVL_DEBUG               /**< logging level */
+#define DEBUG_LVL   LVL_TRACE               /**< logging level */
 #define MOD_NAME    "bin_cmd_parser"        /**< module name */
 
 #include "string.h"
@@ -84,7 +84,7 @@ ezSTATUS ezParser_Init(struct BinCmdParser *parser,
         parser->curr_frame = NULL;
         parser->StatusHandler = handler;
         parser->buff_index = 0U;
-        if (ezmStcMem_InitMemList(&parser->memory_list, buffer, buffer_size_byte) != true)
+        if (ezmStcMem_InitMemList(&parser->memory_list, buffer, buffer_size_byte) == true)
         {
             status = ezSUCCESS;
             DEBUG("init success");
@@ -167,7 +167,7 @@ void ezParser_RunBinParser(struct BinCmdParser* parser, uint8_t data_byte)
             if (parser->curr_frame->payload)
             {
                 parser->parser_state = DATA;
-                TRACE("[len = 0x%02x]", header->payload_size_byte);
+                TRACE("[len = 0x%02x]", HEADER(parser).payload_size_byte);
             }
             else
             {
@@ -204,6 +204,7 @@ void ezParser_RunBinParser(struct BinCmdParser* parser, uint8_t data_byte)
     }
     case CHECKSUM:
     {
+        TRACE("[checksum = 0x%02x]", data_byte);
         *((uint8_t*)(&(parser->curr_frame->checksum)) + --parser->buff_index) = data_byte;
         if (parser->buff_index == 0)
         {
@@ -224,6 +225,42 @@ void ezParser_RunBinParser(struct BinCmdParser* parser, uint8_t data_byte)
         break;
     }
 }
+
+
+uint8_t* ezParser_SerializeHeader(struct BinaryHeader *header, uint8_t* buff, uint32_t buff_size)
+{
+    uint8_t *ret_ptr = NULL;
+
+    if (header != NULL && buff != NULL && buff_size >= FRAME_HEADER_SIZE)
+    {
+        ret_ptr = buff;
+
+        /* sof */
+        *ret_ptr = header->sof;
+        ret_ptr++;
+
+        /* uuid */
+        *(uint32_t*)ret_ptr = header->uuid;
+        ret_ptr += UUID_SIZE;
+
+        /* opcode */
+        *ret_ptr = header->opcode;
+        ret_ptr++;
+
+        /* encrypt */
+        *ret_ptr = header->encrypt_info;
+        ret_ptr++;
+
+        /* payload size */
+        *ret_ptr = header->payload_size_byte >> 8;
+        ret_ptr++;
+        *ret_ptr = header->payload_size_byte & 0xFF;
+        ret_ptr++;
+    }
+
+    return ret_ptr;
+}
+
 
 /******************************************************************************
 * Function : ezParser_RunCommand
