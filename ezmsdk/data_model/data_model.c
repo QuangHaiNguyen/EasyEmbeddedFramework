@@ -155,7 +155,7 @@ void DataModel_ReleaseDataPoint(DataPoint data_point)
 
 #if (DEBUG_LVL > LVL_INFO)
         data_point_count--;
-        DEBUG("num of data point [size = %d]", data_point_count);
+        DEBUG("num of data point [size = %lu]", data_point_count);
 #endif
     }
 }
@@ -200,11 +200,11 @@ DataPoint DataModel_CreateDataPoint(void * data,
             data_model[i].data = data;
             data_model[i].data_size = size;
 
-            DEBUG("found free data element [index = %d]", i);
+            DEBUG("found free data element [index = %lu]", i);
 
 #if (DEBUG_LVL > LVL_INFO)
             data_point_count++;
-            DEBUG("num of data point [size = %d]", data_point_count);
+            DEBUG("num of data point [size = %lu]", data_point_count);
 #endif
             break;
         }
@@ -274,7 +274,7 @@ bool DataModel_WriteDataPoint(DataPoint data_point,
 
             if (memcmp(data_model[data_point].data, data, size) != 0)
             {
-                TRACE("data @ [index = %d] has changed", data_point);
+                TRACE("data @ [index = %lu] has changed", data_point);
 
                 memcpy(data_model[data_point].data, data, size);
                 evntNoti_NotifyEvent(&data_model[data_point].subject,
@@ -339,7 +339,7 @@ bool DataModel_ReadDataPoint(DataPoint data_point,
         if (size == data_model[data_point].data_size &&
             data_model[data_point].is_locked == false)
         {
-            TRACE("Read data @ [index = %d]", data_point);
+            TRACE("Read data @ [index = %lu]", data_point);
 
             data_model[data_point].is_locked = true;
 

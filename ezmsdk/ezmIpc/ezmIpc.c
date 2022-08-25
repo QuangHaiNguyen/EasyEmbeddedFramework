@@ -83,11 +83,11 @@ static IpcInstance instance_pool[CONFIG_NUM_OF_IPC_INSTANCE] = {0};    /**< pool
 /**Function to manipulate the buffer of the ipc. Keyword extern is used because these 
  * functions are not meant to be shared with the user
  */
-extern inline struct Node*      ezmStcMem_ReserveMemoryBlock(struct Node* free_list_head, uint16_t block_size_byte);
-extern inline bool              ezmStcMem_MoveBlock(struct Node* move_node, struct Node* from_list_head, struct Node* to_list_head);
-extern inline struct MemBlock*  GetFreeBlock(void);
-extern inline void              ReleaseBlock(struct MemBlock* block);
-static void                     ezmIpc_ResetInstance    (uint8_t instance_index);
+extern struct Node*      ezmStcMem_ReserveMemoryBlock(struct Node* free_list_head, uint16_t block_size_byte);
+extern bool              ezmStcMem_MoveBlock(struct Node* move_node, struct Node* from_list_head, struct Node* to_list_head);
+extern struct MemBlock*  GetFreeBlock(void);
+extern void              ReleaseBlock(struct MemBlock* block);
+static void              ezmIpc_ResetInstance    (uint8_t instance_index);
 
 /******************************************************************************
 * Function : ezmIpc_InitModule
