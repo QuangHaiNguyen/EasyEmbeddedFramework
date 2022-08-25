@@ -74,8 +74,8 @@ static void     ezmSmalloc_Merge                (struct Node *free_list_head);
 
 struct Node*      ezmStcMem_ReserveMemoryBlock(struct Node* free_list_head, uint16_t block_size_byte);
 bool              ezmStcMem_MoveBlock(struct Node* move_node, struct Node* from_list_head, struct Node* to_list_head);
-static inline struct MemBlock*  GetFreeBlock(void);
-static inline void              ReleaseBlock(struct MemBlock* block);
+struct MemBlock*  GetFreeBlock(void);
+void              ReleaseBlock(struct MemBlock* block);
 /**************************** Public function ********************************/
 
 /******************************************************************************
@@ -466,7 +466,7 @@ static void ezmSmalloc_Merge(struct Node* free_list_head)
     }
 }
 
-static inline struct MemBlock* GetFreeBlock(void)
+struct MemBlock* GetFreeBlock(void)
 {
     struct MemBlock* free_block = NULL;
     for (uint16_t i = 0; i < CONFIG_NUM_OF_MEM_BLOCK; i++)
@@ -481,7 +481,7 @@ static inline struct MemBlock* GetFreeBlock(void)
     return free_block;
 }
 
-static inline void ReleaseBlock(struct MemBlock* block)
+void ReleaseBlock(struct MemBlock* block)
 {
     INIT_BLOCK(block, NULL, 0U);
 }

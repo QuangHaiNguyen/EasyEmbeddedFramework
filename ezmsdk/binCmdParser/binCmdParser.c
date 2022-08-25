@@ -137,7 +137,7 @@ void ezParser_RunBinParser(struct BinCmdParser* parser, uint8_t data_byte)
         if (parser->buff_index == 0)
         {
             parser->parser_state = OP_CODE;
-            TRACE("[uuid = 0x%02x]", parser->curr_frame->header.uuid);
+            TRACE("[uuid = 0x%lx]", parser->curr_frame->header.uuid);
         }
         break;
     }

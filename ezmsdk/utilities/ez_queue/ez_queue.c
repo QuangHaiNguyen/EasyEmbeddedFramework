@@ -206,7 +206,6 @@ ezSTATUS ezQueue_ReserveElement(ezQueue *queue, void **data, uint32_t data_size)
 ezSTATUS ezQueue_Push(ezQueue* queue, void *data, uint32_t data_size)
 {
     ezSTATUS status = ezSUCCESS;
-    ezQueueItem *item = NULL;
     void *reserve_data = NULL;
 
     TRACE("ezQueue_Push( [@ = %p], [size = %lu])", data, data_size);
