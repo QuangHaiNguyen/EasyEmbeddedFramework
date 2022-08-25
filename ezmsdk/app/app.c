@@ -108,9 +108,9 @@
 #include "data_model/data_model.h"
 #endif /* CONFIG_DATA_MODEL == 1U */
 
-#if (MQTT == 1U)
+#if (CONFIG_MQTT == 1U)
 #include "hal/network/mqtt/mqtt.h"
-#endif
+#endif /* CONFIG_MQTT */
 
 #if(CONFIG_EMBEDDED_EMULATOR == 1U)
 #include "app/app_embedded_emulator.h"
@@ -132,37 +132,6 @@
 static void     ezm_AppPrintActiveModule(void);
 static void     ezmApp_PrintHeader(void);
 
-#if(CONFIG_WIN == 1U)
-static uint32_t ezmApp_ReturnTimestampMillisvoid(void);
-#endif
-
-
-#if (CONFIG_UNITY_UNIT_TEST == 0U)
-void main(void)
-{
-    ezmApp_SdkInit();
-
-#if(CONFIG_WIN == 1U)
-    uint64_t execute_time_stamp = ezmApp_ReturnTimestampMillisvoid();
-    do
-    {
-#if (CONFIG_EMBEDDED_EMULATOR == 1U)
-        ezMbedEmulator_Run();
-#endif /* CONFIG_EMBEDDED_EMULATOR */
-
-#if (CONFIG_CLI == 1U)
-        // ezmCli_Run();
-#endif
-        if (ezmApp_ReturnTimestampMillisvoid() - execute_time_stamp > 1)
-        {
-            ezmKernel_UpdateClock();
-            ezmKernel_Run();
-            execute_time_stamp = ezmApp_ReturnTimestampMillisvoid();
-        }
-    } while (execute_time_stamp);
-#endif /* CONFIG_WIN */
-}
-#endif
 
 /******************************************************************************
 * Function : ezmApp_SdkInit
@@ -503,15 +472,5 @@ static void ezmApp_PrintHeader(void)
     INFO("******************************************************************************\n\n");
 }
 
-#if(CONFIG_WIN == 1U)
-static uint32_t ezmApp_ReturnTimestampMillisvoid(void)
-{
-    uint32_t tick_milli;
-    clock_t tick;
-    tick = clock();
-    tick_milli = tick / (CLOCKS_PER_SEC / 1000);
 
-    return tick_milli;
-}
-#endif
 /* End of file*/

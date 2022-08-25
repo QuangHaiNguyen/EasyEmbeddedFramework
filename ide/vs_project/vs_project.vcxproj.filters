@@ -175,9 +175,6 @@
     <ClCompile Include="..\..\ezmsdk\utilities\logging\logging.c">
       <Filter>Source Files\utilities\logging</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\ezmsdk\app\main.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\ezmsdk\utilities\event_notifier\event_notifier.c">
       <Filter>Source Files\utilities\event_notifier</Filter>
     </ClCompile>
@@ -210,6 +207,9 @@
     </ClCompile>
     <ClCompile Include="..\..\ezmsdk\app\app_embedded_emulator.c">
       <Filter>Source Files\app</Filter>
+    </ClCompile>
+    <ClCompile Include="main.c">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
