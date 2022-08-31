@@ -236,6 +236,16 @@ config CRC_SIZE
 endif
 endmenu
 
+config RPC
+    bool "Enable Remote Procedure Call (RPC) support"
+    depends on STCMEM
+    help
+        Implementation of remote procedure call. Note this is a propritary
+        module and it does not follow any standard
+
+comment "RPC support disable. Depend on STCMEM"
+    depends on !STCMEM
+
 menu "IPC configuration"
 config IPC
     bool "Enable IPC support"
