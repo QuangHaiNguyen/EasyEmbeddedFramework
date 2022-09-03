@@ -169,6 +169,8 @@
     <ClCompile Include="..\..\ezmsdk\ezmDriver\driver.c" />
     <ClCompile Include="..\..\ezmsdk\ezmIpc\ezmIpc.c" />
     <ClCompile Include="..\..\ezmsdk\ezmKernel\ezmKernel.c" />
+    <ClCompile Include="..\..\ezmsdk\ezRpc\ezRpc.c" />
+    <ClCompile Include="..\..\ezmsdk\ezRpc\test\test_ezRpc.c" />
     <ClCompile Include="..\..\ezmsdk\hal\network\mqtt\mqtt.c" />
     <ClCompile Include="..\..\ezmsdk\hal\uart\uart.c" />
     <ClCompile Include="..\..\ezmsdk\hal\wifi_controller\wifi_controller.c" />
@@ -208,6 +210,7 @@
     <ClInclude Include="..\..\ezmsdk\ezmIpc\ezmIpc.h" />
     <ClInclude Include="..\..\ezmsdk\ezmIpc\ezmIpc_conf.h" />
     <ClInclude Include="..\..\ezmsdk\ezmKernel\ezmKernel.h" />
+    <ClInclude Include="..\..\ezmsdk\ezRpc\ezRpc.h" />
     <ClInclude Include="..\..\ezmsdk\hal\network\mqtt\mqtt.h" />
     <ClInclude Include="..\..\ezmsdk\hal\uart\uart.h" />
     <ClInclude Include="..\..\ezmsdk\hal\wifi_controller\wifi_controller.h" />

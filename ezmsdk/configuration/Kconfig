@@ -236,15 +236,34 @@ config CRC_SIZE
 endif
 endmenu
 
+menu "RPC configuration"
 config RPC
     bool "Enable Remote Procedure Call (RPC) support"
-    depends on STCMEM
+    depends on EZ_QUEUE
     help
         Implementation of remote procedure call. Note this is a propritary
         module and it does not follow any standard
 
-comment "RPC support disable. Depend on STCMEM"
-    depends on !STCMEM
+comment "RPC support disable. Depend on EZ_QUEUE"
+    depends on !EZ_QUEUE
+
+if RPC
+config NUM_OF_REQUEST
+    int "Number of requests"
+    default 10
+endif
+
+config EZ_RPC_TEST
+    bool "Enable EZ_RPC_TEST unit test support"
+    depends on UNITY_UNIT_TEST
+    help
+        Enable unit test for EZ_RPC module. Note that only one test can be
+        activated at a time
+
+comment "EZ_RPC_TEST support disable. Depend on UNITY_UNIT_TEST"
+    depends on !UNITY_UNIT_TEST
+
+endmenu
 
 menu "IPC configuration"
 config IPC

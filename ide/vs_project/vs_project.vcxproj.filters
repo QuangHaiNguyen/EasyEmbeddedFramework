@@ -110,6 +110,12 @@
     <Filter Include="Source Files\utilities\ez_queue\test">
       <UniqueIdentifier>{8397988e-fa5f-4962-8dde-87be7bc776d5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\ezRpc">
+      <UniqueIdentifier>{c8aeff40-0b1b-41da-ad4d-20d0f395610e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ezRpc\test">
+      <UniqueIdentifier>{3c8f6499-9bec-42ed-ac68-b610eea5198b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ezmsdk\app\app.c">
@@ -210,6 +216,12 @@
     </ClCompile>
     <ClCompile Include="main.c">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\ezRpc\ezRpc.c">
+      <Filter>Source Files\ezRpc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\ezRpc\test\test_ezRpc.c">
+      <Filter>Source Files\ezRpc\test</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -323,6 +335,9 @@
     </ClInclude>
     <ClInclude Include="..\..\ezmsdk\app\app_embedded_emulator.h">
       <Filter>Source Files\app</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ezmsdk\ezRpc\ezRpc.h">
+      <Filter>Source Files\ezRpc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
