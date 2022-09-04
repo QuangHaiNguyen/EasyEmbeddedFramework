@@ -92,14 +92,14 @@ int main(void)
     UnityBegin("test/test_ez_queue.c");
  
     /* Note, must be called in order */
-    //RUN_TEST(test_CreateQueueFail);
-    //RUN_TEST(test_CreateQueueSuccess);
-    //RUN_TEST(test_PopEmptyQueue);
-    //RUN_TEST(test_PushQueueFail);
-    //RUN_TEST(test_PushQueueSuccess);
-    //RUN_TEST(test_GetFrontPop);
+    RUN_TEST(test_CreateQueueFail);
+    RUN_TEST(test_CreateQueueSuccess);
+    RUN_TEST(test_PopEmptyQueue);
+    RUN_TEST(test_PushQueueFail);
+    RUN_TEST(test_PushQueueSuccess);
+    RUN_TEST(test_GetFrontPop);
     RUN_TEST(test_GetBackPop);
-    //RUN_TEST(test_OverflowQueue);
+    RUN_TEST(test_OverflowQueue);
 
     return (UnityEnd());
 }
