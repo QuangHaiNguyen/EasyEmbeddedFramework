@@ -104,11 +104,11 @@ ezSTATUS ezQueue_CreateQueue(ezQueue *queue, uint8_t *buff, uint32_t buff_size);
 
 
 /******************************************************************************
-* Function : ezQueue_Pop
+* Function : ezQueue_PopFront
 *//**
 * @Description:
 *
-* This function pops an element out of the queue
+* This function pops the front element out of the queue
 *
 * @param    *queue: (IN)pointer to the a queue structure, see ezQueue
 * @return   ezSUCCESS or ezFAIL
@@ -122,7 +122,29 @@ ezSTATUS ezQueue_CreateQueue(ezQueue *queue, uint8_t *buff, uint32_t buff_size);
 * @endcode
 *
 *******************************************************************************/
-ezSTATUS ezQueue_Pop(ezQueue *queue);
+ezSTATUS ezQueue_PopFront(ezQueue *queue);
+
+
+/******************************************************************************
+* Function : ezQueue_PopBack
+*//**
+* @Description:
+*
+* This function pops the back element out of the queue
+*
+* @param    *queue: (IN)pointer to the a queue structure, see ezQueue
+* @return   ezSUCCESS or ezFAIL
+*
+* @Example Example:
+* @code
+* if(ezQueue_Pop(&queue) == ezSUCCESS)
+* {
+*     printf("Success");
+* }
+* @endcode
+*
+*******************************************************************************/
+ezSTATUS ezQueue_PopBack(ezQueue *queue);
 
 
 /******************************************************************************
