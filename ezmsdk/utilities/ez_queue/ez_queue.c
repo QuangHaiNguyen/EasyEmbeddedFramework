@@ -178,9 +178,8 @@ ezSTATUS ezQueue_PopBack(ezQueue *queue)
 }
 
 
-ezSTATUS ezQueue_ReserveElement(ezQueue *queue, void **data, uint32_t data_size)
+ezReservedElement ezQueue_ReserveElement(ezQueue *queue, void **data, uint32_t data_size)
 {
-    ezSTATUS status = ezSUCCESS;
     ezQueueItem* item = NULL;
 
     TRACE("ezQueue_Push( [@ = %p], [size = %lu])", data, data_size);
@@ -189,20 +188,15 @@ ezSTATUS ezQueue_ReserveElement(ezQueue *queue, void **data, uint32_t data_size)
     {
         item = (ezQueueItem*)ezmStcMem_Malloc(&queue->mem_list, sizeof(ezQueueItem));
 
-        if (item == NULL)
-        {
-            status = ezFAIL;
-            TRACE("allocate data fail");
-        }
-
-        if (status == ezSUCCESS)
+        if (item != NULL)
         {
             item->data_size = data_size;
             item->data = ezmStcMem_Malloc(&queue->mem_list, data_size);
 
             if (item->data == NULL)
             {
-                status = ezFAIL;
+                ezmStcMem_Free(&queue->mem_list, (void*)item);
+                item = NULL;
                 TRACE("allocate data fail");
             }
             else
@@ -210,29 +204,20 @@ ezSTATUS ezQueue_ReserveElement(ezQueue *queue, void **data, uint32_t data_size)
                 *data = item->data;
             }
         }
+    }
 
-        if (status == ezSUCCESS)
-        {
-            EZMLL_ADD_TAIL(&queue->q_item_list, &item->node);
+    return (ezReservedElement)item;
+}
 
-#if (DEBUG_LVL == LVL_TRACE)
-            TRACE("pushed data");
-            TRACE("[item address = %p]", (void*)item);
-            TRACE("[item node address = %p]", (void*)&item->node);
-            TRACE("[item data size = %p]", (void*)item->data_size);
-            HEXDUMP(item->data, item->data_size);
 
-            TRACE("complete buffer");
-            HEXDUMP(queue->mem_list.buff, queue->mem_list.buff_size);
-#endif /* DEBUG_LVL == LVL_TRACE */
+ezSTATUS ezQueue_PushReservedElement(ezQueue *queue, ezReservedElement element)
+{
+    ezSTATUS status = ezSUCCESS;
+    ezQueueItem *item = (ezQueueItem *)element;
 
-            DEBUG("push item success");
-        }
-        else
-        {
-            DEBUG("add item fail");
-        }
-
+    if (queue != NULL && element != NULL)
+    {
+        EZMLL_ADD_TAIL(&queue->q_item_list, &item->node);
     }
     else
     {
@@ -242,27 +227,47 @@ ezSTATUS ezQueue_ReserveElement(ezQueue *queue, void **data, uint32_t data_size)
     return status;
 }
 
+
+ezSTATUS ezQueue_ReleaseReservedElement( ezQueue *queue, ezReservedElement element)
+{
+    ezSTATUS status = ezFAIL;
+    ezQueueItem *item = element;
+
+    if (queue != NULL && item != NULL)
+    {
+        if (ezmStcMem_Free(&queue->mem_list, (void *)item->data) == true
+            && ezmStcMem_Free(&queue->mem_list, (void *)item) == true)
+        {
+            status = ezSUCCESS;
+        }
+    }
+
+    return status;
+}
+
+
 ezSTATUS ezQueue_Push(ezQueue* queue, void *data, uint32_t data_size)
 {
     ezSTATUS status = ezSUCCESS;
     void *reserve_data = NULL;
+    ezReservedElement reserved_elem = NULL;
 
     TRACE("ezQueue_Push( [@ = %p], [size = %lu])", data, data_size);
 
     if (queue != NULL && data != NULL && data_size > 0)
     {
-        status = ezQueue_ReserveElement(queue, &reserve_data, data_size);
+        reserved_elem = ezQueue_ReserveElement(queue, &reserve_data, data_size);
 
-        if (status == ezSUCCESS)
+        if (reserved_elem != NULL)
         {
             memcpy(reserve_data, data, data_size);
-            DEBUG("push item success");
+            status = ezQueue_PushReservedElement(queue, reserved_elem);
         }
         else
         {
+            status = ezFAIL;
             DEBUG("add item fail");
         }
-
     }
     else
     {
@@ -358,6 +363,18 @@ uint32_t ezQueue_GetNumOfElement(ezQueue* queue)
     return num_of_element;
 }
 
+
+uint32_t ezQueue_IsQueueReady(ezQueue *queue)
+{
+    bool is_ready = false;
+
+    if (queue != NULL && ezmStcMem_IsMemListReady(&queue->mem_list) == true)
+    {
+        is_ready = true;
+    }
+
+    return is_ready;
+}
 
 
 /******************************************************************************

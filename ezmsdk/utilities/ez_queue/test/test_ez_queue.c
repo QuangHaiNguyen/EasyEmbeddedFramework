@@ -78,7 +78,7 @@ void test_PushQueueSuccess(void);
 void test_GetFrontPop(void);
 void test_GetBackPop(void);
 void test_OverflowQueue(void);
-
+void test_ezQueue_ReserveElement(void);
 
 /******************************************************************************
 * External functions
@@ -100,6 +100,7 @@ int main(void)
     RUN_TEST(test_GetFrontPop);
     RUN_TEST(test_GetBackPop);
     RUN_TEST(test_OverflowQueue);
+    RUN_TEST(test_ezQueue_ReserveElement);
 
     return (UnityEnd());
 }
@@ -349,6 +350,88 @@ void test_OverflowQueue(void)
 
     queue_size = ezQueue_GetNumOfElement(&queue);
     TEST_ASSERT_EQUAL(1, queue_size);
+}
+
+
+void test_ezQueue_ReserveElement(void)
+{
+    ezSTATUS status = ezSUCCESS;
+ 
+    struct TestStruct
+    {
+        uint32_t a;
+        uint8_t b;
+        uint32_t c;
+    };
+
+    struct TestStruct test_struct = {0};
+    ezReservedElement elem1 = NULL;
+    ezReservedElement elem2 = NULL;
+    struct TestStruct *to_be_tested_struct = NULL;
+    uint8_t *to_be_tested_stream = NULL;
+
+    test_struct.a = 0xbeefcafe;
+    test_struct.b = 0xaa;
+    test_struct.c = 0xdeadbeef;
+
+    uint8_t byte_stream[] = { 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff };
+
+
+    status = ezQueue_CreateQueue(&queue, queue_buff, sizeof(queue_buff));
+    TEST_ASSERT_EQUAL(ezSUCCESS, status);
+
+    elem1 = ezQueue_ReserveElement(&queue, (void*)&to_be_tested_struct, sizeof(struct TestStruct));
+    TEST_ASSERT_NOT_NULL(elem1);
+    TEST_ASSERT_EQUAL(0, ezQueue_GetNumOfElement(&queue));
+
+    to_be_tested_struct->a = 0xbeefcafe;
+    to_be_tested_struct->b = 0xaa;
+    to_be_tested_struct->c = 0xdeadbeef;
+
+    status = ezQueue_PushReservedElement(&queue, elem1);
+    TEST_ASSERT_EQUAL(ezSUCCESS, status);
+
+    elem2 = ezQueue_ReserveElement(&queue, (void *)&to_be_tested_stream, sizeof(byte_stream));
+    TEST_ASSERT_NOT_NULL(elem2);
+    TEST_ASSERT_EQUAL(1, ezQueue_GetNumOfElement(&queue));
+
+    *(to_be_tested_stream) = 0xaa;
+    to_be_tested_stream++;
+    *(to_be_tested_stream) = 0xbb;
+    to_be_tested_stream++;
+    *(to_be_tested_stream) = 0xcc;
+    to_be_tested_stream++;
+    *(to_be_tested_stream) = 0xdd;
+    to_be_tested_stream++;
+    *(to_be_tested_stream) = 0xee;
+    to_be_tested_stream++;
+    *(to_be_tested_stream) = 0xff;
+
+    status = ezQueue_PushReservedElement(&queue, elem2);
+    TEST_ASSERT_EQUAL(ezSUCCESS, status);
+    TEST_ASSERT_EQUAL(2, ezQueue_GetNumOfElement(&queue));
+
+    to_be_tested_struct = NULL;
+    to_be_tested_stream = NULL;
+    uint32_t data_size = 0;
+
+    status = ezQueue_GetFront(&queue, (void *)&to_be_tested_struct, &data_size);
+    TEST_ASSERT_EQUAL(ezSUCCESS, status);
+    TEST_ASSERT_EQUAL(sizeof(struct TestStruct), data_size);
+    TEST_ASSERT_EQUAL_MEMORY(&test_struct, to_be_tested_struct, sizeof(struct TestStruct));
+
+    status = ezQueue_PopFront(&queue);
+    TEST_ASSERT_EQUAL(ezSUCCESS, status);
+    TEST_ASSERT_EQUAL(1, ezQueue_GetNumOfElement(&queue));
+
+    status = ezQueue_GetFront(&queue, (void *)&to_be_tested_stream, &data_size);
+    TEST_ASSERT_EQUAL(ezSUCCESS, status);
+    TEST_ASSERT_EQUAL(sizeof(byte_stream), data_size);
+    TEST_ASSERT_EQUAL_MEMORY(byte_stream, to_be_tested_stream, sizeof(byte_stream));
+
+    status = ezQueue_PopFront(&queue);
+    TEST_ASSERT_EQUAL(ezSUCCESS, status);
+    TEST_ASSERT_EQUAL(0, ezQueue_GetNumOfElement(&queue));
 }
 
 #endif /* CONFIG_EZ_QUEUE_TEST */

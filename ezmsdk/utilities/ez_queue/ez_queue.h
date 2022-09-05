@@ -60,11 +60,22 @@
  */
 typedef struct ezQueue ezQueue;
 
+
+/** @brief queue structure
+ *
+ */
 struct ezQueue
 {
     struct Node q_item_list;    /**< list of queue element */
     struct MemList mem_list;    /**< memory list, needed for static memory allocation*/
 };
+
+
+/** @brief queue structure
+ *
+ */
+typedef void* ezReservedElement;
+
 /******************************************************************************
 * Module Variable Definitions
 *******************************************************************************/
@@ -152,27 +163,59 @@ ezSTATUS ezQueue_PopBack(ezQueue *queue);
 *//**
 * @Description:
 *
-* This function reserves an element in the queue and returns the pointer to the
-* memory buff of the element. This function gives the ability to block the
-* memory first, and let the user to write the data into the queue later
+* This function reserves an element but does not link it to the queue and
+* returns the pointer to the memory buff of the element. To link it to the queue
+* user must call ezQueue_PushReservedElement(). In case this reserved element is
+* not needed, the user MUST call ezQueue_ReleaseReservedElement() to "free" the
+* element. This function gives the ability to block the memory first, and let
+* the user to write the data into the queue later.
 *
 * @param    *queue: (IN)pointer to the a queue structure, see ezQueue
 * @param    **data: (IN)pointer to the reserve memory block
 * @param    data_size: (IN)size of the reserve memeory
-* @return   ezSUCCESS if success
-*           ezFAIL: if the queue is full or invalid function arguments
+* @return   NULL if fail
 *
 * @Example Example:
 * @code
-* uint8_t queue_buff[32] = {0};
-* if(ezQueue_Push(&queue, queue_buff, 32) == ezSUCCESS)
+* uint8_t *buff;
+* ezReservedElement elem;
+* 
+* elem = ezQueue_ReserveElement(&queue, buff, 32);
+* if(elem != NULL)
 * {
-*     printf("Success");
+*     memset(buff, 0xaa, 32);
+*     ezQueue_PushReservedElement(&queue, elem);
 * }
 * @endcode
 *
 *******************************************************************************/
-ezSTATUS ezQueue_ReserveElement(ezQueue* queue, void **data, uint32_t data_size);
+ezReservedElement ezQueue_ReserveElement(ezQueue* queue, void **data, uint32_t data_size);
+
+
+/******************************************************************************
+* Function : ezQueue_PushReservedElement
+*//**
+* @Description: This function links the reserved element  to the queue
+*
+* @param    *queue: (IN)pointer to the a queue structure, see ezQueue
+* @param    element: (IN)reserved element
+* @return   ezSUCCESS or ezFAIL
+*
+*******************************************************************************/
+ezSTATUS ezQueue_PushReservedElement(ezQueue *queue, ezReservedElement element);
+
+
+/******************************************************************************
+* Function : ezQueue_ReleaseReservedElement
+*//**
+* @Description: release the reserve element when it is not nedded
+*
+* @param    *queue: (IN)pointer to the a queue structure, see ezQueue
+* @param    element: (IN)reserved element
+* @return   ezSUCCESS or ezFAIL
+*
+*******************************************************************************/
+ezSTATUS ezQueue_ReleaseReservedElement(ezQueue *queue, ezReservedElement element);
 
 
 /******************************************************************************
@@ -274,6 +317,20 @@ ezSTATUS ezQueue_GetBack(ezQueue* queue, void **data, uint32_t *data_size);
 *
 *******************************************************************************/
 uint32_t ezQueue_GetNumOfElement(ezQueue* queue);
+
+
+/******************************************************************************
+* Function : ezQueue_IsQueueReady
+*//**
+* @Description:
+*
+* This function returns readay status of the queue
+*
+* @param    *queue: (IN)pointer to the a queue structure, see ezQueue
+* @return   True if ready, else false
+*
+*******************************************************************************/
+uint32_t ezQueue_IsQueueReady(ezQueue *queue);
 
 
 #endif /* CONFIG_EZ_QUEUE */

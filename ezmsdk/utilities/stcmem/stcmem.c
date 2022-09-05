@@ -258,6 +258,30 @@ bool ezmStcMem_Free(ezmMemList *mem_list, void *alloc_addr)
 }
 
 
+/******************************************************************************
+* Function : ezmStcMem_IsMemListReady
+*//**
+* \b Description: Return the status if the mem list is ready 
+*
+* This function frees the allocated memory in the memory buffer
+*
+* @param    *mem_list:  handle to manage memory buffer
+*
+* @return   True if ready, else false
+*
+*******************************************************************************/
+bool ezmStcMem_IsMemListReady(ezmMemList *mem_list)
+{
+    bool is_ready = false;
+
+    if (mem_list->buff != NULL && mem_list->buff_size > 0)
+    {
+        is_ready = true;
+    }
+
+    return is_ready;
+}
+
 
 /******************************************************************************
 * Function : ezmStcMem_HexdumpBuffer

@@ -67,6 +67,7 @@ typedef struct MemList ezmMemList;
 
 void        ezmStcMem_Initialization(void);
 bool        ezmStcMem_InitMemList   (ezmMemList* mem_list, void* buff, uint16_t buff_size);
+bool        ezmStcMem_IsMemListReady(ezmMemList *mem_list);
 void        *ezmStcMem_Malloc       (ezmMemList* mem_list, uint16_t alloc_size);
 bool        ezmStcMem_Free          (ezmMemList *mem_list, void *alloc_addr);
 
