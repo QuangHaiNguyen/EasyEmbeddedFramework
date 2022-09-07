@@ -136,7 +136,6 @@ struct ezRpc
 {
     uint32_t            service_table_size; /**< Size of the command table, how many commands are there in total */
     struct ezRpcService *service_table;     /**< Poiter to the command table */
-    uint8_t             rpc_state;          /**< Store the state of the binary parser statemachine */
     uint8_t             deserializer_state; /**< Store the state of the binary parser statemachine */
     struct ezRpcMsg     curr_msg;           /**< pointer to the current frame that the parser is working*/
     uint32_t            byte_count;         /**< index for deserialize rpc message */
@@ -225,25 +224,45 @@ ezSTATUS ezRpc_SetTxRxFunctions(struct ezRpc *rpc_inst,
 
 
 /******************************************************************************
-* Function : ezRPC_CreateRpcMessage
+* Function : ezRPC_CreateRpcRequest
 *//**
 * @Description:
 *
-* This function enables the RCR check capability of an RPC instance
+* This function creates an RPC request and put it in the transmit queue
 *
 * @param    *rpc_inst:      (IN)pointer to the rpc instance
-* @param    type:           (IN)message type
 * @param    tag:            (IN)tag value
 * @param    *payload:       (IN)pointer to payload to send
 * @param    payload_size:   (IN)siez of the payload
 * @return   ezSUCCESS or ezFAIL
 *
 *******************************************************************************/
-ezSTATUS ezRPC_CreateRpcMessage(struct ezRpc *rpc_inst,
-                                RPC_MSG_TYPE type,
-                                uint8_t tag,
-                                uint8_t *payload,
-                                uint32_t payload_size);
+ezSTATUS ezRPC_CreateRpcRequest(struct ezRpc *rpc_inst,
+    uint8_t tag,
+    uint8_t *payload,
+    uint32_t payload_size);
+
+
+/******************************************************************************
+* Function : ezRPC_CreateRpcResponse
+*//**
+* @Description:
+*
+* This function creates an RPC response and put it in the transmit queue
+*
+* @param    *rpc_inst:      (IN)pointer to the rpc instance
+* @param    uuid:           (IN)uuid value, must match the request value
+* @param    tag:            (IN)tag value
+* @param    *payload:       (IN)pointer to payload to send
+* @param    payload_size:   (IN)siez of the payload
+* @return   ezSUCCESS or ezFAIL
+*
+*******************************************************************************/
+ezSTATUS ezRPC_CreateRpcResponse(struct ezRpc *rpc_inst,
+    uint8_t tag,
+    uint32_t uuid,
+    uint8_t *payload,
+    uint32_t payload_size);
 
 
 /******************************************************************************
@@ -262,7 +281,7 @@ void ezRPC_Run(struct ezRpc *rpc_inst);
 /******************************************************************************
 * Function : ezRPC_NumOfTxPendingMsg
 *//**
-* @Description: Return the number of of messages waiting to be transmitted.
+* @Description: Return the number of messages waiting to be transmitted.
 *               It is used for disagnostic or testing purpose
 *
 * @param    *rpc_inst:      (IN)pointer to the rpc instance
@@ -270,6 +289,19 @@ void ezRPC_Run(struct ezRpc *rpc_inst);
 *
 *******************************************************************************/
 uint32_t ezRPC_NumOfTxPendingMsg(struct ezRpc *rpc_inst);
+
+
+/******************************************************************************
+* Function : ezRPC_NumOfPendingRecords
+*//**
+* @Description: Return the number pending records, i.e. requests that is waiting
+* for the responses
+*
+* @param    *rpc_inst:      (IN)pointer to the rpc instance
+* @return   number of records
+*
+*******************************************************************************/
+uint32_t ezRPC_NumOfPendingRecords(struct ezRpc *rpc_inst);
 
 
 /******************************************************************************

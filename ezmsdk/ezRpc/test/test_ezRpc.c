@@ -74,9 +74,9 @@ uint8_t data_stream_1[] = {
     /* first response */
     0x80, 0x00, 0x00, 0x00, 0x01, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x04, 0xbe, 0xef, 0xca, 0xfe, 0x00, 0x00, 0x03, 0x75,
     /* second response */
-    0x80, 0x00, 0x00, 0x00, 0x01, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x04, 0xbe, 0xef, 0xca, 0xfe, 0x00, 0x00, 0x03, 0x75,
+    0x80, 0x00, 0x00, 0x00, 0x02, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x04, 0xbe, 0xef, 0xca, 0xfe, 0x00, 0x00, 0x03, 0x75,
     /* third response */
-    0x80, 0x00, 0x00, 0x00, 0x01, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x04, 0xbe, 0xef, 0xca, 0xfe, 0x00, 0x00, 0x03, 0x75,
+    0x80, 0x00, 0x00, 0x00, 0x03, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x04, 0xbe, 0xef, 0xca, 0xfe, 0x00, 0x00, 0x03, 0x75,
 };
 
 
@@ -99,6 +99,9 @@ bool Test_CrcVerify(uint8_t *input,
 uint32_t TestTransmit(uint8_t *data, uint32_t size);
 uint32_t TestReceive(uint8_t *data, uint32_t size);
 
+uint32_t TestTransmitDoNothing(uint8_t *data, uint32_t size);
+uint32_t TestReceiveDoNothing(uint8_t *data, uint32_t size);
+
 void TestReceiveService1(void *payload, uint32_t payload_size_byte);
 
 void Test_ezRpc_Initialization_InvalidParams(void);
@@ -109,6 +112,7 @@ void Test_ezRPC_CreateRpcMessage_InvalidParam(void);
 void Test_ezRPC_CreateRpcMessage_WithNoPayload(void);
 void Test_ezRPC_CreateRpcMessage_OverflowRecords(void);
 void Test_ezRPC_Run_NumOfValidMessageReceived(void);
+void Test_ezRPC_Run_RequestTimeOut(void);
 
 struct ezRpcService services[] = {
     {0x01, TestReceiveService1}
@@ -134,6 +138,7 @@ int main(void)
     RUN_TEST(Test_ezRPC_CreateRpcMessage_WithNoPayload);
     RUN_TEST(Test_ezRPC_CreateRpcMessage_OverflowRecords);
     RUN_TEST(Test_ezRPC_Run_NumOfValidMessageReceived);
+    //RUN_TEST(Test_ezRPC_Run_RequestTimeOut); no clock is provided
 
     return (UnityEnd());
 }
@@ -198,6 +203,19 @@ uint32_t TestReceive(uint8_t *data, uint32_t size)
 
     return ret_size;
 }
+
+
+uint32_t TestTransmitDoNothing(uint8_t *data, uint32_t size)
+{
+    return size;
+}
+
+
+uint32_t TestReceiveDoNothing(uint8_t *data, uint32_t size)
+{
+    return 0;
+}
+
 
 void TestReceiveService1(void *payload, uint32_t payload_size_byte)
 {
@@ -310,10 +328,10 @@ void Test_ezRPC_CreateRpcMessage_InvalidParam(void)
 {
     ezSTATUS status;
 
-    status = ezRPC_CreateRpcMessage(NULL, RPC_MSG_REQ, 0xaa, NULL, 0);
+    status = ezRPC_CreateRpcRequest(NULL, 0xaa, NULL, 0);
     TEST_ASSERT_EQUAL(ezFAIL, status);
 
-    status = ezRPC_CreateRpcMessage(NULL, RPC_MSG_RESP, 0xaa, NULL, 4);
+    status = ezRPC_CreateRpcRequest(NULL, 0xaa, NULL, 4);
     TEST_ASSERT_EQUAL(ezFAIL, status);
 }
 
@@ -323,10 +341,10 @@ void Test_ezRPC_CreateRpcMessage_WithNoPayload(void)
     ezSTATUS status;
     uint32_t num_of_pendign_msg = 0;
 
-    status = ezRPC_CreateRpcMessage(&test_rpc, RPC_MSG_REQ, 0xaa, NULL, 0);
+    status = ezRPC_CreateRpcRequest(&test_rpc, 0xaa, NULL, 0);
     TEST_ASSERT_EQUAL(ezSUCCESS, status);
 
-    status = ezRPC_CreateRpcMessage(&test_rpc, RPC_MSG_RESP, 0xab, NULL, 0);
+    status = ezRPC_CreateRpcRequest(&test_rpc, 0xab, NULL, 0);
     TEST_ASSERT_EQUAL(ezSUCCESS, status);
 
     num_of_pendign_msg = ezRPC_NumOfTxPendingMsg(&test_rpc);
@@ -350,14 +368,14 @@ void Test_ezRPC_CreateRpcMessage_OverflowRecords(void)
 
     for (uint32_t i = 0; i < CONFIG_NUM_OF_REQUEST; i++)
     {
-        status = ezRPC_CreateRpcMessage(&test_rpc, RPC_MSG_REQ, 0xaa, NULL, 0);
+        status = ezRPC_CreateRpcRequest(&test_rpc, 0xaa, NULL, 0);
         TEST_ASSERT_EQUAL(ezSUCCESS, status);
     }
 
     num_of_pendign_msg = ezRPC_NumOfTxPendingMsg(&test_rpc);
     TEST_ASSERT_EQUAL(CONFIG_NUM_OF_REQUEST, num_of_pendign_msg);
 
-    status = ezRPC_CreateRpcMessage(&test_rpc, RPC_MSG_REQ, 0xaa, NULL, 0);
+    status = ezRPC_CreateRpcRequest(&test_rpc, 0xaa, NULL, 0);
     TEST_ASSERT_EQUAL(ezFAIL, status);
 
     num_of_pendign_msg = ezRPC_NumOfTxPendingMsg(&test_rpc);
@@ -403,16 +421,17 @@ void Test_ezRPC_Run_NumOfValidMessageReceived(void)
 
     TEST_ASSERT_EQUAL(ezSUCCESS, status);
 
-    status = ezRPC_CreateRpcMessage(&test_rpc, RPC_MSG_REQ, 0xaa, NULL, 0);
+    status = ezRPC_CreateRpcRequest(&test_rpc, 0xaa, NULL, 0);
     TEST_ASSERT_EQUAL(ezSUCCESS, status);
 
-    status = ezRPC_CreateRpcMessage(&test_rpc, RPC_MSG_REQ, 0xaa, NULL, 0);
+    status = ezRPC_CreateRpcRequest(&test_rpc, 0xaa, NULL, 0);
     TEST_ASSERT_EQUAL(ezSUCCESS, status);
 
-    status = ezRPC_CreateRpcMessage(&test_rpc, RPC_MSG_REQ, 0xaa, NULL, 0);
+    status = ezRPC_CreateRpcRequest(&test_rpc, 0xaa, NULL, 0);
     TEST_ASSERT_EQUAL(ezSUCCESS, status);
 
     TEST_ASSERT_EQUAL(3, ezRPC_NumOfTxPendingMsg(&test_rpc));
+    TEST_ASSERT_EQUAL(3, ezRPC_NumOfPendingRecords(&test_rpc));
 
     for (uint32_t i = 0; i < 180; i++)
     {
@@ -420,6 +439,52 @@ void Test_ezRPC_Run_NumOfValidMessageReceived(void)
     }
 
     TEST_ASSERT_EQUAL(0, ezRPC_NumOfTxPendingMsg(&test_rpc));
+    TEST_ASSERT_EQUAL(0, ezRPC_NumOfPendingRecords(&test_rpc));
+}
+
+
+void Test_ezRPC_Run_RequestTimeOut(void)
+{
+    ezSTATUS status;
+    bool is_rpc_ready = true;
+
+    profile.test_count = 0;
+
+    status = ezRpc_Initialization(&test_rpc,
+        test_rpc_buff,
+        TEST_BUFF_SIZE,
+        services,
+        sizeof(services) / sizeof(struct ezRpcService));
+
+    TEST_ASSERT_EQUAL(ezSUCCESS, status);
+
+    ezRpc_SetTxRxFunctions(&test_rpc,
+        TestTransmitDoNothing,
+        TestReceiveDoNothing);
+
+    is_rpc_ready = ezRpc_IsRpcInstanceReady(&test_rpc);
+
+    TEST_ASSERT_EQUAL(true, is_rpc_ready);
+
+    status = ezRPC_CreateRpcRequest(&test_rpc, 0xaa, NULL, 0);
+    TEST_ASSERT_EQUAL(ezSUCCESS, status);
+
+    status = ezRPC_CreateRpcRequest(&test_rpc, 0xaa, NULL, 0);
+    TEST_ASSERT_EQUAL(ezSUCCESS, status);
+
+    status = ezRPC_CreateRpcRequest(&test_rpc, 0xaa, NULL, 0);
+    TEST_ASSERT_EQUAL(ezSUCCESS, status);
+
+    TEST_ASSERT_EQUAL(3, ezRPC_NumOfTxPendingMsg(&test_rpc));
+    TEST_ASSERT_EQUAL(3, ezRPC_NumOfPendingRecords(&test_rpc));
+
+    for (uint32_t i = 0; i < 50000000; i++)
+    {
+        ezRPC_Run(&test_rpc);
+    }
+
+    TEST_ASSERT_EQUAL(0, ezRPC_NumOfTxPendingMsg(&test_rpc));
+    TEST_ASSERT_EQUAL(0, ezRPC_NumOfPendingRecords(&test_rpc));
 }
 
 

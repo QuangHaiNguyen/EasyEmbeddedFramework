@@ -53,7 +53,7 @@
 #define RPC_HEADER_SIZE     12      /**< size of the RPC message header in bytes*/
 #define SOF                 0x80    /**< start of frame, for syncronisation */
 #define RPC_BYTE_READ       1U      /**< number of byte being read by RPC */
-
+#define WAIT_TIME           3000U   /**< time a request waiting for its response in millisec*/
 
 /******************************************************************************
 * Module Typedefs
@@ -97,12 +97,20 @@ typedef enum
 * Function Definitions
 *******************************************************************************/
 static void ezRpc_ResetAllRecords(struct ezRpcRequestRecord *records);
+
+static ezSTATUS ezRPC_CreateRpcMessage(struct ezRpc *rpc_inst,
+                                       struct ezRpcMsgHeader *header,
+                                       uint8_t *payload,
+                                       uint32_t payload_size);
+
 static ezSTATUS ezRpc_SerializeRpcHeader(uint8_t *buff,
                                          uint32_t buff_size,
                                          struct ezRpcMsgHeader *header);
 static bool ezRpc_IsCrcActivated(struct ezRpc *rpc_inst);
 static struct ezRpcRequestRecord *ezRpc_GetAvailRecord(struct ezRpc *rpc_inst);
 static void ezRpc_DeserializedData(struct ezRpc *rpc_inst, uint8_t rx_byte);
+static void ezRpc_HandleReceivedMsg(struct ezRpc *rpc_inst);
+static void ezRpc_CheckTimeoutRecords(struct ezRpc *rpc_inst);
 
 /*Helper functions for debugging */
 #if (DEBUG_LVL == LVL_TRACE)
@@ -152,10 +160,7 @@ ezSTATUS ezRpc_Initialization(struct ezRpc *rpc_inst,
         {
             rpc_inst->service_table = service_table;
             rpc_inst->service_table_size = service_table_size;
-
-            rpc_inst->rpc_state = STATE_RX_DATA;
             rpc_inst->deserializer_state = STATE_SOF;
-
             rpc_inst->byte_count = 0;
         }
     }
@@ -211,133 +216,55 @@ ezSTATUS ezRpc_SetTxRxFunctions(struct ezRpc *rpc_inst,
 }
 
 
-ezSTATUS ezRPC_CreateRpcMessage(struct ezRpc *rpc_inst,
-                                RPC_MSG_TYPE type,
+ezSTATUS ezRPC_CreateRpcRequest(struct ezRpc *rpc_inst,
                                 uint8_t tag,
                                 uint8_t *payload,
                                 uint32_t payload_size)
 {
-    uint32_t alloc_size = RPC_HEADER_SIZE + payload_size;
-    uint8_t *buff = NULL;
-    struct ezRpcMsgHeader temp_header = { 0 };
-    ezSTATUS status = ezSUCCESS;
-    struct ezRpcRequestRecord *record = NULL;
-    ezReservedElement elem = NULL;
+    ezSTATUS status = ezFAIL;
 
-    TRACE("ezRPC_CreateRpcMessage()");
+    struct ezRpcMsgHeader temp_header = { 0 };
 
     if (rpc_inst != NULL)
     {
-        if (rpc_inst->is_encrypted)
-        {
-            /* TODO must allocate data according to encryption algo */
-            alloc_size += rpc_inst->crc_size;
-        }
-        else
-        {
-            alloc_size += rpc_inst->crc_size;
-        }
+        temp_header.tag = tag;
+        temp_header.type = RPC_MSG_REQ;
+        temp_header.payload_size = payload_size;
+        temp_header.uuid = ++rpc_inst->next_uuid;
+        temp_header.is_encrypted = rpc_inst->is_encrypted;
 
-        DEBUG("[payload + crc size = %d bytes]", alloc_size);
-
-        record = ezRpc_GetAvailRecord(rpc_inst);
-
-        if (record != NULL)
-        {
-            elem = ezQueue_ReserveElement(
-                &rpc_inst->tx_msg_queue,
-                &buff,
-                alloc_size);
-
-            if (elem != NULL)
-            {
-                temp_header.tag = tag;
-                temp_header.type = type;
-                temp_header.payload_size = payload_size;
-                temp_header.uuid = ++rpc_inst->next_uuid;
-                temp_header.is_encrypted = rpc_inst->is_encrypted;
-
-                status = ezRpc_SerializeRpcHeader(buff,
-                                                  alloc_size,
-                                                  &temp_header);
-            }
-            else
-            {
-                status = ezFAIL;
-            }
-        }
-        else
-        {
-            status = ezFAIL;
-        }
-
-        if (status == ezSUCCESS && payload != NULL && payload_size > 0)
-        {
-            buff += RPC_HEADER_SIZE;
-            alloc_size -= RPC_HEADER_SIZE;
-
-            memcpy(buff, payload, payload_size);
-
-            DEBUG("payload value:");
-            HEXDUMP(buff, payload_size);
-        }
-
-        if (status == ezSUCCESS && ezRpc_IsCrcActivated(rpc_inst))
-        {
-            alloc_size -= payload_size;
-
-            if (alloc_size >= rpc_inst->crc_size)
-            {
-                buff += payload_size;
-
-                rpc_inst->CrcCalculate(payload,
-                                        payload_size,
-                                        buff,
-                                        rpc_inst->crc_size);
-
-                DEBUG("crc value:");
-                HEXDUMP(buff, rpc_inst->crc_size);
-            }
-            else
-            {
-                status = ezFAIL;
-            }
-        }
-
-        if(record != NULL)
-        {
-            if (status == ezSUCCESS)
-            {
-                record->uuid = temp_header.uuid;
-                record->name = NULL;
-                record->timestamp = ezmKernel_GetTickMillis();
-            }
-            else
-            {
-                record->is_available = true;
-            }
-        }
-
-        if (status == ezSUCCESS)
-        {
-            status = ezQueue_PushReservedElement(
-                &rpc_inst->tx_msg_queue,
-                elem);
-#if (DEBUG_LVL == LVL_TRACE)
-            TRACE("serialized header:");
-            HEXDUMP(buff, alloc_size);
-#endif /* DEBUG_LVL == LVL_TRACE */
-        }
-        else
-        {
-            status = ezQueue_ReleaseReservedElement(
-                &rpc_inst->tx_msg_queue,
-                elem);
-        }
+        status = ezRPC_CreateRpcMessage(rpc_inst,
+                                        &temp_header,
+                                        payload,
+                                        payload_size);
     }
-    else
+
+    return status;
+}
+
+
+ezSTATUS ezRPC_CreateRpcResponse(struct ezRpc *rpc_inst,
+    uint8_t tag,
+    uint32_t uuid,
+    uint8_t *payload,
+    uint32_t payload_size)
+{
+    ezSTATUS status = ezFAIL;
+
+    struct ezRpcMsgHeader temp_header = { 0 };
+
+    if (rpc_inst != NULL)
     {
-        status = ezFAIL;
+        temp_header.tag = tag;
+        temp_header.type = RPC_MSG_REQ;
+        temp_header.payload_size = payload_size;
+        temp_header.uuid = uuid;
+        temp_header.is_encrypted = rpc_inst->is_encrypted;
+
+        status = ezRPC_CreateRpcMessage(rpc_inst,
+            &temp_header,
+            payload,
+            payload_size);
     }
 
     return status;
@@ -347,145 +274,39 @@ ezSTATUS ezRPC_CreateRpcMessage(struct ezRpc *rpc_inst,
 void ezRPC_Run(struct ezRpc *rpc_inst)
 {
     ezSTATUS status = ezSUCCESS; 
+
     if (rpc_inst != NULL && ezRpc_IsRpcInstanceReady(rpc_inst) == true)
     {
-        switch ((RPC_STATES)rpc_inst->rpc_state)
-        {
-        case STATE_RX_DATA:
+        if (rpc_inst->RpcReceive)
         {
             uint8_t one_byte = 0U;
 
-            if (rpc_inst->RpcReceive)
+            /**Try to read all available bytes */
+            while (rpc_inst->RpcReceive(&one_byte, RPC_BYTE_READ) == RPC_BYTE_READ)
             {
-                uint32_t ret_byte = 0;
-
-                /**Try to read all avainale bytes, only move to the next state
-                 * when there is nothing to read. This will prevent missing any
-                 * byte
-                 */
-                while (rpc_inst->RpcReceive(&one_byte, RPC_BYTE_READ) == RPC_BYTE_READ)
-                {
-                    ezRpc_DeserializedData(rpc_inst, one_byte);
-                }
+                ezRpc_DeserializedData(rpc_inst, one_byte);
             }
-            rpc_inst->rpc_state = STATE_HANDLE_RX_DATA;
-            break;
         }
 
-        case STATE_HANDLE_RX_DATA:
+        /* handle the receive message */
+        ezRpc_HandleReceivedMsg(rpc_inst);
+
+        if (ezQueue_GetNumOfElement(&rpc_inst->tx_msg_queue) > 0)
         {
-            if (ezQueue_GetNumOfElement(&rpc_inst->rx_msg_queue) > 0)
+            uint8_t *req;
+            uint32_t req_size;
+
+            if (ezQueue_GetFront(&rpc_inst->tx_msg_queue,
+                (void *)&req,
+                &req_size) == ezSUCCESS)
             {
-                struct ezRpcMsgHeader *header = NULL;
-                uint32_t header_size = 0U;
-                uint8_t *payload = NULL;
-                uint32_t payload_size = 0U;
-
-                bool service_found = false;
-
-                status = ezQueue_GetFront(&rpc_inst->rx_msg_queue,
-                    (void *)&header,
-                    &header_size);
-
-                if (status == ezSUCCESS)
-                {
-#if(DEBUG_LVL == LVL_TRACE)
-                    ezRpc_PrintHeader(header);
-#endif /* DEBUG_LVL == LVL_TRACE */
-
-                    if (header->type == RPC_MSG_RESP)
-                    {
-                        status = ezFAIL;
-                        /* check in the records if we sent it */
-                        for (uint32_t i = 0; i < CONFIG_NUM_OF_REQUEST; i++)
-                        {
-                            if (rpc_inst->records[i].uuid == header->uuid)
-                            {
-                                status = ezSUCCESS;
-
-                                /* record found, so we clear it */
-                                rpc_inst->records[i].is_available = true;
-                            }
-                        }
-
-                        if (status == ezFAIL)
-                        {
-                            (void)ezQueue_PopFront(&rpc_inst->rx_msg_queue);
-                            (void)ezQueue_PopFront(&rpc_inst->rx_msg_queue);
-                        }
-                    }
-                }
-
-                if (status == ezSUCCESS)
-                {
-                    for (uint32_t i = 0; i < rpc_inst->service_table_size; i++)
-                    {
-                        if (rpc_inst->service_table[i].tag == header->tag)
-                        {
-                            (void)ezQueue_PopFront(&rpc_inst->rx_msg_queue);
-
-                            status = ezQueue_GetFront(&rpc_inst->rx_msg_queue,
-                                (void *)&payload,
-                                &payload_size);
-#if(DEBUG_LVL == LVL_TRACE)
-                            if (status == ezSUCCESS)
-                            {
-                                ezRpc_PrintPayload(payload, payload_size);
-                            }
-#endif /* DEBUG_LVL == LVL_TRACE */
-
-                            if (status == ezSUCCESS &&
-                                rpc_inst->service_table[i].pfnService != NULL)
-                            {
-                                rpc_inst->service_table[i].pfnService(payload, payload_size);
-                            }
-
-                            service_found = true;
-                            break;
-                        }
-                    }
-
-                    if (service_found == false)
-                    {
-                        /* no service found for the tag */
-                        (void)ezQueue_PopFront(&rpc_inst->rx_msg_queue);
-                    }
-                    (void)ezQueue_PopFront(&rpc_inst->rx_msg_queue);
-                }
-            }
-            rpc_inst->rpc_state = STATE_TX_DATA;
-            break;
-        }
-
-        case STATE_TX_DATA:
-        {
-            if (ezQueue_GetNumOfElement(&rpc_inst->tx_msg_queue) > 0)
-            {
-                uint8_t *req;
-                uint32_t req_size;
-
-                status = ezQueue_GetFront(&rpc_inst->tx_msg_queue,
-                    (void *)&req,
-                    &req_size);
-                if (status == ezSUCCESS)
-                {
-                    rpc_inst->RpcTransmit(req, req_size);
-                }
-
-                status = ezQueue_PopFront(&rpc_inst->tx_msg_queue);
+                rpc_inst->RpcTransmit(req, req_size);
             }
 
-            rpc_inst->rpc_state = STATE_RX_DATA;
-            break;
+            (void) ezQueue_PopFront(&rpc_inst->tx_msg_queue);
         }
 
-        case STATE_ERR:
-            rpc_inst->rpc_state = STATE_RX_DATA;
-            break;
-
-        default:
-            break;
-        }
+        ezRpc_CheckTimeoutRecords(rpc_inst);
     }
 }
 
@@ -517,6 +338,25 @@ uint32_t ezRPC_NumOfTxPendingMsg(struct ezRpc *rpc_inst)
     }
 
     return num_of_msg;
+}
+
+
+uint32_t ezRPC_NumOfPendingRecords(struct ezRpc *rpc_inst)
+{
+    uint32_t num_of_records = 0;
+
+    if (rpc_inst != NULL)
+    {
+        for (uint32_t i = 0; i < CONFIG_NUM_OF_REQUEST; i++)
+        {
+            if (rpc_inst->records[i].is_available == false)
+            {
+                num_of_records++;
+            }
+        }
+    }
+
+    return num_of_records;
 }
 
 
@@ -569,20 +409,14 @@ static ezSTATUS ezRpc_SerializeRpcHeader(uint8_t *buff,
 
     if (buff != NULL && buff_size >= RPC_HEADER_SIZE)
     {
-        *buff = SOF;
-        buff++;
+        *(buff++) = SOF;
 
         *(uint32_t *)buff = header->uuid;
         buff += sizeof(uint32_t);
 
-        *buff = (uint8_t)header->type;
-        buff++;
-
-        *buff = header->tag;
-        buff++;
-
-        *buff = header->is_encrypted;
-        buff++;
+        *(buff++) = (uint8_t)header->type;
+        *(buff++) = header->tag;
+        *(buff++) = header->is_encrypted;
 
         *(uint32_t *)buff = header->payload_size;
     }
@@ -867,6 +701,292 @@ static void ezRpc_DeserializedData(struct ezRpc *rpc_inst, uint8_t rx_byte)
         }
     }
 }
+
+
+/******************************************************************************
+* Function : ezRPC_CreateRpcMessage
+*//**
+* @Description:
+*
+* This function creates an RPC message and put it in the transmit queue
+*
+* @param    *rpc_inst:      (IN)pointer to the rpc instance
+* @param    type:           (IN)message type
+* @param    tag:            (IN)tag value
+* @param    *payload:       (IN)pointer to payload to send
+* @param    payload_size:   (IN)siez of the payload
+* @return   ezSUCCESS or ezFAIL
+*
+*******************************************************************************/
+static ezSTATUS ezRPC_CreateRpcMessage(struct ezRpc *rpc_inst,
+                                       struct ezRpcMsgHeader *header,
+                                       uint8_t *payload,
+                                       uint32_t payload_size)
+{
+    uint32_t alloc_size = RPC_HEADER_SIZE + payload_size;
+    uint8_t *buff = NULL;
+    ezSTATUS status = ezSUCCESS;
+    struct ezRpcRequestRecord *record = NULL;
+    ezReservedElement elem = NULL;
+
+    TRACE("ezRPC_CreateRpcMessage()");
+
+    if (rpc_inst != NULL && header != NULL)
+    {
+        if (rpc_inst->is_encrypted)
+        {
+            /* TODO must allocate data according to encryption algo */
+            alloc_size += rpc_inst->crc_size;
+        }
+        else
+        {
+            alloc_size += rpc_inst->crc_size;
+        }
+
+        DEBUG("[ total size = %d bytes]", alloc_size);
+
+        record = ezRpc_GetAvailRecord(rpc_inst);
+
+        if (record != NULL)
+        {
+            elem = ezQueue_ReserveElement(
+                &rpc_inst->tx_msg_queue,
+                &buff,
+                alloc_size);
+
+            if (elem != NULL)
+            {
+                status = ezRpc_SerializeRpcHeader(buff,
+                    alloc_size,
+                    header);
+            }
+            else
+            {
+                status = ezFAIL;
+            }
+        }
+        else
+        {
+            status = ezFAIL;
+        }
+
+        if (status == ezSUCCESS && payload != NULL && payload_size > 0)
+        {
+            buff += RPC_HEADER_SIZE;
+            alloc_size -= RPC_HEADER_SIZE;
+
+            memcpy(buff, payload, payload_size);
+
+            DEBUG("payload value:");
+            HEXDUMP(buff, payload_size);
+        }
+
+        if (status == ezSUCCESS && ezRpc_IsCrcActivated(rpc_inst))
+        {
+            alloc_size -= payload_size;
+
+            if (alloc_size >= rpc_inst->crc_size)
+            {
+                buff += RPC_HEADER_SIZE + payload_size;
+
+                rpc_inst->CrcCalculate(payload,
+                    payload_size,
+                    buff,
+                    rpc_inst->crc_size);
+
+                DEBUG("crc value:");
+                HEXDUMP(buff, rpc_inst->crc_size);
+            }
+            else
+            {
+                status = ezFAIL;
+            }
+        }
+
+        if (record != NULL)
+        {
+            if (status == ezSUCCESS)
+            {
+                record->uuid = header->uuid;
+                record->name = NULL;
+                record->timestamp = ezmKernel_GetTickMillis();
+            }
+            else
+            {
+                record->is_available = true;
+            }
+        }
+
+        if (status == ezSUCCESS)
+        {
+            status = ezQueue_PushReservedElement(
+                &rpc_inst->tx_msg_queue,
+                elem);
+#if (DEBUG_LVL == LVL_TRACE)
+            TRACE("serialized data:");
+            HEXDUMP(buff, alloc_size);
+#endif /* DEBUG_LVL == LVL_TRACE */
+        }
+        else
+        {
+            status = ezQueue_ReleaseReservedElement(
+                &rpc_inst->tx_msg_queue,
+                elem);
+        }
+    }
+    else
+    {
+        status = ezFAIL;
+    }
+
+    return status;
+}
+
+
+/******************************************************************************
+* Function : ezRpc_HandleReceivedMsg
+*//**
+* @Description: this function checks the receive message in the rx_msg_queue 
+* and handles them
+*
+* @param    *rpc_inst: (IN)rpc instance
+* @return   None
+*
+*******************************************************************************/
+static void ezRpc_HandleReceivedMsg(struct ezRpc *rpc_inst)
+{
+    struct ezRpcMsgHeader *header = NULL;
+    uint32_t header_size = 0U;
+    uint8_t *payload = NULL;
+    uint32_t payload_size = 0U;
+    ezSTATUS status = ezFAIL;
+    bool service_found = false;
+
+    if (rpc_inst != NULL 
+        && ezRpc_IsRpcInstanceReady(rpc_inst) == true
+        && ezQueue_GetNumOfElement(&rpc_inst->rx_msg_queue) > 0)
+    {
+        status = ezQueue_GetFront(&rpc_inst->rx_msg_queue,
+            (void *)&header,
+            &header_size);
+
+        if (status == ezSUCCESS)
+        {
+#if(DEBUG_LVL == LVL_TRACE)
+            ezRpc_PrintHeader(header);
+#endif /* DEBUG_LVL == LVL_TRACE */
+
+            if (header->type == RPC_MSG_RESP)
+            {
+                status = ezFAIL;
+
+                /* check in the records if we sent it */
+                for (uint32_t i = 0; i < CONFIG_NUM_OF_REQUEST; i++)
+                {
+                    if (rpc_inst->records[i].uuid == header->uuid)
+                    {
+                        status = ezSUCCESS;
+
+                        /* record found, so we clear it */
+                        rpc_inst->records[i].is_available = true;
+                        DEBUG("found request in record [uuid = %d]",
+                            rpc_inst->records[i].uuid);
+                    }
+                }
+
+                if (status == ezFAIL)
+                {
+                    /* discard header */
+                    (void)ezQueue_PopFront(&rpc_inst->rx_msg_queue);
+
+                    /* discard payload */
+                    (void)ezQueue_PopFront(&rpc_inst->rx_msg_queue);
+
+                    DEBUG("no record found, discard message");
+                }
+            }
+        }
+
+        if (status == ezSUCCESS)
+        {
+            for (uint32_t i = 0; i < rpc_inst->service_table_size; i++)
+            {
+                if (rpc_inst->service_table[i].tag == header->tag)
+                {
+                    DEBUG("service supported [tag = %d]",
+                        rpc_inst->service_table[i].tag);
+
+                    /* pop header to read payload */
+                    (void)ezQueue_PopFront(&rpc_inst->rx_msg_queue);
+
+                    /* get payload data */
+                    status = ezQueue_GetFront(&rpc_inst->rx_msg_queue,
+                        (void *)&payload,
+                        &payload_size);
+
+#if(DEBUG_LVL == LVL_TRACE)
+                    if (status == ezSUCCESS)
+                    {
+                        ezRpc_PrintPayload(payload, payload_size);
+                    }
+#endif /* DEBUG_LVL == LVL_TRACE */
+
+                    if (status == ezSUCCESS &&
+                        rpc_inst->service_table[i].pfnService != NULL)
+                    {
+                        rpc_inst->service_table[i].pfnService(payload, payload_size);
+                    }
+
+                    service_found = true;
+                    break;
+                }
+            }
+
+            if (service_found == false)
+            {
+                /* no service found for the tag, pop header */
+                (void)ezQueue_PopFront(&rpc_inst->rx_msg_queue);
+            }
+
+            /* done pop payload */
+            (void)ezQueue_PopFront(&rpc_inst->rx_msg_queue);
+        }
+    }
+}
+
+
+/******************************************************************************
+* Function : ezRpc_CheckTimeoutRecords
+*//**
+* @Description: this function checks if a used record is timeout. If timeout,
+* we clear it (dont wait for the response of that request)
+*
+* @param    *rpc_inst: (IN)rpc instance
+* @return   None
+*
+*******************************************************************************/
+static void ezRpc_CheckTimeoutRecords(struct ezRpc *rpc_inst)
+{
+    if (rpc_inst != NULL)
+    {
+        for (uint32_t i = 0; i < CONFIG_NUM_OF_REQUEST; i++)
+        {
+            if (rpc_inst->records[i].is_available == false
+                && rpc_inst->records[i].timestamp + (int)WAIT_TIME < ezmKernel_GetTickMillis())
+            {
+                rpc_inst->records[i].is_available = true;
+                rpc_inst->records[i].timestamp = 0;
+                rpc_inst->records[i].uuid = 0;
+                rpc_inst->records[i].name = NULL;
+
+                DEBUG("record [i = %d] [uuid = %d] is time out",
+                    i,
+                    rpc_inst->records[i].uuid);
+            }
+        }
+    }
+}
+
 
 #if(DEBUG_LVL == LVL_TRACE)
 /******************************************************************************
