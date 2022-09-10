@@ -183,9 +183,6 @@ uint32_t TestTransmit(uint8_t *data, uint32_t size)
 {
     uint32_t transmitted_byte = size;
 
-    DEBUG("transmit: ");
-    HEXDUMP(data, size);
-
     return transmitted_byte;
 }
 
@@ -219,8 +216,6 @@ uint32_t TestReceiveDoNothing(uint8_t *data, uint32_t size)
 
 void TestReceiveService1(void *payload, uint32_t payload_size_byte)
 {
-    DEBUG("Receive echo response:");
-    HEXDUMP(payload, payload_size_byte);
 }
 
 

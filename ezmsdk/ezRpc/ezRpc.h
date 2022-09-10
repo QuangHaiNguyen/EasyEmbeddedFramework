@@ -25,7 +25,7 @@
 /** @file   ezRpc.h
  *  @author Hai Nguyen
  *  @date   31.08.2022
- *  @brief  This is the source for a module
+ *  @brief  Remote Procedure Module (RPC)
  *  
  *  @details
  * 
@@ -78,7 +78,7 @@ struct ezRpcMsgHeader
     uint32_t        payload_size;   /**< Size of the payload */
 };
 
-/** @brief RPC message struct, omitting the SOF. SOF is sef to 0x80
+/** @brief RPC message struct, omitting the SOF. SOF is set to 0x80
  *
  * |======================================================================================|
  * | 0   | 1...4 | 5        | 6   | 7        | 8...11       | 12 13 ... n | n+1 ... n+m   |
@@ -88,7 +88,7 @@ struct ezRpcMsgHeader
  */
 struct ezRpcMsg
 {
-    struct ezRpcMsgHeader   header;
+    struct ezRpcMsgHeader   header;         /**< Message header */
     uint8_t                 *payload;       /**< The pointer to the payload itself*/
     uint8_t                 *crc;           /**< Pointer to the CRC value */
 };
@@ -129,26 +129,59 @@ struct ezRpcService
 };
 
 
-/** @brief definition of a new type
+/** @brief Data structure holding deserializer related data
+ *
+ */
+struct ezRpcDeserializer
+{
+    uint8_t state;                      /**< Store the state of the binary parser statemachine */
+    struct ezRpcMsgHeader *curr_hdr;    /**< pointer to the current header that the parser is working*/
+    uint32_t byte_count;                /**< index for deserialize rpc message */
+    uint8_t *payload;                   /**< */
+    uint8_t *crc;                       /**< */
+    ezReservedElement payload_elem;     /**< */
+    ezReservedElement crc_elem;         /**< */
+    ezReservedElement header_elem;      /**< */
+};
+
+
+/** @brief Data structure holding encryption related data
+ *
+ */
+struct ezRpcEncrypt
+{
+    bool is_encrypted;  /**< Flag to indicate the rpc instance using encryption */
+};
+
+
+/** @brief Data structure holding crc related data
+ *
+ */
+struct ezRpcCrc
+{
+    CrcVerify           IsCorrect;       /**< Pointer to the CRC verification function */
+    CrcCalculate        Calculate;       /**< Pointer to the CRC calculation function */
+    uint32_t            size;               /**< Size of the crc value, in bytes*/
+};
+
+
+/** @brief Define an RPC object, holding data to make an RPC instance working
  *  
  */
 struct ezRpc
 {
     uint32_t            service_table_size; /**< Size of the command table, how many commands are there in total */
     struct ezRpcService *service_table;     /**< Poiter to the command table */
-    uint8_t             deserializer_state; /**< Store the state of the binary parser statemachine */
-    struct ezRpcMsg     curr_msg;           /**< pointer to the current frame that the parser is working*/
-    uint32_t            byte_count;         /**< index for deserialize rpc message */
+    struct ezRpcDeserializer deserializer;  /**< Hold deserializer related data */
+    struct ezRpcCrc     crc;                /**< Hold crc related data */
+    struct ezRpcEncrypt encrypt;            /**< Hold encryption related data */
     ezQueue             tx_msg_queue;       /**< Queue to store request */
     ezQueue             rx_msg_queue;       /**< Queue to store request */
-    CrcVerify           IsCrcCorrect;       /**< Pointer to the CRC verification function */
-    CrcCalculate        CrcCalculate;       /**< Pointer to the CRC calculation function */
-    uint32_t            crc_size;           /**< Size of the crc value, in bytes*/
-    uint8_t             is_encrypted;       /**< Flag to indicate the rpc instance using encryption */
     uint32_t            next_uuid;          /**< Value of next uuid, assign this value to rpc message */
     RpcTransmit         RpcTransmit;        /**< Function to transmit RPC message */
     RpcReceive          RpcReceive;         /**< Function to receive RPC message */
     struct ezRpcRequestRecord records[CONFIG_NUM_OF_REQUEST]; /* num of request*/
+
 };
 
 
