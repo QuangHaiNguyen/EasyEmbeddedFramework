@@ -45,10 +45,13 @@
 #include "app/app.h"
 #include "ezRpc/ezRpc.h"
 #include "unity_test_platform/unity.h"
+#include "unity_test_platform/unity_fixture.h"
+
 
 #include <string.h>
 
-/*the rest of include go here*/
+
+TEST_GROUP(ezRpc);
 
 /******************************************************************************
 * Module Preprocessor Macros
@@ -56,13 +59,11 @@
 #define TEST_BUFF_SIZE      2048
 #define CRC_SIZE            4U
 
+
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
-struct TestProfile
-{
-    uint32_t test_count;
-};
+/* None */
 
 
 /******************************************************************************
@@ -81,7 +82,6 @@ uint8_t data_stream_1[] = {
 
 
 struct ezRpc test_rpc;
-struct TestProfile profile;
 
 /******************************************************************************
 * Function Definitions
@@ -104,16 +104,6 @@ uint32_t TestReceiveDoNothing(uint8_t *data, uint32_t size);
 
 void TestReceiveService1(void *payload, uint32_t payload_size_byte);
 
-void Test_ezRpc_Initialization_InvalidParams(void);
-void Test_ezRpc_Initialization_ValidParams(void);
-void Test_ezRpc_SetCrcFunctions_InvalidParams(void);
-void Test_ezRpc_SetCrcFunctions_ValidParams(void);
-void Test_ezRPC_CreateRpcMessage_InvalidParam(void);
-void Test_ezRPC_CreateRpcMessage_WithNoPayload(void);
-void Test_ezRPC_CreateRpcMessage_OverflowRecords(void);
-void Test_ezRPC_Run_NumOfValidMessageReceived(void);
-void Test_ezRPC_Run_RequestTimeOut(void);
-
 struct ezRpcService services[] = {
     {0x01, TestReceiveService1}
 };
@@ -122,30 +112,14 @@ struct ezRpcService services[] = {
 /******************************************************************************
 * External functions
 *******************************************************************************/
+/* None */
 
-int main(void)
-{
-    ezmApp_SdkInit();
-
-    UnityBegin("test/test_ezRpc.c");
-
-    /* Note, must be called in order */
-    RUN_TEST(Test_ezRpc_Initialization_InvalidParams);
-    RUN_TEST(Test_ezRpc_Initialization_ValidParams);
-    RUN_TEST(Test_ezRpc_SetCrcFunctions_InvalidParams);
-    RUN_TEST(Test_ezRpc_SetCrcFunctions_ValidParams);
-    RUN_TEST(Test_ezRPC_CreateRpcMessage_InvalidParam);
-    RUN_TEST(Test_ezRPC_CreateRpcMessage_WithNoPayload);
-    RUN_TEST(Test_ezRPC_CreateRpcMessage_OverflowRecords);
-    RUN_TEST(Test_ezRPC_Run_NumOfValidMessageReceived);
-    //RUN_TEST(Test_ezRPC_Run_RequestTimeOut); no clock is provided
-
-    return (UnityEnd());
-}
 
 /******************************************************************************
 * Internal functions
 *******************************************************************************/
+
+
 void Test_CrcCal(uint8_t *input,
                     uint32_t input_size,
                     uint8_t *crc_output,
@@ -219,7 +193,17 @@ void TestReceiveService1(void *payload, uint32_t payload_size_byte)
 }
 
 
-void Test_ezRpc_Initialization_InvalidParams(void)
+TEST_SETUP(ezRpc)
+{
+}
+
+
+TEST_TEAR_DOWN(ezRpc)
+{
+}
+
+
+TEST(ezRpc, Test_ezRpc_Initialization_InvalidParams)
 {
     ezSTATUS status;
     bool is_rpc_ready = false;
@@ -262,7 +246,7 @@ void Test_ezRpc_Initialization_InvalidParams(void)
 }
 
 
-void Test_ezRpc_Initialization_ValidParams(void)
+TEST(ezRpc, Test_ezRpc_Initialization_ValidParams)
 {
     ezSTATUS status;
     bool is_rpc_ready = false;
@@ -283,7 +267,7 @@ void Test_ezRpc_Initialization_ValidParams(void)
 }
 
 
-void Test_ezRpc_SetCrcFunctions_InvalidParams(void)
+TEST(ezRpc, Test_ezRpc_SetCrcFunctions_InvalidParams)
 {
     ezSTATUS status;
 
@@ -307,7 +291,7 @@ void Test_ezRpc_SetCrcFunctions_InvalidParams(void)
 }
 
 
-void Test_ezRpc_SetCrcFunctions_ValidParams(void)
+TEST(ezRpc, Test_ezRpc_SetCrcFunctions_ValidParams)
 {
     ezSTATUS status;
 
@@ -319,7 +303,7 @@ void Test_ezRpc_SetCrcFunctions_ValidParams(void)
 }
 
 
-void Test_ezRPC_CreateRpcMessage_InvalidParam(void)
+TEST(ezRpc, Test_ezRPC_CreateRpcMessage_InvalidParam)
 {
     ezSTATUS status;
 
@@ -331,7 +315,7 @@ void Test_ezRPC_CreateRpcMessage_InvalidParam(void)
 }
 
 
-void Test_ezRPC_CreateRpcMessage_WithNoPayload(void)
+TEST(ezRpc, Test_ezRPC_CreateRpcMessage_WithNoPayload)
 {
     ezSTATUS status;
     uint32_t num_of_pendign_msg = 0;
@@ -356,7 +340,7 @@ void Test_ezRPC_CreateRpcMessage_WithNoPayload(void)
 }
 
 
-void Test_ezRPC_CreateRpcMessage_OverflowRecords(void)
+TEST(ezRpc, Test_ezRPC_CreateRpcMessage_OverflowRecords)
 {
     ezSTATUS status;
     uint32_t num_of_pendign_msg = 0;
@@ -388,12 +372,10 @@ void Test_ezRPC_CreateRpcMessage_OverflowRecords(void)
 }
 
 
-void Test_ezRPC_Run_NumOfValidMessageReceived(void)
+TEST(ezRpc, Test_ezRPC_Run_NumOfValidMessageReceived)
 {
     ezSTATUS status;
     bool is_rpc_ready = true;
-
-    profile.test_count = 0;
 
     status = ezRpc_Initialization(&test_rpc,
                                     test_rpc_buff,
@@ -438,12 +420,10 @@ void Test_ezRPC_Run_NumOfValidMessageReceived(void)
 }
 
 
-void Test_ezRPC_Run_RequestTimeOut(void)
+TEST(ezRpc, Test_ezRPC_Run_RequestTimeOut)
 {
     ezSTATUS status;
     bool is_rpc_ready = true;
-
-    profile.test_count = 0;
 
     status = ezRpc_Initialization(&test_rpc,
         test_rpc_buff,

@@ -38,7 +38,7 @@
 
 #if (CONFIG_DATA_MODEL == 1U)
 
-#define DEBUG_LVL   LVL_TRACE       /**< logging level */
+#define DEBUG_LVL   LVL_DEBUG       /**< logging level */
 #define MOD_NAME    "DATA_MODEL"    /**< module name */
 
 #include <string.h>

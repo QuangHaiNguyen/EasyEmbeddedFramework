@@ -220,7 +220,16 @@
     <ClCompile Include="..\..\ezmsdk\ezRpc\ezRpc.c">
       <Filter>Source Files\ezRpc</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\ezmsdk\ezRpc\test\test_ezRpc.c">
+    <ClCompile Include="..\..\ezmsdk\unity_test_platform\unity_fixture.c">
+      <Filter>Source Files\unity_test_platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\unity_test_platform\unity_memory.c">
+      <Filter>Source Files\unity_test_platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\ezRpc\test\Test_ezRpc_Runner.c">
+      <Filter>Source Files\ezRpc\test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\ezRpc\test\Test_ezRpc.c">
       <Filter>Source Files\ezRpc\test</Filter>
     </ClCompile>
   </ItemGroup>
@@ -338,6 +347,15 @@
     </ClInclude>
     <ClInclude Include="..\..\ezmsdk\ezRpc\ezRpc.h">
       <Filter>Source Files\ezRpc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ezmsdk\unity_test_platform\unity_fixture.h">
+      <Filter>Source Files\unity_test_platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ezmsdk\unity_test_platform\unity_fixture_internals.h">
+      <Filter>Source Files\unity_test_platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ezmsdk\unity_test_platform\unity_memory.h">
+      <Filter>Source Files\unity_test_platform</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

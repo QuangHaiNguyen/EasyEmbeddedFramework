@@ -3,7 +3,7 @@
 #include "app/app_config.h"
 #include "ezmKernel/ezmKernel.h"
 #include "app/app_embedded_emulator.h"
-
+#include "unity_test_platform/unity_fixture.h"
 #include <stdint.h>
 
 
@@ -15,11 +15,16 @@
 static uint32_t ezmApp_ReturnTimestampMillisvoid(void);
 #endif
 
-#if (CONFIG_UNITY_UNIT_TEST == 0U)
-void main(void)
+#if (CONFIG_UNITY_UNIT_TEST == 1U)
+static void RunAllTests(void);
+#endif
+
+int main(int argc, const char *argv[])
 {
     ezmApp_SdkInit();
-
+#if (CONFIG_UNITY_UNIT_TEST == 1U)
+    return UnityMain(argc, argv, RunAllTests);
+#else
 #if(CONFIG_WIN == 1U)
     uint64_t execute_time_stamp = ezmApp_ReturnTimestampMillisvoid();
     do
@@ -37,10 +42,11 @@ void main(void)
             ezmKernel_Run();
             execute_time_stamp = ezmApp_ReturnTimestampMillisvoid();
         }
-    } while (execute_time_stamp);
+} while (execute_time_stamp);
 #endif /* CONFIG_WIN */
-}
 #endif
+}
+
 
 #if(CONFIG_WIN == 1U)
 static uint32_t ezmApp_ReturnTimestampMillisvoid(void)
@@ -51,5 +57,15 @@ static uint32_t ezmApp_ReturnTimestampMillisvoid(void)
     tick_milli = tick / (CLOCKS_PER_SEC / 1000);
 
     return tick_milli;
+}
+#endif
+
+
+#if (CONFIG_UNITY_UNIT_TEST == 1U)
+static void RunAllTests(void)
+{
+#if (CONFIG_EZ_RPC_TEST == 1U)
+    RUN_TEST_GROUP(ezRpc);
+#endif /* CONFIG_EZ_RPC_TEST == 1U */
 }
 #endif
