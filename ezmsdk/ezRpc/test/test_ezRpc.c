@@ -50,9 +50,6 @@
 
 #include <string.h>
 
-
-TEST_GROUP(ezRpc);
-
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
@@ -191,6 +188,8 @@ uint32_t TestReceiveDoNothing(uint8_t *data, uint32_t size)
 void TestReceiveService1(void *payload, uint32_t payload_size_byte)
 {
 }
+
+TEST_GROUP(ezRpc);
 
 
 TEST_SETUP(ezRpc)
