@@ -34,6 +34,9 @@
 /******************************************************************************
 * Includes
 *******************************************************************************/
+#include "app/app_config.h"
+
+#if (CONFIG_EZ_RPC_TEST == 1U)
 
 #define DEBUG_LVL   LVL_TRACE   /**< logging level */
 #define MOD_NAME    "TestezRpc_Runner"       /**< module name */
@@ -82,6 +85,8 @@ TEST_GROUP_RUNNER(ezRpc)
     RUN_TEST_CASE(ezRpc, Test_ezRPC_Run_NumOfValidMessageReceived);
     //RUN_TEST_CASE(ezRpc, Test_ezRPC_Run_RequestTimeOut) //TODO need tick to run
 }
+
+#endif /* CONFIG_EZ_RPC_TEST == 1U */
 
 /* End of file*/
 

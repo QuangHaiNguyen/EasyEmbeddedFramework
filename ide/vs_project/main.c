@@ -2,6 +2,7 @@
 #include "app/app.h"
 #include "app/app_config.h"
 #include "ezmKernel/ezmKernel.h"
+#include "cli/cli.h"
 #include "app/app_embedded_emulator.h"
 #include "unity_test_platform/unity_fixture.h"
 #include <stdint.h>
@@ -34,7 +35,7 @@ int main(int argc, const char *argv[])
 #endif /* CONFIG_EMBEDDED_EMULATOR */
 
 #if (CONFIG_CLI == 1U)
-        // ezmCli_Run();
+         ezmCli_Run();
 #endif
         if (ezmApp_ReturnTimestampMillisvoid() - execute_time_stamp > 1)
         {
