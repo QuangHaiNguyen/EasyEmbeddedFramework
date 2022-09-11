@@ -67,5 +67,9 @@ static void RunAllTests(void)
 #if (CONFIG_EZ_RPC_TEST == 1U)
     RUN_TEST_GROUP(ezRpc);
 #endif /* CONFIG_EZ_RPC_TEST == 1U */
+
+#if (CONFIG_EZ_QUEUE_TEST == 1U)
+    RUN_TEST_GROUP(ezQueue);
+#endif /* CONFIG_EZ_QUEUE_TEST == 1U */
 }
 #endif

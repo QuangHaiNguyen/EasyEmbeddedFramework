@@ -188,7 +188,8 @@
     <ClCompile Include="..\..\ezmsdk\utilities\event_notifier\event_notifier.c" />
     <ClCompile Include="..\..\ezmsdk\utilities\ezmAssert\ezmAssert.c" />
     <ClCompile Include="..\..\ezmsdk\utilities\ez_queue\ez_queue.c" />
-    <ClCompile Include="..\..\ezmsdk\utilities\ez_queue\test\test_ez_queue.c" />
+    <ClCompile Include="..\..\ezmsdk\utilities\ez_queue\test\Test_ezQueue.c" />
+    <ClCompile Include="..\..\ezmsdk\utilities\ez_queue\test\Test_ezQueue_Runner.c" />
     <ClCompile Include="..\..\ezmsdk\utilities\hexdump\hexdump.c" />
     <ClCompile Include="..\..\ezmsdk\utilities\linked_list\linked_list.c" />
     <ClCompile Include="..\..\ezmsdk\utilities\logging\logging.c" />

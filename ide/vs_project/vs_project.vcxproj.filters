@@ -205,9 +205,6 @@
     <ClCompile Include="..\..\ezmsdk\unity_test_platform\unity.c">
       <Filter>Source Files\unity_test_platform</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\ezmsdk\utilities\ez_queue\test\test_ez_queue.c">
-      <Filter>Source Files\utilities\ez_queue\test</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\ezmsdk\unity_test_platform\unity_test_setup.c">
       <Filter>Source Files\unity_test_platform</Filter>
     </ClCompile>
@@ -231,6 +228,12 @@
     </ClCompile>
     <ClCompile Include="..\..\ezmsdk\ezRpc\test\Test_ezRpc.c">
       <Filter>Source Files\ezRpc\test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\utilities\ez_queue\test\Test_ezQueue.c">
+      <Filter>Source Files\utilities\ez_queue\test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\utilities\ez_queue\test\Test_ezQueue_Runner.c">
+      <Filter>Source Files\utilities\ez_queue\test</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
