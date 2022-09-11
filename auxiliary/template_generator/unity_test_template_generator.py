@@ -79,6 +79,17 @@ _doxygen_source_body=\
 
 #include "unity_test_platform/unity.h"
 #include "unity_test_platform/unity_fixture.h"
+#include <stdint.h>
+#include <stdbool.h>
+"""
+
+
+_test_file_body=\
+"""
+
+
+TEST_GROUP({0});
+
 
 /******************************************************************************
 * Module Preprocessor Macros
@@ -109,13 +120,6 @@ _doxygen_source_body=\
 /******************************************************************************
 * Internal functions
 *******************************************************************************/
-"""
-
-
-_test_file_body=\
-"""
-
-TEST_GROUP({0});
 
 
 TEST_SETUP({0})
@@ -133,26 +137,58 @@ TEST({0}, TestTempPlate)
     TEST_ASSERT_EQUAL(false, false);
 }}
 
-/* End of file*/
+/* End of file */
 
 """
 
 _test_runner_file_body=\
 """
 
+
+/******************************************************************************
+* Module Preprocessor Macros
+*******************************************************************************/
+/* None */
+
+/******************************************************************************
+* Module Typedefs
+*******************************************************************************/
+/* None */
+
+/******************************************************************************
+* Module Variable Definitions
+*******************************************************************************/
+/* None */
+
+/******************************************************************************
+* Function Definitions
+*******************************************************************************/
+/* None */
+
+/******************************************************************************
+* External functions
+*******************************************************************************/
+/* None */
+
+
+/******************************************************************************
+* Internal functions
+*******************************************************************************/
 TEST_GROUP_RUNNER({0})
 {{
     RUN_TEST_CASE({0}, TestTempPlate);
 }}
 
+
+/* End of file */
+
 """
 
-def _generate_file(file_path : str, author : str, module : str, generated_date : str):
+def _generate_header(file_path : str, author : str, module : str, generated_date : str):
     with open(file_path, "a") as header:
         header.write(_file_header.format(module + ".c",author, generated_date))
         header.write(_doxygen_file_header.format(module + ".c", author, generated_date))
         header.write(_doxygen_source_body.format(module))
-        header.write(_test_file_body.format(module))
     logger.info("complete")
         
 
@@ -167,7 +203,10 @@ def _generate_test_file(file_name : str, args):
     now = datetime.now()
     dt_string = now.strftime("%d.%m.%Y")
     module = args.module 
-    _generate_file(file_name, args.author, module, dt_string)
+    _generate_header(file_name, args.author, module, dt_string)
+    
+    with open(file_name, "a") as body:
+        body.write(_test_file_body.format(module))
 
 
 def _generate_test_runner_file(file_name : str, args):
@@ -181,7 +220,10 @@ def _generate_test_runner_file(file_name : str, args):
     now = datetime.now()
     dt_string = now.strftime("%d.%m.%Y")
     module = args.module + "_runner"
-    _generate_file(file_name, args.author, module, dt_string)
+    _generate_header(file_name, args.author, module, dt_string)
+    
+    with open(file_name, "a") as body:
+        body.write(_test_runner_file_body.format(args.module))
 
 def main():
     """main, entry point of the application
