@@ -85,6 +85,7 @@
 
 #if(CONFIG_KERNEL == 1U)
 #include "ezmKernel/ezmKernel.h"
+#include "ezKernel/ezKernel.h"
 #endif /* CONFIG_KERNEL */
 
 #if (CONFIG_SYSTEM_ERROR == 1U)
@@ -268,6 +269,10 @@ void ezmApp_SdkInit(void)
     INFO("Initialize Logging module");
     Logging_DemoFeatures();
 #endif /* CONFIG_LOGGING */
+
+#if (CONFIG_KERNEL == 1U)
+    ezKernel_Initialization();
+#endif
 
 #if (CONFIG_EMBEDDED_EMULATOR == 1U)
     INFO("Initialize embedded emulator application");

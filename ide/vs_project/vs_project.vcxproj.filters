@@ -116,6 +116,9 @@
     <Filter Include="Source Files\ezRpc\test">
       <UniqueIdentifier>{3c8f6499-9bec-42ed-ac68-b610eea5198b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\ezKernel">
+      <UniqueIdentifier>{ac237ae5-0f2c-46b0-8746-5daa0ce08cde}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ezmsdk\app\app.c">
@@ -231,6 +234,9 @@
     </ClCompile>
     <ClCompile Include="..\..\ezmsdk\utilities\ez_queue\test\Test_ezQueue_Runner.c">
       <Filter>Source Files\utilities\ez_queue\test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\ezKernel\ezKernel.c">
+      <Filter>Source Files\ezKernel</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -353,6 +359,9 @@
     </ClInclude>
     <ClInclude Include="..\..\ezmsdk\unity_test_platform\unity_memory.h">
       <Filter>Source Files\unity_test_platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ezmsdk\ezKernel\ezKernel.h">
+      <Filter>Source Files\ezKernel</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
