@@ -48,24 +48,20 @@
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
-#define A_MACRO     1   /**< a macro*/
+/* None */
 
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
-
-
-typedef struct ezKernelTask *ezKernelTask;
-
 
 /** @brief definition of status of the executed task
  *
  */
 typedef enum
 {
-    TASK_STATUS_OK,
-    TASK_STATUS_EXEC_AGAIN,
-    TASK_STATUS_ERROR,
+    TASK_STATUS_OK,         /**< status OK, task will be removed from list */
+    TASK_STATUS_EXEC_AGAIN, /**< task will be executed again with the same interval */
+    TASK_STATUS_ERROR,      /**< task error, will be moved from list */
 }KERNEL_TASK_STATUS;
 
 
@@ -89,9 +85,9 @@ typedef KERNEL_TASK_STATUS(*ezKernelTaskFunction)(
 /******************************************************************************
 * Function : ezKernel_Initialization
 *//**
-* @Description:
+* @Description: Initialized the kernel module
 *
-* @param    a:
+* @param    None
 * @return   None
 *
 *******************************************************************************/
@@ -99,11 +95,11 @@ void ezKernel_Initialization(void);
 
 
 /******************************************************************************
-* Function : ezKernel_Initialization
+* Function : ezKernel_UpdateTickMillis
 *//**
-* @Description:
+* @Description: update the kernel tick in milli
 *
-* @param    a:
+* @param    None
 * @return   None
 *
 *******************************************************************************/
@@ -111,12 +107,16 @@ void ezKernel_UpdateTickMillis(void);
 
 
 /******************************************************************************
-* Function : ezKernel_Initialization
+* Function : ezKernel_AddTask
 *//**
 * @Description:
 *
-* @param    a:
-* @return   None
+* @param    function: function to be executed
+* @param    delay_millis: how many millis until the function will be executed
+* @param    task_data: data will be processed by the task, can be null
+* @param    task_data_size: size of the data, can be zero
+*
+* @return   ezSUCCESS or ez FAIL
 *
 *******************************************************************************/
 ezSTATUS ezKernel_AddTask(ezKernelTaskFunction function,
@@ -128,13 +128,25 @@ ezSTATUS ezKernel_AddTask(ezKernelTaskFunction function,
 /******************************************************************************
 * Function : ezKernel_Run
 *//**
-* @Description:
+* @Description: Run the kernel, must be called in the tick function
 *
-* @param    a:
+* @param    None
 * @return   None
 *
 *******************************************************************************/
 void ezKernel_Run(void);
+
+
+/******************************************************************************
+* Function : ezKernel_GetTickMillis
+*//**
+* @Description: return the current tick of the kernel, in millisecond
+*
+* @param    None
+* @return   current tick
+*
+*******************************************************************************/
+uint32_t ezKernel_GetTickMillis(void);
 
 
 #endif /* CONFIG_KERNEL == 1U */
