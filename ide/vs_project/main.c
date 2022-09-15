@@ -23,9 +23,11 @@ static void RunAllTests(void);
 int main(int argc, const char *argv[])
 {
     ezmApp_SdkInit();
+
 #if (CONFIG_UNITY_UNIT_TEST == 1U)
-    return UnityMain(argc, argv, RunAllTests);
-#else
+    (void) UnityMain(argc, argv, RunAllTests);
+#endif /* CONFIG_UNITY_UNIT_TEST == 1U */
+
 #if(CONFIG_WIN == 1U)
     uint64_t execute_time_stamp = ezmApp_ReturnTimestampMillisvoid();
     do
@@ -45,7 +47,7 @@ int main(int argc, const char *argv[])
         }
 } while (execute_time_stamp);
 #endif /* CONFIG_WIN */
-#endif
+
 }
 
 
@@ -72,5 +74,9 @@ static void RunAllTests(void)
 #if (CONFIG_EZ_QUEUE_TEST == 1U)
     RUN_TEST_GROUP(ezQueue);
 #endif /* CONFIG_EZ_QUEUE_TEST == 1U */
+
+#if(CONFIG_KERNEL_TEST == 1U)
+    RUN_TEST_GROUP(ezKernel);
+#endif /* CONFIG_KERNEL_TEST == 1U */
 }
 #endif

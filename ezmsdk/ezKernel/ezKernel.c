@@ -54,9 +54,9 @@
 #define KERNEL_BUFF_SIZE        512     /**< Size for the kernel buffer */
 #endif /*KERNEL_BUFF_SIZE*/
 
-#ifndef NUM_OF_KERNEL_TASK
-#define NUM_OF_KERNEL_TASK      10      /**< Size for the kernel buffer */
-#endif /*KERNEL_BUFF_SIZE*/
+#ifndef CONFIG_NUM_OF_KERNEL_TASK
+#define CONFIG_NUM_OF_KERNEL_TASK   10      /**< Size for the kernel buffer */
+#endif /*CONFIG_NUM_OF_KERNEL_TASK*/
 
 #define DEFAULT_SLEEP_MILLIS    1000
 
@@ -97,7 +97,7 @@ struct ezKernelTask
 *******************************************************************************/
 static struct ezKernel kernel = { 0 };
 static uint8_t kernel_buff[KERNEL_BUFF_SIZE] = { 0 };
-static struct ezKernelTask task_pool[NUM_OF_KERNEL_TASK];
+static struct ezKernelTask task_pool[CONFIG_NUM_OF_KERNEL_TASK];
 
 
 /******************************************************************************
@@ -126,7 +126,7 @@ void ezKernel_Initialization(void)
 
     (void) ezmStcMem_InitMemList(&kernel.memory_list, kernel_buff, KERNEL_BUFF_SIZE);
 
-    for (uint32_t i = 0; i < NUM_OF_KERNEL_TASK; i++)
+    for (uint32_t i = 0; i < CONFIG_NUM_OF_KERNEL_TASK; i++)
     {
         ezKernel_ResetKernelTask(&task_pool[i]);
     }
@@ -350,7 +350,7 @@ static struct ezKernelTask *ezKernel_GetFreeTask(void)
 {
     struct ezKernelTask *free_task = NULL;
     
-    for (uint32_t i = 0; i < NUM_OF_KERNEL_TASK; i++)
+    for (uint32_t i = 0; i < CONFIG_NUM_OF_KERNEL_TASK; i++)
     {
         if (task_pool[i].is_busy == false)
         {

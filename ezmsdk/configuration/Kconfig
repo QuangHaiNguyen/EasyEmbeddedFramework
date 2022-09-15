@@ -288,11 +288,11 @@ endmenu
 menu "KERNEL configuration"
 config KERNEL
     bool "Enable KERNEL support"
-    depends on HELPER_LINKEDLIST
+    depends on HELPER_LINKEDLIST && STCMEM
     help
         This module provides a way to scheduling and executing tasks
 
-comment "KERNEL support disable. Depend on HELPER_LINKEDLIST"
+comment "KERNEL support disable. Depend on HELPER_LINKEDLIST and STCMEM"
     depends on !HELPER_LINKEDLIST
 
 if KERNEL
@@ -300,6 +300,20 @@ config NUM_OF_PROCESS
     int "NUM_OF_PROCESS"
     default 5
 endif
+
+config NUM_OF_KERNEL_TASK
+    int "NUM_OF_KERNEL_TASK"
+    default 10
+
+config KERNEL_TEST
+    bool "Enable KERNEL_TEST unit test support"
+    depends on UNITY_UNIT_TEST
+    help
+        Enable unit test for KERNEL module. 
+
+comment "KERNEL_TEST support disable. Depend on UNITY_UNIT_TEST"
+    depends on !UNITY_UNIT_TEST
+
 endmenu
 
 config DRIVERINF

@@ -165,6 +165,8 @@
     <ClCompile Include="..\..\ezmsdk\cli\cli.c" />
     <ClCompile Include="..\..\ezmsdk\data_model\data_model.c" />
     <ClCompile Include="..\..\ezmsdk\ezKernel\ezKernel.c" />
+    <ClCompile Include="..\..\ezmsdk\ezKernel\test\Test_ezKernel.c" />
+    <ClCompile Include="..\..\ezmsdk\ezKernel\test\Test_ezKernel_Runner.c" />
     <ClCompile Include="..\..\ezmsdk\ezmDebug\ezmDebug.c" />
     <ClCompile Include="..\..\ezmsdk\ezmDriver\dummy_driver.c" />
     <ClCompile Include="..\..\ezmsdk\ezmDriver\driver.c" />

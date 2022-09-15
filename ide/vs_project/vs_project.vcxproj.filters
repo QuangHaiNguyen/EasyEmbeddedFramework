@@ -119,6 +119,9 @@
     <Filter Include="Source Files\ezKernel">
       <UniqueIdentifier>{ac237ae5-0f2c-46b0-8746-5daa0ce08cde}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\ezKernel\test">
+      <UniqueIdentifier>{400f0051-d83b-41f7-909c-fa90bc48caf2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ezmsdk\app\app.c">
@@ -237,6 +240,12 @@
     </ClCompile>
     <ClCompile Include="..\..\ezmsdk\ezKernel\ezKernel.c">
       <Filter>Source Files\ezKernel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\ezKernel\test\Test_ezKernel.c">
+      <Filter>Source Files\ezKernel\test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\ezKernel\test\Test_ezKernel_Runner.c">
+      <Filter>Source Files\ezKernel\test</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
