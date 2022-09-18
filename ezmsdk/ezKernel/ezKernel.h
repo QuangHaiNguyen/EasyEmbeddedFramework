@@ -149,6 +149,18 @@ void ezKernel_Run(void);
 uint32_t ezKernel_GetTickMillis(void);
 
 
+/******************************************************************************
+* Function : ezKernel_GetNumOfTasks
+*//**
+* @Description: return number of tasks
+*
+* @param    None
+* @return   number of tasks
+*
+*******************************************************************************/
+uint32_t ezKernel_GetNumOfTasks(void);
+
+
 #endif /* CONFIG_KERNEL == 1U */
 #endif /* _EZKERNEL_H */
 

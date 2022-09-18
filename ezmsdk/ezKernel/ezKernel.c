@@ -38,7 +38,7 @@
 
 #if(CONFIG_KERNEL == 1U)
 
-#define DEBUG_LVL   LVL_TRACE       /**< logging level */
+#define DEBUG_LVL   LVL_INFO       /**< logging level */
 #define MOD_NAME    "ezKernel"      /**< module name */
 #include "utilities/logging/logging.h"
 
@@ -159,68 +159,57 @@ ezSTATUS ezKernel_AddTask(ezKernelTaskFunction function,
     uint32_t task_data_size)
 {
     ezSTATUS status = ezFAIL;
-    struct ezKernelTask *task = NULL;
+    struct ezKernelTask *task = ezKernel_GetFreeTask();
 
-    if (kernel.is_busy == false)
+    TRACE("ezKernel_AddTask()");
+
+    if (kernel.is_busy == false && function != NULL && task != NULL)
     {
         kernel.is_busy = true;
-        status = ezSUCCESS;
-
         DEBUG("kernel is not busy, start adding task...");
-    }
 
-    if (status == ezSUCCESS && function != NULL)
-    {
-        task = ezKernel_GetFreeTask();
-
-        if (task)
-        {
-            task->delay_millis = delay_millis;
-            task->exec_cnt_down = delay_millis;
-            task->function = function;
+        task->delay_millis = delay_millis;
+        task->exec_cnt_down = delay_millis;
+        task->function = function;
  
-            if (task->task_data != NULL && task->task_data_size > 0)
-            {
-                task->task_data_size = task_data_size;
-                task->task_data = ezmStcMem_Malloc(&kernel.memory_list,
-                    task_data_size);
+        if (task->task_data != NULL && task->task_data_size > 0)
+        {
+            task->task_data_size = task_data_size;
+            task->task_data = ezmStcMem_Malloc(&kernel.memory_list,
+                task_data_size);
 
-                if (task->task_data != NULL)
-                {
-                    memcpy(task->task_data, task_data, task->task_data_size);
-                    status = ezSUCCESS;
-                }
-                else
-                {
-                    TRACE("Cannot allocate data");
-                }
+            if (task->task_data != NULL)
+            {
+                memcpy(task->task_data, task_data, task->task_data_size);
+                EZMLL_ADD_TAIL(&kernel.executed_tasks, &task->node);
+                status = ezSUCCESS;
             }
             else
             {
-                status = ezSUCCESS;
+                TRACE("Cannot allocate data");
             }
-
-            EZMLL_ADD_TAIL(&kernel.executed_tasks, &task->node);
         }
         else
         {
-            TRACE("No free task");
+            EZMLL_ADD_TAIL(&kernel.executed_tasks, &task->node);
+            status = ezSUCCESS;
+        }
+
+        if (status == ezFAIL)
+        {
+            DEBUG("Add task fail");
+            ezKernel_ResetKernelTask(task);
+        }
+        else
+        {
+            DEBUG("Add task success");
+#if(DEBUG_LVL == LVL_TRACE)
+            ezKernel_PrintTaskInfo(task);
+#endif /* DEBUG_LVL == LVL_TRACE */
         }
     }
 
     kernel.is_busy = false;
-
-    if (status == ezSUCCESS)
-    {
-        DEBUG("Add task success");
-#if(DEBUG_LVL == LVL_TRACE)
-        ezKernel_PrintTaskInfo(task);
-#endif /* DEBUG_LVL == LVL_TRACE */
-    }
-    else
-    {
-        DEBUG("Add task fail");
-    }
 
     return status;
 }
@@ -228,68 +217,76 @@ ezSTATUS ezKernel_AddTask(ezKernelTaskFunction function,
 
 void ezKernel_Run(void)
 {
-    struct Node *iterator = NULL;
+    struct Node *iterator = &kernel.executed_tasks;
     int32_t next_wakeup = 0;
     struct ezKernelTask *task = NULL;
     KERNEL_TASK_STATUS task_status = TASK_STATUS_OK;
 
-    EZMLL_FOR_EACH(iterator, &kernel.executed_tasks)
+    if(IS_LIST_EMPTY(&kernel.executed_tasks) == false)
     {
-        task = EZMLL_GET_PARENT_OF(iterator, node, struct ezKernelTask);
+        iterator = kernel.executed_tasks.next;
 
-        if (task->exec_cnt_down <= 0)
+        do
         {
-            /* execute the task when it is timeout */
-#if(DEBUG_LVL == LVL_TRACE)
-            TRACE("executing...");
-            ezKernel_PrintTaskInfo(task);
-#endif /* DEBUG_LVL == LVL_TRACE */
-            if (task->function)
-            {
-                task_status = task->function(task->task_data,
-                    task->task_data_size);
-            }
-            else
-            {
-                task_status = TASK_STATUS_ERROR;
-            }
+            task = EZMLL_GET_PARENT_OF(iterator, node, struct ezKernelTask);
+            iterator = iterator->next;
 
-            /* handle the return task status */
-            if (task_status == TASK_STATUS_OK || task_status == TASK_STATUS_ERROR)
+            if (task->exec_cnt_down <= 0)
             {
-                EZMLL_UNLINK_NODE(iterator);
-                if (task->task_data != NULL)
+                if (task->function)
                 {
-                    ezmStcMem_Free(&kernel.memory_list, task->task_data);
+#if(DEBUG_LVL == LVL_TRACE)
+                    TRACE("executing...time stamp = %d", kernel.current_tick);
+                    ezKernel_PrintTaskInfo(task);
+#endif /* DEBUG_LVL == LVL_TRACE */
+
+                    task_status = task->function(task->task_data,
+                        task->task_data_size);
                 }
-                ezKernel_ResetKernelTask(task);
-            }
-            else if (task_status == TASK_STATUS_EXEC_AGAIN)
-            {
-                /* refresh count down value*/
-                task->exec_cnt_down = task->delay_millis;
+                else
+                {
+                    task_status = TASK_STATUS_ERROR;
+                }
+
+                /* handle the return task status */
+                if (task_status == TASK_STATUS_OK 
+                    || task_status == TASK_STATUS_ERROR)
+                {
+                    EZMLL_UNLINK_NODE(&task->node);
+                    if (task->task_data != NULL)
+                    {
+                        ezmStcMem_Free(&kernel.memory_list, task->task_data);
+                    }
+                    ezKernel_ResetKernelTask(task);
+                }
+                else if (task_status == TASK_STATUS_EXEC_AGAIN)
+                {
+                    /* refresh count down value*/
+                    task->exec_cnt_down = task->delay_millis;
+                }
+                else
+                {
+                    /* do nothing */
+                }
             }
             else
             {
-                /* do nothing */
+                /* get the next wake up time if applied */
+                if (next_wakeup == 0)
+                {
+                    next_wakeup = task->exec_cnt_down;
+                }
+                else if (next_wakeup > task->exec_cnt_down)
+                {
+                    next_wakeup = task->exec_cnt_down;
+                }
+                else
+                {
+                    /* do nothing */
+                }
             }
-        }
-        else
-        {
-            /* get the next wake up time if applied */
-            if (next_wakeup == 0)
-            {
-                next_wakeup = task->exec_cnt_down;
-            }
-            else if (task->exec_cnt_down < next_wakeup)
-            {
-                next_wakeup = task->exec_cnt_down;
-            }
-            else
-            {
-                /* do nothing */
-            }
-        }
+
+        } while (iterator != &kernel.executed_tasks);
     }
 }
 
@@ -297,6 +294,20 @@ void ezKernel_Run(void)
 uint32_t ezKernel_GetTickMillis(void)
 {
     return kernel.current_tick;
+}
+
+
+uint32_t ezKernel_GetNumOfTasks(void)
+{
+    uint32_t num_of_tasks = 0;
+    struct Node *iterator = NULL;
+
+    EZMLL_FOR_EACH(iterator, &kernel.executed_tasks)
+    {
+        num_of_tasks++;
+    }
+
+    return num_of_tasks;
 }
 
 
@@ -327,12 +338,6 @@ static void ezKernel_ResetKernelTask(struct ezKernelTask *task)
         task->task_data = NULL;
         task->task_data_size = 0;
         ezmLL_InitNode(&task->node);
-
-        DEBUG("add task success");
-    }
-    else
-    {
-        DEBUG("add task fail");
     }
 }
 
@@ -381,10 +386,10 @@ void ezKernel_PrintTaskInfo(struct ezKernelTask *task)
         TRACE("------------------------------------");
         TRACE("delay = %d millis", task->delay_millis);
         TRACE("count down = %d millis", task->exec_cnt_down);
-        TRACE("data =@%p", task->task_data);
+        TRACE("data =@0x%p", task->task_data);
         TRACE("data size = %d", task->task_data_size);
-        TRACE("function = @%p", task->function);
-        TRACE("------------------------------------");
+        TRACE("function = @0x%p", task->function);
+        TRACE("------------------------------------\n\n");
     }
 }
 #endif /* DEBUG_LVL == LVL_TRACE */

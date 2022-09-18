@@ -77,7 +77,7 @@
 /*@brief check if a list is empty
  *
  */
-#define IS_LIST_EMPTY(list_head) ((list_head)->next == (list_head)) ? true : false
+#define IS_LIST_EMPTY(list_head) ((list_head)->next == (list_head))
 
 /******************************************************************************
 * Module Typedefs

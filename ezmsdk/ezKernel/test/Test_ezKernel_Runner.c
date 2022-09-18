@@ -77,7 +77,14 @@
 *******************************************************************************/
 TEST_GROUP_RUNNER(ezKernel)
 {
-    RUN_TEST_CASE(ezKernel, TestTempPlate);
+    RUN_TEST_CASE(ezKernel, Test_ezKernel_GetTickMillis_TickIsAdvance);
+    RUN_TEST_CASE(ezKernel, Test_ezKernel_Run_OneShortTask);
+    RUN_TEST_CASE(ezKernel, Test_ezKernel_AddTask_MoreTaskThanSupported);
+    RUN_TEST_CASE(ezKernel, Test_ezKernel_Run_LoopTask);
+    RUN_TEST_CASE(ezKernel, Test_ezKernel_Run_RunUntilComplete);
+    RUN_TEST_CASE(ezKernel, Test_ezKernel_Run_RunFailTask);
+    RUN_TEST_CASE(ezKernel, Test_ezKernel_Run_AddAnotherTaskInsideTaskFunction);
+    RUN_TEST_CASE(ezKernel, Test_ezKernel_GetTickMillis_TickValueCorrect);
 }
 
 #endif /* CONFIG_KERNEL_TEST == 1U */
