@@ -99,6 +99,7 @@
 
 #if (CONFIG_DRIVERINF == 1U)
 #include "ezmDriver/driver.h"
+#include "ezDriver/ezDriver.h"
 #endif /* CONFIG_DRIVERINF */
 
 #if (CONFIG_FLASH_SIM == 1U)
@@ -226,6 +227,8 @@ void ezmApp_SdkInit(void)
 #endif /* CONFIG_STCMEM */
 
 #if(CONFIG_DRIVERINF == 1U)
+    ezDriver_Initialize();
+
     if (ezmDriver_Init())
     {
         INFO("Initialize DRIVERINF module");

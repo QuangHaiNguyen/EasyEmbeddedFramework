@@ -171,8 +171,8 @@ ezSTATUS ezKernel_AddTask(ezKernelTaskFunction function,
         task->delay_millis = delay_millis;
         task->exec_cnt_down = delay_millis;
         task->function = function;
- 
-        if (task->task_data != NULL && task->task_data_size > 0)
+
+        if (task_data != NULL && task_data_size > 0)
         {
             task->task_data_size = task_data_size;
             task->task_data = ezmStcMem_Malloc(&kernel.memory_list,

@@ -62,8 +62,6 @@ typedef bool    (*DriverInitFunction)   (void);
  */
 typedef enum
 {
-    DUMMY_DRIVER,       /**< for testing purpose only */
-
 #if(CONFIG_HAL_UART)
     UART0_DRIVER,       /**< uart driver, normally for cli */
 #endif

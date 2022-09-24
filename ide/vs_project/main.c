@@ -78,5 +78,9 @@ static void RunAllTests(void)
 #if(CONFIG_KERNEL_TEST == 1U)
     RUN_TEST_GROUP(ezKernel);
 #endif /* CONFIG_KERNEL_TEST == 1U */
+
+#if (CONFIG_DRIVERINF_TEST == 1U)
+    RUN_TEST_GROUP(ezDriver);
+#endif /* CONFIG_DRIVERINF_TEST == 1U */
 }
 #endif

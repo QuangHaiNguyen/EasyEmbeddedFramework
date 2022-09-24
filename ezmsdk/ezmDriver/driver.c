@@ -50,7 +50,6 @@
 #include "hal/uart/uart.h"
 #include "hal/wifi_controller/wifi_controller.h"
 #include "hal/network/mqtt/mqtt.h"
-#include "dummy_driver.h"
 
 /******************************************************************************
 * Module Preprocessor Macros
@@ -63,8 +62,6 @@
 
 GetDriverFunction get_driver[NUM_OF_DRIVER] =
 {
-    (GetDriverFunction)DummyDriver_GetDriver,
-
 #if(CONFIG_HAL_UART == 1U)
     (GetDriverFunction)GetUart0Driver,
 #endif

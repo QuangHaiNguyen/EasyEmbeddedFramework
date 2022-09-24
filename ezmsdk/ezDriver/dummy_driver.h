@@ -26,7 +26,6 @@
 *******************************************************************************/
 #include "app/app_config.h"
 
-
 #if (CONFIG_DRIVERINF == 1U)
 
 #include "stdint.h"
@@ -41,13 +40,11 @@
 * Module Typedefs
 *******************************************************************************/
 
-typedef struct
+typedef enum
 {
-    void (*dummy_open)(void);
-    void (*dummy_close)(void);
-    void (*dummy_write)(void);
-    void (*dummy_read)(void);
-}DummyApi;
+    CODE_TX_CMPLT,
+    CODE_RX_CMPLT,
+}DUMMY_CALLBACK_CODE;
 
 /******************************************************************************
 * Module Variable Definitions
@@ -57,7 +54,7 @@ typedef struct
 /******************************************************************************
 * Function Prototypes
 *******************************************************************************/
-void * DummyDriver_GetDriver(void);
+void *LinkDummyDriver(void);
 
 #endif /* CONFIG_DRIVERINF */
 #endif /* _DUMMY_DRIVER_H */

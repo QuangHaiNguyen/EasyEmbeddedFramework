@@ -316,6 +316,7 @@ comment "KERNEL_TEST support disable. Depend on UNITY_UNIT_TEST"
 
 endmenu
 
+menu "DRIVERINF configuration"
 config DRIVERINF
     bool "Enable DRIVERINF support"
     depends on HELPER_LINKEDLIST
@@ -326,9 +327,15 @@ config DRIVERINF
 comment "DRIVERINF support disable. Depend on HELPER_LINKEDLIST"
     depends on !HELPER_LINKEDLIST
 
-config EZM_PRINTF
-    bool "Enable EZM_PRINTF support"
+config DRIVERINF_TEST
+    bool "Enable DRIVERINF_TEST unit test support"
+    depends on UNITY_UNIT_TEST
+    help
+        Enable unit test for KERNEL module. 
 
+comment "DRIVERINF_TEST support disable. Depend on UNITY_UNIT_TEST"
+    depends on !UNITY_UNIT_TEST
+endmenu
 
 config DATA_MODEL
     bool "Enable DATA_MODEL support"

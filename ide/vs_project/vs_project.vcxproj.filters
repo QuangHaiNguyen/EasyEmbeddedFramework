@@ -122,6 +122,12 @@
     <Filter Include="Source Files\ezKernel\test">
       <UniqueIdentifier>{400f0051-d83b-41f7-909c-fa90bc48caf2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\ezDriver">
+      <UniqueIdentifier>{b2a40ac5-b373-49f9-813a-8075c0a48ac5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ezDriver\test">
+      <UniqueIdentifier>{dd78d0a2-085e-4e10-aa68-46bfb4792f78}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ezmsdk\app\app.c">
@@ -149,9 +155,6 @@
       <Filter>Source Files\ezmKernel</Filter>
     </ClCompile>
     <ClCompile Include="..\..\ezmsdk\ezmDriver\driver.c">
-      <Filter>Source Files\ezmDriver</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\ezmsdk\ezmDriver\dummy_driver.c">
       <Filter>Source Files\ezmDriver</Filter>
     </ClCompile>
     <ClCompile Include="..\..\ezmsdk\ezmDebug\ezmDebug.c">
@@ -247,6 +250,18 @@
     <ClCompile Include="..\..\ezmsdk\ezKernel\test\Test_ezKernel_Runner.c">
       <Filter>Source Files\ezKernel\test</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\ezDriver\ezDriver.c">
+      <Filter>Source Files\ezDriver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\ezDriver\dummy_driver.c">
+      <Filter>Source Files\ezDriver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\ezDriver\test\Test_ezDriver.c">
+      <Filter>Source Files\ezDriver\test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\ezDriver\test\Test_ezDriver_Runner.c">
+      <Filter>Source Files\ezDriver\test</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\ezmsdk\app\app.h">
@@ -286,9 +301,6 @@
       <Filter>Source Files\ezmKernel</Filter>
     </ClInclude>
     <ClInclude Include="..\..\ezmsdk\ezmDriver\driver.h">
-      <Filter>Source Files\ezmDriver</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ezmsdk\ezmDriver\dummy_driver.h">
       <Filter>Source Files\ezmDriver</Filter>
     </ClInclude>
     <ClInclude Include="..\..\ezmsdk\platforms\simulator\flash\flash_simulator.h">
@@ -371,6 +383,12 @@
     </ClInclude>
     <ClInclude Include="..\..\ezmsdk\ezKernel\ezKernel.h">
       <Filter>Source Files\ezKernel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ezmsdk\ezDriver\ezDriver.h">
+      <Filter>Source Files\ezDriver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ezmsdk\ezDriver\dummy_driver.h">
+      <Filter>Source Files\ezDriver</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
