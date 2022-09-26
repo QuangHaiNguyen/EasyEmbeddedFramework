@@ -48,82 +48,91 @@
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
-#define A_MACRO     1   /**< a macro*/
+/* None */
 
 
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
 
-/** @brief function pointer of the driver initialize function
+/** @brief Initialize driver function pointer declaration
  *
  */
 typedef ezSTATUS (*ezDriverInitFunction)(void);
 
 
-/** @brief -
+/** @brief Initialize driver function pointer declaration
  *
  */
 typedef int (*StdInterfaceCallback)(uint8_t cb_code, void *param1, void *param2);
 
 
-/** @brief -
+/** @brief Define kernel task as standard Open function
  *
  */
 typedef ezKernelTaskFunction StdInterfaceOpen;
 
 
-/** @brief -
+/** @brief Define kernel task as standard Close function
  *
  */
 typedef ezKernelTaskFunction StdInterfaceClose;
 
 
-/** @brief -
+/** @brief Define kernel task as standard Write function
  *
  */
 typedef ezKernelTaskFunction StdInterfaceWrite;
 
 
-/** @brief -
+/** @brief Define kernel task as standard Read function
  *
  */
 typedef ezKernelTaskFunction StdInterfaceRead;
 
 
-/** @brief -
- *
+/** @brief  Standard interface for the driver. When there is not constrain, the
+ *          application is encourage to use this type of interface to interact
+ *          with the hardware peripheral instead of calling the HAL function.
  */
 struct ezStdInterface
 {
-    StdInterfaceOpen Open;
-    StdInterfaceClose Close;
-    StdInterfaceWrite Write;
-    StdInterfaceRead Read;
+    StdInterfaceOpen Open;      /* TBD */
+    StdInterfaceClose Close;    /* TBD */
+    StdInterfaceWrite Write;    /* Transfer data function */
+    StdInterfaceRead Read;      /* Read data function */
 };
 
 
+/** @brief A structure for sending data by using standard interface
+ *
+ */
 struct ezStdInterfaceData
 {
-    uint8_t *data;
-    uint32_t data_size;
-    StdInterfaceCallback callback;
+    uint8_t *data;          /**< Data to be read or write */
+    uint32_t data_size;     /**< size of the data */
+    StdInterfaceCallback callback;  /**< callback function to handle event */
 };
 
 
-/** @brief -
+/** @brief A structure to store data of a driver object
  *
  */
 struct ezDriver
 {
-    bool is_busy;       /**< */
-    void *config;       /**< */
-    ezDriverInitFunction Initialize;          /**< */
-    void *ll_interface;                     /**< */
-    struct ezStdInterface *std_interface;   /**< */
+    bool is_busy;       /**< Busy flag, act as binary mutex */
+    void *config;       /**< Dedicated configuration according to peripheral */
+    ezDriverInitFunction Initialize;    /**< Pointer to driver init function */
+    void *ll_interface;                 /**< Pointer to low layer interface */
+    struct ezStdInterface *std_interface;   /**< Pointer to standard interface */
 };
 
+
+/** @brief handle for the ezDriver sructure
+ *
+ */
 typedef struct ezDriver* ezDriveHandle;
+
 
 /******************************************************************************
 * Module Variable Definitions
@@ -135,13 +144,14 @@ typedef struct ezDriver* ezDriveHandle;
 * Function Prototypes
 *******************************************************************************/
 
+
 /******************************************************************************
 * Function : ezDriver_Initialize
 *//**
-* @Description: -
+* @Description: Initialize the driver module
 *
-* @param    -
-* @return   -
+* @param    None
+* @return   None
 *
 *
 *******************************************************************************/
@@ -151,10 +161,10 @@ void ezDriver_Initialize(void);
 /******************************************************************************
 * Function : ezDriver_GetDriver
 *//**
-* @Description: -
+* @Description: Searching and returning the driver by its name
 *
-* @param    -
-* @return   -
+* @param    driver_name: (IN)Name of the driver
+* @return   Driver handle or null
 *
 *
 *******************************************************************************/
@@ -164,11 +174,13 @@ ezDriveHandle ezDriver_GetDriver(char *driver_name);
 /******************************************************************************
 * Function : ezDriver_Open
 *//**
-* @Description: -
+* @Description: Open function. Internally this function will create a kernel
+*               task, which in turn, calls the open function from the standard
+*               interface. See ezStdInterface.
 *
-* @param    -
+* @param    handle: (IN)Driver handle
+* @param    data:   (IN)Pointer to the data structure. See ezStdInterfaceData
 * @return   -
-*
 *
 *******************************************************************************/
 ezSTATUS ezDriver_Open(ezDriveHandle handle, struct ezStdInterfaceData *data);
@@ -177,11 +189,13 @@ ezSTATUS ezDriver_Open(ezDriveHandle handle, struct ezStdInterfaceData *data);
 /******************************************************************************
 * Function : ezDriver_Write
 *//**
-* @Description: -
+* @Description: Write function. Internally this function will create a kernel
+*               task, which in turn, calls the write function from the standard
+*               interface. See ezStdInterface.
 *
-* @param    -
+* @param    handle: (IN)Driver handle
+* @param    data:   (IN)Pointer to the data structure. See ezStdInterfaceData
 * @return   -
-*
 *
 *******************************************************************************/
 ezSTATUS ezDriver_Write(ezDriveHandle handle, struct ezStdInterfaceData *data);
@@ -190,11 +204,13 @@ ezSTATUS ezDriver_Write(ezDriveHandle handle, struct ezStdInterfaceData *data);
 /******************************************************************************
 * Function : ezDriver_Read
 *//**
-* @Description: -
+* @Description: Read function. Internally this function will create a kernel
+*               task, which in turn, calls the read function from the standard
+*               interface. See ezStdInterface.
 *
-* @param    -
+* @param    handle: (IN)Driver handle
+* @param    data:   (IN)Pointer to the data structure. See ezStdInterfaceData
 * @return   -
-*
 *
 *******************************************************************************/
 ezSTATUS ezDriver_Read(ezDriveHandle handle, struct ezStdInterfaceData *data);
@@ -203,11 +219,13 @@ ezSTATUS ezDriver_Read(ezDriveHandle handle, struct ezStdInterfaceData *data);
 /******************************************************************************
 * Function : ezDriver_Close
 *//**
-* @Description: -
+* @Description: Close function. Internally this function will create a kernel
+*               task, which in turn, calls the close function from the standard
+*               interface. See ezStdInterface.
 *
-* @param    -
+* @param    handle: (IN)Driver handle
+* @param    data:   (IN)Pointer to the data structure. See ezStdInterfaceData
 * @return   -
-*
 *
 *******************************************************************************/
 ezSTATUS ezDriver_Close(ezDriveHandle handle, struct ezStdInterfaceData *data);

@@ -136,7 +136,8 @@ static KERNEL_TASK_STATUS Write(void *task_data, uint32_t task_data_size)
             if (inf_data->data)
             {
                 memcpy(echo_buff, inf_data->data, inf_data->data_size);
-                TRACE("write [size = %d bytes] to echo buff:", inf_data->data_size);
+                TRACE("write [size = %d bytes] to echo buff:",
+                    inf_data->data_size);
                 HEXDUMP(echo_buff, inf_data->data_size);
             }
 
