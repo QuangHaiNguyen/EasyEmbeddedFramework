@@ -110,12 +110,12 @@
 #if (CONFIG_LOGGING == 1U)
 #if DEBUG_LVL >= LVL_CRITICAL
 #define CRITICAL(fmt, ...)   do {\
-                                dbg_print(purple"[CRITICAL] "reset_color);\
+                                dbg_print("\n"purple"[CRITICAL] "reset_color);\
                                 print_module(MOD_NAME);\
                                 print_file();\
                                 print_line();\
                                 print_func();\
-                                dbg_print(fmt "\n", ##__VA_ARGS__);\
+                                dbg_print(fmt, ##__VA_ARGS__);\
                             }while(0)
 #else
 #define CRITICAL(fmt, ...)
@@ -123,12 +123,12 @@
 
 #if DEBUG_LVL >= LVL_ERROR
 #define ERROR(fmt, ...)     do {\
-                                dbg_print(red"[   ERROR] "reset_color);\
+                                dbg_print("\n"red"[   ERROR] "reset_color);\
                                 print_module(MOD_NAME);\
                                 print_file();\
                                 print_line();\
                                 print_func();\
-                                dbg_print(fmt "\n", ##__VA_ARGS__);\
+                                dbg_print(fmt, ##__VA_ARGS__);\
                             }while(0)
 #else
 #define ERROR(fmt, ...)
@@ -138,12 +138,12 @@
 #define WARNING(fmt, ...)   do {\
                                 if (DEBUG_LVL >= LVL_WARNING)\
                                 {\
-                                    dbg_print(yellow"[ WARNING] "reset_color);\
+                                    dbg_print("\n"yellow"[ WARNING] "reset_color);\
                                     print_module(MOD_NAME);\
                                     print_file();\
                                     print_line();\
                                     print_func();\
-                                    dbg_print(fmt "\n", ##__VA_ARGS__);\
+                                    dbg_print(fmt, ##__VA_ARGS__);\
                                 }\
                             }while(0)
 #else
@@ -152,12 +152,12 @@
 
 #if DEBUG_LVL >= LVL_INFO
 #define INFO(fmt, ...)      do {\
-                                dbg_print(cyan"[    INFO] "reset_color);\
+                                dbg_print("\n"cyan"[    INFO] "reset_color);\
                                 print_module(MOD_NAME);\
                                 print_file();\
                                 print_line();\
                                 print_func();\
-                                dbg_print(fmt "\n", ##__VA_ARGS__);\
+                                dbg_print(fmt, ##__VA_ARGS__);\
                             }while(0)
 #else
 #define INFO(fmt, ...)
@@ -165,12 +165,12 @@
 
 #if DEBUG_LVL >= LVL_DEBUG
 #define DEBUG(fmt, ...)     do {\
-                                dbg_print(green"[   DEBUG] "reset_color);\
+                                dbg_print("\n"green"[   DEBUG] "reset_color);\
                                 print_module(MOD_NAME);\
                                 print_file();\
                                 print_line();\
                                 print_func();\
-                                dbg_print(fmt "\n", ##__VA_ARGS__);\
+                                dbg_print(fmt, ##__VA_ARGS__);\
                             }while(0)
 #else
 #define DEBUG(fmt, ...)
@@ -178,12 +178,13 @@
 
 #if DEBUG_LVL >= LVL_TRACE
 #define TRACE(fmt, ...)     do {\
+                                dbg_print("\n");\
                                 dbg_print(blue"[   TRACE] "reset_color);\
                                 print_module(MOD_NAME);\
                                 print_file();\
                                 print_line();\
                                 print_func();\
-                                dbg_print(fmt "\n", ##__VA_ARGS__);\
+                                dbg_print(fmt, ##__VA_ARGS__);\
                             }while(0)
 #else
 #define TRACE(fmt, ...)
