@@ -40,7 +40,7 @@
 * Includes
 *******************************************************************************/
 #include <stdio.h>
-#include "app/app_config.h"
+#include "ezApp/ezSdk_config.h"
 #include "utilities/hexdump/hexdump.h"
 
 /******************************************************************************

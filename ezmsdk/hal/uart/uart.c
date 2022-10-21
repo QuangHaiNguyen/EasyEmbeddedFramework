@@ -21,9 +21,9 @@
 
 #if (CONFIG_HAL_UART == 1U)
 
-#include "ezmDriver/driver.h"
-#include "ezmDebug/config.h"
-#include "ezmDebug/ezmDebug.h"
+#include "ezApp/ezmDriver/driver.h"
+#include "ezApp/ezmDebug/config.h"
+#include "ezApp/ezmDebug/ezmDebug.h"
 #include "utilities/hexdump/hexdump.h"
 #include "utilities/logging/logging.h"
 

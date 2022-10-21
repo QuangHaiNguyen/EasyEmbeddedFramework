@@ -26,7 +26,7 @@
 *******************************************************************************/
 #include "stdint.h"
 #include "stdbool.h"
-#include "app/app_config.h"
+#include "ezApp/ezSdk_config.h"
 
 #if (CONFIG_HAL_UART > 0U)
 

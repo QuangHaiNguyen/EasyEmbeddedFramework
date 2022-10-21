@@ -1,8 +1,8 @@
 
-#include "app/app.h"
-#include "app/app_config.h"
-#include "ezmKernel/ezmKernel.h"
-#include "cli/cli.h"
+#include "ezApp/ezSdk.h"
+#include "ezApp/ezSdk_config.h"
+#include "ezApp/ezmKernel/ezmKernel.h"
+#include "ezApp/cli/cli.h"
 #include "app/app_embedded_emulator.h"
 #include "unity_test_platform/unity_fixture.h"
 #include <stdint.h>
@@ -22,7 +22,7 @@ static void RunAllTests(void);
 
 int main(int argc, const char *argv[])
 {
-    ezmApp_SdkInit();
+    ezSdk_Initialization();
 
 #if (CONFIG_UNITY_UNIT_TEST == 1U)
     (void) UnityMain(argc, argv, RunAllTests);

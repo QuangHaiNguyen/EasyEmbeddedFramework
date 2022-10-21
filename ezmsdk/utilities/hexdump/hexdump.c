@@ -22,12 +22,12 @@
 /******************************************************************************
 * Includes
 *******************************************************************************/
-#include "app/app_config.h"
+#include "ezApp/ezSdk_config.h"
 
 #if(CONFIG_HELPER_HEXDUMP == 1U)
 #include "hexdump.h"
 #include "stdio.h"
-#include "ezmDebug/ezmDebug.h"
+#include "ezApp/ezmDebug/ezmDebug.h"
 
 /******************************************************************************
 * Module Preprocessor Macros

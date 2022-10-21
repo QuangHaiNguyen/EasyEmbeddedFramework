@@ -34,7 +34,7 @@
 /*******************************************************************************
 * Includes
 *******************************************************************************/
-#include "app/app_config.h"
+#include "ezApp/ezSdk_config.h"
 
 #if (CONFIG_FLASH_SIM == 1U) && (CONFIG_WIN == 1U)
 #include <stdlib.h>

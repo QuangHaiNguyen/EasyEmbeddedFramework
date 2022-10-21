@@ -16,10 +16,10 @@
 /******************************************************************************
  Includes
 ******************************************************************************/
-#include "app/app_config.h"
+#include "ezApp/ezSdk_config.h"
 
 #if (CONFIG_STCMEM == 1U)
-#include "ezmDebug/ezmDebug.h"
+#include "ezApp/ezmDebug/ezmDebug.h"
 #include "utilities/linked_list/linked_list.h"
 #include "utilities/hexdump/hexdump.h"
 #include "stcmem.h"

@@ -29,7 +29,7 @@
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
-#include "app/app_config.h"
+#include "ezApp/ezSdk_config.h"
 
 #if (CONFIG_HELPER_ASSERT == 1U)
 #include "utilities/logging/logging.h"

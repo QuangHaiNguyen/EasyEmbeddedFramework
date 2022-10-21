@@ -23,7 +23,7 @@
 * Includes
 *******************************************************************************/
 #include "uart_sim.h"
-#include "app/app_config.h"
+#include "ezApp/ezSdk_config.h"
 
 #define DEBUG_LVL   LVL_INFO       /**< logging level */
 #define MOD_NAME    "HW_UART"
@@ -31,7 +31,7 @@
 #if(CONFIG_SIM_UART == 1U && SUPPORTED_CHIP == WIN)
 #include <stdint.h>
 #include <stdio.h>
-#include "ezmDebug/ezmDebug.h"
+#include "ezApp/ezmDebug/ezmDebug.h"
 #include "utilities/hexdump/hexdump.h"
 #include "utilities/logging/logging.h"
 
