@@ -43,8 +43,8 @@
 
 #include <string.h>
 
-#include "utilities/logging/logging.h"
-#include "utilities/event_notifier/event_notifier.h"
+#include "ezUtilities/logging/logging.h"
+#include "ezUtilities/event_notifier/event_notifier.h"
 
 /*the rest of include go here*/
 

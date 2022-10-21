@@ -44,12 +44,12 @@
 #define MOD_NAME    "DRIVER"     /**< module name */
 
 #include <string.h>
-#include "utilities/logging/logging.h"
-#include "utilities/linked_list/linked_list.h"
+#include "ezUtilities/logging/logging.h"
+#include "ezUtilities/linked_list/linked_list.h"
 
-#include "hal/uart/uart.h"
-#include "hal/wifi_controller/wifi_controller.h"
-#include "hal/network/mqtt/mqtt.h"
+#include "ezHal/uart/uart.h"
+#include "ezHal/wifi_controller/wifi_controller.h"
+#include "ezHal/network/mqtt/mqtt.h"
 
 /******************************************************************************
 * Module Preprocessor Macros

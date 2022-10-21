@@ -44,7 +44,7 @@
 #include "stdbool.h"
 
 #if(CONFIG_STCMEM == 1U)
-#include "utilities/ez_queue/ez_queue.h"
+#include "ezUtilities/ez_queue/ez_queue.h"
 #else
 #error STCMEM must be activated
 #endif /* STCMEM */

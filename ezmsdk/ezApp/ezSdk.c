@@ -38,7 +38,7 @@
 
 #define DEBUG_LVL   LVL_TRACE   /**< logging level */
 #define MOD_NAME    "ezSdk"       /**< module name */
-#include "utilities/logging/logging.h"
+#include "ezUtilities/logging/logging.h"
 
 #include "ezApp/ezSdk_config.h"
 #include "unity_test_platform/unity.h"
@@ -64,19 +64,19 @@
 #endif /* CONFIG_BIN_PARSER */
 
 #if (CONFIG_HELPER_LINKEDLIST == 1U)
-#include "utilities/linked_list/linked_list.h"
+#include "ezUtilities/linked_list/linked_list.h"
 #endif /* CONFIG_HELPER_LINKEDLIST */
 
 #if (CONFIG_HELPER_HEXDUMP == 1U)
-#include "utilities/hexdump/hexdump.h"
+#include "ezUtilities/hexdump/hexdump.h"
 #endif /* CONFIG_HELPER_HEXDUMP */
 
 #if (CONFIG_RING_BUFFER == 1U)
-#include "utilities/ring_buffer/ring_buffer.h"
+#include "ezUtilities/ring_buffer/ring_buffer.h"
 #endif /* CONFIG_RING_BUFFER */
 
 #if (CONFIG_HELPER_ASSERT == 1U)
-#include "utilities/ezmAssert/ezmAssert.h"
+#include "ezUtilities/ezmAssert/ezmAssert.h"
 #endif /* CONFIG_HELPER_ASSERT */
 
 #if (CONFIG_STATEMACHINE == 1U)
@@ -88,7 +88,7 @@
 #endif /* CONFIG_IPC */
 
 #if (CONFIG_STCMEM==1U)
-#include "utilities/stcmem/stcmem.h"
+#include "ezUtilities/stcmem/stcmem.h"
 #endif /* CONFIG_STCMEM */
 
 #if(CONFIG_KERNEL == 1U)
@@ -97,11 +97,11 @@
 #endif /* CONFIG_KERNEL */
 
 #if (CONFIG_SYSTEM_ERROR == 1U)
-#include "utilities/system_error/system_error.h"
+#include "ezUtilities/system_error/system_error.h"
 #endif /* CONFIG_SYSTEM_ERROR */
 
 #if (CONFIG_HAL_UART)
-#include "hal/uart/uart.h"
+#include "ezHal/uart/uart.h"
 #endif /* CONFIG_HAL_UART */
 
 

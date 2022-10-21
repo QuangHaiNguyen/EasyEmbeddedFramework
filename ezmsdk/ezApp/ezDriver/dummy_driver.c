@@ -22,9 +22,9 @@
 #if (CONFIG_DRIVERINF == 1U)
 #include "ezApp/ezDriver/ezDriver.h"
 #include "string.h"
-#include "utilities/hexdump/hexdump.h"
-#include "utilities/logging/logging.h"
-#include "utilities/linked_list/linked_list.h"
+#include "ezUtilities/hexdump/hexdump.h"
+#include "ezUtilities/logging/logging.h"
+#include "ezUtilities/linked_list/linked_list.h"
 
 
 /******************************************************************************

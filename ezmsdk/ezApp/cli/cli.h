@@ -38,7 +38,7 @@
 #include "stdint.h"
 #include "stdbool.h"
 #include "ezApp/ezmDriver/driver.h"
-#include "hal/uart/uart.h"
+#include "ezHal/uart/uart.h"
 
 /******************************************************************************
 * Module Preprocessor Macros

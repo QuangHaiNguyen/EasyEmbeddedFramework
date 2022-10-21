@@ -42,7 +42,7 @@
 #if (CONFIG_DRIVERINF == 1U)
 #include "stdint.h"
 #include "stdbool.h"
-#include "utilities/event_notifier/event_notifier.h"
+#include "ezUtilities/event_notifier/event_notifier.h"
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/

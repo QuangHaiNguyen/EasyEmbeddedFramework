@@ -44,8 +44,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "utilities/event_notifier/event_notifier.h"
-#include "utilities/linked_list/linked_list.h"
+#include "ezUtilities/event_notifier/event_notifier.h"
+#include "ezUtilities/linked_list/linked_list.h"
 
 /******************************************************************************
 * Module Preprocessor Macros

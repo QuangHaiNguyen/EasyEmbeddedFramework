@@ -37,7 +37,7 @@
 
 #define DEBUG_LVL   LVL_TRACE   /**< logging level */
 #define MOD_NAME    "ezKernel_runner"       /**< module name */
-#include "utilities/logging/logging.h"
+#include "ezUtilities/logging/logging.h"
 
 #include "unity_test_platform/unity.h"
 #include "unity_test_platform/unity_fixture.h"

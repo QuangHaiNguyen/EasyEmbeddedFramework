@@ -121,7 +121,7 @@ _doxygen_source_body=\
 
 #define DEBUG_LVL   LVL_TRACE   /**< logging level */
 #define MOD_NAME    "{0}"       /**< module name */
-#include "utilities/logging/logging.h"
+#include "ezUtilities/logging/logging.h"
 
 /*the rest of include go here*/
 

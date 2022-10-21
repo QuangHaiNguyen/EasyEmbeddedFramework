@@ -40,10 +40,10 @@
 
 #define DEBUG_LVL   LVL_INFO       /**< logging level */
 #define MOD_NAME    "ezKernel"      /**< module name */
-#include "utilities/logging/logging.h"
+#include "ezUtilities/logging/logging.h"
 
-#include "utilities/linked_list/linked_list.h"
-#include "utilities/stcmem/stcmem.h"
+#include "ezUtilities/linked_list/linked_list.h"
+#include "ezUtilities/stcmem/stcmem.h"
 #include <string.h>
 
 /******************************************************************************

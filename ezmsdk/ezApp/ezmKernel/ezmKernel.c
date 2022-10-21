@@ -18,7 +18,7 @@
 
 #if (CONFIG_KERNEL == 1U)
 #include "string.h"
-#include "utilities/hexdump/hexdump.h"
+#include "ezUtilities/hexdump/hexdump.h"
 #include "ezApp/ezmDebug/ezmDebug.h"
 
 #define MOD_NAME        "KERNEL"

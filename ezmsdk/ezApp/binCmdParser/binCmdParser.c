@@ -22,7 +22,7 @@
 #define MOD_NAME    "bin_cmd_parser"        /**< module name */
 
 #include "string.h"
-#include "utilities/logging/logging.h"
+#include "ezUtilities/logging/logging.h"
 #include "../ezmDebug/ezmDebug.h"
 #include "../utilities/hexdump/hexdump.h"
 

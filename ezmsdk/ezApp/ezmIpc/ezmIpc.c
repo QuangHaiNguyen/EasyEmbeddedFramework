@@ -17,8 +17,8 @@
 
 #if (CONFIG_IPC == 1U)
 
-#include "utilities/linked_list/linked_list.h"
-#include "utilities/stcmem/stcmem.h"
+#include "ezUtilities/linked_list/linked_list.h"
+#include "ezUtilities/stcmem/stcmem.h"
 #include "ezmIpc_conf.h"
 #include "string.h"
 

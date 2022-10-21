@@ -41,7 +41,7 @@
 #define DEBUG_LVL   LVL_TRACE       /**< logging level */
 #define MOD_NAME    "ezDriver"      /**< module name */
 
-#include "utilities/logging/logging.h"
+#include "ezUtilities/logging/logging.h"
 #include "ezApp/ezKernel/ezKernel.h"
 #include "dummy_driver.h"
 #include <string.h>

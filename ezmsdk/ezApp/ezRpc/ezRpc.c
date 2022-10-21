@@ -41,7 +41,7 @@
 #define DEBUG_LVL   LVL_ERROR   /**< logging level */
 #define MOD_NAME    "ezRpc"        /**< module name */
 
-#include "utilities/logging/logging.h"
+#include "ezUtilities/logging/logging.h"
 #include "ezApp/ezmKernel/ezmKernel.h"
 
 #include <string.h>

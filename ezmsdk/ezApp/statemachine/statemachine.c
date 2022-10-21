@@ -29,7 +29,7 @@
 #define DEBUG_LVL   LVL_TRACE       /**< logging level */
 #define MOD_NAME    "STATEMACHINE"  /**< module name */
 
-#include "utilities/logging/logging.h"
+#include "ezUtilities/logging/logging.h"
 
 /******************************************************************************
 * Module Typedefs

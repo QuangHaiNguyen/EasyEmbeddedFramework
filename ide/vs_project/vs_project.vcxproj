@@ -159,7 +159,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\ezmsdk\app\app_embedded_emulator.c" />
     <ClCompile Include="..\..\ezmsdk\ezApp\binCmdParser\binCmdParser.c" />
     <ClCompile Include="..\..\ezmsdk\ezApp\cli\cli.c" />
     <ClCompile Include="..\..\ezmsdk\ezApp\data_model\data_model.c" />
@@ -179,33 +178,31 @@
     <ClCompile Include="..\..\ezmsdk\ezApp\ezSdk.c" />
     <ClCompile Include="..\..\ezmsdk\ezApp\scheduler\scheduler.c" />
     <ClCompile Include="..\..\ezmsdk\ezApp\statemachine\statemachine.c" />
-    <ClCompile Include="..\..\ezmsdk\hal\network\mqtt\mqtt.c" />
-    <ClCompile Include="..\..\ezmsdk\hal\uart\uart.c" />
-    <ClCompile Include="..\..\ezmsdk\hal\wifi_controller\wifi_controller.c" />
-    <ClCompile Include="..\..\ezmsdk\platforms\simulator\flash\flash_simulator.c" />
-    <ClCompile Include="..\..\ezmsdk\platforms\simulator\uart\uart_sim.c" />
-    <ClCompile Include="..\..\ezmsdk\platforms\simulator\virtual_com\virtual_com_driver.c" />
-    <ClCompile Include="..\..\ezmsdk\platforms\simulator\wifi_controller\wifi_controller_sim.c" />
+    <ClCompile Include="..\..\ezmsdk\ezHal\network\mqtt\mqtt.c" />
+    <ClCompile Include="..\..\ezmsdk\ezHal\uart\uart.c" />
+    <ClCompile Include="..\..\ezmsdk\ezHal\wifi_controller\wifi_controller.c" />
+    <ClCompile Include="..\..\ezmsdk\ezTargets\simulator\flash\flash_simulator.c" />
+    <ClCompile Include="..\..\ezmsdk\ezTargets\simulator\uart\uart_sim.c" />
+    <ClCompile Include="..\..\ezmsdk\ezTargets\simulator\virtual_com\virtual_com_driver.c" />
+    <ClCompile Include="..\..\ezmsdk\ezTargets\simulator\wifi_controller\wifi_controller_sim.c" />
+    <ClCompile Include="..\..\ezmsdk\ezUtilities\event_notifier\event_notifier.c" />
+    <ClCompile Include="..\..\ezmsdk\ezUtilities\ezmAssert\ezmAssert.c" />
+    <ClCompile Include="..\..\ezmsdk\ezUtilities\ez_queue\ez_queue.c" />
+    <ClCompile Include="..\..\ezmsdk\ezUtilities\ez_queue\test\Test_ezQueue.c" />
+    <ClCompile Include="..\..\ezmsdk\ezUtilities\ez_queue\test\Test_ezQueue_Runner.c" />
+    <ClCompile Include="..\..\ezmsdk\ezUtilities\hexdump\hexdump.c" />
+    <ClCompile Include="..\..\ezmsdk\ezUtilities\linked_list\linked_list.c" />
+    <ClCompile Include="..\..\ezmsdk\ezUtilities\logging\logging.c" />
+    <ClCompile Include="..\..\ezmsdk\ezUtilities\ring_buffer\ring_buffer.c" />
+    <ClCompile Include="..\..\ezmsdk\ezUtilities\smalloc\smalloc.c" />
+    <ClCompile Include="..\..\ezmsdk\ezUtilities\stcmem\stcmem.c" />
+    <ClCompile Include="..\..\ezmsdk\ezUtilities\system_error\system_error.c" />
     <ClCompile Include="..\..\ezmsdk\unity_test_platform\unity.c" />
     <ClCompile Include="..\..\ezmsdk\unity_test_platform\unity_fixture.c" />
     <ClCompile Include="..\..\ezmsdk\unity_test_platform\unity_memory.c" />
-    <ClCompile Include="..\..\ezmsdk\utilities\event_notifier\event_notifier.c" />
-    <ClCompile Include="..\..\ezmsdk\utilities\ezmAssert\ezmAssert.c" />
-    <ClCompile Include="..\..\ezmsdk\utilities\ez_queue\ez_queue.c" />
-    <ClCompile Include="..\..\ezmsdk\utilities\ez_queue\test\Test_ezQueue.c" />
-    <ClCompile Include="..\..\ezmsdk\utilities\ez_queue\test\Test_ezQueue_Runner.c" />
-    <ClCompile Include="..\..\ezmsdk\utilities\hexdump\hexdump.c" />
-    <ClCompile Include="..\..\ezmsdk\utilities\linked_list\linked_list.c" />
-    <ClCompile Include="..\..\ezmsdk\utilities\logging\logging.c" />
-    <ClCompile Include="..\..\ezmsdk\utilities\ring_buffer\ring_buffer.c" />
-    <ClCompile Include="..\..\ezmsdk\utilities\smalloc\smalloc.c" />
-    <ClCompile Include="..\..\ezmsdk\utilities\stcmem\stcmem.c" />
-    <ClCompile Include="..\..\ezmsdk\utilities\system_error\system_error.c" />
     <ClCompile Include="main.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\ezmsdk\app\app_embedded_emulator.h" />
-    <ClInclude Include="..\..\ezmsdk\configuration\sdkconfig.h" />
     <ClInclude Include="..\..\ezmsdk\ezApp\binCmdParser\binCmdParser.h" />
     <ClInclude Include="..\..\ezmsdk\ezApp\cli\cli.h" />
     <ClInclude Include="..\..\ezmsdk\ezApp\data_model\data_model.h" />
@@ -221,32 +218,33 @@
     <ClInclude Include="..\..\ezmsdk\ezApp\ezSdk_config.h" />
     <ClInclude Include="..\..\ezmsdk\ezApp\scheduler\scheduler.h" />
     <ClInclude Include="..\..\ezmsdk\ezApp\statemachine\statemachine.h" />
-    <ClInclude Include="..\..\ezmsdk\hal\network\mqtt\mqtt.h" />
-    <ClInclude Include="..\..\ezmsdk\hal\uart\uart.h" />
-    <ClInclude Include="..\..\ezmsdk\hal\wifi_controller\wifi_controller.h" />
-    <ClInclude Include="..\..\ezmsdk\platforms\simulator\flash\flash_simulator.h" />
-    <ClInclude Include="..\..\ezmsdk\platforms\simulator\uart\uart_sim.h" />
-    <ClInclude Include="..\..\ezmsdk\platforms\simulator\virtual_com\virtual_com_driver.h" />
-    <ClInclude Include="..\..\ezmsdk\platforms\simulator\wifi_controller\wifi_controller_sim.h" />
+    <ClInclude Include="..\..\ezmsdk\ezConfig\sdkconfig.h" />
+    <ClInclude Include="..\..\ezmsdk\ezHal\network\mqtt\mqtt.h" />
+    <ClInclude Include="..\..\ezmsdk\ezHal\uart\uart.h" />
+    <ClInclude Include="..\..\ezmsdk\ezHal\wifi_controller\wifi_controller.h" />
+    <ClInclude Include="..\..\ezmsdk\ezTargets\simulator\flash\flash_simulator.h" />
+    <ClInclude Include="..\..\ezmsdk\ezTargets\simulator\uart\uart_sim.h" />
+    <ClInclude Include="..\..\ezmsdk\ezTargets\simulator\virtual_com\virtual_com_driver.h" />
+    <ClInclude Include="..\..\ezmsdk\ezTargets\simulator\wifi_controller\wifi_controller_sim.h" />
+    <ClInclude Include="..\..\ezmsdk\ezUtilities\event_notifier\event_notifier.h" />
+    <ClInclude Include="..\..\ezmsdk\ezUtilities\ezmAssert\ezmAssert.h" />
+    <ClInclude Include="..\..\ezmsdk\ezUtilities\ez_queue\ez_queue.h" />
+    <ClInclude Include="..\..\ezmsdk\ezUtilities\hexdump\hexdump.h" />
+    <ClInclude Include="..\..\ezmsdk\ezUtilities\linked_list\linked_list.h" />
+    <ClInclude Include="..\..\ezmsdk\ezUtilities\logging\logging.h" />
+    <ClInclude Include="..\..\ezmsdk\ezUtilities\ring_buffer\ring_buffer.h" />
+    <ClInclude Include="..\..\ezmsdk\ezUtilities\smalloc\smalloc.h" />
+    <ClInclude Include="..\..\ezmsdk\ezUtilities\stcmem\stcmem.h" />
+    <ClInclude Include="..\..\ezmsdk\ezUtilities\system_error\system_error.h" />
+    <ClInclude Include="..\..\ezmsdk\ezUtilities\system_error\system_error_table.h" />
     <ClInclude Include="..\..\ezmsdk\unity_test_platform\unity.h" />
     <ClInclude Include="..\..\ezmsdk\unity_test_platform\unity_fixture.h" />
     <ClInclude Include="..\..\ezmsdk\unity_test_platform\unity_fixture_internals.h" />
     <ClInclude Include="..\..\ezmsdk\unity_test_platform\unity_internals.h" />
     <ClInclude Include="..\..\ezmsdk\unity_test_platform\unity_memory.h" />
-    <ClInclude Include="..\..\ezmsdk\utilities\event_notifier\event_notifier.h" />
-    <ClInclude Include="..\..\ezmsdk\utilities\ezmAssert\ezmAssert.h" />
-    <ClInclude Include="..\..\ezmsdk\utilities\ez_queue\ez_queue.h" />
-    <ClInclude Include="..\..\ezmsdk\utilities\hexdump\hexdump.h" />
-    <ClInclude Include="..\..\ezmsdk\utilities\linked_list\linked_list.h" />
-    <ClInclude Include="..\..\ezmsdk\utilities\logging\logging.h" />
-    <ClInclude Include="..\..\ezmsdk\utilities\ring_buffer\ring_buffer.h" />
-    <ClInclude Include="..\..\ezmsdk\utilities\smalloc\smalloc.h" />
-    <ClInclude Include="..\..\ezmsdk\utilities\stcmem\stcmem.h" />
-    <ClInclude Include="..\..\ezmsdk\utilities\system_error\system_error.h" />
-    <ClInclude Include="..\..\ezmsdk\utilities\system_error\system_error_table.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\ezmsdk\configuration\Kconfig" />
+    <None Include="..\..\ezmsdk\ezConfig\Kconfig" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

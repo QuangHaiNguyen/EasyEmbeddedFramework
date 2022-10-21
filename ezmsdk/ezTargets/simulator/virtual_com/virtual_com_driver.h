@@ -1,93 +1,111 @@
 
 /*******************************************************************************
-* Filename:         ezDriver_runner.c
+* Filename:         virtual_com_driver.h
 * Author:           Hai Nguyen
-* Original Date:    24.09.2022
-* Last Update:      24.09.2022
+* Original Date:    07.08.2022
+* Last Update:      07.08.2022
 *
 * -----------------------------------------------------------------------------
-* Company:          Embedded Easy
+* Comany:           Easy Embedded
 *                   Address Line 1
 *                   Address Line 2
 *
 * -----------------------------------------------------------------------------
-* Contact:          Embedded Easy
+* Contact:          Easy Embedded
 *                   hainguyen.ezm@gmail.com
 *
 * -----------------------------------------------------------------------------
 * Copyright Hai Nguyen - All Rights Reserved
 * Unauthorized copying of this file, via any medium is strictly prohibited
 * Proprietary and confidential
-* Written by Hai Nguyen 24.09.2022
+* Written by Hai Nguyen 07.08.2022
 *
 *******************************************************************************/
 
-/** @file   ezDriver_runner.c
+/** @file   virtual_com_driver.h
  *  @author Hai Nguyen
- *  @date   24.09.2022
+ *  @date   07.08.2022
  *  @brief  This is the source for a module
  *  
  *  @details
  * 
  */
 
-/******************************************************************************
+#ifndef _VIRTUAL_COM_DRIVER_H
+#define _VIRTUAL_COM_DRIVER_H
+
+/*******************************************************************************
 * Includes
 *******************************************************************************/
-
 #include "ezApp/ezSdk_config.h"
 
-#if (CONFIG_DRIVERINF_TEST == 1U)
-
-#define DEBUG_LVL   LVL_TRACE   /**< logging level */
-#define MOD_NAME    "ezDriver_runner"       /**< module name */
-#include "ezUtilities/logging/logging.h"
-
-#include "unity_test_platform/unity.h"
-#include "unity_test_platform/unity_fixture.h"
-#include <stdint.h>
+#if (CONFIG_VIRTUAL_COM == 1U)
 #include <stdbool.h>
+#include <stdint.h>
 
-
+#include "ezHal/uart/uart.h"
 
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
 /* None */
 
+
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
 /* None */
+
 
 /******************************************************************************
 * Module Variable Definitions
 *******************************************************************************/
 /* None */
 
-/******************************************************************************
-* Function Definitions
-*******************************************************************************/
-/* None */
 
 /******************************************************************************
-* External functions
+* Function Prototypes
 *******************************************************************************/
-/* None */
 
 
 /******************************************************************************
-* Internal functions
+* Function : VirtualCom_Initialization
+*//**
+* @Description:
+*
+* @param
+* @return
+*
+* @Example Example:
+* @code
+*
+* @endcode
+*
 *******************************************************************************/
-TEST_GROUP_RUNNER(ezDriver)
-{
-    RUN_TEST_CASE(ezDriver, Test_ezDriver_GetDriver_WrongDriverName);
-    RUN_TEST_CASE(ezDriver, Test_ezDriver_GetDriver_CorrectDriverName);
-    RUN_TEST_CASE(ezDriver, Test_ezDriver_Write);
-    RUN_TEST_CASE(ezDriver, Test_ezDriver_Read);
-}
+bool VirtualCom_Initialization(void);
 
-#endif /*CONFIG_DRIVERINF_TEST == 1U */
+
+
+
+/******************************************************************************
+* Function : VirtualCom_Initialization
+*//**
+* @Description:
+*
+* @param
+* @return
+*
+* @Example Example:
+* @code
+*
+* @endcode
+*
+*******************************************************************************/
+UartDrvApi *VirtualCom_GetInterface(void);
+
+
+#endif /* CONFIG_VIRTUAL_COM */
+#endif /* _VIRTUAL_COM_DRIVER_H */
 
 /* End of file */
 

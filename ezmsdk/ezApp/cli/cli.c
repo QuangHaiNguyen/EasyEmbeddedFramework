@@ -37,7 +37,7 @@
 
 #include <string.h>
 #include <stdarg.h>
-#include "utilities/logging/logging.h"
+#include "ezUtilities/logging/logging.h"
 
 #define STR_TERMINATE                   '\0'
 #define SPACE                           ' '
