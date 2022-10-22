@@ -40,9 +40,6 @@
 #include "ezApp/ezSdk_config.h"
 
 #if (CONFIG_VIRTUAL_COM == 1U)
-#include <stdbool.h>
-#include <stdint.h>
-
 #include "ezHal/uart/uart.h"
 
 /******************************************************************************
@@ -83,7 +80,7 @@
 *
 *******************************************************************************/
 bool VirtualCom_Initialization(void);
-
+ezSTATUS VirtualCom_Initialize(void);
 
 
 
@@ -102,7 +99,24 @@ bool VirtualCom_Initialization(void);
 *
 *******************************************************************************/
 UartDrvApi *VirtualCom_GetInterface(void);
+UartDrvApi *VirtualCom_GetLowLayerInterface(void);
 
+
+/******************************************************************************
+* Function : VirtualCom_GetStdInterface
+*//**
+* @Description:
+*
+* @param
+* @return
+*
+* @Example Example:
+* @code
+*
+* @endcode
+*
+*******************************************************************************/
+void *VirtualCom_GetStdInterface(void);
 
 #endif /* CONFIG_VIRTUAL_COM */
 #endif /* _VIRTUAL_COM_DRIVER_H */

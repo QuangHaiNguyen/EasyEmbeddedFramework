@@ -26,9 +26,6 @@
     <Filter Include="Source Files\ezApp\ezKernel">
       <UniqueIdentifier>{14ca1056-1049-4f03-97c3-f3206df0df28}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\ezApp\ezmDriver">
-      <UniqueIdentifier>{1aca6c83-0013-46a3-afda-41f73e5101e5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\ezApp\ezmIpc">
       <UniqueIdentifier>{42abf52e-6262-4e03-ac97-299c1e9dc53f}</UniqueIdentifier>
     </Filter>
@@ -157,9 +154,6 @@
     <ClCompile Include="..\..\ezmsdk\ezApp\ezKernel\ezKernel.c">
       <Filter>Source Files\ezApp\ezKernel</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\ezmsdk\ezApp\ezmDriver\driver.c">
-      <Filter>Source Files\ezApp\ezmDriver</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\ezmsdk\ezApp\ezmIpc\ezmIpc.c">
       <Filter>Source Files\ezApp\ezmIpc</Filter>
     </ClCompile>
@@ -287,9 +281,6 @@
     </ClInclude>
     <ClInclude Include="..\..\ezmsdk\ezApp\ezKernel\ezKernel.h">
       <Filter>Source Files\ezApp\ezKernel</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ezmsdk\ezApp\ezmDriver\driver.h">
-      <Filter>Source Files\ezApp\ezmDriver</Filter>
     </ClInclude>
     <ClInclude Include="..\..\ezmsdk\ezApp\ezmIpc\ezmIpc.h">
       <Filter>Source Files\ezApp\ezmIpc</Filter>

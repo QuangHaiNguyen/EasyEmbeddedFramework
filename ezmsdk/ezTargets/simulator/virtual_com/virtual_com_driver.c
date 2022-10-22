@@ -44,7 +44,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "ezUtilities/hexdump/hexdump.h"
+#include "ezApp/ezDriver/ezDriver.h"
 
 
 /******************************************************************************
@@ -80,8 +80,9 @@ typedef struct
 /******************************************************************************
 * Module Variable Definitions
 *******************************************************************************/
-static HwVirtualComDrv driver = {0};
-static UartDrvApi drv_api;
+static HwVirtualComDrv driver = { 0 };
+static UartDrvApi drv_api = { 0 };
+static struct ezStdInterface virtual_com_std_inf = { 0 };
 
 /******************************************************************************
 * Function Definitions
@@ -112,12 +113,38 @@ bool VirtualCom_Initialization(void)
 }
 
 
+ezSTATUS VirtualCom_Initialize(void)
+{
+    PRNT_DBG("VirtualCom_Initialization()");
+
+    drv_api.ezmUart_Configure = VirtualCom_Configure;
+    drv_api.ezmUart_Receive = NULL;
+    drv_api.ezmUart_ReceiveBlocking = VirtualCom_RecvBlocking;
+    drv_api.ezmUart_Send = NULL;
+    drv_api.ezmUart_SendBlocking = VirtualCom_SendBlocking;
+    drv_api.ezmUart_RegisterCallback = NULL;
+    drv_api.ezmUart_UnregisterCallback = NULL;
+
+    return ezSUCCESS;
+}
+
+
 UartDrvApi *VirtualCom_GetInterface(void)
 {
     return &drv_api;
 }
 
 
+UartDrvApi *VirtualCom_GetLowLayerInterface(void)
+{
+    return &drv_api;
+}
+
+
+void *VirtualCom_GetStdInterface(void)
+{
+    return (void *)&virtual_com_std_inf;
+}
 
 /******************************************************************************
 * Internal functions
@@ -152,15 +179,14 @@ static bool VirtualCom_Configure(UartConfiguration* config)
         snprintf(helper, sizeof(helper), "\\\\.\\%s", config->port_name);
         mbstowcs_s(&byte_converted, driver.port_name, 32, helper, 31);
 
-
-
-        driver.driver_h = CreateFile((wchar_t*)driver.port_name,    // port name
-                                        GENERIC_READ | GENERIC_WRITE,               // Read/Write
-                                        0,                                          // No Sharing
-                                        NULL,                                       // No Security
-                                        OPEN_EXISTING,                              // Open existing port only
-                                        0,                                          // Non Overlapped I/O
-                                        NULL);
+        driver.driver_h = CreateFile(
+            (wchar_t*)driver.port_name,     // port name
+            GENERIC_READ | GENERIC_WRITE,   // Read/Write
+            0,                              // No Sharing
+            NULL,                           // No Security
+            OPEN_EXISTING,                  // Open existing port only
+            0,                              // Non Overlapped I/O
+            NULL);
 
         if (driver.driver_h == INVALID_HANDLE_VALUE)
         {

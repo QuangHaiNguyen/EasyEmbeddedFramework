@@ -106,7 +106,6 @@
 
 
 #if (CONFIG_DRIVERINF == 1U)
-#include "ezApp/ezmDriver/driver.h"
 #include "ezApp/ezDriver/ezDriver.h"
 #endif /* CONFIG_DRIVERINF */
 
@@ -222,16 +221,9 @@ void ezSdk_Initialization(void)
 
 #if(CONFIG_DRIVERINF == 1U)
     ezDriver_Initialize();
+    INFO("Initialize DRIVERINF module");
+    INFO("Module Id: 0x%02x", DRIVERINF_MOD_ID);
 
-    if (ezmDriver_Init())
-    {
-        INFO("Initialize DRIVERINF module");
-        INFO("Module Id: 0x%02x", DRIVERINF_MOD_ID);
-    }
-    else
-    {
-        INFO("Initialize DRIVERINF module error");
-    }
 #endif /* CONFIG_DRIVERINF */
 
 #if (CONFIG_SYSTEM_ERROR == 1U)
@@ -286,9 +278,10 @@ void ezSdk_Initialization(void)
 #endif
 
 #if (CONFIG_CLI == 1U && CONFIG_HAL_UART == 1U)
-    UartDrvApi *uart_driver;
-    ezmDriver_GetDriverInstance(UART0_DRIVER, (void *)(&uart_driver));
-    if (uart_driver == NULL)
+    ezDriveHandle cli_uart = NULL;
+    cli_uart = ezDriver_GetDriver("cli_uart");
+
+    if (cli_uart == NULL)
     {
         INFO("ERROR: Initialize command line interface");
     }
@@ -297,7 +290,7 @@ void ezSdk_Initialization(void)
         INFO("Initialize command line interface");
         INFO("Module Id: 0x%02x", CLI_MOD_ID);
         INFO("Number of supported command: [command = %d]", CONFIG_NUM_OF_CMD);
-        ezmCli_Init(uart_driver);
+        ezmCli_Init((UartDrvApi*)cli_uart->ll_interface);
     }
 #endif
 

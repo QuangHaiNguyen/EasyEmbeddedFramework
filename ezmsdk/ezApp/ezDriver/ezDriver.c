@@ -43,6 +43,7 @@
 
 #include "ezUtilities/logging/logging.h"
 #include "ezApp/ezKernel/ezKernel.h"
+#include "ezHal/uart/uart.h"
 #include "dummy_driver.h"
 #include <string.h>
 
@@ -75,6 +76,11 @@ struct ezDriverConfig
 struct ezDriverConfig ConfigurationTable[] = {
     /* name                 version     handle      LinkDriverFunction */
     { "dummy_driver",       {1,0,0},    NULL,       LinkDummyDriver },
+    { "cli_uart",           {1,0,0},    NULL,       ezHal_Uart_LinkCliDriv },
+
+#if (CONFIG_VIRTUAL_COM == 1U)
+    { "virtual_com",        {1,0,0},    NULL,       ezHal_VirtualCom_LinkDriv},
+#endif /* CONFIG_VIRTUAL_COM == 1U */
 
     /*End of configuration table - DO NOT CHANGE!!! */
     { NULL, {0,0,0}, NULL, NULL}
@@ -107,19 +113,26 @@ void ezDriver_Initialize(void)
                 config->version[1],
                 config->version[2]);
 
-            if (config->driver->Initialize() == ezSUCCESS)
+            if (config->driver->Initialize)
             {
-                INFO("  Initialize driver success");
-
-                if (config->driver->ll_interface)
+                if (config->driver->Initialize() == ezSUCCESS)
                 {
-                    INFO("  low level driver is available");
+                    INFO("  Initialize driver success");
+
+                    if (config->driver->ll_interface)
+                    {
+                        INFO("  low level driver is available");
+                    }
+
+                    if (config->driver->std_interface == NULL)
+                    {
+                        ERROR("  No standard interface");
+                        config->driver = NULL;
+                    }
                 }
-
-                if (config->driver->std_interface == NULL)
+                else
                 {
-                    ERROR("  No standard interface");
-                    config->driver = NULL;
+                    ERROR("Initialize driver fail");
                 }
             }
             else

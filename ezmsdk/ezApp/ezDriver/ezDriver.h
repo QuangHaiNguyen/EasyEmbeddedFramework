@@ -40,9 +40,6 @@
 #include "ezApp/ezSdk_config.h"
 
 #if (CONFIG_DRIVERINF == 1U)
-
-#include "stdint.h"
-#include "stdbool.h"
 #include "ezApp/ezKernel/ezKernel.h"
 
 /******************************************************************************

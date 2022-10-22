@@ -40,11 +40,6 @@
 #include "ezApp/ezSdk_config.h"
 
 #if(CONFIG_KERNEL == 1U)
-
-#include "stdint.h"
-#include "stdbool.h"
-
-
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
@@ -53,16 +48,6 @@
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
-
-/** @brief definition of status of the executed task
- *
- */
-typedef enum
-{
-    TASK_STATUS_OK,         /**< status OK, task will be removed from list */
-    TASK_STATUS_EXEC_AGAIN, /**< task will be executed again with the same interval */
-    TASK_STATUS_ERROR,      /**< task error, will be moved from list */
-}KERNEL_TASK_STATUS;
 
 
 /** @brief definition of the task function pointer

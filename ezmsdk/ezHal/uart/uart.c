@@ -18,14 +18,13 @@
 
 #define DEBUG_LVL   LVL_INFO       /**< logging level */
 #define MOD_NAME    "UART"
+#include "ezUtilities/logging/logging.h"
 
 #if (CONFIG_HAL_UART == 1U)
 
 #include "ezApp/ezmDriver/driver.h"
-#include "ezApp/ezmDebug/config.h"
-#include "ezApp/ezmDebug/ezmDebug.h"
-#include "ezUtilities/hexdump/hexdump.h"
-#include "ezUtilities/logging/logging.h"
+#include "ezApp/ezDriver/ezDriver.h"
+
 
 #if (CONFIG_ESP32 == 1U)
 #include "platforms/esp32/uart/esp32_uart.h"
@@ -53,13 +52,14 @@
 /******************************************************************************
 * Module Variable Definitions
 *******************************************************************************/
-static const char *cli_uart_name = "cli uart";
 
 #if (CONFIG_VIRTUAL_COM == 1U)
 static const char *virtual_com_name = "virtual com";
 #endif /* CONFIG_VIRTUAL_COM == 1U */
 
-static Driver aszSupportedUart[NUM_OF_SUPPORTED_UART] = { 0 };
+static struct ezDriver cli_uart = { 0 };
+static struct ezDriver virtual_com = { 0 };
+
 
 /******************************************************************************
 * Function Definitions
@@ -67,54 +67,32 @@ static Driver aszSupportedUart[NUM_OF_SUPPORTED_UART] = { 0 };
 /* None */
 
 /********************** Public functions **************************************/
-void* GetUart0Driver(void)
+
+void *ezHal_Uart_LinkCliDriv(void)
 {
-    Driver* ret_driver = NULL;
-#if (CONFIG_ESP32 == 1U)
-    if(espUart_Init(CLI_UART, &aszSupportedUart[CLI_UART].driver_api) == true)
-    {
-        aszSupportedUart[CLI_UART].init_function = EspUart0_Init;
-        aszSupportedUart[CLI_UART].is_busy = false;
-        ret_driver = &aszSupportedUart[CLI_UART];
-        INFO("UART0 init complete");
-    }
-#endif
+    cli_uart.is_busy = false;
+    cli_uart.config = NULL;
+    cli_uart.Initialize = simUart_Initialize;
+    cli_uart.ll_interface = (void*)simUart_GetApi();
+    cli_uart.std_interface = (struct ezStdInterface*)simUart_GetStdInterface();
 
-#if(CONFIG_STM32 == 1U)
-    aszSupportedUart[CLI_UART].is_busy = false;
-    aszSupportedUart[CLI_UART].init_function = stmUart1_Init;
-    aszSupportedUart[CLI_UART].driver_api = stmUart_GetApi(CLI_UART);
-    ret_driver = &aszSupportedUart[CLI_UART];
-    INFO("UART0 init complete");
-#endif
-
-#if(CONFIG_WIN == 1U)
-    aszSupportedUart[CLI_UART].is_busy = false;
-    aszSupportedUart[CLI_UART].init_function = simUart_Init;
-    aszSupportedUart[CLI_UART].driver_api = simUart_GetApi(CLI_UART);
-    aszSupportedUart[CLI_UART].driver_name = cli_uart_name;
-    ret_driver = &aszSupportedUart[CLI_UART];
-    INFO("UART0 init complete");
-#endif /* SUPPORTED_CHIP */
-
-    return (void*)ret_driver;
+    return (void *)&cli_uart;
 }
+
 
 #if (CONFIG_VIRTUAL_COM == 1U)
-void *GetVirtualComDriver(void)
+void *ezHal_VirtualCom_LinkDriv(void)
 {
-    Driver* ret_driver = NULL;
+    virtual_com.is_busy = false;
+    virtual_com.config = NULL;
+    virtual_com.Initialize = VirtualCom_Initialize;
+    virtual_com.ll_interface = (void *)VirtualCom_GetLowLayerInterface();
+    virtual_com.std_interface = (struct ezStdInterface *)VirtualCom_GetStdInterface();
 
-    aszSupportedUart[VCP_UART].is_busy = false;
-    aszSupportedUart[VCP_UART].init_function = VirtualCom_Initialization;
-    aszSupportedUart[VCP_UART].driver_api = VirtualCom_GetInterface();
-    aszSupportedUart[VCP_UART].driver_name = virtual_com_name;
-    ret_driver = &aszSupportedUart[VCP_UART];
-    INFO("virtual com init complete");
-
-    return ret_driver;
+    return (void *)&virtual_com;
 }
 #endif /* VIRTUAL_COM */
+
 
 #endif /* CONFIG_HAL_UART > 0U */
 /* End of file*/

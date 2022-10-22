@@ -1,55 +1,70 @@
+
 /*******************************************************************************
-* Title                 :   module 
-* Filename              :   module.c
-* Author                :   Quang Hai Nguyen
-* Origin Date           :   21.02.2021
-* Version               :   1.0.0
+* Filename:         uart_sim.c.c
+* Author:           Hai Nguyen
+* Original Date:    22.10.2022
+* Last Update:      22.10.2022
 *
-* <br><b> - HISTORY OF CHANGES - </b>
-*  
-* <table align="left" style="width:800px">
-* <tr><td> Date       </td><td> Software Version </td><td> Initials         </td><td> Description </td></tr>
-* <tr><td> 21.02.2021 </td><td> 1.0.0            </td><td> Quang Hai Nguyen </td><td> Interface Created </td></tr>
-* </table><br><br>
-* <hr>
+* -----------------------------------------------------------------------------
+* Company:          Embedded Easy
+*                   Address Line 1
+*                   Address Line 2
+*
+* -----------------------------------------------------------------------------
+* Contact:          Embedded Easy
+*                   hainguyen.ezm@gmail.com
+*
+* -----------------------------------------------------------------------------
+* Copyright Hai Nguyen - All Rights Reserved
+* Unauthorized copying of this file, via any medium is strictly prohibited
+* Proprietary and confidential
+* Written by Hai Nguyen 22.10.2022
 *
 *******************************************************************************/
 
-/** @file  module.c
- *  @brief This is the source template for a module
+/** @file   uart_sim.c
+ *  @author Hai Nguyen
+ *  @date   22.10.2022
+ *  @brief  This is the source of the uart simulator module
+ *
+ *  @details this module simulates the uart driver on window OS
+ *
  */
 
-/******************************************************************************
-* Includes
-*******************************************************************************/
-#include "uart_sim.h"
+ /******************************************************************************
+ * Includes
+ *******************************************************************************/
 #include "ezApp/ezSdk_config.h"
+
+#if(CONFIG_SIM_UART == 1U && SUPPORTED_CHIP == WIN)
 
 #define DEBUG_LVL   LVL_INFO       /**< logging level */
 #define MOD_NAME    "HW_UART"
-
-#if(CONFIG_SIM_UART == 1U && SUPPORTED_CHIP == WIN)
-#include <stdint.h>
-#include <stdio.h>
-#include "ezApp/ezmDebug/ezmDebug.h"
-#include "ezUtilities/hexdump/hexdump.h"
 #include "ezUtilities/logging/logging.h"
+
+#include "uart_sim.h"
+#include "ezApp/ezDriver/ezDriver.h"
+
+
+/******************************************************************************
+* Module Preprocessor Macros
+*******************************************************************************/
+/* None */
 
 
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
+/* None */
 
-typedef struct
-{
-    UartDrvApi uart_api;
-    UART_CALLBACK callback;
-}HwUart;
 
 /******************************************************************************
 * Module Variable Definitions
 *******************************************************************************/
-/* None */
+static struct ezStdInterface sim_uart_std_inf = { 0 };
+static UartDrvApi uart_sim_api = { 0 };
+static UART_CALLBACK sim_uart_callback;
+
 
 /******************************************************************************
 * Function Definitions
@@ -58,30 +73,64 @@ static uint16_t UartSim_Read                (uint8_t*buff, uint32_t size);
 static uint16_t UartSim_Write               (uint8_t *buff, uint32_t size);
 static void     UartSim_RegisterCallback    (UART_CALLBACK call_back);
 static void     UartSim_UnRegisterCallback  (void);
+static KERNEL_TASK_STATUS simUart_Open(void *task_data,
+    uint32_t task_data_size);
 
-static HwUart hw_uarts[NUM_OF_SUPPORTED_UART] = { 0 };
+static KERNEL_TASK_STATUS simUart_Close(void *task_data,
+    uint32_t task_data_size);
 
-bool simUart_Init(void)
+static KERNEL_TASK_STATUS simUart_Write(void *task_data,
+    uint32_t task_data_size);
+
+static KERNEL_TASK_STATUS simUart_Read(void *task_data,
+    uint32_t task_data_size);
+
+
+/******************************************************************************
+* External functions
+*******************************************************************************/
+
+ezSTATUS simUart_Initialize(void)
 {
-    hw_uarts[CLI_UART].uart_api.ezmUart_Receive = UartSim_Read;
-    hw_uarts[CLI_UART].uart_api.ezmUart_Send = UartSim_Write;
-    hw_uarts[CLI_UART].uart_api.ezmUart_RegisterCallback = UartSim_RegisterCallback;
-    hw_uarts[CLI_UART].uart_api.ezmUart_UnregisterCallback = UartSim_UnRegisterCallback;
-    INFO("init complete");
-    return true;
+    uart_sim_api.ezmUart_Receive = UartSim_Read;
+    uart_sim_api.ezmUart_Send = UartSim_Write;
+    uart_sim_api.ezmUart_RegisterCallback = UartSim_RegisterCallback;
+    uart_sim_api.ezmUart_UnregisterCallback = UartSim_UnRegisterCallback;
+
+    return ezSUCCESS;
 }
 
-UartDrvApi*simUart_GetApi(uint8_t hw_uart_index)
+void *simUart_GetStdInterface(void)
 {
-    UartDrvApi* api = NULL;
-    if (hw_uart_index < NUM_OF_SUPPORTED_UART)
-    {
-        api = &hw_uarts[hw_uart_index].uart_api;
-    }
-    return api;
+    sim_uart_std_inf.Open = simUart_Open;
+    sim_uart_std_inf.Close = simUart_Close;
+    sim_uart_std_inf.Write = simUart_Write;
+    sim_uart_std_inf.Read = simUart_Read;
+
+    return (void*)&sim_uart_std_inf;
 }
 
 
+UartDrvApi*simUart_GetApi(void)
+{
+    return &uart_sim_api;
+}
+
+
+/******************************************************************************
+* Internal functions
+*******************************************************************************/
+
+
+/******************************************************************************
+* Function : UartSim_Read
+*//**
+* @Description:
+*
+* @param    None
+* @return   None
+*
+*******************************************************************************/
 static uint16_t UartSim_Read(uint8_t* buff, uint32_t size)
 {
     for (uint32_t i = 0; i < size; i++)
@@ -89,14 +138,24 @@ static uint16_t UartSim_Read(uint8_t* buff, uint32_t size)
         buff[i] = (uint8_t)_getchar_nolock();
     }
 
-    if (hw_uarts[CLI_UART].callback)
+    if (sim_uart_callback)
     {
-        (void)hw_uarts[CLI_UART].callback((uint8_t)UART_RX_COMPLT, (uint16_t*)&size);
+        sim_uart_callback((uint8_t)UART_RX_COMPLT, (uint16_t*)&size);
     }
 
     return size;
 }
 
+
+/******************************************************************************
+* Function : UartSim_Write
+*//**
+* @Description:
+*
+* @param    None
+* @return   None
+*
+*******************************************************************************/
 static uint16_t UartSim_Write(uint8_t* buff, uint32_t size)
 {
     for (uint32_t i = 0; i < size; i++)
@@ -104,22 +163,79 @@ static uint16_t UartSim_Write(uint8_t* buff, uint32_t size)
         putchar(buff[i]);
     }
 
-    if (hw_uarts[CLI_UART].callback)
+    if (sim_uart_callback)
     {
-        (void)hw_uarts[CLI_UART].callback((uint8_t)UART_TX_COMPLT, NULL);
+        sim_uart_callback((uint8_t)UART_TX_COMPLT, NULL);
     }
     return size;
 }
 
+
+/******************************************************************************
+* Function : UartSim_RegisterCallback
+*//**
+* @Description:
+*
+* @param    None
+* @return   None
+*
+*******************************************************************************/
 static void UartSim_RegisterCallback(UART_CALLBACK call_back)
 {
-    hw_uarts[CLI_UART].callback = call_back;
+    sim_uart_callback = call_back;
 }
 
+
+/******************************************************************************
+* Function : UartSim_UnRegisterCallback
+*//**
+* @Description:
+*
+* @param    None
+* @return   None
+*
+*******************************************************************************/
 static void UartSim_UnRegisterCallback(void)
 {
-    hw_uarts[CLI_UART].callback = NULL;
+    sim_uart_callback = NULL;
 }
+
+
+/******************************************************************************
+* Function : simUart_Open
+*//**
+* @Description:
+*
+* @param    None
+* @return   None
+*
+*******************************************************************************/
+static KERNEL_TASK_STATUS simUart_Open(void *task_data,
+    uint32_t task_data_size)
+{
+    KERNEL_TASK_STATUS status = TASK_STATUS_OK;
+
+    return status;
+}
+
+
+/******************************************************************************
+* Function : simUart_Close
+*//**
+* @Description:
+*
+* @param    None
+* @return   None
+*
+*******************************************************************************/
+static KERNEL_TASK_STATUS simUart_Close(void *task_data,
+    uint32_t task_data_size)
+{
+    KERNEL_TASK_STATUS status = TASK_STATUS_OK;
+
+    return status;
+}
+
 
 #endif /* CONFIG_SIM_UART */
 /* End of file*/

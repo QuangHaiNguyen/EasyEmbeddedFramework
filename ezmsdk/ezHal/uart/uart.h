@@ -13,8 +13,8 @@
 *  21.02.2021   1.0.0       Quang Hai Nguyen    Interface Created.
 *
 *******************************************************************************/
-/** @file   module.h
- *  @brief  Header template for a module
+/** @file   uart.h
+ *  @brief  Header of HAL UART modulec
  */
 
 
@@ -24,20 +24,15 @@
 /*******************************************************************************
 * Includes
 *******************************************************************************/
-#include "stdint.h"
-#include "stdbool.h"
 #include "ezApp/ezSdk_config.h"
 
-#if (CONFIG_HAL_UART > 0U)
-
+#if (CONFIG_HAL_UART == 1U)
 
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
-#define NUM_OF_SUPPORTED_UART   2U    /**< Number of supported Uart*/
-#define SIM_UART0               0U
-#define VCP_UART                1U
-#define CLI_UART                SIM_UART0
+/* None */
+
 
 /******************************************************************************
 * Module Typedefs
@@ -52,6 +47,11 @@ typedef enum
     UART_RX_COMPLT,     /**< UART receive completed */
     UART_BUFF_FULL,     /**< UART buffer is full */
     UART_UNSUPPORTED,   /**< UART unsupported callback */
+
+    /**More code can be added from here.
+     * Do not delete the one above for compatibility
+     */
+
 }UART_NOTIFY_CODE;
 
 
@@ -60,9 +60,9 @@ typedef enum
  */
 typedef enum
 {
-    ONE_BIT,            /**< */
-    ONE_AND_HALF_BIT,   /**< */
-    TWO_BITS,           /**< */
+    ONE_BIT,            /**< 1 stop bit */
+    ONE_AND_HALF_BIT,   /**< 1.5 stop bit */
+    TWO_BITS,           /**< 2 stop bits */
 }UART_STOP_BIT;
 
 
@@ -94,6 +94,7 @@ typedef struct
  */
 typedef uint8_t (*UART_CALLBACK)(uint8_t eCode, void *param1);
 
+
 /** @brief definition of api set for UART
  *  
  */
@@ -101,8 +102,8 @@ typedef struct
 {
     uint16_t(*ezmUart_Send)             (uint8_t *au8Buffer, uint32_t u16Size);
     uint16_t(*ezmUart_Receive)          (uint8_t *au8Buffer, uint32_t u16Size);
-    uint16_t(*ezmUart_SendBlocking)     (uint8_t* au8Buffer, uint32_t u16Size);
-    uint16_t(*ezmUart_ReceiveBlocking)  (uint8_t* au8Buffer, uint32_t u16Size);
+    uint16_t(*ezmUart_SendBlocking)     (uint8_t *au8Buffer, uint32_t u16Size);
+    uint16_t(*ezmUart_ReceiveBlocking)  (uint8_t *au8Buffer, uint32_t u16Size);
     bool(*ezmUart_Configure)            (UartConfiguration *config);
     void(*ezmUart_RegisterCallback)     (UART_CALLBACK pfnCallback);
     void(*ezmUart_UnregisterCallback)   (void);
@@ -117,13 +118,13 @@ typedef struct
 /******************************************************************************
 * Function Prototypes
 *******************************************************************************/
-void* GetUart0Driver(void);
+void *ezHal_Uart_LinkCliDriv(void);
 
 #if (CONFIG_VIRTUAL_COM == 1U)
-void *GetVirtualComDriver(void);
+void *ezHal_VirtualCom_LinkDriv(void);
 #endif /* CONFIG_VIRTUAL_COM */
 
-#endif /* CONFIG_HAL_UART > 0U */
+#endif /* CONFIG_HAL_UART == 1U */
 #endif /* _HAL_UART_H */
 
 /* End of file*/

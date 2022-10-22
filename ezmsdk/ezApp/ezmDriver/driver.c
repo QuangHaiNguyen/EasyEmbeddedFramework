@@ -63,11 +63,11 @@
 GetDriverFunction get_driver[NUM_OF_DRIVER] =
 {
 #if(CONFIG_HAL_UART == 1U)
-    (GetDriverFunction)GetUart0Driver,
+    //(GetDriverFunction)GetUart0Driver,
 #endif
 
 #if (CONFIG_VIRTUAL_COM == 1U)
-    (GetDriverFunction)GetVirtualComDriver,
+    //(GetDriverFunction)GetVirtualComDriver,
 #endif /*CONFIG_VIRTUAL_COM*/
 
 #if(WIFI_CONTROLLER == 1U)

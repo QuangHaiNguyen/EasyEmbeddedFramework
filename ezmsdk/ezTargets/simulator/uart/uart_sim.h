@@ -1,22 +1,35 @@
+
 /*******************************************************************************
-* Title                 :   module
-* Filename              :   module.h
-* Author                :   Quang Hai Nguyen
-* Origin Date           :   21.02.2021
-* Version               :   1.0.0
+* Filename:         uart_sim.h
+* Author:           Hai Nguyen
+* Original Date:    22.10.2022
+* Last Update:      22.10.2022
+*
+* -----------------------------------------------------------------------------
+* Company:          Embedded Easy
+*                   Address Line 1
+*                   Address Line 2
+*
+* -----------------------------------------------------------------------------
+* Contact:          Embedded Easy
+*                   hainguyen.ezm@gmail.com
+*
+* -----------------------------------------------------------------------------
+* Copyright Hai Nguyen - All Rights Reserved
+* Unauthorized copying of this file, via any medium is strictly prohibited
+* Proprietary and confidential
+* Written by Hai Nguyen 22.10.2022
 *
 *******************************************************************************/
 
-/*************** INTERFACE CHANGE LIST *****************************************
-*
-*  Date         Version     Author              Description 
-*  21.02.2021   1.0.0       Quang Hai Nguyen    Interface Created.
-*
-*******************************************************************************/
-/** @file   module.h
- *  @brief  Header template for a module
+/** @file   uart_sim.h
+ *  @author Hai Nguyen
+ *  @date   22.10.2022
+ *  @brief  This is the header file of uart_sim module
+ *
+ *  @details
+ *
  */
-
 
 #ifndef _UART_SIM_H
 #define _UART_SIM_H
@@ -36,18 +49,7 @@
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
-
-/** @brief definition of a new type
- *  
- */
-
-typedef struct
-{
-    int a;
-    /**< an integer */
-    int b;
-    /**< an integer */
-}aType;
+/* None */
 
 
 /******************************************************************************
@@ -59,8 +61,42 @@ typedef struct
 /******************************************************************************
 * Function Prototypes
 *******************************************************************************/
-bool simUart_Init(void);
-UartDrvApi* simUart_GetApi(uint8_t hw_uart_index);
+
+
+/******************************************************************************
+* Function : simUart_Close
+*//**
+* @Description:
+*
+* @param    None
+* @return   None
+*
+*******************************************************************************/
+ezSTATUS simUart_Initialize(void);
+
+
+/******************************************************************************
+* Function : simUart_Close
+*//**
+* @Description:
+*
+* @param    None
+* @return   None
+*
+*******************************************************************************/
+void *simUart_GetStdInterface(void);
+
+
+/******************************************************************************
+* Function : simUart_Close
+*//**
+* @Description:
+*
+* @param    None
+* @return   None
+*
+*******************************************************************************/
+UartDrvApi *simUart_GetApi(void);
 
 #endif
 
