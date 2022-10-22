@@ -37,7 +37,7 @@
 #if (CONFIG_CLI == 1U)
 #include "stdint.h"
 #include "stdbool.h"
-#include "ezApp/ezmDriver/driver.h"
+//#include "ezApp/ezmDriver/driver.h"
 #include "ezHal/uart/uart.h"
 
 /******************************************************************************

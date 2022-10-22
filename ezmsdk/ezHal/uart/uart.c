@@ -22,7 +22,6 @@
 
 #if (CONFIG_HAL_UART == 1U)
 
-#include "ezApp/ezmDriver/driver.h"
 #include "ezApp/ezDriver/ezDriver.h"
 
 

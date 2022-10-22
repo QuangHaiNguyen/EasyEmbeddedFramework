@@ -237,5 +237,40 @@ static KERNEL_TASK_STATUS simUart_Close(void *task_data,
 }
 
 
+/******************************************************************************
+* Function : simUart_Write
+*//**
+* @Description:
+*
+* @param    None
+* @return   None
+*
+*******************************************************************************/
+static KERNEL_TASK_STATUS simUart_Write(void *task_data,
+    uint32_t task_data_size)
+{
+    KERNEL_TASK_STATUS status = TASK_STATUS_OK;
+
+    return status;
+}
+
+
+/******************************************************************************
+* Function : simUart_Read
+*//**
+* @Description:
+*
+* @param    None
+* @return   None
+*
+*******************************************************************************/
+static KERNEL_TASK_STATUS simUart_Read(void *task_data,
+    uint32_t task_data_size)
+{
+    KERNEL_TASK_STATUS status = TASK_STATUS_OK;
+
+    return status;
+}
+
 #endif /* CONFIG_SIM_UART */
 /* End of file*/
