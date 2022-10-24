@@ -3,77 +3,40 @@ add_library(sdk STATIC)
 
 # utilities module
 target_sources(sdk PRIVATE
-utilities/ezmAssert/ezmAssert.c
-utilities/hexdump/hexdump.c
-utilities/linked_list/linked_list.c
-utilities/logging/logging.c
-utilities/ring_buffer/ring_buffer.c
-utilities/smalloc/smalloc.c
-utilities/stcmem/stcmem.c
-utilities/system_error/system_error.c
-utilities/event_notifier/event_notifier.c)
+ezUtilities/ezmAssert/ezmAssert.c
+ezUtilities/hexdump/hexdump.c
+ezUtilities/linked_list/linked_list.c
+ezUtilities/logging/logging.c
+ezUtilities/ring_buffer/ring_buffer.c
+ezUtilities/smalloc/smalloc.c
+ezUtilities/stcmem/stcmem.c
+ezUtilities/system_error/system_error.c
+ezUtilities/event_notifier/event_notifier.c)
 
-# app module
-target_sources(sdk PRIVATE
-app/app.c
-app/app_wifi_management.c
-app/app_mqtt.c)
 
 # binCmdParser module
 target_sources(sdk PRIVATE
-binCmdParser/binCmdParser.c)
-
-# cli module
-target_sources(sdk PRIVATE
-cli/cli.c)
-
-# ezmDebug module
-target_sources(sdk PRIVATE
-ezmDebug/ezmDebug.c)
-
-# ezmDriver module
-target_sources(sdk PRIVATE
-ezmDriver/driver.c
-ezmDriver/dummy_driver.c)
-
-# ezmIpc module
-target_sources(sdk PRIVATE
-ezmIpc/ezmIpc.c)
-
-# ezmKernel module
-target_sources(sdk PRIVATE
-ezmKernel/ezmKernel.c)
-
-# scheduler module
-target_sources(sdk PRIVATE
-scheduler/scheduler.c)
-
-# statemachine module
-target_sources(sdk PRIVATE
-statemachine/statemachine.c)
-
-# data model module
-target_sources(sdk PRIVATE
-data_model/data_model.c)
+ezApp/ezSdk.c
+ezApp/cli/cli.c
+ezApp/ezDriver/ezDriver.c
+ezApp/ezDriver/dummy_driver.c
+ezApp/ezmIpc/ezmIpc.c
+ezApp/ezKernel/ezKernel.c
+ezApp/data_model/data_model.c)
 
 # hal module
 target_sources(sdk PRIVATE
-hal/uart/uart.c
-hal/wifi_controller/wifi_controller.c
-hal/network/mqtt/mqtt.c)
+ezHal/uart/uart.c
+ezHal/hal_i2c/hal_i2c.c
+ezHal/wifi_controller/wifi_controller.c
+ezHal/network/mqtt/mqtt.c)
 
 # platforms module
 # PC target
 target_sources(sdk PRIVATE
-platforms/simulator/flash/flash_simulator.c
-platforms/simulator/uart/uart_sim.c
-platforms/simulator/wifi_controller/wifi_controller_sim.c)
-
-#esp32 target
-target_sources(sdk PRIVATE
-platforms/esp32/uart/esp32_uart.c
-platforms/esp32/wifi_controller/esp32_wifi_controller.c
-platforms/esp32/network/esp_mqtt/esp32_mqtt.c)
+ezTargets/simulator/flash/flash_simulator.c
+ezTargets/simulator/uart/uart_sim.c
+ezTargets/simulator/wifi_controller/wifi_controller_sim.c)
 
 if(ESP_PLATFORM)
   # On ESP-IDF, bar.c needs to include esp_spi_flash.h from the spi_flash component

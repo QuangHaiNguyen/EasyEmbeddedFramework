@@ -429,7 +429,7 @@ static void ezSdk_PrintActiveModule(void)
     INFO("[ ] FLASH_SIM");
 #endif /* CONFIG_FLASH_SIM */
 
-#if (CONFIG_HAL_UART)
+#if (CONFIG_HAL_UART == 1U)
     INFO("[x] UART");
 #else
     INFO("[ ] UART");
@@ -447,7 +447,6 @@ static void ezSdk_PrintActiveModule(void)
     INFO("[ ] VIRTUAL_COM");
 #endif /* CONFIG_VIRTUAL_COM */
 
-    INFO("");
     INFO("******************************************************************************\n\n");
 }
 

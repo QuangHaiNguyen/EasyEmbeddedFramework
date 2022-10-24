@@ -82,7 +82,10 @@ struct ezDriverConfig
 struct ezDriverConfig ConfigurationTable[] = {
     /* name                 version     handle      LinkDriverFunction */
     { "dummy_driver",       {1,0,0},    NULL,       LinkDummyDriver },
+    
+#if (CONFIG_HAL_UART == 1U)
     { "cli_uart",           {1,0,0},    NULL,       ezHal_Uart_LinkCliDriv },
+#endif /*CONFIG_HAL_UART*/
 
 #if (CONFIG_HAL_I2C == 1U)
     { "i2c",                {1,0,0},    NULL,       ezI2c_LinkDriver},

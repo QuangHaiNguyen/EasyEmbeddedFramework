@@ -57,8 +57,14 @@ CONFIG_EZ_QUEUE=y
 #
 CONFIG_HAL_UART=y
 CONFIG_SIM_UART=y
-CONFIG_VIRTUAL_COM=y
+# CONFIG_VIRTUAL_COM is not set
 # end of HAL_UART configuration
+
+#
+# HAL_I2C configuration
+#
+CONFIG_HAL_I2C=y
+# end of HAL_I2C configuration
 
 #
 # FLASH_SIM configuration
@@ -77,9 +83,7 @@ CONFIG_VIRTUAL_COM=y
 #
 # CLI configuration
 #
-CONFIG_CLI=y
-CONFIG_NUM_OF_ARGUMENT=4
-CONFIG_NUM_OF_CMD=10
+# CONFIG_CLI is not set
 # end of CLI configuration
 
 # CONFIG_SCHEDULER is not set
