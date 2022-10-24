@@ -43,10 +43,16 @@
 
 #include "ezUtilities/logging/logging.h"
 #include "ezApp/ezKernel/ezKernel.h"
-#include "ezHal/uart/uart.h"
 #include "dummy_driver.h"
 #include <string.h>
 
+#if (CONFIG_HAL_UART == 1U)
+#include "ezHal/uart/uart.h"
+#endif /* CONFIG_HAL_UART == 1U */
+
+#if (CONFIG_HAL_I2C == 1U)
+#include "ezHal/hal_i2c/hal_i2c.h"
+#endif /* CONFIG_HAL_I2C == 1U */
 
 /******************************************************************************
 * Module Preprocessor Macros
@@ -77,6 +83,10 @@ struct ezDriverConfig ConfigurationTable[] = {
     /* name                 version     handle      LinkDriverFunction */
     { "dummy_driver",       {1,0,0},    NULL,       LinkDummyDriver },
     { "cli_uart",           {1,0,0},    NULL,       ezHal_Uart_LinkCliDriv },
+
+#if (CONFIG_HAL_I2C == 1U)
+    { "i2c",                {1,0,0},    NULL,       ezI2c_LinkDriver},
+#endif /* CONFIG_HAL_I2C == 1U */
 
 #if (CONFIG_VIRTUAL_COM == 1U)
     { "virtual_com",        {1,0,0},    NULL,       ezHal_VirtualCom_LinkDriv},
@@ -137,7 +147,7 @@ void ezDriver_Initialize(void)
             }
             else
             {
-                ERROR("Initialize driver fail");
+                ERROR("No initialize function");
             }
         }
         else
@@ -259,8 +269,7 @@ ezSTATUS ezDriver_Close(ezDriveHandle handle, struct ezStdInterfaceData *data)
 /******************************************************************************
 * Function : ezDriver_SearchDriverConfig
 *//**
-* @Description: Search for the driver corresponding driver in the configuration
-*               table
+* @Description: Search for the driver in the configuration table
 *
 * @param    handle: (IN)Driver handle
 * @return   Configuration or null

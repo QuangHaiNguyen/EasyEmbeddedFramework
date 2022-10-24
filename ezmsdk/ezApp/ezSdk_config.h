@@ -174,6 +174,10 @@ typedef enum
     UART_MOD_ID,
 #endif /* CONFIG_HAL_UART */
 
+#if (CONFIG_HAL_I2C == 1U)
+    I2C_HAL_MOD_ID,
+#endif /* CONFIG_HAL_I2C */
+
 #if (WIFI_CONTROLLER == 1U)
     WIFI_CONTROLLER_ID,
 #endif /* WIFI_CONTROLLER */

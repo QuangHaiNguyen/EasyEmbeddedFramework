@@ -149,6 +149,15 @@ endif
 
 endmenu
 
+menu "HAL_I2C configuration"
+config HAL_I2C
+    bool "Enable HAL_I2C support"
+    help
+        Hardware abstaction layer for I2C interface. It provides a common api
+        to interact with the hardware I2C bus
+
+endmenu
+
 menu "FLASH_SIM configuration"
 config FLASH_SIM
     bool "Enable FLASH_SIM support"

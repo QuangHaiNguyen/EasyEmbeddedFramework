@@ -104,6 +104,9 @@
 #include "ezHal/uart/uart.h"
 #endif /* CONFIG_HAL_UART */
 
+#if (CONFIG_HAL_I2C == 1U)
+#include "ezHal/hal_i2c/hal_i2c.h"
+#endif /* CONFIG_HAL_I2C */
 
 #if (CONFIG_DRIVERINF == 1U)
 #include "ezApp/ezDriver/ezDriver.h"
@@ -253,6 +256,11 @@ void ezSdk_Initialization(void)
     INFO("Initialize UART Driver");
     INFO("Module Id: 0x%02x", UART_MOD_ID);
 #endif /* CONFIG_HAL_UART */
+
+#if (CONFIG_HAL_I2C == 1U)
+    INFO("Initialize I2C HAL Driver");
+    INFO("Module Id: 0x%02x", I2C_HAL_MOD_ID);
+#endif /* CONFIG_HAL_I2C */
 
 #if (CONFIG_LOGGING == 1U)
     INFO("Initialize Logging module");
@@ -426,6 +434,12 @@ static void ezSdk_PrintActiveModule(void)
 #else
     INFO("[ ] UART");
 #endif /* CONFIG_HAL_UART */
+
+#if (CONFIG_HAL_I2C == 1U)
+    INFO("[x] HAL I2C");
+#else
+    INFO("[ ] HAL I2C");
+#endif /* CONFIG_HAL_I2C == 1U */
 
 #if (CONFIG_VIRTUAL_COM)
     INFO("[x] VIRTUAL_COM");

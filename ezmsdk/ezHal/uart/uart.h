@@ -118,6 +118,17 @@ typedef struct
 /******************************************************************************
 * Function Prototypes
 *******************************************************************************/
+
+/******************************************************************************
+* Function : ezHal_Uart_LinkCliDriv
+*//**
+* @Description: This function is called by the driver module to make this driver
+*               available for usage
+*
+* @param    None
+* @return   driver struture, see ezDriver
+*
+*******************************************************************************/
 void *ezHal_Uart_LinkCliDriv(void);
 
 #if (CONFIG_VIRTUAL_COM == 1U)

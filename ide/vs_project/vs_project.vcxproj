@@ -177,6 +177,7 @@
     <ClCompile Include="..\..\ezmsdk\ezApp\ezSdk.c" />
     <ClCompile Include="..\..\ezmsdk\ezApp\scheduler\scheduler.c" />
     <ClCompile Include="..\..\ezmsdk\ezApp\statemachine\statemachine.c" />
+    <ClCompile Include="..\..\ezmsdk\ezHal\hal_i2c\hal_i2c.c" />
     <ClCompile Include="..\..\ezmsdk\ezHal\network\mqtt\mqtt.c" />
     <ClCompile Include="..\..\ezmsdk\ezHal\uart\uart.c" />
     <ClCompile Include="..\..\ezmsdk\ezHal\wifi_controller\wifi_controller.c" />
@@ -217,6 +218,7 @@
     <ClInclude Include="..\..\ezmsdk\ezApp\scheduler\scheduler.h" />
     <ClInclude Include="..\..\ezmsdk\ezApp\statemachine\statemachine.h" />
     <ClInclude Include="..\..\ezmsdk\ezConfig\sdkconfig.h" />
+    <ClInclude Include="..\..\ezmsdk\ezHal\hal_i2c\hal_i2c.h" />
     <ClInclude Include="..\..\ezmsdk\ezHal\network\mqtt\mqtt.h" />
     <ClInclude Include="..\..\ezmsdk\ezHal\uart\uart.h" />
     <ClInclude Include="..\..\ezmsdk\ezHal\wifi_controller\wifi_controller.h" />

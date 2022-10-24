@@ -122,6 +122,9 @@
     <Filter Include="Source Files\ezUtilities\ez_queue\test">
       <UniqueIdentifier>{8397988e-fa5f-4962-8dde-87be7bc776d5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\ezHal\hal_i2c">
+      <UniqueIdentifier>{8a50c989-a7e1-4013-b2dd-ad648ef8a387}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ezmsdk\unity_test_platform\unity.c">
@@ -247,6 +250,9 @@
     <ClCompile Include="..\..\ezmsdk\ezUtilities\system_error\system_error.c">
       <Filter>Source Files\ezUtilities\system_error</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\ezHal\hal_i2c\hal_i2c.c">
+      <Filter>Source Files\ezHal\hal_i2c</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\ezmsdk\unity_test_platform\unity.h">
@@ -362,6 +368,9 @@
     </ClInclude>
     <ClInclude Include="..\..\ezmsdk\ezUtilities\system_error\system_error_table.h">
       <Filter>Source Files\ezUtilities\system_error</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ezmsdk\ezHal\hal_i2c\hal_i2c.h">
+      <Filter>Source Files\ezHal\hal_i2c</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
