@@ -34,6 +34,9 @@
 /******************************************************************************
 * Includes
 *******************************************************************************/
+#include "ezApp/ezSdk_config.h"
+
+#if(CONFIG_EZ_EVENT_NOTIFIER_TEST == 1U)
 
 #define DEBUG_LVL   LVL_TRACE   /**< logging level */
 #define MOD_NAME    "ezEventNotifier_runner"       /**< module name */
@@ -77,9 +80,12 @@
 *******************************************************************************/
 TEST_GROUP_RUNNER(ezEventNotifier)
 {
-    RUN_TEST_CASE(ezEventNotifier, TestTempPlate);
+    RUN_TEST_CASE(ezEventNotifier, SubscribeToSubject);
+    RUN_TEST_CASE(ezEventNotifier, UnsubscribeFromSubject);
+    RUN_TEST_CASE(ezEventNotifier, ResetSubject);
+    RUN_TEST_CASE(ezEventNotifier, NotifyEvent1);
 }
 
-
+#endif /* CONFIG_EZ_EVENT_NOTIFIER_TEST == 1U */
 /* End of file */
 

@@ -81,5 +81,9 @@ static void RunAllTests(void)
 #if (CONFIG_DRIVERINF_TEST == 1U)
     RUN_TEST_GROUP(ezDriver);
 #endif /* CONFIG_DRIVERINF_TEST == 1U */
+
+#if (CONFIG_EZ_EVENT_NOTIFIER_TEST == 1U)
+    RUN_TEST_GROUP(ezEventNotifier);
+#endif /* CONFIG_EZ_EVENT_NOTIFIER_TEST == 1U */
 }
 #endif

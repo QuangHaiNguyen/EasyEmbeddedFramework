@@ -36,6 +36,8 @@ config EMBEDDED_EMULATOR
 comment "EMBEDDED_EMULATOR support disable. Depend on LOGBIN_PARSER and EZ_QUEUE"
     depends on !BIN_PARSER || !EZ_QUEUE
 
+##############################################################################
+
 menu "Helper modules"
 
 config HELPER_LINKEDLIST
@@ -73,16 +75,6 @@ config RING_BUFFER
 
 config HELPER_ASSERT
     bool "Enable HELPER_ASSERT support"
-
-config EVENT_NOTIFIER
-    bool "Enable EVENT_NOTIFIER support"
-    depends on HELPER_LINKEDLIST
-    help
-        This module allows events can be notified between modules based on pub/sub
-        pattern
-
-comment "EVENT_NOTIFIER support disable. Depend on HELPER_LINKEDLIST"
-    depends on !HELPER_LINKEDLIST
 
 menu "STCMEM configuration"    
 config STCMEM
@@ -188,6 +180,34 @@ config WIFI_CONTROLLER
 config MQTT
     bool "Enable MQTT support"
 endmenu
+
+##############################################################################
+
+menu "Service Module"
+
+config EVENT_NOTIFIER
+    bool "Enable EVENT_NOTIFIER support"
+    depends on HELPER_LINKEDLIST
+    help
+        This module allows events can be notified between modules based on pub/sub
+        pattern
+
+comment "EVENT_NOTIFIER support disable. Depend on HELPER_LINKEDLIST"
+    depends on !HELPER_LINKEDLIST
+
+config EZ_EVENT_NOTIFIER_TEST
+    bool "Enable EZ_EVENT_NOTIFIER_TEST unit test support"
+    depends on UNITY_UNIT_TEST
+    help
+        Enable unit test for EVENT_NOTIFIER module. Note that only one test can
+        be activated at a time
+
+comment "EZ_EVENT_NOTIFIER_TEST support disable. Depend on UNITY_UNIT_TEST"
+    depends on !UNITY_UNIT_TEST
+
+endmenu
+
+##############################################################################
 
 menu "Application modules"
 
@@ -362,3 +382,5 @@ config STATEMACHINE
         This modules is the implementation for the state machine
 
 endmenu
+
+##############################################################################
