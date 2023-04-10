@@ -113,9 +113,6 @@
     <Filter Include="Source Files\ezUtilities\logging">
       <UniqueIdentifier>{e9175cfd-dcaf-4f6b-996d-57d836f97ca8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\ezUtilities\event_notifier">
-      <UniqueIdentifier>{b574796a-873a-4b17-8a84-aa9441d74fde}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\ezUtilities\ez_queue">
       <UniqueIdentifier>{03beacfa-b5da-4f78-b497-b27e20bf8cb5}</UniqueIdentifier>
     </Filter>
@@ -125,13 +122,19 @@
     <Filter Include="Source Files\ezHal\hal_i2c">
       <UniqueIdentifier>{8a50c989-a7e1-4013-b2dd-ad648ef8a387}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\ezService">
+      <UniqueIdentifier>{fb8159fa-65f3-4ed6-9890-775ac73057de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ezService\ezEventNotifier">
+      <UniqueIdentifier>{448ee358-2e1d-4591-8cab-bccbcf6946ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ezService\ezEventNotifier\test">
+      <UniqueIdentifier>{56b553cf-98be-4178-8bcc-b810d627ee51}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ezmsdk\unity_test_platform\unity.c">
       <Filter>Source Files\unity_test_platform</Filter>
-    </ClCompile>
-    <ClCompile Include="main.c">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\ezmsdk\unity_test_platform\unity_fixture.c">
       <Filter>Source Files\unity_test_platform</Filter>
@@ -214,9 +217,6 @@
     <ClCompile Include="..\..\ezmsdk\ezTargets\simulator\wifi_controller\wifi_controller_sim.c">
       <Filter>Source Files\ezTargets\simulator\wifi_controller</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\ezmsdk\ezUtilities\event_notifier\event_notifier.c">
-      <Filter>Source Files\ezUtilities\event_notifier</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\ezmsdk\ezUtilities\ez_queue\ez_queue.c">
       <Filter>Source Files\ezUtilities\ez_queue</Filter>
     </ClCompile>
@@ -252,6 +252,18 @@
     </ClCompile>
     <ClCompile Include="..\..\ezmsdk\ezHal\hal_i2c\hal_i2c.c">
       <Filter>Source Files\ezHal\hal_i2c</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\main.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\ezService\ezEventNotifier\ezEventNotifier.c">
+      <Filter>Source Files\ezService\ezEventNotifier</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\ezService\ezEventNotifier\test\Test_ezEventNotifier.c">
+      <Filter>Source Files\ezService\ezEventNotifier\test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ezmsdk\ezService\ezEventNotifier\test\Test_ezEventNotifier_Runner.c">
+      <Filter>Source Files\ezService\ezEventNotifier\test</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -336,9 +348,6 @@
     <ClInclude Include="..\..\ezmsdk\ezConfig\sdkconfig.h">
       <Filter>Source Files\ezConfig</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\ezmsdk\ezUtilities\event_notifier\event_notifier.h">
-      <Filter>Source Files\ezUtilities\event_notifier</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\ezmsdk\ezUtilities\ez_queue\ez_queue.h">
       <Filter>Source Files\ezUtilities\ez_queue</Filter>
     </ClInclude>
@@ -371,6 +380,9 @@
     </ClInclude>
     <ClInclude Include="..\..\ezmsdk\ezHal\hal_i2c\hal_i2c.h">
       <Filter>Source Files\ezHal\hal_i2c</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ezmsdk\ezService\ezEventNotifier\ezEventNotifier.h">
+      <Filter>Source Files\ezService\ezEventNotifier</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

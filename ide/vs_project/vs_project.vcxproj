@@ -93,7 +93,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>G:\SDK\ezmSDK\ezmsdk;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\..\..\ezmSDK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ScanSourceForModuleDependencies>true</ScanSourceForModuleDependencies>
       <SuppressStartupBanner>false</SuppressStartupBanner>
       <DiagnosticsFormat>Caret</DiagnosticsFormat>
@@ -181,11 +181,13 @@
     <ClCompile Include="..\..\ezmsdk\ezHal\network\mqtt\mqtt.c" />
     <ClCompile Include="..\..\ezmsdk\ezHal\uart\uart.c" />
     <ClCompile Include="..\..\ezmsdk\ezHal\wifi_controller\wifi_controller.c" />
+    <ClCompile Include="..\..\ezmsdk\ezService\ezEventNotifier\ezEventNotifier.c" />
+    <ClCompile Include="..\..\ezmsdk\ezService\ezEventNotifier\test\Test_ezEventNotifier.c" />
+    <ClCompile Include="..\..\ezmsdk\ezService\ezEventNotifier\test\Test_ezEventNotifier_Runner.c" />
     <ClCompile Include="..\..\ezmsdk\ezTargets\simulator\flash\flash_simulator.c" />
     <ClCompile Include="..\..\ezmsdk\ezTargets\simulator\uart\uart_sim.c" />
     <ClCompile Include="..\..\ezmsdk\ezTargets\simulator\virtual_com\virtual_com_driver.c" />
     <ClCompile Include="..\..\ezmsdk\ezTargets\simulator\wifi_controller\wifi_controller_sim.c" />
-    <ClCompile Include="..\..\ezmsdk\ezUtilities\event_notifier\event_notifier.c" />
     <ClCompile Include="..\..\ezmsdk\ezUtilities\ezmAssert\ezmAssert.c" />
     <ClCompile Include="..\..\ezmsdk\ezUtilities\ez_queue\ez_queue.c" />
     <ClCompile Include="..\..\ezmsdk\ezUtilities\ez_queue\test\Test_ezQueue.c" />
@@ -197,10 +199,10 @@
     <ClCompile Include="..\..\ezmsdk\ezUtilities\smalloc\smalloc.c" />
     <ClCompile Include="..\..\ezmsdk\ezUtilities\stcmem\stcmem.c" />
     <ClCompile Include="..\..\ezmsdk\ezUtilities\system_error\system_error.c" />
+    <ClCompile Include="..\..\ezmsdk\main.c" />
     <ClCompile Include="..\..\ezmsdk\unity_test_platform\unity.c" />
     <ClCompile Include="..\..\ezmsdk\unity_test_platform\unity_fixture.c" />
     <ClCompile Include="..\..\ezmsdk\unity_test_platform\unity_memory.c" />
-    <ClCompile Include="main.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\ezmsdk\ezApp\binCmdParser\binCmdParser.h" />
@@ -222,11 +224,11 @@
     <ClInclude Include="..\..\ezmsdk\ezHal\network\mqtt\mqtt.h" />
     <ClInclude Include="..\..\ezmsdk\ezHal\uart\uart.h" />
     <ClInclude Include="..\..\ezmsdk\ezHal\wifi_controller\wifi_controller.h" />
+    <ClInclude Include="..\..\ezmsdk\ezService\ezEventNotifier\ezEventNotifier.h" />
     <ClInclude Include="..\..\ezmsdk\ezTargets\simulator\flash\flash_simulator.h" />
     <ClInclude Include="..\..\ezmsdk\ezTargets\simulator\uart\uart_sim.h" />
     <ClInclude Include="..\..\ezmsdk\ezTargets\simulator\virtual_com\virtual_com_driver.h" />
     <ClInclude Include="..\..\ezmsdk\ezTargets\simulator\wifi_controller\wifi_controller_sim.h" />
-    <ClInclude Include="..\..\ezmsdk\ezUtilities\event_notifier\event_notifier.h" />
     <ClInclude Include="..\..\ezmsdk\ezUtilities\ezmAssert\ezmAssert.h" />
     <ClInclude Include="..\..\ezmsdk\ezUtilities\ez_queue\ez_queue.h" />
     <ClInclude Include="..\..\ezmsdk\ezUtilities\hexdump\hexdump.h" />

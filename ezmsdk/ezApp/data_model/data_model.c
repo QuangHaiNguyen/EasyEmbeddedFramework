@@ -44,7 +44,7 @@
 #include <string.h>
 
 #include "ezUtilities/logging/logging.h"
-#include "ezUtilities/event_notifier/event_notifier.h"
+#include "ezService/ezEventNotifier/ezEventNotifier.h"
 
 /*the rest of include go here*/
 
@@ -65,7 +65,7 @@ struct DataModelElement
     bool            is_locked;
     uint32_t        data_size;
     void            *data;
-    event_subject   subject;
+    ezSubject       subject;
 };
 
 /******************************************************************************
@@ -115,7 +115,7 @@ bool DataModel_Initialization(void)
         data_model[i].data_size = 0;
         data_model[i].is_locked = false;
 
-        if (evntNoti_CreateSubject(&data_model[i].subject, 10) == false)
+        if (ezEventNotifier_CreateSubject(&data_model[i].subject) == ezFAIL)
         {
             ERROR("init failed");
             is_success = false;
@@ -151,7 +151,7 @@ void DataModel_ReleaseDataPoint(DataPoint data_point)
         data_model[data_point].data_size = 0;
         data_model[data_point].is_avail = true;
         data_model[data_point].is_locked = false;
-        evntNoti_ResetSubject(&data_model[data_point].subject);
+        ezEventNotifier_ResetSubject(&data_model[data_point].subject);
 
 #if (DEBUG_LVL > LVL_INFO)
         data_point_count--;
@@ -277,10 +277,10 @@ bool DataModel_WriteDataPoint(DataPoint data_point,
                 TRACE("data @ [index = %lu] has changed", data_point);
 
                 memcpy(data_model[data_point].data, data, size);
-                evntNoti_NotifyEvent(&data_model[data_point].subject,
-                                     DATA_MODIFY,
-                                     data_model[data_point].data,
-                                     &data_model[data_point].data_size);
+                ezEventNotifier_NotifyEvent(&data_model[data_point].subject,
+                                            DATA_MODIFY,
+                                            data_model[data_point].data,
+                                            &data_model[data_point].data_size);
             }
             else
             {
@@ -368,7 +368,7 @@ bool DataModel_ReadDataPoint(DataPoint data_point,
 *
 *******************************************************************************/
 bool DataModel_SubscribeDataPointEvent(DataPoint data_point,
-                                       event_observer * observer)
+                                       ezObserver * observer)
 {
     TRACE("DataModel_SubscribeDataPointEvent()");
 
@@ -378,7 +378,7 @@ bool DataModel_SubscribeDataPointEvent(DataPoint data_point,
         data_model[data_point].is_avail == false &&
         observer != NULL)
     {
-        is_success = evntNoti_SubscribeEvent(&data_model[data_point].subject, observer);
+        is_success = (ezEventNotifier_SubscribeToSubject(&data_model[data_point].subject, observer) == ezSUCCESS);
     }
     return is_success;
 }
@@ -398,7 +398,7 @@ bool DataModel_SubscribeDataPointEvent(DataPoint data_point,
 *
 *******************************************************************************/
 bool DataModel_UnsubscribeDataPointEvent(DataPoint data_point,
-                                         event_observer* observer)
+                                         ezObserver * observer)
 {
     TRACE("DataModel_UnsubscribeDataPointEvent()");
 
@@ -409,7 +409,7 @@ bool DataModel_UnsubscribeDataPointEvent(DataPoint data_point,
         observer != NULL)
     {
 
-        is_success = evntNoti_UnsubscribeEvent(&data_model[data_point].subject, observer);
+        is_success = (ezEventNotifier_UnsubscribeFromSubject(&data_model[data_point].subject, observer) == ezSUCCESS);
     }
     return is_success;
 }

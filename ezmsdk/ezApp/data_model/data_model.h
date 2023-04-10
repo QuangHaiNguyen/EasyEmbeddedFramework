@@ -44,7 +44,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "ezUtilities/event_notifier/event_notifier.h"
+#include "ezService/ezEventNotifier/ezEventNotifier.h"
 #include "ezUtilities/linked_list/linked_list.h"
 
 /******************************************************************************
@@ -86,10 +86,10 @@ bool DataModel_ReadDataPoint(DataPoint data_point,
                              uint32_t size);
 
 bool DataModel_SubscribeDataPointEvent(DataPoint data_point,
-                                       event_observer * observer);
+                                       ezObserver *observer);
 
 bool DataModel_UnsubscribeDataPointEvent(DataPoint data_point,
-                                         event_observer* observer);
+                                         ezObserver *observer);
 
 #endif /* CONFIG_DATA_MODEL == 1U */
 
