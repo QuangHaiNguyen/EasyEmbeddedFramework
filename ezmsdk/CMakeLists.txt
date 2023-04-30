@@ -10,9 +10,11 @@ ezUtilities/logging/logging.c
 ezUtilities/ring_buffer/ring_buffer.c
 ezUtilities/smalloc/smalloc.c
 ezUtilities/stcmem/stcmem.c
-ezUtilities/system_error/system_error.c
-ezUtilities/event_notifier/event_notifier.c)
+ezUtilities/system_error/system_error.c)
 
+# Service module
+target_sources(sdk PRIVATE
+ezService/ezEventNotifier/ezEventNotifier.c)
 
 # binCmdParser module
 target_sources(sdk PRIVATE

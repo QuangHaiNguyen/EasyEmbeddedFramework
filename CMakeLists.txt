@@ -6,20 +6,9 @@ project(EasyEmbeddedSdk
     DESCRIPTION "Easy Embedded Software Development Kit"
 )
 
-include(FetchContent)    
-
-message(STATUS "Download Unity test framework")
-FetchContent_Declare(
-    unity
-    GIT_REPOSITORY    https://github.com/ThrowTheSwitch/Unity.git
-    GIT_TAG           v2.5.2
-)
-
-SET(UNITY_EXTENSION_FIXTURE ON CACHE BOOL "Build Unity with extension features")
-
-FetchContent_MakeAvailable(unity)
 
 add_subdirectory(ezmsdk)
+add_subdirectory(extern)
 add_subdirectory(tests)
 
 add_executable(main ezmsdk/main.c)
