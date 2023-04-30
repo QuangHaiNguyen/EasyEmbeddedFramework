@@ -39,12 +39,12 @@
 *******************************************************************************/
 #include "ezApp/ezSdk_config.h"
 
-#if (CONFIG_DATA_MODEL == 1U)
+#if (DATA_MODEL == 1U)
 
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "ezService/ezEventNotifier/ezEventNotifier.h"
+#include "ez_event_notifier.h"
 #include "ezUtilities/linked_list/linked_list.h"
 
 /******************************************************************************
@@ -86,10 +86,10 @@ bool DataModel_ReadDataPoint(DataPoint data_point,
                              uint32_t size);
 
 bool DataModel_SubscribeDataPointEvent(DataPoint data_point,
-                                       ezObserver *observer);
+                                        ezObserver *observer);
 
 bool DataModel_UnsubscribeDataPointEvent(DataPoint data_point,
-                                         ezObserver *observer);
+     ezObserver *observer);
 
 #endif /* CONFIG_DATA_MODEL == 1U */
 

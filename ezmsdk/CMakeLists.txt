@@ -1,20 +1,11 @@
 #build the complete sdk as static library
 add_library(sdk STATIC)
 
-# utilities module
-target_sources(sdk PRIVATE
-ezUtilities/ezmAssert/ezmAssert.c
-ezUtilities/hexdump/hexdump.c
-ezUtilities/linked_list/linked_list.c
-ezUtilities/logging/logging.c
-ezUtilities/ring_buffer/ring_buffer.c
-ezUtilities/smalloc/smalloc.c
-ezUtilities/stcmem/stcmem.c
-ezUtilities/system_error/system_error.c)
+include(features.cmake)
 
-# Service module
-target_sources(sdk PRIVATE
-ezService/ezEventNotifier/ezEventNotifier.c)
+add_subdirectory(ezUtilities)
+add_subdirectory(service)
+add_subdirectory(ezApp)
 
 # binCmdParser module
 target_sources(sdk PRIVATE
@@ -23,8 +14,7 @@ ezApp/cli/cli.c
 ezApp/ezDriver/ezDriver.c
 ezApp/ezDriver/dummy_driver.c
 ezApp/ezmIpc/ezmIpc.c
-ezApp/ezKernel/ezKernel.c
-ezApp/data_model/data_model.c)
+ezApp/ezKernel/ezKernel.c)
 
 # hal module
 target_sources(sdk PRIVATE
@@ -44,6 +34,11 @@ if(ESP_PLATFORM)
   # On ESP-IDF, bar.c needs to include esp_spi_flash.h from the spi_flash component
   target_link_libraries(sdk PRIVATE idf::mqtt)
 endif()
+
+target_link_libraries(sdk PRIVATE
+ez_utilities
+ez_event_notifier
+ez_app)
 
 #include directory
 target_include_directories(sdk PUBLIC .)

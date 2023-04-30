@@ -34,13 +34,11 @@
 #ifndef _EVENT_NOTIFIER_H
 #define _EVENT_NOTIFIER_H
 
+#if(EVENT_NOTIFIER == 1U)
+
 /*******************************************************************************
 * Includes
 *******************************************************************************/
-#include "ezApp/ezSdk_config.h"
-
-#if(CONFIG_EVENT_NOTIFIER == 1U)
-
 #include <stdint.h>
 #include <stdbool.h>
 #include "ezUtilities/linked_list/linked_list.h"
@@ -67,20 +65,11 @@ typedef int (*EVENT_CALLBACK)(uint32_t event_code, void *param1, void *param2);
  */
 typedef struct Node ezSubject;
 
+
 /** @brief define event_observer type.
  *
  */
 typedef struct ezObserver ezObserver;
-
-
-/** @brief Observer object, used to subscribed to
- *
- */
-struct ezObserver
-{
-    struct Node node;           /**< link list node */
-    EVENT_CALLBACK callback;    /**< event call back function */
-};
 
 
 /******************************************************************************
@@ -177,7 +166,7 @@ ezSTATUS ezEventNotifier_CreateObserver(ezObserver * observer,
 *
 *******************************************************************************/
 ezSTATUS ezEventNotifier_SubscribeToSubject(ezSubject *subject,
-                                            ezObserver *observer);
+    ezObserver *observer);
 
 
 /******************************************************************************
@@ -199,7 +188,7 @@ ezSTATUS ezEventNotifier_SubscribeToSubject(ezSubject *subject,
 *
 *******************************************************************************/
 ezSTATUS ezEventNotifier_UnsubscribeFromSubject(ezSubject *subject,
-                                                ezObserver *observer);
+    ezObserver *observer);
 
 
 /******************************************************************************

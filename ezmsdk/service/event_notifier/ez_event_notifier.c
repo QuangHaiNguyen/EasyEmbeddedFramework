@@ -34,13 +34,13 @@
 /******************************************************************************
 * Includes
 *******************************************************************************/
-#include "ezService/ezEventNotifier/ezEventNotifier.h"
+#include "ez_event_notifier.h"
 
 
 #define DEBUG_LVL   LVL_NO_LOG      /**< logging level */
 #define MOD_NAME    "EVENT_NOTIFY"  /**< module name */
 
-#if(CONFIG_EVENT_NOTIFIER == 1U)
+#if(EVENT_NOTIFIER == 1U)
 
 #include "ezUtilities/logging/logging.h"
 #include "ezUtilities/ezmAssert/ezmAssert.h"
@@ -53,7 +53,14 @@
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
-/* None */
+/** @brief Observer object, used to subscribed to
+ *
+ */
+struct ezObserver
+{
+    struct Node node;           /**< link list node */
+    EVENT_CALLBACK callback;    /**< event call back function */
+};
 
 /******************************************************************************
 * Module Variable Definitions

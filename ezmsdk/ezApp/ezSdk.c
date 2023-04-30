@@ -116,7 +116,7 @@
 #include "platforms/simulator/flash/flash_simulator.h"
 #endif /* CONFIG_FLASH_SIM */
 
-#if (CONFIG_DATA_MODEL == 1U)
+#if (DATA_MODEL == 1U)
 #include "ezApp/data_model/data_model.h"
 #endif /* CONFIG_DATA_MODEL == 1U */
 
@@ -218,6 +218,7 @@ void ezSdk_Initialization(void)
 
 #if (CONFIG_STCMEM==1U)
     ezmStcMem_Initialization();
+    ezmStcMem_Initialization();
     INFO("Initialize STCMEM module");
     INFO("Module Id: 0x%02x", STCMEM_MOD_ID);
 #endif /* CONFIG_STCMEM */
@@ -235,7 +236,7 @@ void ezSdk_Initialization(void)
     INFO("Module Id: 0x%02x", SYSTEM_ERROR_MOD_ID);
 #endif /* CONFIG_SYSTEM_ERROR*/
 
-#if (CONFIG_DATA_MODEL == 1U)
+#if (DATA_MODEL == 1U)
     DataModel_Initialization();
     INFO("Initialize DATA_MODEL module");
 #endif /* CONFIG_DATA_MODEL == 1U */
@@ -417,7 +418,7 @@ static void ezSdk_PrintActiveModule(void)
     INFO("[ ] SYSTEM_ERROR");
 #endif /* CONFIG_SYSTEM_ERROR */
 
-#if (CONFIG_DATA_MODEL == 1U)
+#if (DATA_MODEL == 1U)
     INFO("[x] DATA_MODEL");
 #else
     INFO("[ ] DATA_MODEL");

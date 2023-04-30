@@ -34,17 +34,16 @@
 /******************************************************************************
 * Includes
 *******************************************************************************/
-#include "data_model.h"
 
-#if (CONFIG_DATA_MODEL == 1U)
+
+#if (DATA_MODEL == 1U)
 
 #define DEBUG_LVL   LVL_DEBUG       /**< logging level */
 #define MOD_NAME    "DATA_MODEL"    /**< module name */
 
 #include <string.h>
-
 #include "ezUtilities/logging/logging.h"
-#include "ezService/ezEventNotifier/ezEventNotifier.h"
+#include "data_model.h"
 
 /*the rest of include go here*/
 
@@ -368,7 +367,7 @@ bool DataModel_ReadDataPoint(DataPoint data_point,
 *
 *******************************************************************************/
 bool DataModel_SubscribeDataPointEvent(DataPoint data_point,
-                                       ezObserver * observer)
+    ezObserver * observer)
 {
     TRACE("DataModel_SubscribeDataPointEvent()");
 
@@ -398,7 +397,7 @@ bool DataModel_SubscribeDataPointEvent(DataPoint data_point,
 *
 *******************************************************************************/
 bool DataModel_UnsubscribeDataPointEvent(DataPoint data_point,
-                                         ezObserver * observer)
+    ezObserver * observer)
 {
     TRACE("DataModel_UnsubscribeDataPointEvent()");
 
