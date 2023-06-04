@@ -46,7 +46,7 @@
 #include "unity_test_platform/unity_fixture.h"
 #include <stdint.h>
 #include <stdbool.h>
-#include "ezService/ezEventNotifier/ezEventNotifier.h"
+#include "service/ezEventNotifier/ezEventNotifier.h"
 
 
 TEST_GROUP(ezEventNotifier);

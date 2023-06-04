@@ -40,13 +40,12 @@ int main(int argc, const char *argv[])
 #endif
         if (ezmApp_ReturnTimestampMillisvoid() - execute_time_stamp > 1)
         {
-            ezKernel_UpdateTickMillis();
-            ezKernel_Run();
+            //ezKernel_UpdateTickMillis();
+            //ezKernel_Run();
             execute_time_stamp = ezmApp_ReturnTimestampMillisvoid();
         }
 } while (execute_time_stamp);
 #endif /* CONFIG_WIN */
-
 }
 
 

@@ -10,7 +10,7 @@ add_subdirectory(ezmsdk)
 add_subdirectory(extern)
 #add_subdirectory(tests)
 
-add_executable(main ezmsdk/main.c)
+add_executable(main targets/windows/main.c)
 target_include_directories(main PRIVATE ezmsdk)
 target_link_libraries(main PRIVATE unity sdk)
 

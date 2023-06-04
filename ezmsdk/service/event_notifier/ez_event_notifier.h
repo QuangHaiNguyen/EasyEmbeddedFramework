@@ -34,14 +34,14 @@
 #ifndef _EVENT_NOTIFIER_H
 #define _EVENT_NOTIFIER_H
 
-#if(EVENT_NOTIFIER == 1U)
+#if(EZ_EVENT_NOTIFIER == 1U)
 
 /*******************************************************************************
 * Includes
 *******************************************************************************/
 #include <stdint.h>
 #include <stdbool.h>
-#include "ezUtilities/linked_list/linked_list.h"
+#include "utilities/linked_list/ez_linked_list.h"
 
 /******************************************************************************
 * Module Preprocessor Macros
@@ -238,7 +238,7 @@ void ezEventNotifier_NotifyEvent(ezSubject *subject,
                                  void* param1,
                                  void* param2);
 
-#endif /* (EVENT_NOTIFIER == 1U) */
+#endif /* (EZ_EVENT_NOTIFIER == 1U) */
 
 #endif /* _EVENT_NOTIFIER_H */
 

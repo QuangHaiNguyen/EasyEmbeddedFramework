@@ -42,7 +42,7 @@
 #define MOD_NAME    "DATA_MODEL"    /**< module name */
 
 #include <string.h>
-#include "ezUtilities/logging/logging.h"
+#include "utilities/logging/ez_logging.h"
 #include "data_model.h"
 
 /*the rest of include go here*/
@@ -105,7 +105,7 @@ bool DataModel_Initialization(void)
 {
     bool is_success = true;
 
-    TRACE("DataModel_Initialization");
+    EZTRACE("DataModel_Initialization");
 
     for (uint32_t i = 0; i < NUM_OF_DATA_ELEMENT; i++)
     {
@@ -116,7 +116,7 @@ bool DataModel_Initialization(void)
 
         if (ezEventNotifier_CreateSubject(&data_model[i].subject) == ezFAIL)
         {
-            ERROR("init failed");
+            EZERROR("init failed");
             is_success = false;
             break;
         }
@@ -154,7 +154,7 @@ void DataModel_ReleaseDataPoint(DataPoint data_point)
 
 #if (DEBUG_LVL > LVL_INFO)
         data_point_count--;
-        DEBUG("num of data point [size = %lu]", data_point_count);
+        EZDEBUG("num of data point [size = %lu]", data_point_count);
 #endif
     }
 }
@@ -185,7 +185,7 @@ void DataModel_ReleaseDataPoint(DataPoint data_point)
 DataPoint DataModel_CreateDataPoint(void * data,
                                     uint32_t size)
 {
-    TRACE("DataModel_CreateDataElement()");
+    EZTRACE("DataModel_CreateDataElement()");
 
     bool is_success = true;
     DataPoint data_point = DATA_POINT_INVALID;
@@ -199,11 +199,11 @@ DataPoint DataModel_CreateDataPoint(void * data,
             data_model[i].data = data;
             data_model[i].data_size = size;
 
-            DEBUG("found free data element [index = %lu]", i);
+            EZDEBUG("found free data element [index = %lu]", i);
 
 #if (DEBUG_LVL > LVL_INFO)
             data_point_count++;
-            DEBUG("num of data point [size = %lu]", data_point_count);
+            EZDEBUG("num of data point [size = %lu]", data_point_count);
 #endif
             break;
         }
@@ -211,7 +211,7 @@ DataPoint DataModel_CreateDataPoint(void * data,
 
     if (!is_success)
     {
-        ERROR("Do not have enough data point");
+        EZERROR("Do not have enough data point");
     }
 
     return data_point;
@@ -250,7 +250,7 @@ bool DataModel_WriteDataPoint(DataPoint data_point,
                               void* data,
                               uint32_t size)
 {
-    TRACE("DataModel_WriteDataPoint()");
+    EZTRACE("DataModel_WriteDataPoint()");
 
     bool is_success = false;
 
@@ -258,12 +258,12 @@ bool DataModel_WriteDataPoint(DataPoint data_point,
         data_model[data_point].is_avail == false &&
         data != NULL)
     {
-        TRACE("params sanity check OK");
+        EZTRACE("params sanity check OK");
 
         if (size == data_model[data_point].data_size &&
             data_model[data_point].is_locked == false)
         {
-            TRACE("internal data check OK");
+            EZTRACE("internal data check OK");
 
 #if (DEBUG_LVL > LVL_DEBUG)
             HEXDUMP(data, size);
@@ -273,7 +273,7 @@ bool DataModel_WriteDataPoint(DataPoint data_point,
 
             if (memcmp(data_model[data_point].data, data, size) != 0)
             {
-                TRACE("data @ [index = %lu] has changed", data_point);
+                EZTRACE("data @ [index = %lu] has changed", data_point);
 
                 memcpy(data_model[data_point].data, data, size);
                 ezEventNotifier_NotifyEvent(&data_model[data_point].subject,
@@ -283,7 +283,7 @@ bool DataModel_WriteDataPoint(DataPoint data_point,
             }
             else
             {
-                TRACE("data unchanged");
+                EZTRACE("data unchanged");
             }
 
             data_model[data_point].is_locked = false;
@@ -327,7 +327,7 @@ bool DataModel_ReadDataPoint(DataPoint data_point,
                              void* data,
                              uint32_t size)
 {
-    TRACE("DataModel_ReadDataElement()");
+    EZTRACE("DataModel_ReadDataElement()");
 
     bool is_success = false;
 
@@ -338,7 +338,7 @@ bool DataModel_ReadDataPoint(DataPoint data_point,
         if (size == data_model[data_point].data_size &&
             data_model[data_point].is_locked == false)
         {
-            TRACE("Read data @ [index = %lu]", data_point);
+            EZTRACE("Read data @ [index = %lu]", data_point);
 
             data_model[data_point].is_locked = true;
 
@@ -369,7 +369,7 @@ bool DataModel_ReadDataPoint(DataPoint data_point,
 bool DataModel_SubscribeDataPointEvent(DataPoint data_point,
     ezObserver * observer)
 {
-    TRACE("DataModel_SubscribeDataPointEvent()");
+    EZTRACE("DataModel_SubscribeDataPointEvent()");
 
     bool is_success = false;
 
@@ -399,7 +399,7 @@ bool DataModel_SubscribeDataPointEvent(DataPoint data_point,
 bool DataModel_UnsubscribeDataPointEvent(DataPoint data_point,
     ezObserver * observer)
 {
-    TRACE("DataModel_UnsubscribeDataPointEvent()");
+    EZTRACE("DataModel_UnsubscribeDataPointEvent()");
 
     bool is_success = false;
 

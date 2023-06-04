@@ -1,6 +1,6 @@
 add_library(ez_data_model STATIC)
 
-message(STATUS "Buidling Data Model app")
+message(STATUS "    Adding Data Model app")
 
 target_compile_definitions(ez_data_model
 PUBLIC 
