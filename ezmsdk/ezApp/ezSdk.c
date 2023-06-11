@@ -38,7 +38,7 @@
 
 #define DEBUG_LVL   LVL_TRACE   /**< logging level */
 #define MOD_NAME    "ezSdk"       /**< module name */
-#include "logging/ez_logging.h"
+#include "utilities/logging/ez_logging.h"
 
 //#include "ezApp/ezSdk_config.h"
 #include "unity_test_platform/unity.h"
@@ -137,7 +137,7 @@
 #endif /* CONFIG_DATA_MODEL == 1U */
 
 #if (EZ_GENERIC_DRIVER == 1U)
-#include "ezApp/generic_driver/ez_generic_driver.h"
+#include "service/driver/ez_driver.h"
 #endif /* EZ_GENERIC_DRIVER == 1U */
 
 #if (CONFIG_MQTT == 1U)

@@ -20,7 +20,7 @@
 #define MOD_NAME        "DUMMY_DRIVER"
 
 #if (EZ_GENERIC_DRIVER == 1U)
-#include "ezApp/generic_driver/ez_generic_driver.h"
+#include "service/driver/ez_driver.h"
 #include "string.h"
 #include "utilities/hexdump/ez_hexdump.h"
 #include "utilities/logging/ez_logging.h"

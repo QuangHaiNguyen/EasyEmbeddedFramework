@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.11 FATAL_ERROR)
 
 include(FetchContent)    
 
-
 FetchContent_Declare(
     unity
     GIT_REPOSITORY    https://github.com/ThrowTheSwitch/Unity.git

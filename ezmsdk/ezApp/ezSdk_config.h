@@ -190,7 +190,7 @@ typedef enum
     EMBEDDED_EMULATOR_ID,
 #endif /* CONFIG_EMBEDDED_EMULATOR */
     /* Application module */
-
+    NUM_OF_MODULE,
 }MODULE_ID;
 
 /******************************************************************************

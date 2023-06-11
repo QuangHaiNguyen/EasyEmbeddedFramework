@@ -36,14 +36,14 @@
 *******************************************************************************/
 #include "ezApp/ezSdk_config.h"
 
-#if (CONFIG_EZ_QUEUE_TEST == 1U)
+#if (EZ_QUEUE == 1U)
 
 #define DEBUG_LVL   LVL_TRACE   /**< logging level */
 #define MOD_NAME    "ezQueue"       /**< module name */
-#include "ezUtilities/logging/logging.h"
-#include "unity_test_platform/unity.h"
-#include "unity_test_platform/unity_fixture.h"
-#include "utilities/ez_queue/ez_queue.h"
+#include "utilities/logging/ez_logging.h"
+#include "unity.h"
+#include "unity_fixture.h"
+#include "utilities/queue/ez_queue.h"
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -420,7 +420,7 @@ TEST(ezQueue, ezQueue_ReserveElement)
     TEST_ASSERT_EQUAL(0, ezQueue_GetNumOfElement(&queue));
 }
 
-#endif /* CONFIG_EZ_QUEUE_TEST == 1U */
+#endif /* EZ_QUEUE == 1U */
 
 /* End of file */
 

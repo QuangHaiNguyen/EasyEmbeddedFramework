@@ -34,20 +34,14 @@
 /******************************************************************************
 * Includes
 *******************************************************************************/
-#include "ezConfig/sdkconfig.h"
-
-#if(CONFIG_EZ_EVENT_NOTIFIER_TEST == 1U)
-
-#define DEBUG_LVL   LVL_TRACE   /**< logging level */
-#define MOD_NAME    "ezEventNotifier"       /**< module name */
-#include "ezUtilities/logging/logging.h"
-
-#include "unity_test_platform/unity.h"
-#include "unity_test_platform/unity_fixture.h"
+#include "unity.h"
+#include "unity_fixture.h"
 #include <stdint.h>
 #include <stdbool.h>
-#include "service/ezEventNotifier/ezEventNotifier.h"
+#include "service/event_notifier/ez_event_notifier.h"
+#include "ezApp/ezSdk_config.h"
 
+#if(EZ_EVENT_NOTIFIER == 1)
 
 TEST_GROUP(ezEventNotifier);
 
@@ -110,21 +104,12 @@ TEST_SETUP(ezEventNotifier)
     success &= (ezSUCCESS == ezEventNotifier_CreateObserver(&observer1, Observer1_Callback));
     success &= (ezSUCCESS == ezEventNotifier_CreateObserver(&observer2, Observer2_Callback));
 
-    if (!success)
-    {
-        ERROR("Cannot setup test properly");
-    }
-    else
+    if (success)
     {
         observer1_notiffy_code = 0;
         observer2_notiffy_code = 0;
         success &= (ezSUCCESS == ezEventNotifier_SubscribeToSubject(&test_subject, &observer1));
         success &= (ezSUCCESS == ezEventNotifier_SubscribeToSubject(&test_subject, &observer2));
-
-        if (!success)
-        {
-            ERROR("Connect subscribe to a subject");
-        }
     }
 }
 
@@ -178,7 +163,6 @@ TEST(ezEventNotifier, NotifyEvent1)
     TEST_ASSERT_EQUAL(NOTIFY_CODE_1, observer2_notiffy_code);
 }
 
-#endif /* CONFIG_EZ_EVENT_NOTIFIER_TEST == 1U */
-
+#endif /* EZ_EVENT_NOTIFIER */
 /* End of file */
 

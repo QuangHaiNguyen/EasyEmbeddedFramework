@@ -6,6 +6,11 @@ project(EasyEmbeddedSdk
     DESCRIPTION "Easy Embedded Software Development Kit"
 )
 
+# Only use testing if we're not somebody's subproject!
+if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+    include(CTest)
+endif()
+
 add_subdirectory(ezmsdk)
 add_subdirectory(extern)
 #add_subdirectory(tests)
@@ -15,3 +20,7 @@ target_include_directories(main PRIVATE ezmsdk)
 target_link_libraries(main PRIVATE unity sdk)
 
 #target_link_libraries(main PRIVATE unity sdk unit_test)
+
+if(BUILD_TESTING)
+    add_subdirectory(tests)
+endif()

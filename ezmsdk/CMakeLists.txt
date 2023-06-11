@@ -38,11 +38,12 @@ ezApp/ezSdk.c)
 #  target_link_libraries(sdk PRIVATE idf::mqtt)
 #endif()
 
-target_link_libraries(sdk PRIVATE
+target_link_libraries(sdk PUBLIC
 ez_utilities
 ez_event_notifier
 ez_app
-ez_kernel)
+ez_kernel
+ez_generic_driver)
 
 #include directory
 target_include_directories(sdk PUBLIC .)

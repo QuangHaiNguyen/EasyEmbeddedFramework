@@ -60,6 +60,15 @@
  */
 typedef int (*EVENT_CALLBACK)(uint32_t event_code, void *param1, void *param2);
 
+/** @brief Observer object, used to subscribed to
+ *
+ */
+struct ezObserver
+{
+    struct Node node;           /**< link list node */
+    EVENT_CALLBACK callback;    /**< event call back function */
+};
+
 /** @brief define event_subject type.
  *
  */

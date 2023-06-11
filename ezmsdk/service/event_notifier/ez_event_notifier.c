@@ -41,7 +41,7 @@
 #define DEBUG_LVL   LVL_NO_LOG      /**< logging level */
 #define MOD_NAME    "EVENT_NOTIFY"  /**< module name */
 
-#include "logging/ez_logging.h"
+#include "utilities/logging/ez_logging.h"
 
 /******************************************************************************
 * Module Preprocessor Macros
@@ -51,14 +51,7 @@
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
-/** @brief Observer object, used to subscribed to
- *
- */
-struct ezObserver
-{
-    struct Node node;           /**< link list node */
-    EVENT_CALLBACK callback;    /**< event call back function */
-};
+/* None */
 
 /******************************************************************************
 * Module Variable Definitions

@@ -83,7 +83,7 @@ ezSTATUS ezQueue_CreateQueue(ezQueue *queue, uint8_t *buff, uint32_t buff_size)
 {
     ezSTATUS status = ezFAIL;
 
-    TRACE("ezQueue_CreateQueue( size = %lu)", buff_size);
+    EZTRACE("ezQueue_CreateQueue( size = %lu)", buff_size);
 
     memset(buff, 0, buff_size);
 
@@ -93,7 +93,7 @@ ezSTATUS ezQueue_CreateQueue(ezQueue *queue, uint8_t *buff, uint32_t buff_size)
         if (ezmStcMem_InitMemList(&queue->mem_list, buff, buff_size) == true)
         {
             status = ezSUCCESS;
-            DEBUG("create queue success");
+            EZDEBUG("create queue success");
         }
     }
 
@@ -105,7 +105,7 @@ ezSTATUS ezQueue_PopFront(ezQueue* queue)
     ezSTATUS status = ezSUCCESS;
     ezQueueItem* popped_item = NULL;
 
-    TRACE("ezQueue_PopFront()");
+    EZTRACE("ezQueue_PopFront()");
 
     if (queue != NULL)
     {
@@ -117,7 +117,7 @@ ezSTATUS ezQueue_PopFront(ezQueue* queue)
             if (ezmStcMem_Free(&queue->mem_list, popped_item->data) == false)
             {
                 status = ezFAIL;
-                TRACE("free fail");
+                EZTRACE("free fail");
             }
 
             if (status == ezSUCCESS)
@@ -125,7 +125,7 @@ ezSTATUS ezQueue_PopFront(ezQueue* queue)
                 if (ezmStcMem_Free(&queue->mem_list, (void*)popped_item) == false)
                 {
                     status = ezFAIL;
-                    TRACE("free fail");
+                    EZTRACE("free fail");
                 }
             }
         }
@@ -144,7 +144,7 @@ ezSTATUS ezQueue_PopBack(ezQueue *queue)
     ezSTATUS status = ezSUCCESS;
     ezQueueItem *popped_item = NULL;
 
-    TRACE("ezQueue_Pop()");
+    EZTRACE("ezQueue_Pop()");
 
     if (queue != NULL)
     {
@@ -156,7 +156,7 @@ ezSTATUS ezQueue_PopBack(ezQueue *queue)
             if (ezmStcMem_Free(&queue->mem_list, popped_item->data) == false)
             {
                 status = ezFAIL;
-                TRACE("free fail");
+                EZTRACE("free fail");
             }
 
             if (status == ezSUCCESS)
@@ -164,7 +164,7 @@ ezSTATUS ezQueue_PopBack(ezQueue *queue)
                 if (ezmStcMem_Free(&queue->mem_list, (void *)popped_item) == false)
                 {
                     status = ezFAIL;
-                    TRACE("free fail");
+                    EZTRACE("free fail");
                 }
             }
         }
@@ -182,7 +182,7 @@ ezReservedElement ezQueue_ReserveElement(ezQueue *queue, void **data, uint32_t d
 {
     ezQueueItem* item = NULL;
 
-    TRACE("ezQueue_Push( [@ = %p], [size = %lu])", data, data_size);
+    EZTRACE("ezQueue_Push( [@ = %p], [size = %lu])", data, data_size);
 
     if (queue != NULL && data != NULL && data_size > 0)
     {
@@ -197,7 +197,7 @@ ezReservedElement ezQueue_ReserveElement(ezQueue *queue, void **data, uint32_t d
             {
                 ezmStcMem_Free(&queue->mem_list, (void*)item);
                 item = NULL;
-                TRACE("allocate data fail");
+                EZTRACE("allocate data fail");
             }
             else
             {
@@ -252,7 +252,7 @@ ezSTATUS ezQueue_Push(ezQueue* queue, void *data, uint32_t data_size)
     void *reserve_data = NULL;
     ezReservedElement reserved_elem = NULL;
 
-    TRACE("ezQueue_Push( [@ = %p], [size = %lu])", data, data_size);
+    EZTRACE("ezQueue_Push( [@ = %p], [size = %lu])", data, data_size);
 
     if (queue != NULL && data != NULL && data_size > 0)
     {
@@ -266,7 +266,7 @@ ezSTATUS ezQueue_Push(ezQueue* queue, void *data, uint32_t data_size)
         else
         {
             status = ezFAIL;
-            DEBUG("add item fail");
+            EZDEBUG("add item fail");
         }
     }
     else
@@ -282,7 +282,7 @@ ezSTATUS ezQueue_GetFront(ezQueue* queue, void **data, uint32_t *data_size)
     ezSTATUS status = ezSUCCESS;
     ezQueueItem* front_item = NULL;
 
-    TRACE("ezQueue_GetFront()");
+    EZTRACE("ezQueue_GetFront()");
 
     if (queue != NULL && data != NULL && data_size != NULL)
     {
@@ -293,23 +293,23 @@ ezSTATUS ezQueue_GetFront(ezQueue* queue, void **data, uint32_t *data_size)
             *data_size = front_item->data_size;
 
 #if (DEBUG_LVL == LVL_TRACE)
-            TRACE("[item address = %p]", (void*)front_item);
-            TRACE("[item node address = %p]", (void*)&front_item->node);
-            TRACE("[item data size = %p]", (void*)front_item->data_size);
+            EZTRACE("[item address = %p]", (void*)front_item);
+            EZTRACE("[item node address = %p]", (void*)&front_item->node);
+            EZTRACE("[item data size = %p]", (void*)front_item->data_size);
 
-            TRACE("data of front item");
-            HEXDUMP((uint8_t*)*data, *data_size);
+            EZTRACE("data of front item");
+            EZHEXDUMP((uint8_t*)*data, *data_size);
 #endif /* DEBUG_LVL == LVL_TRACE */
         }
         else
         {
-            DEBUG("queue is empty");
+            EZDEBUG("queue is empty");
             status = ezFAIL;
         }
     }
     else
     {
-        DEBUG("get front item fail");
+        EZDEBUG("get front item fail");
         status = ezFAIL;
     }
 
@@ -321,7 +321,7 @@ ezSTATUS ezQueue_GetBack(ezQueue* queue, void **data, uint32_t *data_size)
     ezSTATUS status = ezSUCCESS;
     ezQueueItem *back_item = NULL;
 
-    TRACE("ezQueue_GetBack()");
+    EZTRACE("ezQueue_GetBack()");
 
     if (queue != NULL && data != NULL && data_size != NULL)
     {
@@ -332,19 +332,19 @@ ezSTATUS ezQueue_GetBack(ezQueue* queue, void **data, uint32_t *data_size)
             *data_size = back_item->data_size;
 
 #if (DEBUG_LVL == LVL_TRACE)
-            TRACE("data of back item");
-            HEXDUMP((uint8_t*)*data, *data_size);
+            EZTRACE("data of back item");
+            EZHEXDUMP((uint8_t*)*data, *data_size);
 #endif
         }
         else
         {
-            DEBUG("queue is empty");
+            EZDEBUG("queue is empty");
             status = ezFAIL;
         }
     }
     else
     {
-        DEBUG("get back item fail");
+        EZDEBUG("get back item fail");
         status = ezFAIL;
     }
 

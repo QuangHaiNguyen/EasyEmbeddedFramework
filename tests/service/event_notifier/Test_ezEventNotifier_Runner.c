@@ -36,16 +36,10 @@
 *******************************************************************************/
 #include "ezApp/ezSdk_config.h"
 
-#if(CONFIG_EZ_EVENT_NOTIFIER_TEST == 1U)
+#if(EZ_EVENT_NOTIFIER == 1)
 
-#define DEBUG_LVL   LVL_TRACE   /**< logging level */
-#define MOD_NAME    "ezEventNotifier_runner"       /**< module name */
-#include "ezUtilities/logging/logging.h"
-
-#include "unity_test_platform/unity.h"
-#include "unity_test_platform/unity_fixture.h"
-#include <stdint.h>
-#include <stdbool.h>
+#include "unity.h"
+#include "unity_fixture.h"
 
 
 

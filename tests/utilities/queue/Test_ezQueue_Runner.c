@@ -36,14 +36,9 @@
 *******************************************************************************/
 #include "ezApp/ezSdk_config.h"
 
-#if (CONFIG_EZ_QUEUE_TEST == 1U)
-
-#define DEBUG_LVL   LVL_TRACE   /**< logging level */
-#define MOD_NAME    "ezQueue_runner"       /**< module name */
-#include "ezUtilities/logging/logging.h"
-
-#include "unity_test_platform/unity.h"
-#include "unity_test_platform/unity_fixture.h"
+#if (EZ_QUEUE == 1U)
+#include "unity.h"
+#include "unity_fixture.h"
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -92,6 +87,6 @@ TEST_GROUP_RUNNER(ezQueue)
     RUN_TEST_CASE(ezQueue, ezQueue_ReserveElement);
 }
 
-#endif /* CONFIG_EZ_QUEUE_TEST == 1U */
+#endif /* EZ_QUEUE == 1U */
 
 /* End of file */
