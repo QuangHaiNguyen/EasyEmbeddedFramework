@@ -3,47 +3,29 @@ add_library(sdk STATIC)
 
 include(features.cmake)
 
+add_subdirectory(targets)
 add_subdirectory(utilities)
 add_subdirectory(service)
 add_subdirectory(ezApp)
 
 target_sources(sdk PRIVATE
-ezApp/ezSdk.c)
+    ezApp/ezSdk.c
+)
 
-# binCmdParser module
-#target_sources(sdk PRIVATE
-#ezApp/ezSdk.c
-#ezApp/cli/cli.c
-#ezApp/ezDriver/ezDriver.c
-#ezApp/ezDriver/dummy_driver.c
-#ezApp/ezmIpc/ezmIpc.c
-#ezApp/ezKernel/ezKernel.c)
-#
-## hal module
-#target_sources(sdk PRIVATE
-#ezHal/uart/uart.c
-#ezHal/hal_i2c/hal_i2c.c
-#ezHal/wifi_controller/wifi_controller.c
-#ezHal/network/mqtt/mqtt.c)
-#
-## platforms module
-## PC target
-#target_sources(sdk PRIVATE
-#ezTargets/simulator/flash/flash_simulator.c
-#ezTargets/simulator/uart/uart_sim.c
-#ezTargets/simulator/wifi_controller/wifi_controller_sim.c)
-#
-#if(ESP_PLATFORM)
-#  # On ESP-IDF, bar.c needs to include esp_spi_flash.h from the spi_flash component
-#  target_link_libraries(sdk PRIVATE idf::mqtt)
-#endif()
+target_compile_definitions(sdk
+    PRIVATE 
+    WINDOWS_TARGET=$<BOOL:${ENABLE_WINDOWS_TARGET}>
+    LINUX_TARGET=$<BOOL:${ENABLE_LINUX_TARGET}>
+    EMBEDDED_TARGET=$<BOOL:${ENABLE_EMBEDDED_TARGET}>
+)
 
 target_link_libraries(sdk PUBLIC
-ez_utilities
-ez_event_notifier
-ez_app
-ez_kernel
-ez_generic_driver)
+    ez_utilities
+    ez_event_notifier
+    ez_app
+    ez_kernel
+    ez_generic_driver
+)
 
 #include directory
 target_include_directories(sdk PUBLIC .)

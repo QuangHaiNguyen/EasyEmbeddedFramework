@@ -1,3 +1,8 @@
+# Configure the target
+option(ENABLE_WINDOWS_TARGET    "Enable Windows target"                 ON)
+option(ENABLE_LINUX_TARGET      "Enable Linux target"                   OFF)
+option(ENABLE_EMBEDDED_TARGET   "Enable Embedded target"                OFF)
+
 # Configure the features
 
 # Configure Utilities modules
@@ -12,9 +17,12 @@ option(ENABLE_EZ_SYS_ERROR      "Enable system error feature"           ON)
 option(ENABLE_EZ_QUEUE          "Enable queue feature"                  ON)
 
 # Configure Service modules
-option(ENABLE_EZ_EVENT_NOTIFIER    "Enable the Event Notifier module"      ON)
-option(ENABLE_EZ_KERNEL            "Enable the Kernel service"             ON)
+option(ENABLE_EZ_EVENT_NOTIFIER    "Enable the Event Notifier module"       ON)
+option(ENABLE_EZ_KERNEL            "Enable the Kernel service"              ON)
 
 # Configure application framework
-option(ENABLE_DATA_MODEL        "Enable the Event Notifier module"      ON)
-option(ENABLE_EZ_GENERIC_DRIVER "Enable the Generic Driver application" ON)
+option(ENABLE_DATA_MODEL        "Enable the Event Notifier module"          ON)
+option(ENABLE_EZ_GENERIC_DRIVER "Enable the Generic Driver application"     ON)
+
+# Configure target
+option(ENABLE_EZ_TARGET_ECHO    "Enable eho driver in targer"               ON)

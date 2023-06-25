@@ -34,17 +34,10 @@
 /******************************************************************************
 * Includes
 *******************************************************************************/
+#include "unity.h"
+#include "unity_fixture.h"
 
-#define DEBUG_LVL   LVL_TRACE   /**< logging level */
-#define MOD_NAME    "ezKernel_runner"       /**< module name */
-#include "ezUtilities/logging/logging.h"
-
-#include "unity_test_platform/unity.h"
-#include "unity_test_platform/unity_fixture.h"
-#include <stdint.h>
-#include <stdbool.h>
-
-#if(CONFIG_KERNEL_TEST == 1U)
+#if(EZ_KERNEL == 1U)
 
 /******************************************************************************
 * Module Preprocessor Macros
@@ -87,7 +80,7 @@ TEST_GROUP_RUNNER(ezKernel)
     RUN_TEST_CASE(ezKernel, Test_ezKernel_GetTickMillis_TickValueCorrect);
 }
 
-#endif /* CONFIG_KERNEL_TEST == 1U */
+#endif /* EZ_KERNEL == 1U */
 
 /* End of file */
 

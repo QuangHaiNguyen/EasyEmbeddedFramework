@@ -14,4 +14,6 @@ static void RunAllTests(void)
 {
     RUN_TEST_GROUP(ezEventNotifier);
     RUN_TEST_GROUP(ezQueue);
+    RUN_TEST_GROUP(ezKernel);
+    RUN_TEST_GROUP(EchoHal);
 }

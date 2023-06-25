@@ -43,6 +43,11 @@
 //#include "ezApp/ezSdk_config.h"
 #include "unity_test_platform/unity.h"
 
+#if ((WINDOWS_TARGET + LINUX_TARGET + EMBEDDED_TARGET) > 1)
+#error More than one target is activated
+#endif
+
+
 /* Utilities section ********************************************************/
 
 #if (EZ_LINKEDLIST == 1)
@@ -135,10 +140,6 @@
 #if (DATA_MODEL == 1U)
 #include "ezApp/data_model/data_model.h"
 #endif /* CONFIG_DATA_MODEL == 1U */
-
-#if (EZ_GENERIC_DRIVER == 1U)
-#include "service/driver/ez_driver.h"
-#endif /* EZ_GENERIC_DRIVER == 1U */
 
 #if (CONFIG_MQTT == 1U)
 #include "hal/network/mqtt/mqtt.h"
@@ -234,11 +235,6 @@ void ezSdk_Initialization(void)
     DataModel_Initialization();
     EZINFO("Initialized DATA_MODEL application");
 #endif /* CONFIG_DATA_MODEL == 1U */
-
-#if (EZ_GENERIC_DRIVER == 1U)
-    ezDriver_Initialize();
-    EZINFO("Initialized EZ_GENERIC_DRIVER application");
-#endif /* EZ_GENERIC_DRIVER == 1U */
 
 
 #if (SCHEDULER == 1U)

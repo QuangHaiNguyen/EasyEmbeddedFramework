@@ -1,9 +1,9 @@
 
 /*******************************************************************************
-* Filename:         ezDriver_runner.c
+* Filename:         EchoHal_runner.c
 * Author:           Hai Nguyen
-* Original Date:    24.09.2022
-* Last Update:      24.09.2022
+* Original Date:    18.06.2023
+* Last Update:      18.06.2023
 *
 * -----------------------------------------------------------------------------
 * Company:          Embedded Easy
@@ -18,13 +18,13 @@
 * Copyright Hai Nguyen - All Rights Reserved
 * Unauthorized copying of this file, via any medium is strictly prohibited
 * Proprietary and confidential
-* Written by Hai Nguyen 24.09.2022
+* Written by Hai Nguyen 18.06.2023
 *
 *******************************************************************************/
 
-/** @file   ezDriver_runner.c
+/** @file   EchoHal_runner.c
  *  @author Hai Nguyen
- *  @date   24.09.2022
+ *  @date   18.06.2023
  *  @brief  This is the source for a module
  *  
  *  @details
@@ -34,20 +34,11 @@
 /******************************************************************************
 * Includes
 *******************************************************************************/
-
-#include "ezApp/ezSdk_config.h"
-
-#if (CONFIG_DRIVERINF_TEST == 1U)
-
-#define DEBUG_LVL   LVL_TRACE   /**< logging level */
-#define MOD_NAME    "ezDriver_runner"       /**< module name */
-#include "ezUtilities/logging/logging.h"
-
-#include "unity_test_platform/unity.h"
-#include "unity_test_platform/unity_fixture.h"
 #include <stdint.h>
 #include <stdbool.h>
 
+#include "unity.h"
+#include "unity_fixture.h"
 
 
 /******************************************************************************
@@ -79,15 +70,17 @@
 /******************************************************************************
 * Internal functions
 *******************************************************************************/
-TEST_GROUP_RUNNER(ezDriver)
+TEST_GROUP_RUNNER(EchoHal)
 {
-    RUN_TEST_CASE(ezDriver, Test_ezDriver_GetDriver_WrongDriverName);
-    RUN_TEST_CASE(ezDriver, Test_ezDriver_GetDriver_CorrectDriverName);
-    RUN_TEST_CASE(ezDriver, Test_ezDriver_Write);
-    RUN_TEST_CASE(ezDriver, Test_ezDriver_Read);
+    RUN_TEST_CASE(EchoHal, ezHalEcho_GetDriver_Correct);
+    RUN_TEST_CASE(EchoHal, ezHalEcho_GetDriver_Incorrect);
+    RUN_TEST_CASE(EchoHal, ezHalEcho_ReleaseDriver);
+    RUN_TEST_CASE(EchoHal, ezHalEcho_Write_Incorrect);
+    RUN_TEST_CASE(EchoHal, ezHalEcho_Write_Correct);
+    RUN_TEST_CASE(EchoHal, ezHalEcho_Read_Incorrect);
+    RUN_TEST_CASE(EchoHal, ezHalEcho_Read_Correct);
 }
 
-#endif /*CONFIG_DRIVERINF_TEST == 1U */
 
 /* End of file */
 

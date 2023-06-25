@@ -6,10 +6,10 @@ target_include_directories(ez_unit_test_event_notifier PRIVATE
 .
 ../../../ezmsdk)
 
-target_link_libraries(ez_unit_test_event_notifier PUBLIC unity sdk)
+target_link_libraries(ez_unit_test_event_notifier PRIVATE unity sdk)
 
 target_compile_definitions(ez_unit_test_event_notifier
-PUBLIC 
+PRIVATE 
 EZ_EVENT_NOTIFIER=$<BOOL:${ENABLE_EZ_EVENT_NOTIFIER}>
 )
 
