@@ -25,4 +25,4 @@ option(ENABLE_DATA_MODEL        "Enable the Event Notifier module"          ON)
 option(ENABLE_EZ_HAL_DRIVER     "Enable the Driver module"                  ON)
 
 # Configure target
-option(ENABLE_EZ_HAL_ECHO       "Enable eho driver in targer"               ON)
+option(ENABLE_EZ_HAL_ECHO       "Enable echo driver in targer"               ON)

@@ -7,8 +7,9 @@ message(STATUS "************************************")
 
 #include directory
 target_include_directories(ez_unit_test PRIVATE
-.
-../ezmsdk)
+    .
+    ../ezmsdk
+)
 
 target_link_libraries(ez_unit_test PUBLIC unity sdk)
 
@@ -46,4 +47,5 @@ target_link_libraries(ez_unit_test PRIVATE
 )
 
 add_test(NAME ez_unit_test
-COMMAND ez_unit_test)
+    COMMAND ez_unit_test
+)

@@ -10,7 +10,7 @@ if(ENABLE_EZ_HAL_ECHO)
     if(ENABLE_WINDOWS_TARGET)
         message(STATUS "    + Link to Windows Echo driver")
         target_link_libraries(ez_hal_driver PUBLIC
-            $<$<BOOL:${ENABLE_WINDOWS_TARGET}>:ez_windows_driver>
+            $<$<BOOL:${ENABLE_WINDOWS_TARGET}>:ez_windows_target>
         )
     endif()
 endif()

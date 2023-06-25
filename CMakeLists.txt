@@ -13,15 +13,14 @@ endif()
 
 add_subdirectory(ezmsdk)
 add_subdirectory(extern)
-#add_subdirectory(tests)
 
-add_executable(main targets/windows/main.c)
+add_executable(main
+    $<$<BOOL:${ENABLE_EZ_EVENT_NOTIFIER}>:targets/windows/main.c>
+)
+
 target_include_directories(main PRIVATE ezmsdk)
 target_link_libraries(main PRIVATE unity sdk)
 
-#target_link_options(main PRIVATE "/MAP:${PROJECT_SOURCE_DIR}/file.map")
-
-#target_link_libraries(main PRIVATE unity sdk unit_test)
 
 if(BUILD_TESTING)
     add_subdirectory(tests)

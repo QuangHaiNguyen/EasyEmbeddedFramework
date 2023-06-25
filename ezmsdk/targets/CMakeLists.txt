@@ -14,6 +14,5 @@ endif()
 
 if(ENABLE_EMBEDDED_TARGET)
     message(STATUS "Embedded target activated")
-    #add_subdirectory(kernel)
 endif()
 
