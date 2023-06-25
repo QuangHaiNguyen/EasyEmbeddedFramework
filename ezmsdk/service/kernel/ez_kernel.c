@@ -38,7 +38,7 @@
 
 #if(EZ_KERNEL == 1U)
 
-#define DEBUG_LVL   LVL_INFO       /**< logging level */
+#define DEBUG_LVL   LVL_CRITICAL    /**< logging level */
 #define MOD_NAME    "ezKernel"      /**< module name */
 #include "utilities/logging/ez_logging.h"
 

@@ -31,7 +31,7 @@ endif()
 
 if(ENABLE_EZ_HAL_ECHO)
     message(STATUS "Test for hal echo is activated")
-    add_subdirectory(service/driver/hal/echo)
+    add_subdirectory(service/driver/hal_echo)
 endif()
 
 # Service module

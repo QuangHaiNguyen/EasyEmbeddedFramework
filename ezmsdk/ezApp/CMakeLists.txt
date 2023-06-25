@@ -8,7 +8,7 @@ message(STATUS "* Building application framework")
 message(STATUS "************************************")
 
 if(ENABLE_DATA_MODEL)
-message("Data model application is activated")
+message(STATUS "Data model application is activated")
 add_subdirectory(data_model)
 endif()
 

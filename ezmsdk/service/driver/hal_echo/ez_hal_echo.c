@@ -36,7 +36,7 @@
 *******************************************************************************/
 #include "ez_hal_echo.h"
 
-#define DEBUG_LVL   LVL_TRACE   /**< logging level */
+#define DEBUG_LVL   LVL_CRITICAL        /**< logging level */
 #define MOD_NAME    "ez_hal_echo"       /**< module name */
 #include "utilities/logging/ez_logging.h"
 #include "utilities/assert/ez_assert.h"

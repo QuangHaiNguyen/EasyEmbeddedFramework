@@ -12,11 +12,6 @@ target_include_directories(ez_unit_test_hal_echo PRIVATE
 
 target_link_libraries(ez_unit_test_hal_echo PRIVATE unity sdk)
 
-target_compile_definitions(ez_unit_test_hal_echo
-PRIVATE 
-EZ_KERNEL=$<BOOL:${ENABLE_EZ_KERNEL}>
-)
-
 # Service module
 target_sources(ez_unit_test_hal_echo PRIVATE
     Test_EchoHal.c
