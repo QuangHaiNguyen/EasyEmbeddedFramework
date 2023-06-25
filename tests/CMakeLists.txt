@@ -34,6 +34,11 @@ if(ENABLE_EZ_HAL_ECHO)
     add_subdirectory(service/driver/hal_echo)
 endif()
 
+if(ENABLE_EZ_HAL_UART)
+    message(STATUS "Test for hal echo is activated")
+    add_subdirectory(service/driver/hal_uart)
+endif()
+
 # Service module
 target_sources(ez_unit_test PRIVATE
     main.c
@@ -44,6 +49,7 @@ target_link_libraries(ez_unit_test PRIVATE
     $<$<BOOL:${ENABLE_EZ_QUEUE}>:ez_unit_test_queue>
     $<$<BOOL:${ENABLE_EZ_KERNEL}>:ez_unit_test_kernel>
     $<$<BOOL:${ENABLE_EZ_HAL_ECHO}>:ez_unit_test_hal_echo>
+    $<$<BOOL:${ENABLE_EZ_HAL_UART}>:ez_unit_test_hal_uart>
 )
 
 add_test(NAME ez_unit_test

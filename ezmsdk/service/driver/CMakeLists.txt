@@ -20,17 +20,18 @@ target_compile_definitions(ez_hal_driver
     PUBLIC 
     EZ_HAL_DRIVER=$<BOOL:${ENABLE_EZ_HAL_DRIVER}>
     WINDOWS_TARGET=$<BOOL:${ENABLE_WINDOWS_TARGET}>
-    EZ_TARGET_ECHO=$<BOOL:${ENABLE_EZ_TARGET_ECHO}>
+    EZ_HAL_ECHO=$<BOOL:${ENABLE_EZ_HAL_ECHO}>
+    EZ_HAL_UART=$<BOOL:${ENABLE_EZ_HAL_UART}>
 )
 
 target_sources(ez_hal_driver PRIVATE
     $<$<BOOL:${ENABLE_EZ_HAL_ECHO}>:hal_echo/ez_hal_echo.c>
+    $<$<BOOL:${ENABLE_EZ_HAL_UART}>:hal_uart/ez_hal_uart.c>
 )
 
 target_include_directories(ez_hal_driver PUBLIC
     ${CURRENT_DIR}
     ${SDK_ROOT_DIR}
-    $<$<BOOL:${ENABLE_EZ_HAL_ECHO}>:${CURRENT_DIR}/hal>
 )
 
 target_link_libraries(ez_hal_driver PUBLIC
