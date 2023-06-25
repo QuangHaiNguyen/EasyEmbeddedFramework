@@ -28,8 +28,10 @@ if(ENABLE_EZ_QUEUE)
     add_subdirectory(utilities/queue)
 endif()
 
-add_subdirectory(service/driver/hal/echo)
-
+if(ENABLE_EZ_HAL_ECHO)
+    message(STATUS "Test for hal echo is activated")
+    add_subdirectory(service/driver/hal/echo)
+endif()
 
 # Service module
 target_sources(ez_unit_test PRIVATE
@@ -39,8 +41,8 @@ target_sources(ez_unit_test PRIVATE
 target_link_libraries(ez_unit_test PRIVATE
     $<$<BOOL:${ENABLE_EZ_EVENT_NOTIFIER}>:ez_unit_test_event_notifier>
     $<$<BOOL:${ENABLE_EZ_QUEUE}>:ez_unit_test_queue>
-    $<$<BOOL:${ENABLE_EZ_QUEUE}>:ez_unit_test_kernel>
-    ez_unit_test_hal_echo
+    $<$<BOOL:${ENABLE_EZ_KERNEL}>:ez_unit_test_kernel>
+    $<$<BOOL:${ENABLE_EZ_HAL_ECHO}>:ez_unit_test_hal_echo>
 )
 
 add_test(NAME ez_unit_test

@@ -22,7 +22,7 @@ option(ENABLE_EZ_KERNEL            "Enable the Kernel service"              ON)
 
 # Configure application framework
 option(ENABLE_DATA_MODEL        "Enable the Event Notifier module"          ON)
-option(ENABLE_EZ_GENERIC_DRIVER "Enable the Generic Driver application"     ON)
+option(ENABLE_EZ_HAL_DRIVER     "Enable the Driver module"                  ON)
 
 # Configure target
-option(ENABLE_EZ_TARGET_ECHO    "Enable eho driver in targer"               ON)
+option(ENABLE_EZ_HAL_ECHO       "Enable eho driver in targer"               ON)

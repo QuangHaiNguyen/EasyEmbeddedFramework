@@ -2,8 +2,8 @@ message(STATUS "************************************")
 message(STATUS "* Building Service framework")
 message(STATUS "************************************")
 
-if(ENABLE_EZ_GENERIC_DRIVER)
-    message(STATUS "Driver service is activated")
+if(ENABLE_EZ_HAL_DRIVER)
+    message(STATUS "HAL Driver service is activated")
     add_subdirectory(driver)
 endif()
 
