@@ -59,6 +59,7 @@ typedef enum
     EZ_DRIVER_OK,           /**< OK, function as expected */
     EZ_DRIVER_BUSY,         /**< Driver is occupied by other module */
     EZ_DRIVER_ERR_NO_DRIVER,/**< Driver does not exist */
+    EZ_DRIVER_ERR_INIT,     /**< Error occur during initialization */
     EZ_DRIVER_ERR_GENERIC,  /**< Generic, uncategorized error */
 }ezDriverStatus_t;
 
@@ -107,7 +108,7 @@ struct ezDriver
     ezDriverConfiguration_t ptr_configuration;      /**< Point to the configuration */
     ezTargetDriver_t        ptr_target_driver;      /**< Point to the hardware api */
     struct Node             parent_list;            /**< List of the module using the driver */
-    ezDriverHandle_t        *current_handle;        /**< Handle currently "own" the driver */
+    ezDriverHandle_t  *current_handle;        /**< Handle currently "own" the driver */
 };
 
 

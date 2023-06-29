@@ -41,7 +41,7 @@
 #include "utilities/logging/ez_logging.h"
 #include "utilities/assert/ez_assert.h"
 
-#if(WINDOWS_TARGET == 1 && EZ_TARGET_ECHO == 1)
+#if(WINDOWS_TARGET == 1)
 #include "targets/windows/echo_driver/ez_windows_echo.h"
 #endif
 

@@ -206,7 +206,7 @@ static void ezEcho_Initialize(uint8_t driver_index)
             driver_internal[driver_index].buff,
             BUFF_SIZE);
 
-            driver_internal[driver_index].hal_driver.initialized = true;
+        driver_internal[driver_index].hal_driver.initialized = true;
     }/* else invalid arguments */
 }
 
