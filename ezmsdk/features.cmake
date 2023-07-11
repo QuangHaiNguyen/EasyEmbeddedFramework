@@ -24,5 +24,6 @@ option(ENABLE_EZ_KERNEL            "Enable the Kernel service"              ON)
 option(ENABLE_DATA_MODEL        "Enable the Event Notifier module"          ON)
 option(ENABLE_EZ_HAL_DRIVER     "Enable the Driver module"                  ON)
 
-# Configure target
-option(ENABLE_EZ_HAL_ECHO       "Enable echo driver in targer"               ON)
+# Configure HAL driver
+option(ENABLE_EZ_HAL_ECHO       "Enable HAL echo driver"                    ON)
+option(ENABLE_EZ_HAL_UART       "Enable HAL uart driver"                    ON)

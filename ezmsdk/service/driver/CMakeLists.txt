@@ -7,32 +7,33 @@ set(SDK_ROOT_DIR ${CMAKE_SOURCE_DIR}/ezmsdk/)
 
 if(ENABLE_EZ_HAL_ECHO)
     message(STATUS "    HAL Echo driver is activated")
-    if(ENABLE_WINDOWS_TARGET)
-        message(STATUS "    + Link to Windows Echo driver")
-        target_link_libraries(ez_hal_driver PUBLIC
-            $<$<BOOL:${ENABLE_WINDOWS_TARGET}>:ez_windows_target>
-        )
-    endif()
+endif()
+
+if(ENABLE_EZ_HAL_UART)
+    message(STATUS "    HAL Uart driver is activated")
 endif()
 
 
 target_compile_definitions(ez_hal_driver
-    PUBLIC 
+    PUBLIC
     EZ_HAL_DRIVER=$<BOOL:${ENABLE_EZ_HAL_DRIVER}>
     WINDOWS_TARGET=$<BOOL:${ENABLE_WINDOWS_TARGET}>
-    EZ_TARGET_ECHO=$<BOOL:${ENABLE_EZ_TARGET_ECHO}>
+    EZ_HAL_ECHO=$<BOOL:${ENABLE_EZ_HAL_ECHO}>
+    EZ_HAL_UART=$<BOOL:${ENABLE_EZ_HAL_UART}>
 )
 
 target_sources(ez_hal_driver PRIVATE
+    ez_driver_common.c
     $<$<BOOL:${ENABLE_EZ_HAL_ECHO}>:hal_echo/ez_hal_echo.c>
+    $<$<BOOL:${ENABLE_EZ_HAL_UART}>:hal_uart/ez_hal_uart.c>
 )
 
 target_include_directories(ez_hal_driver PUBLIC
     ${CURRENT_DIR}
     ${SDK_ROOT_DIR}
-    $<$<BOOL:${ENABLE_EZ_HAL_ECHO}>:${CURRENT_DIR}/hal>
 )
 
 target_link_libraries(ez_hal_driver PUBLIC
-ez_utilities
+    ez_utilities
+    $<$<BOOL:${ENABLE_WINDOWS_TARGET}>:ez_windows_target>
 )

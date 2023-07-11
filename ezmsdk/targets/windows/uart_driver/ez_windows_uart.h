@@ -1,9 +1,9 @@
 
 /*******************************************************************************
-* Filename:         ez_windows_echo.h
+* Filename:         ez_windows_uart.h
 * Author:           Hai Nguyen
-* Original Date:    13.06.2023
-* Last Update:      13.06.2023
+* Original Date:    25.06.2023
+* Last Update:      25.06.2023
 *
 * -----------------------------------------------------------------------------
 * Company:          Embedded Easy
@@ -18,36 +18,33 @@
 * Copyright Hai Nguyen - All Rights Reserved
 * Unauthorized copying of this file, via any medium is strictly prohibited
 * Proprietary and confidential
-* Written by Hai Nguyen 13.06.2023
+* Written by Hai Nguyen 25.06.2023
 *
 *******************************************************************************/
 
-/** @file   ez_windows_echo.h
+/** @file   ez_windows_uart.h
  *  @author Hai Nguyen
- *  @date   13.06.2023
- *  @brief  Implementation fo the Echo driver
+ *  @date   25.06.2023
+ *  @brief  This is the source for a module
  *  
- *  @details: Provide the functions to bind the implementation of the Echo
- *            driver to the HAL driver
+ *  @details
  * 
  */
 
-#ifndef _EZ_WINDOWS_ECHO_H
-#define _EZ_WINDOWS_ECHO_H
+#ifndef _EZ_WINDOWS_UART_H
+#define _EZ_WINDOWS_UART_H
 
 /*******************************************************************************
 * Includes
 *******************************************************************************/
 #include "stdbool.h"
 #include "stdint.h" 
-#include "service/driver/hal_echo/ez_hal_echo_target_def.h"
-#include "service/driver/ez_hal_driver_def.h"
+#include "service/driver/hal_uart/ez_target_uart_def.h"
 
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
-/* None */
-
+/* Nonen */
 
 /******************************************************************************
 * Module Typedefs
@@ -60,24 +57,13 @@
 *******************************************************************************/
 /* None */
 
-
 /******************************************************************************
 * Function Prototypes
 *******************************************************************************/
-
-/******************************************************************************
-* Function : ezTargetEcho_GetDriver
-*//**
-* @Description: Return the deriver handle the HAL layer.
-*
-* @param    (IN)driver_index: index of the driver.
-*
-* @return   Pointer to the driver or NULL.
-*
-*******************************************************************************/
-const struct ezHalEchoDriver *ezTargetEcho_GetDriver(uint8_t driver_index);
+const struct ezTargetUartDriver *ezWinUart_GetDriver(uint8_t driver_index);
 
 
-#endif /* _EZ_WINDOWS_ECHO_H */
+#endif /* _EZ_WINDOWS_UART_H */
 
 /* End of file */
+

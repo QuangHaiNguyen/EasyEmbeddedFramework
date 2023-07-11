@@ -1,9 +1,9 @@
 
 /*******************************************************************************
-* Filename:         ez_windows_echo.h
+* Filename:         ez_hal_uart_runner.c
 * Author:           Hai Nguyen
-* Original Date:    13.06.2023
-* Last Update:      13.06.2023
+* Original Date:    25.06.2023
+* Last Update:      25.06.2023
 *
 * -----------------------------------------------------------------------------
 * Company:          Embedded Easy
@@ -18,66 +18,69 @@
 * Copyright Hai Nguyen - All Rights Reserved
 * Unauthorized copying of this file, via any medium is strictly prohibited
 * Proprietary and confidential
-* Written by Hai Nguyen 13.06.2023
+* Written by Hai Nguyen 25.06.2023
 *
 *******************************************************************************/
 
-/** @file   ez_windows_echo.h
+/** @file   ez_hal_uart_runner.c
  *  @author Hai Nguyen
- *  @date   13.06.2023
- *  @brief  Implementation fo the Echo driver
+ *  @date   25.06.2023
+ *  @brief  This is the source for a module
  *  
- *  @details: Provide the functions to bind the implementation of the Echo
- *            driver to the HAL driver
+ *  @details
  * 
  */
 
-#ifndef _EZ_WINDOWS_ECHO_H
-#define _EZ_WINDOWS_ECHO_H
-
-/*******************************************************************************
+/******************************************************************************
 * Includes
 *******************************************************************************/
-#include "stdbool.h"
-#include "stdint.h" 
-#include "service/driver/hal_echo/ez_hal_echo_target_def.h"
-#include "service/driver/ez_hal_driver_def.h"
+#include <stdint.h>
+#include <stdbool.h>
+
+#include "unity.h"
+#include "unity_fixture.h"
 
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
 /* None */
 
-
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
 /* None */
-
 
 /******************************************************************************
 * Module Variable Definitions
 *******************************************************************************/
 /* None */
 
+/******************************************************************************
+* Function Definitions
+*******************************************************************************/
+/* None */
 
 /******************************************************************************
-* Function Prototypes
+* External functions
 *******************************************************************************/
+/* None */
+
 
 /******************************************************************************
-* Function : ezTargetEcho_GetDriver
-*//**
-* @Description: Return the deriver handle the HAL layer.
-*
-* @param    (IN)driver_index: index of the driver.
-*
-* @return   Pointer to the driver or NULL.
-*
+* Internal functions
 *******************************************************************************/
-const struct ezHalEchoDriver *ezTargetEcho_GetDriver(uint8_t driver_index);
+TEST_GROUP_RUNNER(ez_hal_uart)
+{
+    RUN_TEST_CASE(ez_hal_uart, ezHalUart_GetDriver_Correct);
+    RUN_TEST_CASE(ez_hal_uart, ezHalUart_GetDriver_Incorrect);
+    RUN_TEST_CASE(ez_hal_uart, ezHalUart_Write_Without_Get_Driver);
+    RUN_TEST_CASE(ez_hal_uart, ezHalUart_ReleaseDriver);
+    RUN_TEST_CASE(ez_hal_uart, UsingUnsupportedAPI);
+    RUN_TEST_CASE(ez_hal_uart, ezHalUart_Write); 
+    RUN_TEST_CASE(ez_hal_uart, ezHalUart_WriteReadSequencial);
+    RUN_TEST_CASE(ez_hal_uart, ezHalUart_WriteReadBlock);
+}
 
-
-#endif /* _EZ_WINDOWS_ECHO_H */
 
 /* End of file */
+

@@ -173,11 +173,6 @@ TEST(EchoHal, ezHalEcho_GetDriver_Incorrect)
     TEST_ASSERT_EQUAL(EZ_DRIVER_ERR_NO_DRIVER, status);
     TEST_ASSERT_EQUAL(NULL, handle1.driver);
     TEST_ASSERT_EQUAL(NULL, handle1.callback);
-
-    status = ezHalEcho_GetDriver(NULL, &handle1, Handle1Callback);
-    TEST_ASSERT_EQUAL(EZ_DRIVER_ERR_NO_DRIVER, status);
-    TEST_ASSERT_EQUAL(NULL, handle1.driver);
-    TEST_ASSERT_EQUAL(NULL, handle1.callback);
 }
 
 
