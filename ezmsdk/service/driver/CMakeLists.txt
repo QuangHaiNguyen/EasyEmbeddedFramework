@@ -23,6 +23,7 @@ target_compile_definitions(ez_hal_driver
 )
 
 target_sources(ez_hal_driver PRIVATE
+    ez_driver_common.c
     $<$<BOOL:${ENABLE_EZ_HAL_ECHO}>:hal_echo/ez_hal_echo.c>
     $<$<BOOL:${ENABLE_EZ_HAL_UART}>:hal_uart/ez_hal_uart.c>
 )

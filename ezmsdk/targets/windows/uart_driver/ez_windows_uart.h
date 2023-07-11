@@ -40,7 +40,6 @@
 #include "stdbool.h"
 #include "stdint.h" 
 #include "service/driver/hal_uart/ez_target_uart_def.h"
-#include "service/driver/ez_hal_driver_def.h"
 
 /******************************************************************************
 * Module Preprocessor Macros
@@ -62,35 +61,6 @@
 * Function Prototypes
 *******************************************************************************/
 const struct ezTargetUartDriver *ezWinUart_GetDriver(uint8_t driver_index);
-
-
-/******************************************************************************
-* Function : ezTargetEcho_SetCallback
-*//**
-* @Description: Set callback function to notify the event to the HAL layer
-*
-* @param: (IN)driver_index: index of the driver.
-* @param: (IN)callback: pointer to callback function
-*
-* @return: Pointer to the driver or NULL. See ezDriver.
-*
-*
-*******************************************************************************/
-void ezWinUart_SetCallback(uint8_t driver_index,
-                           ezDriverCallback callback);
-
-
-/******************************************************************************
-* Function : ezTargetEcho_GetConfiguration
-*//**
-* @Description: Return the configuration of a corresponding driver
-*
-* @param: (IN)driver_index: index of the driver.
-*
-* @return   Pointer to the driver or NULL. See ezDriver.
-*
-*******************************************************************************/
-struct ezTargetUartConfiguration *ezWinUart_GetConfiguration(uint8_t driver_index);
 
 
 #endif /* _EZ_WINDOWS_UART_H */

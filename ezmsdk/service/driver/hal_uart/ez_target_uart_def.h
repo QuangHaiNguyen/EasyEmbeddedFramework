@@ -3,7 +3,7 @@
 * Filename:         ez_hal_uart_target_def.h
 * Author:           Hai Nguyen
 * Original Date:    25.06.2023
-* Last Update:      25.06.2023
+* Last Update:      07.03.2023
 *
 * -----------------------------------------------------------------------------
 * Company:          Embedded Easy
@@ -25,10 +25,12 @@
 /** @file   ez_hal_uart_target_def.h
  *  @author Hai Nguyen
  *  @date   25.06.2023
- *  @brief  This is the source for a module
- *  
- *  @details
- * 
+ *  @brief  This file provide the boilerplate for every implementation of the 
+ *          UART driver.
+ *
+ *  @details The Uart driver in the target device must be implemented following
+ *           this template to guarantee a smooth operation between the target
+ *           and the HAL driver
  */
 
 #ifndef _EZ_TARGET_UART_DEF_H
@@ -40,28 +42,52 @@
 #include "string.h"
 #include "stdint.h"
 #include "stdbool.h"
+#include "service/driver/ez_hal_driver_def.h"
 
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
+#ifndef NUM_OF_UART_INTERFACE
+#define NUM_OF_UART_INTERFACE   2   /**< Number of the supported devices*/
+#endif /* NUM_OF_UART_INTERFACE */
+
+#if (NUM_OF_UART_INTERFACE > 0)
+    #ifndef UART0_NAME
+    #define UART0_NAME  "uart1"  /**< Name of the first UART */
+    #endif /* UART0_NAME */
+
+    #ifndef UART0_INDEX
+    #define UART0_INDEX 0  /**< index of the first UART */
+    #endif /* UART0_INDEX */
+#endif /* (NUM_OF_UART_INTERFACE > 0) */
+
+#if (NUM_OF_UART_INTERFACE > 1)
+    #ifndef UART1_NAME
+    #define UART1_NAME  "uart2"  /**< Name of the second UART */
+    #endif /* UART1_NAME */
+
+    #ifndef UART1_INDEX
+    #define UART1_INDEX 1  /**< index of the second UART */
+    #endif /* UART1_INDEX */
+#endif /* (NUM_OF_UART_INTERFACE > 1) */
+
 #if(WINDOWS_TARGET)
-#define NUM_OF_UART_INTERFACE   2               /**< Number of the supported devices*/
-#define UART0_NAME              "vitual_com_1"  /**< Name of the first UART */
-#define UART_PORT               "COM1"          /**< Connected port of the first driver */
-#define UART1_NAME              "vitual_com_2"  /**< Name of the second UART */
+    #ifndef UART_PORT
+    #define UART_PORT   "COM1"          /**< Connected port of the first driver */
+    #endif /* UART_PORT */
 #endif /* WINDOWS_TARGET */
 
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
 
-/** @brief definition of a new type
+/** @brief Event code from the UART driver
  */
 typedef enum
 {
-    UART_TX_CMPLT,
-    UART_RX_CMPLT,
-    UART_ERROR,
+    UART_TX_CMPLT,  /**< Transmit completed */
+    UART_RX_CMPLT,  /**< Reception completed */
+    UART_ERROR,     /**< Error occured*/
 }ezHalUartCallbackCode_t;
 
 
@@ -97,6 +123,11 @@ struct ezTargetUartConfiguration
     ezHalUartParity_t   parity;     /**< Parity */
     ezHalUartStopBit_t  stop_bit;   /**< Number of Stop bit */
 };
+
+
+/** @brief Define callback for uart driver
+ */
+typedef ezDriverCallback ezUartCallback;
 
 
 /******************************************************************************
@@ -140,8 +171,8 @@ typedef bool(*ezTargetUart_Deinitialize)(uint8_t driver_index);
 *
 *******************************************************************************/
 typedef uint32_t(*ezTargetUart_Write)(uint8_t driver_index,
-                                        uint8_t *data,
-                                        uint32_t data_size);
+                                      uint8_t *data,
+                                      uint32_t data_size);
 
 
 /******************************************************************************
@@ -175,8 +206,8 @@ typedef uint32_t(*ezTargetUart_Read)(uint8_t driver_index,
 *
 *******************************************************************************/
 typedef uint32_t(*ezTargetUart_WriteBlocking)(uint8_t driver_index,
-                                                uint8_t *data,
-                                                uint32_t data_size);
+                                              uint8_t *data,
+                                              uint32_t data_size);
 
 
 /******************************************************************************
@@ -192,8 +223,8 @@ typedef uint32_t(*ezTargetUart_WriteBlocking)(uint8_t driver_index,
 *
 *******************************************************************************/
 typedef uint32_t(*ezTargetUart_ReadBlocking)(uint8_t driver_index,
-                                                uint8_t *data,
-                                                uint32_t data_size);
+                                             uint8_t *data,
+                                             uint32_t data_size);
 
 
 /** @brief  Hold the functions must be implemented by the target driver.
@@ -201,12 +232,10 @@ typedef uint32_t(*ezTargetUart_ReadBlocking)(uint8_t driver_index,
  */
 struct ezTargetUartApi
 {
-    ezTargetUart_Initialize Initialize;         /**< Pointer to the initialized function */
-    ezTargetUart_Deinitialize Deinitialize;     /**< Pointer to the deinitialized function */
-    ezTargetUart_Write Write;                   /**< Pointer to the write function */
-    ezTargetUart_WriteBlocking WriteBlocking;   /**< Pointer to the blocking write function */
-    ezTargetUart_Read Read;                     /**< Pointer to the read function */
-    ezTargetUart_ReadBlocking ReadBlocking;     /**< Pointer to the blocking read function */
+    ezTargetUart_Write          write;          /**< Pointer to the write function */
+    ezTargetUart_WriteBlocking  write_blocking; /**< Pointer to the blocking write function */
+    ezTargetUart_Read           read;           /**< Pointer to the read function */
+    ezTargetUart_ReadBlocking   read_blocking;  /**< Pointer to the blocking read function */
 };
 
 
@@ -215,10 +244,9 @@ struct ezTargetUartApi
  */
 struct ezTargetUartDriver
 {
-    bool initialized;                       /**< Driver inialized completeted flag */
-    uint8_t index;                          /**< Index value of the driver */
-    struct ezTargetUartConfiguration config;   /**< Configuration of the target driver */
-    struct ezTargetUartApi api;             /**< Pointer to the API implementation */
+    struct ezDriverCommon               common; /**< Common data and function, MUST BE THE FIRST ELEMENT OF STRUCT */
+    struct ezTargetUartApi              api;    /**< Pointer to the API implementation */
+    struct ezTargetUartConfiguration    config; /**< Configuration of the target driver */
 };
 
 

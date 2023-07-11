@@ -41,7 +41,7 @@
 #include "string.h"
 #include "stdint.h"
 #include "stdbool.h"
-
+#include "service/driver/ez_driver_common.h"
 
 /******************************************************************************
 * Module Preprocessor Macros
@@ -126,7 +126,6 @@ struct ezHalEchoConfiguration
  */
 struct ezTargetEchoApi
 {
-    ezEcho_TargetInitialize Initialize; /**< Poiter to the initialized function */
     ezEcho_TargetWrite Write;           /**< Pointer to the write function */
     ezEcho_TargeRead Read;              /**< Pointer to the read function */
 };
@@ -137,8 +136,7 @@ struct ezTargetEchoApi
  */
 struct ezHalEchoDriver
 {
-    bool initialized;                       /**< Driver inialized completeted flag */
-    uint8_t index;                          /**< Index value of the driver */
+    struct ezDriverCommon common;           /**< Common data and function, MUST BE THE FIRST ELEMENT OF STRUCT */
     struct ezHalEchoConfiguration config;   /**< Configuration of the target driver */
     struct ezTargetEchoApi api;             /**< Pointer to the API implementation */
 };

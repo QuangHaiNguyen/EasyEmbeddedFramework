@@ -89,7 +89,7 @@ typedef void* ezDriverConfiguration_t;
 
 
 /** @brief Define target driver. The actual implementation depends on individual
- *         targer
+ *         target
  */
 typedef void* ezTargetDriver_t;
 
@@ -99,16 +99,51 @@ typedef void* ezTargetDriver_t;
 typedef struct ezDriverHandle ezDriverHandle_t;
 
 
+/** @brief
+ */
+typedef ezDriverStatus_t(*ezDriver_Initilialize)(uint8_t driver_index);
+
+
+/** @brief
+ */
+typedef ezDriverStatus_t(*ezDriver_Deinitilialize)(uint8_t driver_index);
+
+
+/** @brief
+ */
+typedef void (*ezDriver_SetCallback)(uint8_t driver_index, ezDriverCallback Callback);
+
+
+/** @brief
+ */
+typedef ezDriverConfiguration_t *(*ezDriver_GetConfiguration)(uint8_t driver_index);
+
+
+/** @brief  Structure holds common data and function callbacks which must be
+ *          implemented by every target driver.
+ */
+struct ezDriverCommon
+{
+    uint8_t                     index;              /**< Index of the current driver */
+    ezDriver_Initilialize       initialize;         /**< Pointer to initialize function */
+    ezDriver_Deinitilialize     deinitialize;       /**< Pointer to deinitialize function */
+    ezDriver_SetCallback        set_callback;        /**< Pointer to set callback function */
+    ezDriver_GetConfiguration   get_configuration;   /**< Pointer to get configuration function */
+};
+
+
 /** @brief Contain information, data, API of a driver
  */
 struct ezDriver
 {
+    bool                    initialized;            /**< Driver inialized flag */
     const char              *name;                  /**< Name of the driver */
     uint32_t                version;                /**< Version of the driver */
-    ezDriverConfiguration_t ptr_configuration;      /**< Point to the configuration */
-    ezTargetDriver_t        ptr_target_driver;      /**< Point to the hardware api */
+    ezDriverConfiguration_t configuration;          /**< Point to the configuration */
+    ezTargetDriver_t        target_driver;          /**< Point to the hardware api */
+    ezDriverCallback        callback;               /**< Callback function */
     struct Node             parent_list;            /**< List of the module using the driver */
-    ezDriverHandle_t  *current_handle;        /**< Handle currently "own" the driver */
+    ezDriverHandle_t        *current_handle;        /**< Handle currently "own" the driver */
 };
 
 
@@ -116,9 +151,9 @@ struct ezDriver
  */
 struct ezDriverHandle
 {
-    struct Node node;           /**< Node of linked list */
-    ezDriverCallback callback;  /**< Callback function to receive event */
-    struct ezDriver *driver;    /**< pointer to the driver struct */
+    struct Node         node;       /**< Node of linked list */
+    ezDriverCallback    callback;   /**< Callback function to receive event */
+    struct ezDriver     *driver;    /**< pointer to the driver struct */
 };
 
 

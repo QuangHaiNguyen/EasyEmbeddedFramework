@@ -35,7 +35,7 @@ if(ENABLE_EZ_HAL_ECHO)
 endif()
 
 if(ENABLE_EZ_HAL_UART)
-    message(STATUS "Test for hal echo is activated")
+    message(STATUS "Test for hal uart is activated")
     add_subdirectory(service/driver/hal_uart)
 endif()
 

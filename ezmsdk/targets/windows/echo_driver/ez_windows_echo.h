@@ -78,34 +78,6 @@
 const struct ezHalEchoDriver *ezTargetEcho_GetDriver(uint8_t driver_index);
 
 
-/******************************************************************************
-* Function : ezTargetEcho_SetCallback
-*//**
-* @Description: Set callback function to notify the event to the HAL layer
-*
-* @param: (IN)driver_index: index of the driver.
-* @param: (IN)callback: pointer to callback function
-*
-* @return: Pointer to the driver or NULL. See ezDriver.
-*
-*
-*******************************************************************************/
-void ezTargetEcho_SetCallback(uint8_t driver_index,
-                              ezDriverCallback callback);
-
-
-/******************************************************************************
-* Function : ezTargetEcho_GetConfiguration
-*//**
-* @Description: Return the configuration of a corresponding driver
-*
-* @param: (IN)driver_index: index of the driver.
-*
-* @return   Pointer to the driver or NULL. See ezDriver.
-*
-*******************************************************************************/
-struct ezHalEchoConfiguration *ezTargetEcho_GetConfiguration(uint8_t driver_index);
-
 #endif /* _EZ_WINDOWS_ECHO_H */
 
 /* End of file */

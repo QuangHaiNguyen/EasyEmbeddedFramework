@@ -61,7 +61,7 @@ struct ezUartInternalDriver
     DCB          config;
     COMMTIMEOUTS timeouts;
     struct ezTargetUartDriver uart_driver;
-    ezDriverCallback callback;
+    ezUartCallback callback;
 };
 
 /******************************************************************************
@@ -72,8 +72,11 @@ struct ezUartInternalDriver
 /******************************************************************************
 * Function Definitions
 *******************************************************************************/
-static bool ezWinUart_Initialize(uint8_t driver_index);
-static bool ezWinUart_Deinitialize(uint8_t driver_index);
+static ezDriverStatus_t ezWinUart_Initialize(uint8_t driver_index);
+static ezDriverStatus_t ezWinUart_Deinitialize(uint8_t driver_index);
+static void ezWinUart_SetCallback(uint8_t driver_index,
+                                  ezUartCallback callback);
+static ezDriverConfiguration_t *ezWinUart_GetConfiguration(uint8_t driver_index);
 static uint32_t ezWinUart_WriteBlocking(uint8_t driver_index,
                                         uint8_t *data,
                                         uint32_t data_size);
@@ -87,16 +90,20 @@ static struct ezUartInternalDriver internal_drivers[NUM_OF_UART_INTERFACE] =
     {
         .uart_driver =
         {
-            .index = 0,
-            .initialized = false,
+            .common =
+            {
+                .index = 0,
+                .initialize = ezWinUart_Initialize,
+                .deinitialize = ezWinUart_Deinitialize,
+                .set_callback = ezWinUart_SetCallback,
+                .get_configuration = ezWinUart_GetConfiguration,
+            },
             .api =
             {
-                .Initialize = ezWinUart_Initialize,
-                .Deinitialize = ezWinUart_Deinitialize,
-                .Read = NULL,
-                .ReadBlocking = ezWinUart_ReadBlocking,
-                .Write = NULL,
-                .WriteBlocking = ezWinUart_WriteBlocking,
+                .read = NULL,
+                .read_blocking = ezWinUart_ReadBlocking,
+                .write = NULL,
+                .write_blocking = ezWinUart_WriteBlocking,
             },
         },
         .callback = NULL,
@@ -104,16 +111,20 @@ static struct ezUartInternalDriver internal_drivers[NUM_OF_UART_INTERFACE] =
     {
         .uart_driver =
         {
-            .index = 1,
-            .initialized = false,
+            .common =
+            {
+                .index = 1,
+                .initialize = ezWinUart_Initialize,
+                .deinitialize = ezWinUart_Deinitialize,
+                .set_callback = ezWinUart_SetCallback,
+                .get_configuration = ezWinUart_GetConfiguration,
+            },
             .api =
             {
-                .Initialize = ezWinUart_Initialize,
-                .Deinitialize = ezWinUart_Deinitialize,
-                .Read = NULL,
-                .ReadBlocking = ezWinUart_ReadBlocking,
-                .Write = NULL,
-                .WriteBlocking = ezWinUart_WriteBlocking,
+                .read = NULL,
+                .read_blocking = ezWinUart_ReadBlocking,
+                .write = NULL,
+                .write_blocking = ezWinUart_WriteBlocking,
             },
         },
         .callback = NULL,
@@ -141,7 +152,46 @@ const struct ezTargetUartDriver *ezWinUart_GetDriver(uint8_t driver_index)
 }
 
 
-struct ezTargetUartConfiguration *ezWinUart_GetConfiguration(uint8_t driver_index)
+/******************************************************************************
+* Internal functions
+*******************************************************************************/
+
+/******************************************************************************
+* Function : ezTargetEcho_SetCallback
+*//**
+* @Description: Set callback function to notify the event to the HAL layer
+*
+* @param: (IN)driver_index: index of the driver.
+* @param: (IN)callback: pointer to callback function
+*
+* @return: Pointer to the driver or NULL. See ezDriver.
+*
+*
+*******************************************************************************/
+static void ezWinUart_SetCallback(uint8_t driver_index,
+                                  ezUartCallback callback)
+{
+    ASSERT(driver_index < NUM_OF_UART_INTERFACE);
+    ASSERT(callback != NULL);
+
+    if (driver_index < NUM_OF_UART_INTERFACE && callback)
+    {
+        internal_drivers[driver_index].callback = callback;
+    }
+}
+
+
+/******************************************************************************
+* Function : ezTargetEcho_GetConfiguration
+*//**
+* @Description: Return the configuration of a corresponding driver
+*
+* @param: (IN)driver_index: index of the driver.
+*
+* @return   Pointer to the driver or NULL. See ezDriver.
+*
+*******************************************************************************/
+static ezDriverConfiguration_t *ezWinUart_GetConfiguration(uint8_t driver_index)
 {
     struct ezTargetUartConfiguration *config = NULL;
 
@@ -158,7 +208,7 @@ struct ezTargetUartConfiguration *ezWinUart_GetConfiguration(uint8_t driver_inde
         case ODDPARITY:     config->parity = PARITY_ODD;    break;
         case MARKPARITY:    config->parity = PARITY_MARK;   break;
         case SPACEPARITY:   config->parity = PARITY_SPACE;  break;
-        /* Set the config to NULL to indicated error */
+            /* Set the config to NULL to indicated error */
         default:            config = NULL;                  break;
         }
 
@@ -169,7 +219,7 @@ struct ezTargetUartConfiguration *ezWinUart_GetConfiguration(uint8_t driver_inde
             case ONESTOPBIT:    config->stop_bit = ONE_BIT;             break;
             case ONE5STOPBITS:  config->stop_bit = ONE_AND_HALF_BIT;    break;
             case TWO_BITS:      config->stop_bit = TWO_BITS;            break;
-            /* Set the config to NULL to indicated error */
+                /* Set the config to NULL to indicated error */
             default:            config = NULL;                          break;
             }
         }
@@ -185,32 +235,17 @@ struct ezTargetUartConfiguration *ezWinUart_GetConfiguration(uint8_t driver_inde
             config = NULL;
         }/* else invalid argument */
     }
-    return config;
+    return (ezDriverConfiguration_t)config;
 }
 
 
-void ezWinUart_SetCallback(uint8_t driver_index,
-                           ezDriverCallback callback)
-{
-    ASSERT(driver_index < NUM_OF_UART_INTERFACE);
-    ASSERT(callback != NULL);
-
-    if (driver_index < NUM_OF_UART_INTERFACE && callback)
-    {
-        internal_drivers[driver_index].callback = callback;
-    }
-}
-
-
-/******************************************************************************
-* Internal functions
-*******************************************************************************/
-static bool ezWinUart_Initialize(uint8_t driver_index)
+static ezDriverStatus_t ezWinUart_Initialize(uint8_t driver_index)
 {
     ASSERT(driver_index < NUM_OF_UART_INTERFACE);
     EZDEBUG("ezWinUart_Initialize(index = %d)", driver_index);
 
     bool success = true;
+    ezDriverStatus_t status = EZ_DRIVER_ERR_INIT;
 
     if (driver_index < NUM_OF_UART_INTERFACE)
     {
@@ -260,7 +295,7 @@ static bool ezWinUart_Initialize(uint8_t driver_index)
 
         if (success)
         {
-            internal_drivers[driver_index].uart_driver.initialized = true;
+            status = EZ_DRIVER_OK;
         }
         else
         {
@@ -268,15 +303,16 @@ static bool ezWinUart_Initialize(uint8_t driver_index)
         }
     }
 
-    return success;
+    return status;
 }
 
 
-static bool ezWinUart_Deinitialize(uint8_t driver_index)
+static ezDriverStatus_t ezWinUart_Deinitialize(uint8_t driver_index)
 {
     ASSERT(driver_index < NUM_OF_UART_INTERFACE);
     EZDEBUG("ezWinUart_Deinitialize(index = %d)", driver_index);
     bool success = true;
+    ezDriverStatus_t status = EZ_DRIVER_ERR_GENERIC;
 
     if (driver_index >= NUM_OF_UART_INTERFACE)
     {
@@ -287,12 +323,16 @@ static bool ezWinUart_Deinitialize(uint8_t driver_index)
         success = success && CloseHandle(internal_drivers[driver_index].driver_h);
     }
 
-    if (!success)
+    if (success)
+    {
+        status = EZ_DRIVER_OK;
+    }
+    else
     {
         EZERROR("Port cannot be closed!!!");
     }
 
-    return success;
+    return status;
 }
 
 

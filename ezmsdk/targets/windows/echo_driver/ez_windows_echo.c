@@ -78,19 +78,25 @@ struct ezEchoDriverInternal
 *******************************************************************************/
 static uint32_t ezEcho_Write(uint8_t driver_index, uint8_t *data, uint32_t data_size);
 static uint32_t ezEcho_Read(uint8_t driver_index, uint8_t *data, uint32_t data_size);
-static void ezEcho_Initialize(uint8_t driver_index);
-
+static ezDriverStatus_t ezEcho_Initialize(uint8_t driver_index);
+static ezDriverConfiguration_t *ezTargetEcho_GetConfiguration(uint8_t driver_index);
+static void ezTargetEcho_SetCallback(uint8_t driver_index, ezDriverCallback callback);
 
 static struct ezEchoDriverInternal driver_internal[NUM_OF_DRIVER] =
 {
     {
         .hal_driver =
         {
-            .index = ECHO_INTERFACE_1,
-            .initialized = false,
+            .common =
+            {
+                .index = 0,
+                .initialize = ezEcho_Initialize,
+                .deinitialize = NULL,
+                .set_callback = ezTargetEcho_SetCallback,
+                .get_configuration = ezTargetEcho_GetConfiguration,
+            },
             .api =
             {
-                .Initialize = ezEcho_Initialize,
                 .Read = ezEcho_Read,
                 .Write = ezEcho_Write,
             },
@@ -106,11 +112,16 @@ static struct ezEchoDriverInternal driver_internal[NUM_OF_DRIVER] =
     {
         .hal_driver =
         {
-            .index = ECHO_INTERFACE_2,
-            .initialized = false,
+            .common =
+            {
+                .index = 1,
+                .initialize = ezEcho_Initialize,
+                .deinitialize = NULL,
+                .set_callback = ezTargetEcho_SetCallback,
+                .get_configuration = ezTargetEcho_GetConfiguration,
+            },
             .api =
             {
-                .Initialize = ezEcho_Initialize,
                 .Read = ezEcho_Read,
                 .Write = ezEcho_Write,
             },
@@ -146,42 +157,6 @@ const struct ezHalEchoDriver *ezTargetEcho_GetDriver(uint8_t driver_index)
 }
 
 
-void ezTargetEcho_SetCallback(uint8_t driver_index, ezDriverCallback callback)
-{
-    ASSERT((driver_index < NUM_OF_DRIVER));
-    ASSERT((callback != NULL));
-
-    EZDEBUG("ezTargetEcho_SetCallback(index = %d)", driver_index);
-
-    if (driver_index < NUM_OF_DRIVER && callback)
-    {
-        driver_internal[driver_index].callback = callback;
-
-        EZDEBUG("Set callback OK");
-    }/* else invalid arguments */
-}
-
-
-struct ezHalEchoConfiguration *ezTargetEcho_GetConfiguration(uint8_t driver_index)
-{
-    ASSERT((driver_index < NUM_OF_DRIVER));
-
-    struct ezHalEchoConfiguration *ptr_config = NULL;
-
-    EZDEBUG("ezTargetEcho_GetConfiguration(index = %d)", driver_index);
-
-    if (driver_index < NUM_OF_DRIVER
-        && driver_internal[driver_index].hal_driver.initialized)
-    {
-        ptr_config = &driver_internal[driver_index].hal_driver.config;
-
-        EZDEBUG("ring buff size = %d", ptr_config->size_of_ring_buff);
-    }/* else invalid arguments */
-
-    return ptr_config;
-}
-
-
 /******************************************************************************
 * Internal functions
 *******************************************************************************/
@@ -193,12 +168,13 @@ struct ezHalEchoConfiguration *ezTargetEcho_GetConfiguration(uint8_t driver_inde
 *
 * @param: (IN)driver_index: index of the driver.
 *
-* @return: -
+* @return: EZ_DRIVER_OK if success, else error.
 *
 *******************************************************************************/
-static void ezEcho_Initialize(uint8_t driver_index)
+static ezDriverStatus_t ezEcho_Initialize(uint8_t driver_index)
 {
     ASSERT((driver_index < NUM_OF_DRIVER));
+    ezDriverStatus_t status = EZ_DRIVER_ERR_INIT;
 
     if (driver_index < NUM_OF_DRIVER)
     {
@@ -206,7 +182,66 @@ static void ezEcho_Initialize(uint8_t driver_index)
             driver_internal[driver_index].buff,
             BUFF_SIZE);
 
-        driver_internal[driver_index].hal_driver.initialized = true;
+        status = EZ_DRIVER_OK;
+    }/* else invalid arguments */
+
+    return status;
+}
+
+
+/******************************************************************************
+* Function : ezTargetEcho_GetConfiguration
+*//**
+* @Description: Return the configuration of a corresponding driver
+*
+* @param: (IN)driver_index: index of the driver.
+*
+* @return   Pointer to the driver or NULL. See ezDriver.
+*
+*******************************************************************************/
+static ezDriverConfiguration_t *ezTargetEcho_GetConfiguration(uint8_t driver_index)
+{
+    ASSERT((driver_index < NUM_OF_DRIVER));
+
+    struct ezHalEchoConfiguration *ptr_config = NULL;
+
+    EZDEBUG("ezTargetEcho_GetConfiguration(index = %d)", driver_index);
+
+    if (driver_index < NUM_OF_DRIVER)
+    {
+        ptr_config = &driver_internal[driver_index].hal_driver.config;
+
+        EZDEBUG("ring buff size = %d", ptr_config->size_of_ring_buff);
+    }/* else invalid arguments */
+
+    return (ezDriverConfiguration_t)ptr_config;
+}
+
+
+/******************************************************************************
+* Function : ezTargetEcho_SetCallback
+*//**
+* @Description: Set callback function to notify the event to the HAL layer
+*
+* @param: (IN)driver_index: index of the driver.
+* @param: (IN)callback: pointer to callback function
+*
+* @return: Pointer to the driver or NULL. See ezDriver.
+*
+*
+*******************************************************************************/
+static void ezTargetEcho_SetCallback(uint8_t driver_index, ezDriverCallback callback)
+{
+    ASSERT((driver_index < NUM_OF_DRIVER));
+    ASSERT((callback != NULL));
+
+    EZDEBUG("ezTargetEcho_SetCallback(index = %d)", driver_index);
+
+    if (driver_index < NUM_OF_DRIVER && callback)
+    {
+        driver_internal[driver_index].callback = callback;
+
+        EZDEBUG("Set callback OK");
     }/* else invalid arguments */
 }
 
