@@ -27,3 +27,6 @@ option(ENABLE_EZ_HAL_DRIVER     "Enable the Driver module"                  ON)
 # Configure HAL driver
 option(ENABLE_EZ_HAL_ECHO       "Enable HAL echo driver"                    ON)
 option(ENABLE_EZ_HAL_UART       "Enable HAL uart driver"                    ON)
+
+# Configure 3rd Party
+option(ENABLE_LITTLE_FS         "Enable littlefs library"                   ON)

@@ -19,8 +19,7 @@ add_executable(main
 )
 
 target_include_directories(main PRIVATE ezmsdk)
-target_link_libraries(main PRIVATE unity sdk)
-
+target_link_libraries(main PRIVATE sdk)
 
 if(BUILD_TESTING)
     add_subdirectory(tests)
