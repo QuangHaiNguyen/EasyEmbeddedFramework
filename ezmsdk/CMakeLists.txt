@@ -25,6 +25,7 @@ target_link_libraries(sdk PUBLIC
     ez_app
     ez_kernel
     ez_hal_driver
+    littlefs
 )
 
 #include directory
