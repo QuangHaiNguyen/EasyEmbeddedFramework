@@ -39,7 +39,7 @@
 *******************************************************************************/
 #include "stdbool.h"
 #include "stdint.h" 
-#include "service/driver/hal_uart/ez_target_uart_def.h"
+#include "service/driver/hal/hal_uart/ez_target_uart_def.h"
 
 /******************************************************************************
 * Module Preprocessor Macros

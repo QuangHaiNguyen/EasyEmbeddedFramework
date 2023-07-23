@@ -39,7 +39,7 @@
 #include "string.h"
 
 #include "service/driver/ez_hal_driver_def.h"
-#include "service/driver/hal_echo/ez_hal_echo.h"
+#include "service/driver/hal/hal_echo/ez_hal_echo.h"
 
 #include "unity.h"
 #include "unity_fixture.h"

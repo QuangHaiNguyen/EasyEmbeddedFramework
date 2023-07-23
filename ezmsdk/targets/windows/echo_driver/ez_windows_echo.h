@@ -40,7 +40,7 @@
 *******************************************************************************/
 #include "stdbool.h"
 #include "stdint.h" 
-#include "service/driver/hal_echo/ez_hal_echo_target_def.h"
+#include "service/driver/hal/hal_echo/ez_hal_echo_target_def.h"
 #include "service/driver/ez_hal_driver_def.h"
 
 /******************************************************************************
