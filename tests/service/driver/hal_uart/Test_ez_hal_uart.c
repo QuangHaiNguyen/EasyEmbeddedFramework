@@ -38,8 +38,8 @@
 #include <stdbool.h>
 #include "unity.h"
 #include "unity_fixture.h"
-#include "service/driver/hal_uart/ez_hal_uart.h"
-#include "service/driver/hal_uart/ez_target_uart_def.h"
+#include "service/driver/hal/hal_uart/ez_hal_uart.h"
+#include "service/driver/hal/hal_uart/ez_target_uart_def.h"
 
 TEST_GROUP(ez_hal_uart);
 
