@@ -1,9 +1,9 @@
 
 /*******************************************************************************
-* Filename:         ez_hal_uart_runner.c
+* Filename:         temp.h
 * Author:           Hai Nguyen
-* Original Date:    25.06.2023
-* Last Update:      25.06.2023
+* Original Date:    21.01.2024
+* Last Update:      21.01.2024
 *
 * -----------------------------------------------------------------------------
 * Company:          Embedded Easy
@@ -18,37 +18,45 @@
 * Copyright Hai Nguyen - All Rights Reserved
 * Unauthorized copying of this file, via any medium is strictly prohibited
 * Proprietary and confidential
-* Written by Hai Nguyen 25.06.2023
+* Written by Hai Nguyen 21.01.2024
 *
 *******************************************************************************/
 
-/** @file   ez_hal_uart_runner.c
+/** @file   temp.h
  *  @author Hai Nguyen
- *  @date   25.06.2023
+ *  @date   21.01.2024
  *  @brief  This is the source for a module
  *  
  *  @details
  * 
  */
 
-/******************************************************************************
+#ifndef _TEMP_H
+#define _TEMP_H
+
+/*******************************************************************************
 * Includes
 *******************************************************************************/
-#include <stdint.h>
-#include <stdbool.h>
-
-#include "unity.h"
-#include "unity_fixture.h"
+#include "app/app_config.h"
 
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
-/* None */
+#define A_MACRO     1   /**< a macro*/
 
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
-/* None */
+
+/** @brief definition of a new type
+ *  
+ */
+typedef struct
+{
+    int a;  /**< an integer */
+    int b;  /**< an integer */
+}aType;
+
 
 /******************************************************************************
 * Module Variable Definitions
@@ -56,31 +64,11 @@
 /* None */
 
 /******************************************************************************
-* Function Definitions
+* Function Prototypes
 *******************************************************************************/
-/* None */
+int sum(int a, int b); /**< Short description of function */
 
-/******************************************************************************
-* External functions
-*******************************************************************************/
-/* None */
-
-
-/******************************************************************************
-* Internal functions
-*******************************************************************************/
-TEST_GROUP_RUNNER(ez_hal_uart)
-{
-    RUN_TEST_CASE(ez_hal_uart, ezHalUart_GetDriver_Correct);
-    RUN_TEST_CASE(ez_hal_uart, ezHalUart_GetDriver_Incorrect);
-    RUN_TEST_CASE(ez_hal_uart, ezHalUart_Write_Without_Get_Driver);
-    RUN_TEST_CASE(ez_hal_uart, ezHalUart_ReleaseDriver);
-    RUN_TEST_CASE(ez_hal_uart, UsingUnsupportedAPI);
-    RUN_TEST_CASE(ez_hal_uart, ezHalUart_Write); 
-    RUN_TEST_CASE(ez_hal_uart, ezHalUart_WriteReadSequencial);
-    RUN_TEST_CASE(ez_hal_uart, ezHalUart_WriteReadBlock);
-}
-
+#endif /* _TEMP_H */
 
 /* End of file */
 

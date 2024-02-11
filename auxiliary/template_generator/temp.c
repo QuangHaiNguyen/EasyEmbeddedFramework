@@ -1,9 +1,9 @@
 
 /*******************************************************************************
-* Filename:         ez_hal_uart_runner.c
+* Filename:         temp.c
 * Author:           Hai Nguyen
-* Original Date:    25.06.2023
-* Last Update:      25.06.2023
+* Original Date:    21.01.2024
+* Last Update:      21.01.2024
 *
 * -----------------------------------------------------------------------------
 * Company:          Embedded Easy
@@ -18,13 +18,13 @@
 * Copyright Hai Nguyen - All Rights Reserved
 * Unauthorized copying of this file, via any medium is strictly prohibited
 * Proprietary and confidential
-* Written by Hai Nguyen 25.06.2023
+* Written by Hai Nguyen 21.01.2024
 *
 *******************************************************************************/
 
-/** @file   ez_hal_uart_runner.c
+/** @file   temp.c
  *  @author Hai Nguyen
- *  @date   25.06.2023
+ *  @date   21.01.2024
  *  @brief  This is the source for a module
  *  
  *  @details
@@ -34,16 +34,18 @@
 /******************************************************************************
 * Includes
 *******************************************************************************/
-#include <stdint.h>
-#include <stdbool.h>
+#include "temp.h"
 
-#include "unity.h"
-#include "unity_fixture.h"
+#define DEBUG_LVL   LVL_TRACE   /**< logging level */
+#define MOD_NAME    "temp"       /**< module name */
+#include "ezUtilities/logging/logging.h"
+
+/*the rest of include go here*/
 
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
-/* None */
+#define A_MACRO     1   /**< a macro*/
 
 /******************************************************************************
 * Module Typedefs
@@ -63,24 +65,34 @@
 /******************************************************************************
 * External functions
 *******************************************************************************/
-/* None */
 
+/******************************************************************************
+* Function : sum
+*//** 
+* @Description:
+*
+* This function initializes the ring buffer
+* 
+* @param    a: (IN)pointer to the ring buffer
+* @param    b: (IN)size of the ring buffer
+* @return   None
+*
+* @Example Example:
+* @code
+* sum(a, b);
+* @endcode
+*
+* @see sum
+*
+*******************************************************************************/
+int sum(int a, int b)
+{
+    return a + b;
+}
 
 /******************************************************************************
 * Internal functions
 *******************************************************************************/
-TEST_GROUP_RUNNER(ez_hal_uart)
-{
-    RUN_TEST_CASE(ez_hal_uart, ezHalUart_GetDriver_Correct);
-    RUN_TEST_CASE(ez_hal_uart, ezHalUart_GetDriver_Incorrect);
-    RUN_TEST_CASE(ez_hal_uart, ezHalUart_Write_Without_Get_Driver);
-    RUN_TEST_CASE(ez_hal_uart, ezHalUart_ReleaseDriver);
-    RUN_TEST_CASE(ez_hal_uart, UsingUnsupportedAPI);
-    RUN_TEST_CASE(ez_hal_uart, ezHalUart_Write); 
-    RUN_TEST_CASE(ez_hal_uart, ezHalUart_WriteReadSequencial);
-    RUN_TEST_CASE(ez_hal_uart, ezHalUart_WriteReadBlock);
-}
 
-
-/* End of file */
+/* End of file*/
 

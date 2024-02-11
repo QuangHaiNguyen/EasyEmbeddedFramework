@@ -1,1 +1,0 @@
-amap.exe -g  ..\ide\vs_project\Debug\vs_project.map
