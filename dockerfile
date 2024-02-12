@@ -9,5 +9,6 @@ RUN apt-get install make -y
 RUN apt-get install ninja-build doxygen graphviz -y
 RUN apt-get install --no-install-recommends curl -y
 RUN apt-get install python3 python3-pip -y
+RUN apt-get install git -y
 
-WORKDIR /home/sdk
+WORKDIR /home/framework
