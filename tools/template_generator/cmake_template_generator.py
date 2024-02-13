@@ -147,10 +147,17 @@ def main():
 
     my_parser.add_argument("-l",
                             "--library",
-                            action="store",
-                            type=bool,
+                            action="store_true",
                             help="flag to indicate this cmake is a library or an executable")
     
+    my_parser.add_argument("-e",
+                            "--executable",
+                            dest="library",
+                            action="store_false",
+                            help="flag to indicate this cmake is an executable")
+
+    my_parser.set_defaults(library=True)
+
     my_parser.add_argument( "-n",
                             "--name",
                             action="store",
