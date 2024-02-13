@@ -40,7 +40,7 @@
 * Includes
 *******************************************************************************/
 #include <stdio.h>
-#include "utilities/hexdump/ez_hexdump.h"
+#include "../hexdump/ez_hexdump.h"
 
 /******************************************************************************
 * Module Preprocessor Macros

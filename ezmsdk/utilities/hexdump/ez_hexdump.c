@@ -25,7 +25,7 @@
 
 #if(EZ_HEXDUMP == 1U)
 #include "ez_hexdump.h"
-#include "logging/ez_logging.h"
+#include "ez_logging.h"
 #include "stdio.h"
 
 /******************************************************************************

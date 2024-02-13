@@ -20,7 +20,7 @@
 * Includes
 *******************************************************************************/
 #include "stdint.h"
-#include "linked_list/ez_linked_list.h"
+#include "ez_linked_list.h"
 
 /******************************************************************************
 * Module Preprocessor Macros

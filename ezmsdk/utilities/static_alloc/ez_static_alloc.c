@@ -19,8 +19,7 @@
 #include "ez_static_alloc.h"
 
 #if (EZ_STATIC_ALLOC == 1U)
-#include "ezApp/ezmDebug/ezmDebug.h"
-#include "hexdump/ez_hexdump.h"
+#include "ez_hexdump.h"
 
 #include "stdbool.h"
 #include <string.h>

@@ -55,8 +55,7 @@ target_include_directories(ez_utilities_lib
         ${CMAKE_CURRENT_LIST_DIR}/static_alloc
         ${CMAKE_CURRENT_LIST_DIR}/system_error
         ${CMAKE_CURRENT_LIST_DIR}/queue
-    PRIVATE
-        ${FRAMEWORK_ROOT_DIR}
+        ${FRAMEWORK_ROOT_DIR}/ezApp
 )
 
 

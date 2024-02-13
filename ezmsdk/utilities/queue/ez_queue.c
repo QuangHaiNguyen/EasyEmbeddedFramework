@@ -41,7 +41,7 @@
 #define DEBUG_LVL   LVL_INFO       /**< logging level */
 #define MOD_NAME    "ez_queue"     /**< module name */
 
-#include "logging/ez_logging.h"
+#include "ez_logging.h"
 #include <string.h>
 
 /******************************************************************************

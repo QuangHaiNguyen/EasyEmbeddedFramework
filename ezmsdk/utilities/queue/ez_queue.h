@@ -37,13 +37,13 @@
 /*******************************************************************************
 * Includes
 *******************************************************************************/
-#include "ezApp/ezSdk_config.h"
+#include "ezSdk_config.h"
 
 #if (EZ_QUEUE == 1U)
 
 #include <stdint.h>
-#include "linked_list/ez_linked_list.h"
-#include "static_alloc/ez_static_alloc.h"
+#include "ez_linked_list.h"
+#include "ez_static_alloc.h"
 
 
 /******************************************************************************
