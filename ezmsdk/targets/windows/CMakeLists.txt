@@ -26,5 +26,5 @@ target_compile_definitions(ez_windows_target
 )
 
 target_link_libraries(ez_windows_target PRIVATE
-    ez_utilities
+    ez_utilities_lib
 )

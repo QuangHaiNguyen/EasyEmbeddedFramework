@@ -16,4 +16,4 @@ target_include_directories(ez_event_notifier PUBLIC
 ${CURRENT_DIR} 
 ${SDK_ROOT_DIR})
 
-target_link_libraries(ez_event_notifier PRIVATE ez_utilities)
+target_link_libraries(ez_event_notifier PRIVATE ez_utilities_lib)
