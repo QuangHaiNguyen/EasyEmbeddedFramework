@@ -41,7 +41,7 @@
 *******************************************************************************/
 #include <stdint.h>
 #include <stdbool.h>
-#include "utilities/linked_list/ez_linked_list.h"
+#include "ez_linked_list.h"
 
 /******************************************************************************
 * Module Preprocessor Macros

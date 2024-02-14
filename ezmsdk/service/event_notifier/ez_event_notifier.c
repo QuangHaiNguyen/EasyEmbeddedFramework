@@ -41,7 +41,7 @@
 #define DEBUG_LVL   LVL_NO_LOG      /**< logging level */
 #define MOD_NAME    "EVENT_NOTIFY"  /**< module name */
 
-#include "utilities/logging/ez_logging.h"
+#include "ez_logging.h"
 
 /******************************************************************************
 * Module Preprocessor Macros
