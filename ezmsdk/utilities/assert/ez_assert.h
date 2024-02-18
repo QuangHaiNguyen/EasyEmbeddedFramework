@@ -1,30 +1,36 @@
-/*******************************************************************************
-* Title                 :   ezmAssert
-* Filename              :   ezmAssert.h
-* Author                :   Quang Hai Nguyen
-* Origin Date           :   24.05.2021
-* Version               :   1.0.0
+/*****************************************************************************
+* Filename:         ez_assert.h
+* Author:           Hai Nguyen
+* Original Date:    18.02.2024
 *
-*******************************************************************************/
+* ----------------------------------------------------------------------------
+* Contact:          Hai Nguyen
+*                   hainguyen.eeit@gmail.com
+*
+* ----------------------------------------------------------------------------
+* License: This file is published under the license described in LICENSE.md
+*
+*****************************************************************************/
 
-/*************** INTERFACE CHANGE LIST *****************************************
-*
-*  Date         Version     Author              Description 
-*  24.05.2021   1.0.0       Quang Hai Nguyen    Interface Created.
-*
-*******************************************************************************/
-/** @file   ezmAssert.h
- *  @brief  Header template for a Assert
+/** @file   ez_assert.h
+ *  @author Hai Nguyen
+ *  @date   18.02.2024
+ *  @brief  Public API of the assert component
+ *
+ *  @details Provide implementation of the assert function. This
+ *  implementation also shows function and line where the assert failure
+ *  occurs
+ * 
  */
 
-
-#ifndef _EZMASSERT_H
-#define _EZMASSERT_H
+#ifndef _EZ_ASSERT_H
+#define _EZ_ASSERT_H
 
 /*******************************************************************************
 * Includes
 *******************************************************************************/
 /*None*/
+
 
 /******************************************************************************
 * Module Preprocessor Macros
@@ -48,14 +54,13 @@
                 if(!(expr))                                                                         \
                 {printf("\nassert:%s:%d - " fmt "\n", __func__ , __LINE__, ##__VA_ARGS__);while(1);}\
             }while(0);                                                                              \
-            
+
 #else
 #define ASSERT(expr)
 #define ASSERT_MSG(expr, msg)
 #define ASSERT_CUST_MSG(expr, msg, ...)
 #endif /* HELPER_ASSERT */
 
-/**< register your module id*/
 
 /******************************************************************************
 * Module Typedefs
@@ -72,6 +77,6 @@
 *******************************************************************************/
 
 
-#endif /* _EZMASSERT_H */
+#endif /* _EZ_ASSERT_H */
 
 /* End of file*/
