@@ -6,3 +6,5 @@ tools/StateMachineGenerator/*.h
 tools/template_generator/*.c
 tools/template_generator/*.h
 tools/template_generator/CMakeLists.txt
+doxygen/
+tools/template_generator/__pycache__/

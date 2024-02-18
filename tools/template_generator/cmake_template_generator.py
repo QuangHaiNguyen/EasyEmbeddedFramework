@@ -37,6 +37,9 @@ message(STATUS "**********************************************************")
 message(STATUS "* Generating {0} library build files")
 message(STATUS "**********************************************************")
 
+
+set(FRAMEWORK_ROOT_DIR ${{CMAKE_SOURCE_DIR}}/ezmsdk)
+
 """
 
 cmake_body="""
@@ -57,7 +60,7 @@ target_compile_definitions({0}_{1}
 # Include directory -----------------------------------------------------------
 target_include_directories({0}_{1}
     PUBLIC
-        # Please add public folders here
+        ${{CMAKE_CURRENT_LIST_DIR}}
     PRIVATE
         # Please add private folders here
     INTERFACE
@@ -74,7 +77,6 @@ target_link_libraries({0}_{1}
     INTERFACE
         # Please add interface libraries
 )
-
 
 # End of file
 """
@@ -122,6 +124,7 @@ def generate_cmake_lib(author:str, name:str, path:str) -> bool:
         bool: True if success, else false
     """
     if is_tartget_name_valid(name) == True:
+        path = os.path.join(path, "CMakeLists.txt")
         with open(path, "+a") as file:
             write_text_to_cmake_lib(author, name, file)
             return True
@@ -169,24 +172,9 @@ def main():
     logger.info("destination: {}".format(args.destination))
     logger.info("name: {}".format(args.name))
 
-    # Create the file path
-    cmake_path = args.destination + "/CMakeLists.txt"
-    
-    if os.path.exists(cmake_path):
-        logger.warning("file exists, do you want to overide it?")
-        logger.warning("type Yes to overwrite:")
-        _user_input = input("")
-        
-        if _user_input == "Yes":
-            logger.debug("user type yes, continue to generate file")
-            os.remove(cmake_path)
-        else:
-            logger.info("terminated")
-            quit()
-
     if args.library == True:
         logger.info("cmake for library")
-        generate_cmake_lib(args.author, args.name, cmake_path)
+        generate_cmake_lib(args.author, args.name, args.path)
     else:
         logger.warning("not supported yet")
 
