@@ -22,7 +22,7 @@ namespace
             au8Data[i + 2] = 0xBE;
             au8Data[i + 3] = 0xEF;
         }
-        ezmHexdump((void *)au8Data, 100);
+        ezHexdump((void *)au8Data, 100);
 
         struct TestStruture
         {
@@ -33,7 +33,7 @@ namespace
         };
 
         TestStruture stTest;
-        ezmHexdump((void *)&stTest, sizeof(TestStruture));
+        ezHexdump((void *)&stTest, sizeof(TestStruture));
     }
     
     TEST(Hexdump, Test_Ascii)
@@ -44,7 +44,7 @@ namespace
         {
             au8CapitalLetter[i] = i + 0x41;
         }
-        ezmHexdump((void *)au8CapitalLetter, 24);
+        ezHexdump((void *)au8CapitalLetter, 24);
 
         uint8_t au8SmallLetter[24];
 
@@ -52,7 +52,7 @@ namespace
         {
             au8SmallLetter[i] = i + 0x61;
         }
-        ezmHexdump((void *)au8SmallLetter, 24);
+        ezHexdump((void *)au8SmallLetter, 24);
     } 
 #endif /* CONFIG_HELPER_HEXDUMP */
 }

@@ -190,7 +190,7 @@
 #endif
 
 #if DEBUG_LVL >= LVL_DEBUG
-#define EZHEXDUMP(x,y)  ezmHexdump(x,y)
+#define EZHEXDUMP(x,y)  ezHexdump(x,y)
 #else
 #define EZHEXDUMP(x, y)
 #endif

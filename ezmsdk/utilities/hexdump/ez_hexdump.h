@@ -1,22 +1,25 @@
-/*******************************************************************************
-* Title                 :   hexdump.h
-* Filename              :   hexdump.h
-* Author                :   Quang Hai Nguyen
-* Origin Date           :   16.05.2021
-* Version               :   1.0.0
+/*****************************************************************************
+* Filename:         ez_hexdump.h
+* Author:           Hai Nguyen
+* Original Date:    18.02.2024
 *
-*******************************************************************************/
+* ----------------------------------------------------------------------------
+* Contact:          Hai Nguyen
+*                   hainguyen.eeit@gmail.com
+*
+* ----------------------------------------------------------------------------
+* License: This file is published under the license described in LICENSE.md
+*
+*****************************************************************************/
 
-/*************** INTERFACE CHANGE LIST *****************************************
-*
-*  Date         Version     Author              Description 
-*  16.05.2021   1.0.0       Quang Hai Nguyen    Interface Created.
-*
-*******************************************************************************/
-/** @file   hexdump.h
- *  @brief  Contains public functions of HUxdump module
+/** @file   ez_hexdump.h
+ *  @author Hai Nguyen
+ *  @date   18.02.2024
+ *  @brief  Public functions of hexdump component
+ *
+ *  @details
+ * 
  */
-
 #ifndef _HEXDUMP_H
 #define _HEXDUMP_H
 
@@ -29,11 +32,13 @@
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
+/* None */
+
 
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
-
+/* None */
 
 
 /******************************************************************************
@@ -41,11 +46,32 @@
 *******************************************************************************/
 /* None */
 
+
 /******************************************************************************
 * Function Prototypes
 *******************************************************************************/
 
-void ezmHexdump( void * pAddress, uint16_t u16Size); /* This function display the data as hex and ascii */
+/*****************************************************************************
+* Function: ezHexdump
+*//** 
+* @brief Print data at a certain address as hex value
+*
+* @details
+*
+* @param    address: (IN)Starting address where data will be printed
+* @param    size: (IN)size of of data, in byte
+* @return   None
+*
+* @pre None
+* @post None
+*
+* @code
+* char test[3] = {'a', 'b', 'c'};
+* ezHexdump(test, 3);
+* @endcode
+*
+*****************************************************************************/
+void ezHexdump(void *address, uint16_t size);
 #endif /* _HEXDUMP_H */
 
 /* End of file*/

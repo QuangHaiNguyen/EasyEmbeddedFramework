@@ -37,7 +37,7 @@
     #define STCMEMPRINT2(a,b,c)       PRINT_DEBUG2(MOD_NAME,a,b,c)
     #define STCMEMPRINT3(a,b,c,d)     PRINT_DEBUG3(MOD_NAME,a,b,c,d)
     #define STCMEMPRINT4(a,b,c,d,e)   PRINT_DEBUG4(MOD_NAME,a,b,c,d,e)
-    #define STCMEMHEXDUMP(a,b)        ezmHexdump(a,b)
+    #define STCMEMHEXDUMP(a,b)        ezHexdump(a,b)
 #else 
     #define STCMEMPRINT(a)
     #define STCMEMPRINT1(a,b)
