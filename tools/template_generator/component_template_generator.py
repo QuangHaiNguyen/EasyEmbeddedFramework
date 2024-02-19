@@ -23,7 +23,7 @@ logger.addHandler(ch)
 
 
 # Create the parser
-my_parser = argparse.ArgumentParser(prog = 'Module Source header template generator',
+my_parser = argparse.ArgumentParser(prog = 'Component Source header template generator',
                                     description='Create the header and source file')
 
 _file_header ="""\
@@ -50,7 +50,6 @@ _doxygen_file_header=\
  *  @brief  One line description of the component
  *
  *  @details Detail description of the component
- * 
  */
 """
 
@@ -64,15 +63,13 @@ _doxygen_header_body=\
 *****************************************************************************/
 /* INCLUDE HEADER HERE */
 
-
 /*****************************************************************************
-* Module Preprocessor Macros
+* Component Preprocessor Macros
 *****************************************************************************/
 #define A_MACRO     1   /**< a macro*/
 
-
 /*****************************************************************************
-* Module Typedefs
+* Component Typedefs
 *****************************************************************************/
 
 /** @brief definition of a new type
@@ -86,9 +83,9 @@ typedef struct
 
 
 /*****************************************************************************
-* Module Variable Definitions
+* Component Variable Definitions
 *****************************************************************************/
-/* None +/
+/* None */
 
 /*****************************************************************************
 * Function Prototypes
@@ -137,17 +134,17 @@ _doxygen_source_body=\
 /*the rest of include go here*/
 
 /*****************************************************************************
-* Module Preprocessor Macros
+* Component Preprocessor Macros
 *****************************************************************************/
 #define A_MACRO     1   /**< a macro*/
 
 /*****************************************************************************
-* Module Typedefs
+* Component Typedefs
 *****************************************************************************/
 /* None */
 
 /*****************************************************************************
-* Module Variable Definitions
+* Component Variable Definitions
 *****************************************************************************/
 /* None */
 
@@ -157,7 +154,7 @@ _doxygen_source_body=\
 /* None */
 
 /*****************************************************************************
-* External functions
+* Public functions
 *****************************************************************************/
 int sum(int a, int b)
 {{
@@ -165,7 +162,7 @@ int sum(int a, int b)
 }}
 
 /*****************************************************************************
-* Internal functions
+* Local functions
 *****************************************************************************/
 
 /* End of file*/
