@@ -1,40 +1,31 @@
 
-/*******************************************************************************
-* Filename:         logging.h
+/*****************************************************************************
+* Filename:         ez_logging.h
 * Author:           Hai Nguyen
-* Original Date:    01.06.2022
-* Last Update:      01.06.2022
+* Original Date:    26.02.2024
 *
-* -----------------------------------------------------------------------------
-* Comany:           Easy Embedded
-*                   Address Line 1
-*                   Address Line 2
+* ----------------------------------------------------------------------------
+* Contact:          Hai Nguyen
+*                   hainguyen.eeit@gmail.com
 *
-* -----------------------------------------------------------------------------
-* Contact:          Easy Embedded
-*                   hainguyen.ezm@gmail.com
+* ----------------------------------------------------------------------------
+* License: This file is published under the license described in LICENSE.md
 *
-* -----------------------------------------------------------------------------
-* Copyright Hai Nguyen - All Rights Reserved
-* Unauthorized copying of this file, via any medium is strictly prohibited
-* Proprietary and confidential
-* Written by Hai Nguyen 01.06.2022
-*
-*******************************************************************************/
+*****************************************************************************/
 
-/** @file   logging.h
+/** @file   ez_logging.h
  *  @author Hai Nguyen
- *  @date   01.06.2022
+ *  @date   26.02.2024
  *  @brief  This is the header file for logging module
- *  
+ *
  *  @details Logging module provides user with multi-level and multi-format
  *  logging. Originally, logging will use printf to print file on the console,
  *  but  it can be tailored to other IO
- * 
  */
 
-#ifndef _LOGGING_H
-#define _LOGGING_H
+
+#ifndef _EZ_LOGGING_H
+#define _EZ_LOGGING_H
 
 /*******************************************************************************
 * Includes
@@ -218,9 +209,24 @@
 /******************************************************************************
 * Function Prototypes
 *******************************************************************************/
+
+/*****************************************************************************
+* Function : Logging_DemoFeatures
+*//** 
+* @brief This function demostrates some features of logging module
+*
+* @details
+*
+* @param    None
+* @return   None
+*
+* @pre None
+* @post None
+*
+*****************************************************************************/
 void Logging_DemoFeatures(void);
 
-#endif /* _LOGGING_H */
+#endif /* _EZ_LOGGING_H */
 
 /* End of file */
 
