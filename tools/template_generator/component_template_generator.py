@@ -105,6 +105,7 @@ typedef struct
 * @pre Precondition
 * @post Postcondition
 *
+* \b Example
 * @code
 * sum(a, b);
 * @endcode
