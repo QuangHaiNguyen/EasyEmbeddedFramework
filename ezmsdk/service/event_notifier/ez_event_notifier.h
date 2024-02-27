@@ -1,151 +1,152 @@
-
-/*******************************************************************************
-* Filename:         event_notifier.h
+/*****************************************************************************
+* Filename:         ez_event_notifier.h
 * Author:           Hai Nguyen
-* Original Date:    08.06.2022
-* Last Update:      19.06.2022
+* Original Date:    27.02.2024
 *
-* -----------------------------------------------------------------------------
-* Comany:           Easy Embedded
-*                   Address Line 1
-*                   Address Line 2
+* ----------------------------------------------------------------------------
+* Contact:          Hai Nguyen
+*                   hainguyen.eeit@gmail.com
 *
-* -----------------------------------------------------------------------------
-* Contact:          Easy Embedded
-*                   hainguyen.ezm@gmail.com
+* ----------------------------------------------------------------------------
+* License: This file is published under the license described in LICENSE.md
 *
-* -----------------------------------------------------------------------------
-* Copyright Hai Nguyen - All Rights Reserved
-* Unauthorized copying of this file, via any medium is strictly prohibited
-* Proprietary and confidential
-* Written by Hai Nguyen 08.06.2022
-*
-*******************************************************************************/
+*****************************************************************************/
 
-/** @file   event_notifier.h
+/** @file   ez_event_notifier.h
  *  @author Hai Nguyen
- *  @date   08.06.2022
- *  @brief  This is the source for a module
- *  
- *  @details
- * 
+ *  @date   27.02.2024
+ *  @brief  Public API of the event notifier component.
+ *
+ *  @details Event notifier component implements the observer design pattern.
  */
 
-#ifndef _EVENT_NOTIFIER_H
-#define _EVENT_NOTIFIER_H
+#ifndef _EZ_EVENT_NOTIFIER_H
+#define _EZ_EVENT_NOTIFIER_H
 
 #if(EZ_EVENT_NOTIFIER == 1U)
 
-/*******************************************************************************
+/*****************************************************************************
 * Includes
-*******************************************************************************/
+*****************************************************************************/
 #include <stdint.h>
 #include <stdbool.h>
 #include "ez_linked_list.h"
 
-/******************************************************************************
-* Module Preprocessor Macros
-*******************************************************************************/
+
+/*****************************************************************************
+* Component Preprocessor Macros
+*****************************************************************************/
 /* None */
 
-/******************************************************************************
-* Module Typedefs
-*******************************************************************************/
 
+/*****************************************************************************
+* Component Typedefs
+*****************************************************************************/
 /** @brief event callback pointer. It is used by the event notifier module to 
  *         notify the subscriber about an event.
- *         event_code: number representing an event. Specified by the event subject
+ *         event_code: number representing an event. Specified by the event
+ *         subject
  *         param1: pointer to first parameter, can be NULL if not used
  *         param2: pointer to second parameter, can be NULL if not used
+ *
  */
 typedef int (*EVENT_CALLBACK)(uint32_t event_code, void *param1, void *param2);
 
-/** @brief Observer object, used to subscribed to
- *
+
+/** @brief Observer object, used to subscribed to a subject to receive event
+ *         notification
  */
 struct ezObserver
 {
-    struct Node node;           /**< link list node */
+    struct Node node;           /**< linked list node */
     EVENT_CALLBACK callback;    /**< event call back function */
 };
 
+
 /** @brief define event_subject type.
- *
  */
 typedef struct Node ezSubject;
 
 
 /** @brief define event_observer type.
- *
  */
 typedef struct ezObserver ezObserver;
 
 
-/******************************************************************************
-* Module Variable Definitions
-*******************************************************************************/
+/*****************************************************************************
+* Component Variable Definitions
+*****************************************************************************/
 /* None */
 
-/******************************************************************************
+
+/*****************************************************************************
 * Function Prototypes
-*******************************************************************************/
+*****************************************************************************/
 
-
-/******************************************************************************
+/*****************************************************************************
 * Function : ezEventNotifier_CreateSubject
-*//**
-* @Description:
+*//** 
+* @brief This function creates a subject for observers to subscribe to.
 *
-* This function creates a subject for observers subscribe to. The user is
-* RECOMMENDED to use this function to create the subject instead of modify the
-* struct by themself
+* @details The user is RECOMMENDED to use this function to create the subject
+* instead of modify the struct by themselve.
 *
-* @param    *subject: (IN)pointer to the subject
-* @return   ezSTATUS
+* @param[in]    *subject: Pointer to the subject
+* @return       ezSTATUS
 *
-* @Example Example:
+* @pre None
+* @post None
+*
+* \b Example
 * @code
 * ezSubject subject;
 * (void) ezEventNotifier_CreateSubject(&subject);
 * @endcode
 *
-*******************************************************************************/
+*****************************************************************************/
 ezSTATUS ezEventNotifier_CreateSubject(ezSubject *subject);
 
 
 /******************************************************************************
-* Function : ezEventNotifier_ResetSubject
+* Function: ezEventNotifier_ResetSubject
 *//**
-* @Description:
+* @brief This function resets a subject
 *
-* This function reset a subject
+* @details It resets the linked list and unlinks all nodes of that list
 *
-* @param    *subject: (IN)pointer to the subject
-* @return   None
+* @param[in]    *subject: Pointer to the subject
+* @return       None
 *
-* @Example Example:
+* @pre Subject must be created
+* @post None
+*
+* \b Example
 * @code
 * ezEventNotifier_ResetSubject(&subject);
 * @endcode
+*
+* @see ezEventNotifier_CreateSubject
 *
 *******************************************************************************/
 void ezEventNotifier_ResetSubject(ezSubject *subject);
 
 
 /******************************************************************************
-* Function : ezEventNotifier_CreateObserver
+* Function: ezEventNotifier_CreateObserver
 *//**
-* @Description:
+* @brief This function creates an observer for the events from a subject.
 *
-* This function creates an observer for the events from a subject. The user is
-* RECOMMENDED to use this function to create the observer instead of modify the
-* struct by themself
+* @details The user is RECOMMENDED to use this function to create the observer
+* instead of modify the struct by themselve.
 *
-* @param    *observer: (IN)pointer to the obsever
-* @param    callback: (IN)callback to handle event from the subject
-* @return   ezSTATUS
+* @param[in]    *observer: Pointer to the obsever
+* @param[in]    callback: Callback to handle event from the subject
+* @return       ezSTATUS
 *
-* @Example Example:
+* @pre None
+* @post None
+*
+* \b Example
 * @code
 * ezObserver subject;
 * (void) ezEventNotifier_CreateObserver(&observer, EventHandleFunction);
@@ -157,89 +158,104 @@ ezSTATUS ezEventNotifier_CreateObserver(ezObserver * observer,
 
 
 /******************************************************************************
-* Function : ezEventNotifier_SubscribeEvent
+* Function: ezEventNotifier_SubscribeEvent
 *//**
-* @Description:
+* @brief This function subcribes the observer to the subject
 *
-* This function subcribes the observer to the subject
+* @details
 *
-* @param    *subject: (IN)pointer to the subject
-* @param    *observer: (IN)publisher handle
+* @param[in]    *subject: Pointer to the subject
+* @param[in]    *observer: Publisher handle
+* @return       ezSTATUS
 *
-* @return   ezSTATUS
+* @pre subject and observer must be created
+* @post None
 *
-* @Example Example:
+* \b Example
 * @code
 * ezEventNotifier_SubscribeEvent(&subject, &observer);
 * @endcode
 *
+* @see ezEventNotifier_CreateSubject, ezEventNotifier_CreateObserver
+*
 *******************************************************************************/
 ezSTATUS ezEventNotifier_SubscribeToSubject(ezSubject *subject,
-    ezObserver *observer);
+                                            ezObserver *observer);
 
 
 /******************************************************************************
-* Function : ezEventNotifier_UnsubscribeEvent
+* Function: ezEventNotifier_UnsubscribeEvent
 *//**
-* @Description:
+* @brief This function unscribe the observer to from subject
 *
-* This function unscribe the observer to from subject
+* @details
 *
-* @param    *subject: (IN)pointer to the subject
-* @param    *observer: (IN)publisher handle
+* @param[in]    *subject: Pointer to the subject
+* @param[in]    *observer: Publisher handle
+* @return       ezSTATUS
 *
-* @return   ezSTATUS
+* @pre subject and observer must be created
+* @post None
 *
-* @Example Example:
+* \b Example
 * @code
 * ezEventNotifier_UnsubscribeEvent(&subject, &observer);
 * @endcode
 *
+* @see ezEventNotifier_CreateSubject, ezEventNotifier_CreateObserver
+*
 *******************************************************************************/
 ezSTATUS ezEventNotifier_UnsubscribeFromSubject(ezSubject *subject,
-    ezObserver *observer);
+                                                ezObserver *observer);
 
 
 /******************************************************************************
-* Function : ezEventNotifier_GetNumOfObservers
+* Function: ezEventNotifier_GetNumOfObservers
 *//**
-* @Description:
+* @brief This function returns the number of observers in a subject
 *
-* This function returns the number of observers in a subject
+* @details
 *
 * @param    *observer: (IN)publisher handle
-*
 * @return   number of observers
 *
-* @Example Example:
+* @pre subject must be created
+* @post None
+*
+* \b Example
 * @code
 * uint16_t num_observer = ezEventNotifier_GetNumOfObservers(&subject);
 * @endcode
+*
+* @see ezEventNotifier_CreateSubject
 *
 *******************************************************************************/
 uint16_t ezEventNotifier_GetNumOfObservers(ezSubject *subject);
 
 
 /******************************************************************************
-* Function : evntNoti_NotifyEvent
+* Function: ezEventNotifier_NotifyEvent
 *//**
-* @Description:
+* @brief This function notifies the subscriber about an event has just happened
 *
-* This function notifies the subscriber about an event has just been happening
+* @details
 *
-* @param    *subject: (IN)pointer to the subject
-* @param    event_code: (IN)event code
-* @param    param1: (IN)companion paramneter 1, set to NULL if unused
-* @param    param1: (IN)companion paramneter 2, set to NULL if unused
+* @param[in]    *subject: Pointer to the subject
+* @param[in]    event_code: Event code. Defined by users
+* @param[in]    param1: Companion paramneter 1, set to NULL if unused
+* @param[in]    param1: Companion paramneter 2, set to NULL if unused
+* @return       None
 *
-* @return   None
+* @pre  subject must be created. event_code, param1, and param2 are defined by
+*       the user
+* @post None
 *
-* @Example Example:
+* \b Example
 * @code
 * evntNoti_NotifyEnvent(&subject, ENUM_ERROR_CODE, NULL, NULL);
 * @endcode
 *
-* @see module must be initialized
+* @see ezEventNotifier_CreateSubject
 *
 *******************************************************************************/
 void ezEventNotifier_NotifyEvent(ezSubject *subject,
@@ -247,9 +263,8 @@ void ezEventNotifier_NotifyEvent(ezSubject *subject,
                                  void* param1,
                                  void* param2);
 
-#endif /* (EZ_EVENT_NOTIFIER == 1U) */
 
-#endif /* _EVENT_NOTIFIER_H */
+#endif /* (EZ_EVENT_NOTIFIER == 1U) */
+#endif /* _EZ_EVENT_NOTIFIER_H */
 
 /* End of file */
-
