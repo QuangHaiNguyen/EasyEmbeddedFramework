@@ -38,9 +38,9 @@
 #define DEBUG_LVL   LVL_ERROR
 
 
-#include "logging/ez_logging.h"
+#include "ez_logging.h"
 #include "ez_system_error_table.h"
-#include "assert/ez_assert.h"
+#include "ez_assert.h"
 
 
 /******************************************************************************

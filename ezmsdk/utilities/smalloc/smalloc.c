@@ -55,7 +55,7 @@
 
 #if (ENABLE_HEXDUMP == 1U)
     #if (MODULE_DEBUG == 1U) && (SMALLOC_DEBUG == 1U)
-        #define SMALLOCHEXDUMP(a,b,c)           ezmHexdump(a,b,c)
+        #define SMALLOCHEXDUMP(a,b,c)           ezHexdump(a,b,c)
     #else 
         #define SMALLOCHEXDUMP(a,b,c)
     #endif

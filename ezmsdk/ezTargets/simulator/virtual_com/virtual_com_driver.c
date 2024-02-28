@@ -58,7 +58,7 @@
 
 #if (DEBUG == 1U)
 #define PRNT_DBG(fmt, ...)      printf("["MOD_NAME"] " fmt "\n", ##__VA_ARGS__)
-#define HEXDUMP(x,y)            ezmHexdump(x,y)
+#define HEXDUMP(x,y)            ezHexdump(x,y)
 #else
 #define PRNT_DBG(fmt, ...)
 #define HEXDUMP(x, y)

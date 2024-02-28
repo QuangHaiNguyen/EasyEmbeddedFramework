@@ -19,5 +19,5 @@ ${SDK_ROOT_DIR}
 
 target_link_libraries(ez_kernel PRIVATE
 ez_event_notifier
-ez_utilities
+ez_utilities_lib
 )

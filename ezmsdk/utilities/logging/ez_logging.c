@@ -1,38 +1,26 @@
-
-/*******************************************************************************
-* Filename:         logging.c
+/*****************************************************************************
+* Filename:         ez_logging.c
 * Author:           Hai Nguyen
-* Original Date:    01.06.2022
-* Last Update:      01.06.2022
+* Original Date:    26.02.2024
 *
-* -----------------------------------------------------------------------------
-* Comany:           Easy Embedded
-*                   Address Line 1
-*                   Address Line 2
+* ----------------------------------------------------------------------------
+* Contact:          Hai Nguyen
+*                   hainguyen.eeit@gmail.com
 *
-* -----------------------------------------------------------------------------
-* Contact:          Easy Embedded
-*                   hainguyen.ezm@gmail.com
+* ----------------------------------------------------------------------------
+* License: This file is published under the license described in LICENSE.md
 *
-* -----------------------------------------------------------------------------
-* Copyright Hai Nguyen - All Rights Reserved
-* Unauthorized copying of this file, via any medium is strictly prohibited
-* Proprietary and confidential
-* Written by Hai Nguyen 01.06.2022
-*
-*******************************************************************************/
+*****************************************************************************/
 
-/** @file   logging.c
+/** @file   ez_logging.c
  *  @author Hai Nguyen
- *  @date   01.06.2022
+ *  @date   26.02.2024
  *  @brief  This is the source for a logging module
- *  
+ *
  *  @details this source file will be reserve for porting logging module to
  *  other interface. At the moment, it prints the supported logging level and
  *  format
- * 
  */
-
 
 
 /******************************************************************************

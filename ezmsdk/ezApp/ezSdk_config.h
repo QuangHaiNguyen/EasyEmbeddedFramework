@@ -37,7 +37,7 @@
 /*******************************************************************************
 * Includes
 *******************************************************************************/
-#include "ezConfig/sdkconfig.h"
+//#include "ezConfig/sdkconfig.h"
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -49,6 +49,9 @@
 #define EZM_PRINTF              0U  /**< Legacy, for compatible only */
 #define WIFI_CONTROLLER         0U  /**< Legacy, for compatible only */
 #define MQTT                    0U  /**< Legacy, for compatible only */
+
+#define CONFIG_APP_VERSION_NUMBER "00.00.00"
+#define CONFIG_SDK_VERSION_NUMBER "00.00.99"
 
 /* SCHEDULER SECTION **********************************************************/
 #if (SCHEDULER == 1U)

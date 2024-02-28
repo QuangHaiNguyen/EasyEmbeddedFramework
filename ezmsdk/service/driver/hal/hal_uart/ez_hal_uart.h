@@ -37,9 +37,10 @@
 /*******************************************************************************
 * Includes
 *******************************************************************************/
-#include "service/driver/ez_hal_driver_def.h"
 #include "stdint.h"
 #include "stdbool.h"
+#include "service/driver/ez_hal_driver_def.h"
+#include "hal_uart/ez_target_uart_def.h"
 
 /******************************************************************************
 * Module Preprocessor Macros

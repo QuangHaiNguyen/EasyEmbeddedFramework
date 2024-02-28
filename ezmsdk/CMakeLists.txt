@@ -20,12 +20,13 @@ target_compile_definitions(sdk
 )
 
 target_link_libraries(sdk PUBLIC
-    ez_utilities
-    ez_event_notifier
+    ez_utilities_lib
+    $<$<BOOL:${ENABLE_EZ_EVENT_NOTIFIER}>:ez_event_notifier_lib>
+    $<$<BOOL:${ENABLE_EZ_KERNEL}>:ez_kernel>
+    $<$<BOOL:${ENABLE_EZ_HAL_DRIVER}>:ez_driver>
+    $<$<BOOL:${ENABLE_DATA_MODEL}>:ez_data_model_lib>
+    $<$<BOOL:${ENABLE_LITTLE_FS}>:littlefs>
     ez_app
-    ez_kernel
-    ez_driver
-    littlefs
 )
 
 #include directory

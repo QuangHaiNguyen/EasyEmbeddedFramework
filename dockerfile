@@ -10,5 +10,7 @@ RUN apt-get install ninja-build doxygen graphviz -y
 RUN apt-get install --no-install-recommends curl -y
 RUN apt-get install python3 python3-pip -y
 RUN apt-get install git -y
+RUN apt-get install doxygen -y
+RUN apt-get install graphviz -y
 
 WORKDIR /home/framework

@@ -1,32 +1,23 @@
-/*******************************************************************************
-* Title                 :   ring buffer module 
-* Filename              :   ring_buffer.c
-* Author                :   Quang Hai Nguyen
-* Origin Date           :   24.01.2021
-* Version               :   1.0.0
+/*****************************************************************************
+* Filename:         ez_ring_buffer.c
+* Author:           Hai Nguyen
+* Original Date:    26.02.2024
 *
-*******************************************************************************/
+* ----------------------------------------------------------------------------
+* Contact:          Hai Nguyen
+*                   hainguyen.eeit@gmail.com
+*
+* ----------------------------------------------------------------------------
+* License: This file is published under the license described in LICENSE.md
+*
+*****************************************************************************/
 
-/*************** SOURCE REVISION LOG *****************************************
-*
-*  Date         Version     Author              Description 
-*  24.01.2021   1.0.0       Quang Hai Nguyen    Initial Release.
-*  28.03.2021   1.0.1       Quang Hai Nguyen    Increase buff to uint16_t,
-*                                               Add static memory
-*
-*******************************************************************************/
-/** @file  ring_buffer.c
- *  @brief implemetation of the ring buffer
- * 
- * <br><b> - HISTORY OF CHANGES - </b>
- *  
- * <table align="left" style="width:800px">
- * <tr><td> Date       </td><td> Software Version </td><td> Initials         </td><td> Description </td></tr>
- * <tr><td> 24.01.2021 </td><td> 1.0.0            </td><td> Quang Hai Nguyen </td><td> Init </td></tr>
- * <tr><td> 28.03.2021 </td><td> 1.0.1            </td><td> Quang Hai Nguyen </td><td> increase buff size and support static memory </td></tr>
- * </table><br><br>
- * <hr>
- * 
+/** @file   ez_ring_buffer.c
+ *  @author Hai Nguyen
+ *  @date   26.02.2024
+ *  @brief  Implementation of the ring data structure
+ *
+ *  @details
  */
 
 /******************************************************************************
@@ -38,47 +29,33 @@
 #include "string.h"
 
 
-
-/******************************************************************************
-* Module Typedefs
-*******************************************************************************/
+/*****************************************************************************
+* Component Preprocessor Macros
+*****************************************************************************/
 /* None */
 
-/******************************************************************************
-* Module Variable Definitions
-*******************************************************************************/
+
+/*****************************************************************************
+* Component Typedefs
+*****************************************************************************/
 /* None */
 
-/******************************************************************************
+
+/*****************************************************************************
+* Component Variable Definitions
+*****************************************************************************/
+/* None */
+
+
+/*****************************************************************************
 * Function Definitions
-*******************************************************************************/
+*****************************************************************************/
 /* None */
 
-/******************************************************************************
-* Function : RingBuffer_Init
-*//** 
-* \b Description:
-*
-* This function initializes the ring buffer
-*
-* PRE-CONDITION: None
-*
-* POST-CONDITION: None
-* 
-* @param    pstBuff:  (OUT)pointer to the ring buffer
-* @param    u16Size:   (IN)size of the ring buffer
-* @return   True if success, else false
-*
-* \b Example Example:
-* @code
-* RingBuffer buffer;
-* RingBuffer_Init(&buffer, 30);
-* @endcode
-*
-* @see RingBuffer_Init
-*
-*
-*******************************************************************************/
+
+/*****************************************************************************
+* Public functions
+*****************************************************************************/
 bool ezmRingBuffer_Init(RingBuffer* pstBuff, uint8_t* pu8Buff, uint16_t u16Size)
 {
     bool bResult = true;
@@ -100,96 +77,18 @@ bool ezmRingBuffer_Init(RingBuffer* pstBuff, uint8_t* pu8Buff, uint16_t u16Size)
 }
 
 
-/******************************************************************************
-* Function : RingBuffer_IsEmpty
-*//** 
-* \b Description:
-*
-* Check if the buffer is empty
-*
-* PRE-CONDITION: a RingBuffer is exsiting
-*
-* POST-CONDITION: None
-* 
-* @param    pstBuff:  (IN)pointer to the ring buffer
-* @return   True if empty, else false
-*
-* \b Example Example:
-* @code
-* RingBuffer buffer;
-* RingBuffer_Init(&buffer, 30);
-* RingBuff_Status status;
-* status = RingBuffer_IsEmpty(&buffer);
-* @endcode
-*
-* @see RingBuffer_Init
-*
-*******************************************************************************/
 bool ezmRingBuffer_IsEmpty(RingBuffer * pstBuff)
 {
     return (0 == pstBuff->u16Count);
 }
 
 
-/******************************************************************************
-* Function : RingBuffer_IsFull
-*//** 
-* \b Description:
-*
-* Check if the buffer is full
-*
-* PRE-CONDITION: a RingBuffer is exsiting
-*
-* POST-CONDITION: None
-* 
-* @param    pstBuff:  (IN)pointer to the ring buffer
-* @return   True of full, else false
-*
-* \b Example Example:
-* @code
-* RingBuffer buffer;
-* RingBuffer_Init(&buffer, 30);
-* RingBuff_Status status;
-* status = RingBuffer_IsFull(&buffer);
-* @endcode
-*
-* @see RingBuffer_Init
-*
-*******************************************************************************/
 bool ezmRingBuffer_IsFull(RingBuffer * pstBuff)
 {
     return (pstBuff->u16Count == pstBuff->u16Capacity);
 }
 
-/******************************************************************************
-* Function : RingBuffer_Push
-*//** 
-* \b Description:
-*
-* Push data into buffer
-*
-* PRE-CONDITION: a RingBuffer is exsiting
-*
-* POST-CONDITION: None
-* 
-* @param    pstBuff:    (IN)pointer to the ring buffer
-* @param    pu8Data:    (IN)pointer to the pushed data
-* @param    u16Size:    (IN)size of the data
-* @return   Status of buffer
-*           + BUFF_OK
-*           + BUFF_NO_MEMORY
-* 
-* \b Example Example:
-* @code
-* RingBuffer buffer;
-* RingBuffer_Init(&buffer, 30);
-* uint8_t u8Data[3U] = {0U,1U,2U}
-* RingBuffer_Push(&buffer, u8Data, 3U);
-* @endcode
-*
-* @see RingBuffer_Init
-*
-*******************************************************************************/
+
 uint16_t ezmRingBuffer_Push(RingBuffer * pstBuff, uint8_t * pu8Data, uint16_t u16Size)
 {
     uint16_t u16RemainByte = 0U;
@@ -224,35 +123,7 @@ uint16_t ezmRingBuffer_Push(RingBuffer * pstBuff, uint8_t * pu8Data, uint16_t u1
     return u16NumPushedData;
 }
 
-/******************************************************************************
-* Function : RingBuffer_Pop
-*//** 
-* \b Description:
-*
-* pop data out of buffer
-*
-* PRE-CONDITION: a RingBuffer is exsiting
-*
-* POST-CONDITION: None
-* 
-* @param    pstBuff:    (IN)pointer to the ring buffer
-* @param    pu8Data:    (OUT)pointer to the popped data
-* @param    u16Size:    (IN)size of the popped data
-* @return   Status of buffer
-*           + BUFF_OK
-*           + BUFF_NO_MEMORY
-*
-* \b Example Example:
-* @code
-* RingBuffer buffer;
-* RingBuffer_Init(&buffer, 30);
-* uint8_t u8Data[3U];
-* RingBuffer_Pop(&buffer, u8Data, 3U);
-* @endcode
-*
-* @see RingBuffer_Init
-*
-*******************************************************************************/
+
 uint16_t ezmRingBuffer_Pop(RingBuffer * pstBuff, uint8_t * pu8Data, uint16_t u16Size)
 {
 
@@ -289,29 +160,7 @@ uint16_t ezmRingBuffer_Pop(RingBuffer * pstBuff, uint8_t * pu8Data, uint16_t u16
     return u16NumPoppedData;
 }
 
-/******************************************************************************
-* Function : RingBuffer_Reset
-*//** 
-* \b Description:
-*
-* Reset the buffer
-*
-* PRE-CONDITION: a RingBuffer is exsiting
-*
-* POST-CONDITION: None
-* 
-* @param    pstBuff:  (IN)pointer to the ring buffer
-* @return   Status of buffer
-*           + BUFF_OK
-*
-* \b Example Example:
-* @code
-* RingBuffer_Reset(&buffer);
-* @endcode
-*
-* @see RingBuffer_Init
-*
-*******************************************************************************/
+
 void ezmRingBuffer_Reset(RingBuffer * pstBuff)
 {
     pstBuff->u16Head = 0;
@@ -320,33 +169,7 @@ void ezmRingBuffer_Reset(RingBuffer * pstBuff)
     memset(pstBuff->pu8Buff, 0, pstBuff->u16Capacity);
 }
 
-/******************************************************************************
-* Function : RingBuffer_GetAvailableMemory
-*//** 
-* \b Description:
-*
-* Get avalable memory from the buffer
-*
-* PRE-CONDITION: a RingBuffer is exsiting
-*
-* POST-CONDITION: None
-* 
-* @param    pstBuff:  (IN)pointer to the ring buffer
-* @param    avail_mem:   (OUT)pointer to the variable holding the available memory
-* @return   Status of buffer
-*           + BUFF_OK
-*
-* \b Example Example:
-* @code
-* RingBuffer buffer;
-* RingBuffer_Init(&buffer, 30);
-* uint8_t u8AvailMem;
-* RingBuffer_GetAvailableMemory(&buffer, &u8AvailMem);
-* @endcode
-*
-* @see RingBuffer_Init
-*
-*******************************************************************************/
+
 uint16_t ezmRingBuffer_GetAvailableMemory( RingBuffer * pstBuff)
 {
     return pstBuff->u16Capacity - pstBuff->u16Count;
@@ -354,4 +177,4 @@ uint16_t ezmRingBuffer_GetAvailableMemory( RingBuffer * pstBuff)
 
 #endif /* CONFIG_RING_BUFFER */
 
-/* End of file*****************************************************************/
+/* End of file */
