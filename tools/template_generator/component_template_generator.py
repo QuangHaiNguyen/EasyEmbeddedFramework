@@ -92,7 +92,7 @@ typedef struct
 *****************************************************************************/
 
 /*****************************************************************************
-* Function : sum
+* Function: sum
 *//** 
 * @brief one line description
 *
@@ -102,8 +102,8 @@ typedef struct
 * @param    b: (IN)size of the ring buffer
 * @return   None
 *
-* @pre Precondition
-* @post Postcondition
+* @pre None
+* @post None
 *
 * \\b Example
 * @code

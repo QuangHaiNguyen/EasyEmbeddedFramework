@@ -13,7 +13,6 @@ message(STATUS "**********************************************************")
 
 set(FRAMEWORK_ROOT_DIR ${CMAKE_SOURCE_DIR}/ezmsdk)
 
-message(${CMAKE_CURRENT_LIST_DIR})
 
 # Source files ---------------------------------------------------------------
 target_sources(ez_utilities_lib

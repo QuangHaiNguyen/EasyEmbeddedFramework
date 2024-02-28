@@ -2,7 +2,7 @@
 # Author: Hai Nguyen
 # Name: ez_event_notifier_lib
 # License: This file is published under the license described in LICENSE.md
-# Description: PLEASE ADD TEXT HERE
+# Description: CMake file for event notifier component
 # ----------------------------------------------------------------------------
 
 add_library(ez_event_notifier_lib STATIC)
@@ -10,8 +10,6 @@ add_library(ez_event_notifier_lib STATIC)
 message(STATUS "**********************************************************")
 message(STATUS "* Generating ez_event_notifier library build files")
 message(STATUS "**********************************************************")
-
-set(FRAMEWORK_ROOT_DIR ${CMAKE_SOURCE_DIR}/ezmsdk)
 
 
 # Source files ---------------------------------------------------------------
@@ -33,7 +31,7 @@ target_include_directories(ez_event_notifier_lib
     PUBLIC
         ${CMAKE_CURRENT_LIST_DIR}
     PRIVATE
-        ${FRAMEWORK_ROOT_DIR}
+        # Unused
     INTERFACE
         # Unused
 )
@@ -42,9 +40,9 @@ target_include_directories(ez_event_notifier_lib
 # Link libraries -------------------------------------------------------------
 target_link_libraries(ez_event_notifier_lib
     PUBLIC
-        # Unused
-    PRIVATE
         ez_utilities_lib
+    PRIVATE
+        # Unused
     INTERFACE
         # Unused
 )

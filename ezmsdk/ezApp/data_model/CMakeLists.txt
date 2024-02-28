@@ -1,14 +1,53 @@
-add_library(ez_data_model STATIC)
+# ----------------------------------------------------------------------------
+# Author: Hai Nguyen
+# Name: data_model_lib
+# License: This file is published under the license described in LICENSE.md
+# Description: CMake file for data model component
+# ----------------------------------------------------------------------------
 
-message(STATUS "    Adding Data Model app")
+add_library(ez_data_model_lib STATIC)
 
-target_compile_definitions(ez_data_model
-PUBLIC 
-DATA_MODEL=$<BOOL:${ENABLE_DATA_MODEL}>
+message(STATUS "**********************************************************")
+message(STATUS "* Generating data_model library build files")
+message(STATUS "**********************************************************")
+
+
+set(FRAMEWORK_ROOT_DIR ${CMAKE_SOURCE_DIR}/ezmsdk)
+
+
+# Source files ---------------------------------------------------------------
+target_sources(ez_data_model_lib
+    PRIVATE
+        data_model.c
 )
 
-target_sources(ez_data_model PRIVATE data_model.c)
 
-target_include_directories(ez_data_model PUBLIC . ../../)
+# Definitions ----------------------------------------------------------------
+target_compile_definitions(ez_data_model_lib
+    PUBLIC
+        DATA_MODEL=$<BOOL:${ENABLE_DATA_MODEL}>
+)
 
-target_link_libraries(ez_data_model PUBLIC ez_event_notifier)
+
+# Include directory -----------------------------------------------------------
+target_include_directories(ez_data_model_lib
+    PUBLIC
+        ${CMAKE_CURRENT_LIST_DIR}
+    PRIVATE
+        # Unused
+    INTERFACE
+        # Unused
+)
+
+
+# Link libraries -------------------------------------------------------------
+target_link_libraries(ez_data_model_lib
+    PUBLIC
+        ez_event_notifier_lib
+    PRIVATE
+        # Unused
+    INTERFACE
+        # Unused
+)
+
+# End of file

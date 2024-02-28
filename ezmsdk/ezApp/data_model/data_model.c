@@ -1,106 +1,95 @@
-
-/*******************************************************************************
-* Filename:         data_model.c
+/*****************************************************************************
+* Filename:         ez_data_model.c
 * Author:           Hai Nguyen
-* Original Date:    19.06.2022
-* Last Update:      19.06.2022
+* Original Date:    27.02.2024
 *
-* -----------------------------------------------------------------------------
-* Comany:           Easy Embedded
-*                   Address Line 1
-*                   Address Line 2
+* ----------------------------------------------------------------------------
+* Contact:          Hai Nguyen
+*                   hainguyen.eeit@gmail.com
 *
-* -----------------------------------------------------------------------------
-* Contact:          Easy Embedded
-*                   hainguyen.ezm@gmail.com
+* ----------------------------------------------------------------------------
+* License: This file is published under the license described in LICENSE.md
 *
-* -----------------------------------------------------------------------------
-* Copyright Hai Nguyen - All Rights Reserved
-* Unauthorized copying of this file, via any medium is strictly prohibited
-* Proprietary and confidential
-* Written by Hai Nguyen 19.06.2022
-*
-*******************************************************************************/
+*****************************************************************************/
 
 /** @file   data_model.c
  *  @author Hai Nguyen
- *  @date   19.06.2022
- *  @brief  This is the source for a module
- *  
+ *  @date   27.02.2024
+ *  @brief  Implementation of the data model component
+ *
  *  @details
- * 
  */
 
-/******************************************************************************
-* Includes
-*******************************************************************************/
 
+/*****************************************************************************
+* Includes
+*****************************************************************************/
 
 #if (DATA_MODEL == 1U)
+#include <string.h>
 
 #define DEBUG_LVL   LVL_DEBUG       /**< logging level */
 #define MOD_NAME    "DATA_MODEL"    /**< module name */
+#include "ez_logging.h"
 
-#include <string.h>
-#include "utilities/logging/ez_logging.h"
 #include "data_model.h"
 
 /*the rest of include go here*/
 
-/******************************************************************************
-* Module Preprocessor Macros
-*******************************************************************************/
+/*****************************************************************************
+* Component Preprocessor Macros
+*****************************************************************************/
 #define NUM_OF_DATA_ELEMENT     10   /**< a macro*/
 
-/******************************************************************************
-* Module Typedefs
-*******************************************************************************/
-/** @brief definition of a new type
- *
+/*****************************************************************************
+* Component Typedefs
+*****************************************************************************/
+
+/** @brief Definition of a data point
  */
 struct DataModelElement
 {
     bool            is_avail;
+    /**< Availability flag*/
+
     bool            is_locked;
+    /**< Data model locked flag, indicating that other component is using
+     *   this model */
     uint32_t        data_size;
+    /**< Size of the data point */
     void            *data;
+    /**< Pointer to memory location where data is stored */
     ezSubject       subject;
+    /**< Event subject, managing the observer receiving event notification */
 };
 
-/******************************************************************************
-* Module Variable Definitions
-*******************************************************************************/
+
+/*****************************************************************************
+* Component Variable Definitions
+*****************************************************************************/
 static struct DataModelElement data_model[NUM_OF_DATA_ELEMENT] = {0};
 
 #if (DEBUG_LVL > LVL_INFO)
 static uint32_t data_point_count = 0U;
 #endif
+
+
 /******************************************************************************
 * Function Definitions
 *******************************************************************************/
 /* None */
 
-/******************************************************************************
-* External functions
-*******************************************************************************/
 
-/******************************************************************************
-* Function : DataModel_Initialization
-*//** 
-* @Description:
-*
-* This function initializes the Data model module
-* 
-* @param    None
-* @return   true: success
-*           false: fail
-*
-* @Example Example:
-* @code
-* DataModel_Initialization();
-* @endcode
-*
-*******************************************************************************/
+/*****************************************************************************
+* Function Definitions
+*****************************************************************************/
+/* None */
+
+
+/*****************************************************************************
+* Public functions
+*****************************************************************************/
+
 bool DataModel_Initialization(void)
 {
     bool is_success = true;
@@ -125,23 +114,7 @@ bool DataModel_Initialization(void)
     return is_success;
 }
 
-/******************************************************************************
-* Function : DataModel_ReleaseDataPoint
-*//**
-* @Description:
-*
-* This function releases and reset the data point when it is unused
-*
-* @param    data_point: (IN)data point handle
-* @return   true: success
-*           false: fail
-*
-* @Example Example:
-* @code
-* DataModel_ReleaseDataPoint(my_data_point);
-* @endcode
-*
-*******************************************************************************/
+
 void DataModel_ReleaseDataPoint(DataPoint data_point)
 {
     if (data_point < NUM_OF_DATA_ELEMENT)
@@ -159,29 +132,7 @@ void DataModel_ReleaseDataPoint(DataPoint data_point)
     }
 }
 
-/******************************************************************************
-* Function : DataModel_CreateDataPoint
-*//**
-* @Description:
-*
-* This function creates a data point by getting a free data point from
-* data_model, and it init the data point according to the arguments
-*
-* @param    *data: (IN)pointer to the actual data
-* @param    size: (IN)size of data, for sanity checking and future use
-* @return   DataPoint handle or DATA_POINT_INVALID
-*
-* @Example Example:
-* @code
-* uint32_t my_data = 100;
-* DataPoint my_data_point = DataModel_CreateDataPoint(&my_data, sizeof(uint32_t));
-* if(my_data_point != DATA_POINT_INVALID)
-* {
-*     printf("success");
-* }
-* @endcode
-*
-*******************************************************************************/
+
 DataPoint DataModel_CreateDataPoint(void * data,
                                     uint32_t size)
 {
@@ -218,34 +169,6 @@ DataPoint DataModel_CreateDataPoint(void * data,
 }
 
 
-/******************************************************************************
-* Function : DataModel_WriteDataPoint
-*//**
-* @Description:
-*
-* This function write new data to a data point
-*
-* @param    data_point: (IN)data point handle, where data is written to
-* @param    *data: (IN)pointer to the written data
-* @param    size: (IN)size of data, for sanity checking and future use
-* @return   true: success
-*           false: fail
-*
-* @Example Example:
-* @code
-* uint32_t my_data = 100;
-* uint32_t new_data = 200;
-* 
-* DataPoint my_data_point = DataModel_CreateDataPoint(&my_data, sizeof(uint32_t));
-* 
-* if(my_data_point != DATA_POINT_INVALID)
-* {
-*     printf("success");
-*    DataModel_WriteDataPoint(my_data_point, &new_data, sizeof(uint32_t));
-* }
-* @endcode
-*
-*******************************************************************************/
 bool DataModel_WriteDataPoint(DataPoint data_point,
                               void* data,
                               uint32_t size)
@@ -295,34 +218,7 @@ bool DataModel_WriteDataPoint(DataPoint data_point,
     return is_success;
 }
 
-/******************************************************************************
-* Function : DataModel_WriteDataPoint
-*//**
-* @Description:
-*
-* This function reads data from a data point
-*
-* @param    data_point: (IN)data point handle, where data is read to
-* @param    *data: (IN)pointer to the read data
-* @param    size: (IN)size of data, for sanity checking and future use
-* @return   true: success
-*           false: fail
-*
-* @Example Example:
-* @code
-* uint32_t my_data = 100;
-* uint32_t new_data;
-*
-* DataPoint my_data_point = DataModel_CreateDataPoint(&my_data, sizeof(uint32_t));
-*
-* if(my_data_point != DATA_POINT_INVALID)
-* {
-*     printf("success");
-*    DataModel_ReadDataPoint(my_data_point, &new_data, sizeof(uint32_t));
-* }
-* @endcode
-*
-*******************************************************************************/
+
 bool DataModel_ReadDataPoint(DataPoint data_point,
                              void* data,
                              uint32_t size)
@@ -352,20 +248,7 @@ bool DataModel_ReadDataPoint(DataPoint data_point,
     return is_success;
 }
 
-/******************************************************************************
-* Function : DataModel_SubscribeDataPointEvent
-*//**
-* @Description:
-*
-* This function allow a module to receive data change event from the data model
-*
-* @param    data_point: (IN)data point handle, where data is read to
-* @param    *observer: (IN)pointer to the observer
-*
-* @return   true: success
-*           false: fail
-*
-*******************************************************************************/
+
 bool DataModel_SubscribeDataPointEvent(DataPoint data_point,
     ezObserver * observer)
 {
@@ -382,20 +265,7 @@ bool DataModel_SubscribeDataPointEvent(DataPoint data_point,
     return is_success;
 }
 
-/******************************************************************************
-* Function : DataModel_UnsubscribeDataPointEvent
-*//**
-* @Description:
-*
-* This function allow a module to stop receiving data change event from the data model
-*
-* @param    data_point: (IN)data point handle, where data is read to
-* @param    *observer: (IN)pointer to the observer
-*
-* @return   true: success
-*           false: fail
-*
-*******************************************************************************/
+
 bool DataModel_UnsubscribeDataPointEvent(DataPoint data_point,
     ezObserver * observer)
 {
