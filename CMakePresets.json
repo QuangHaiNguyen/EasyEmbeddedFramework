@@ -49,7 +49,7 @@
     ],
     "testPresets": [
         {
-          "name": "github_workflow",
+          "name": "github_ci",
           "configurePreset": "linux_debug",
           "output": {"outputOnFailure": true},
           "execution": {"noTestsAction": "error", "stopOnFailure": true}
