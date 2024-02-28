@@ -41,7 +41,6 @@
 #include "utilities/logging/ez_logging.h"
 
 //#include "ezApp/ezSdk_config.h"
-#include "unity_test_platform/unity.h"
 
 #if ((WINDOWS_TARGET + LINUX_TARGET + EMBEDDED_TARGET) > 1)
 #error More than one target is activated
@@ -51,31 +50,31 @@
 /* Utilities section ********************************************************/
 
 #if (EZ_LINKEDLIST == 1)
-#include "linked_list/ez_linked_list.h"
+#include "ez_linked_list.h"
 #endif /* EZ_LINKEDLIST == 1 */
 
 #if (EZ_HEXDUMP == 1)
-#include "hexdump/ez_hexdump.h"
+#include "ez_hexdump.h"
 #endif /* EZ_HEXDUMP == 1 */
 
 #if (EZ_RING_BUFFER == 1)
-#include "ring_buffer/ez_ring_buffer.h"
+#include "ez_ring_buffer.h"
 #endif /* EZ_RING_BUFFER == 1 */
 
 #if (EZ_STATIC_ALLOC == 1)
-#include "static_alloc/ez_static_alloc.h"
+#include "ez_static_alloc.h"
 #endif /* EZ_STATIC_ALLOC == 1 */
 
 #if (EZ_ASSERT == 1)
-#include "assert/ez_assert.h"
+#include "ez_assert.h"
 #endif /* EZ_ASSERT == 1 */
 
 #if (EZ_SYS_ERROR == 1)
-#include "system_error/ez_system_error.h"
+#include "ez_system_error.h"
 #endif /* EZ_SYS_ERROR == 1 */
 
 #if (EZ_QUEUE == 1)
-#include "queue/ez_queue.h"
+#include "ez_queue.h"
 #endif /* EZ_QUEUE == 1 */
 
 /* Service section **********************************************************/
@@ -138,7 +137,7 @@
 /* Application section *******************************************************/
 
 #if (DATA_MODEL == 1U)
-#include "ezApp/data_model/data_model.h"
+#include "ez_data_model.h"
 #endif /* CONFIG_DATA_MODEL == 1U */
 
 #if (CONFIG_MQTT == 1U)
@@ -197,12 +196,6 @@ void ezSdk_Initialization(void)
     EZINFO("Initialized EZ_RING_BUFFER module");
     //INFO("Module Id: 0x%02x", RING_BUFFER_MOD_ID);
 #endif /* EZ_RING_BUFFER == 1 */
-
-#if (EZ_STATIC_ALLOC == 1)
-    ezmStcMem_Initialization();
-    EZINFO("Initialized EZ_STATIC_ALLOC module");
-    //INFO("Module Id: 0x%02x", STCMEM_MOD_ID);
-#endif /* EZ_STATIC_ALLOC == 1 */
 
 #if (EZ_ASSERT == 1)
     /* DEBUG module has no init function*/

@@ -42,7 +42,7 @@
 #include "string.h"
 #include "stdint.h"
 #include "stdbool.h"
-#include "service/driver/ez_hal_driver_def.h"
+
 
 /******************************************************************************
 * Module Preprocessor Macros

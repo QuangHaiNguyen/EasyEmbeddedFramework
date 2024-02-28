@@ -34,13 +34,7 @@
 /******************************************************************************
 * Includes
 *******************************************************************************/
-#include "main.h"
-
-#define DEBUG_LVL   LVL_TRACE   /**< logging level */
-#define MOD_NAME    "main"       /**< module name */
-#include "ezUtilities/logging/logging.h"
-
-/*the rest of include go here*/
+#include "ezApp/ezSdk.h"
 
 /******************************************************************************
 * Module Preprocessor Macros
@@ -66,28 +60,9 @@
 * External functions
 *******************************************************************************/
 
-/******************************************************************************
-* Function : sum
-*//** 
-* @Description:
-*
-* This function initializes the ring buffer
-* 
-* @param    a: (IN)pointer to the ring buffer
-* @param    b: (IN)size of the ring buffer
-* @return   None
-*
-* @Example Example:
-* @code
-* sum(a, b);
-* @endcode
-*
-* @see sum
-*
-*******************************************************************************/
-int sum(int a, int b)
+void main(void)
 {
-    return a + b;
+    ezSdk_Initialization();
 }
 
 /******************************************************************************

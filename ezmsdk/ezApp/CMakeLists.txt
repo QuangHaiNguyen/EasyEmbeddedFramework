@@ -24,5 +24,5 @@ ${SDK_PATH}
 ${APP_FRAMEWORK_PATH})
 
 target_link_libraries(ez_app PUBLIC
-$<$<BOOL:${ENABLE_DATA_MODEL}>:ez_data_model>
+$<$<BOOL:${ENABLE_DATA_MODEL}>:ez_data_model_lib>
 )

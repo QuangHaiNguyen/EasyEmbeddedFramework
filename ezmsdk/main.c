@@ -1,4 +1,3 @@
-
 #include "ezApp/ezSdk.h"
 #include "ezApp/ezSdk_config.h"
 #include "ezApp/ezKernel/ezKernel.h"

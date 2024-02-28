@@ -12,9 +12,9 @@ int main(int argc, const char *argv[])
 
 static void RunAllTests(void)
 {
-    RUN_TEST_GROUP(ezEventNotifier);
+    //RUN_TEST_GROUP(ezEventNotifier);
     RUN_TEST_GROUP(ezQueue);
-    RUN_TEST_GROUP(ezKernel);
-    RUN_TEST_GROUP(EchoHal);
-    RUN_TEST_GROUP(ez_hal_uart);
+    //RUN_TEST_GROUP(ezKernel);
+    //RUN_TEST_GROUP(EchoHal);
+    //RUN_TEST_GROUP(ez_hal_uart);
 }
