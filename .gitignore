@@ -8,3 +8,4 @@ tools/template_generator/*.h
 tools/template_generator/CMakeLists.txt
 doxygen/
 tools/template_generator/__pycache__/
+Testing/

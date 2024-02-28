@@ -23,6 +23,7 @@
             "displayName": "Linux debug configuration",
             "description": "Debug configuration using ninja generator on linux",
             "inherits": "linux_base",
+            "binaryDir": "${sourceDir}/build/linux_debug",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug"
             }
@@ -32,6 +33,7 @@
             "displayName": "Linux release configuration",
             "description": "Release configuration using ninja generator on linux",
             "inherits": "linux_base",
+            "binaryDir": "${sourceDir}/build/linux_release",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release"
             }
