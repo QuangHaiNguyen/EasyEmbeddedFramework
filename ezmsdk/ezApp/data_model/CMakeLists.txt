@@ -18,7 +18,7 @@ set(FRAMEWORK_ROOT_DIR ${CMAKE_SOURCE_DIR}/ezmsdk)
 # Source files ---------------------------------------------------------------
 target_sources(ez_data_model_lib
     PRIVATE
-        data_model.c
+        ez_data_model.c
 )
 
 

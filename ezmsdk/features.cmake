@@ -17,11 +17,11 @@ option(ENABLE_EZ_SYS_ERROR      "Enable system error feature"           ON)
 option(ENABLE_EZ_QUEUE          "Enable queue feature"                  ON)
 
 # Configure Service modules
-option(ENABLE_EZ_EVENT_NOTIFIER    "Enable the Event Notifier module"       OFF)
+option(ENABLE_EZ_EVENT_NOTIFIER    "Enable the Event Notifier module"       ON)
 option(ENABLE_EZ_KERNEL            "Enable the Kernel service"              OFF)
 
 # Configure application framework
-option(ENABLE_DATA_MODEL        "Enable the Event Notifier module"          OFF)
+option(ENABLE_DATA_MODEL        "Enable the Event Notifier module"          ON)
 option(ENABLE_EZ_HAL_DRIVER     "Enable the Driver module"                  OFF)
 
 # Configure HAL driver

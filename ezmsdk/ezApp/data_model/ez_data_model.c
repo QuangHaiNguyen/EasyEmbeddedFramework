@@ -32,7 +32,7 @@
 #define MOD_NAME    "DATA_MODEL"    /**< module name */
 #include "ez_logging.h"
 
-#include "data_model.h"
+#include "ez_data_model.h"
 
 /*the rest of include go here*/
 
