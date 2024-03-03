@@ -1,4 +1,3 @@
-#include "app/ezSdk.h"
 #include "app/ezSdk_config.h"
 #include "unity.h"
 #include "unity_fixture.h"

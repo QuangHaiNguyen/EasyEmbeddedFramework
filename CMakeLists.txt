@@ -17,9 +17,9 @@ add_executable(main
     targets/linux/main.c
 )
 
-target_include_directories(main PRIVATE ezmsdk)
+target_include_directories(main PRIVATE easy_embedded)
 
-target_link_libraries(main PRIVATE sdk)
+target_link_libraries(main PRIVATE easy_embedded_lib)
 
 if(BUILD_TESTING)
     add_subdirectory(tests)
