@@ -6,10 +6,10 @@ include(features.cmake)
 add_subdirectory(targets)
 add_subdirectory(utilities)
 add_subdirectory(service)
-add_subdirectory(ezApp)
+add_subdirectory(app)
 
 target_sources(sdk PRIVATE
-    ezApp/ezSdk.c
+    app/ezSdk.c
 )
 
 target_compile_definitions(sdk

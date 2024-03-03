@@ -10,7 +10,7 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     include(CTest)
 endif()
 
-add_subdirectory(ezmsdk)
+add_subdirectory(easy_embedded)
 add_subdirectory(extern)
 
 add_executable(main

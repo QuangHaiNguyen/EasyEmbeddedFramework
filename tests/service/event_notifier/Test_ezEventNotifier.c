@@ -39,7 +39,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "service/event_notifier/ez_event_notifier.h"
-#include "ezApp/ezSdk_config.h"
+#include "app/ezSdk_config.h"
 
 #if(EZ_EVENT_NOTIFIER == 1)
 
