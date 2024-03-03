@@ -11,7 +11,7 @@ target_include_directories(ez_unit_test PRIVATE
     ../ezmsdk
 )
 
-target_link_libraries(ez_unit_test PUBLIC unity sdk)
+target_link_libraries(ez_unit_test PUBLIC unity easy_embedded_lib)
 
 # activate test depend on the activated module
 if(ENABLE_EZ_EVENT_NOTIFIER)

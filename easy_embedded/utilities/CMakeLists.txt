@@ -11,7 +11,7 @@ message(STATUS "**********************************************************")
 message(STATUS "* Generating ez_utilities library build files")
 message(STATUS "**********************************************************")
 
-set(FRAMEWORK_ROOT_DIR ${CMAKE_SOURCE_DIR}/ezmsdk)
+set(FRAMEWORK_ROOT_DIR ${CMAKE_SOURCE_DIR}/easy_embedded)
 
 
 # Source files ---------------------------------------------------------------
@@ -54,7 +54,7 @@ target_include_directories(ez_utilities_lib
         ${CMAKE_CURRENT_LIST_DIR}/static_alloc
         ${CMAKE_CURRENT_LIST_DIR}/system_error
         ${CMAKE_CURRENT_LIST_DIR}/queue
-        ${FRAMEWORK_ROOT_DIR}/ezApp
+        ${FRAMEWORK_ROOT_DIR}/app
 )
 
 
