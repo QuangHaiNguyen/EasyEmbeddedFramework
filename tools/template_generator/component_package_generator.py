@@ -53,23 +53,26 @@ def main():
     args = my_parser.parse_args()
 
     component_name = "ez_" + args.component
-    path = os.path.join(args.destination, args.component)
+    path_src = os.path.join(args.destination, args.component)
+    path_test = os.path.join(args.destination, args.component, "unit_test")
 
-    if os.path.exists(path) == True:
+    if os.path.exists(path_src) == True:
         logger.warning("folder exists. The existing folder will be overwritten")
-        shutil.rmtree(path)
-    os.mkdir(path)
+        shutil.rmtree(path_src)
+    os.mkdir(path_src)
+    os.mkdir(path_test)
 
-    cmake_gen.generate_cmake_lib(args.author, component_name, path)
-    comp_gen.generate_header_file(path,
+    cmake_gen.generate_cmake_lib(args.author, component_name, path_src)
+    comp_gen.generate_header_file(path_src,
                                   component_name,
                                   args.author)
-    comp_gen.generate_source_file(path,
+    comp_gen.generate_source_file(path_src,
                                   component_name,
                                   args.author)
-    test_gen.generate_test_file(path,
+    test_gen.generate_test_file(path_test,
                                 component_name,
                                 args.author)
+    cmake_gen.generate_cmake_test(args.author, component_name, path_test)
 
 if __name__ == "__main__":
     main()
