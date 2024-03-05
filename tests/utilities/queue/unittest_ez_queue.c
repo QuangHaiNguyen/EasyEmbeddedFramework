@@ -1,66 +1,47 @@
-
-/*******************************************************************************
-* Filename:         ezQueue.c
+/*****************************************************************************
+* Filename:         ez_queue.c
 * Author:           Hai Nguyen
-* Original Date:    11.09.2022
-* Last Update:      11.09.2022
+* Original Date:    05.03.2024
 *
-* -----------------------------------------------------------------------------
-* Company:          Embedded Easy
-*                   Address Line 1
-*                   Address Line 2
+* ----------------------------------------------------------------------------
+* Contact:          Hai Nguyen
+*                   hainguyen.eeit@gmail.com
 *
-* -----------------------------------------------------------------------------
-* Contact:          Embedded Easy
-*                   hainguyen.ezm@gmail.com
+* ----------------------------------------------------------------------------
+* License: This file is published under the license described in LICENSE.md
 *
-* -----------------------------------------------------------------------------
-* Copyright Hai Nguyen - All Rights Reserved
-* Unauthorized copying of this file, via any medium is strictly prohibited
-* Proprietary and confidential
-* Written by Hai Nguyen 11.09.2022
-*
-*******************************************************************************/
+*****************************************************************************/
 
-/** @file   ezQueue.c
+/** @file   ez_queue.c
  *  @author Hai Nguyen
- *  @date   11.09.2022
- *  @brief  This is the source for a module
- *  
- *  @details
+ *  @date   05.03.2024
+ *  @brief  One line description of the component
+ *
+ *  @details Detail description of the component
  * 
  */
 
 /******************************************************************************
 * Includes
 *******************************************************************************/
-#include "app/ezSdk_config.h"
-
-#if (EZ_QUEUE == 1U)
-
-#define DEBUG_LVL   LVL_TRACE   /**< logging level */
-#define MOD_NAME    "ezQueue"       /**< module name */
-#include "utilities/logging/ez_logging.h"
 #include "unity.h"
 #include "unity_fixture.h"
-#include "utilities/queue/ez_queue.h"
-
 #include <stdint.h>
 #include <stdbool.h>
-#include <string.h>
+#include "ez_queue.h"
 
-TEST_GROUP(ezQueue);
-
+TEST_GROUP(ez_queue);
 
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
-#define BUFF_SIZE     256   /**< a macro*/
+#define BUFF_SIZE     256   /**< Test buffer size */
 
 /******************************************************************************
 * Module Typedefs
 *******************************************************************************/
 /* None */
+
 
 /******************************************************************************
 * Module Variable Definitions
@@ -72,35 +53,48 @@ static uint8_t item_2[6] = { 1, 2, 3 , 4, 5, 6 };
 static uint8_t item_3[10] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 };
 static uint8_t item_4[8] = { 1, 2, 3, 4, 5, 6, 7, 8 };
 
+
 /******************************************************************************
 * Function Definitions
 *******************************************************************************/
-/* None */
+static void RunAllTests(void);
+
 
 /******************************************************************************
 * External functions
 *******************************************************************************/
-/* None */
+int main(int argc, const char *argv[])
+{
+    return UnityMain(argc, argv, RunAllTests);
+}
 
-
-/******************************************************************************
-* Internal functions
-*******************************************************************************/
-
-
-TEST_SETUP(ezQueue)
+TEST_SETUP(ez_queue)
 {
     memset(queue_buff, 0, BUFF_SIZE);
     ezQueue_CreateQueue(&queue, queue_buff, BUFF_SIZE);
 }
 
 
-TEST_TEAR_DOWN(ezQueue)
+TEST_TEAR_DOWN(ez_queue)
 {
 }
 
 
-TEST(ezQueue, CreateQueueFail)
+TEST_GROUP_RUNNER(ez_queue)
+{
+    RUN_TEST_CASE(ez_queue, CreateQueueFail);
+    RUN_TEST_CASE(ez_queue, CreateQueueSuccess);
+    RUN_TEST_CASE(ez_queue, PopEmptyQueue);
+    RUN_TEST_CASE(ez_queue, PushQueueFail);
+    RUN_TEST_CASE(ez_queue, PushQueueSuccess);
+    RUN_TEST_CASE(ez_queue, test_GetFrontPop);
+    RUN_TEST_CASE(ez_queue, GetBackPop);
+    RUN_TEST_CASE(ez_queue, OverflowQueue);
+    RUN_TEST_CASE(ez_queue, ezQueue_ReserveElement);
+}
+
+
+TEST(ez_queue, CreateQueueFail)
 {
     ezSTATUS status = ezSUCCESS;
     status = ezQueue_CreateQueue(NULL, NULL, 0);
@@ -114,7 +108,7 @@ TEST(ezQueue, CreateQueueFail)
 }
 
 
-TEST(ezQueue, CreateQueueSuccess)
+TEST(ez_queue, CreateQueueSuccess)
 {
     ezSTATUS status = ezSUCCESS;
     status = ezQueue_CreateQueue(&queue, queue_buff, BUFF_SIZE);
@@ -122,7 +116,7 @@ TEST(ezQueue, CreateQueueSuccess)
 }
 
 
-TEST(ezQueue, PopEmptyQueue)
+TEST(ez_queue, PopEmptyQueue)
 {
     ezSTATUS status = ezSUCCESS;
     uint32_t queue_size = 0U;
@@ -135,7 +129,7 @@ TEST(ezQueue, PopEmptyQueue)
 }
 
 
-TEST(ezQueue, PushQueueFail)
+TEST(ez_queue, PushQueueFail)
 {
     ezSTATUS status = ezSUCCESS;
     status = ezQueue_Push(NULL, NULL, 0);
@@ -149,7 +143,7 @@ TEST(ezQueue, PushQueueFail)
 }
 
 
-TEST(ezQueue, PushQueueSuccess)
+TEST(ez_queue, PushQueueSuccess)
 {
     ezSTATUS status = ezSUCCESS;
     uint32_t queue_size = 0U;
@@ -174,7 +168,7 @@ TEST(ezQueue, PushQueueSuccess)
 }
 
 
-TEST(ezQueue, test_GetFrontPop)
+TEST(ez_queue, test_GetFrontPop)
 {
     ezSTATUS status = ezSUCCESS;
     uint32_t queue_size = 0U;
@@ -244,7 +238,7 @@ TEST(ezQueue, test_GetFrontPop)
 }
 
 
-TEST(ezQueue, GetBackPop)
+TEST(ez_queue, GetBackPop)
 {
     ezSTATUS status = ezSUCCESS;
     uint32_t queue_size = 0U;
@@ -322,7 +316,7 @@ TEST(ezQueue, GetBackPop)
 }
 
 
-TEST(ezQueue, OverflowQueue)
+TEST(ez_queue, OverflowQueue)
 {
     ezSTATUS status = ezSUCCESS;
     uint32_t queue_size = 0U;
@@ -342,7 +336,7 @@ TEST(ezQueue, OverflowQueue)
 }
 
 
-TEST(ezQueue, ezQueue_ReserveElement)
+TEST(ez_queue, ezQueue_ReserveElement)
 {
     ezSTATUS status = ezSUCCESS;
 
@@ -420,7 +414,14 @@ TEST(ezQueue, ezQueue_ReserveElement)
     TEST_ASSERT_EQUAL(0, ezQueue_GetNumOfElement(&queue));
 }
 
-#endif /* EZ_QUEUE == 1U */
+/******************************************************************************
+* Internal functions
+*******************************************************************************/
+static void RunAllTests(void)
+{
+    RUN_TEST_GROUP(ez_queue);
+}
+
+
 
 /* End of file */
-

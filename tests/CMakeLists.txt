@@ -1,17 +1,13 @@
-#build the unit tests
-add_executable(ez_unit_test)
+# ----------------------------------------------------------------------------
+# Author: Hai Nguyen
+# License: This file is published under the license described in LICENSE.md
+# Description: CMake file to build unit tests
+# ----------------------------------------------------------------------------
 
 message(STATUS "************************************")
 message(STATUS "* Building unit tests")
 message(STATUS "************************************")
 
-#include directory
-target_include_directories(ez_unit_test PRIVATE
-    .
-    ../ezmsdk
-)
-
-target_link_libraries(ez_unit_test PUBLIC unity easy_embedded_lib)
 
 # activate test depend on the activated module
 if(ENABLE_EZ_EVENT_NOTIFIER)
@@ -39,19 +35,4 @@ if(ENABLE_EZ_HAL_UART)
     add_subdirectory(service/driver/hal_uart)
 endif()
 
-# Service module
-target_sources(ez_unit_test PRIVATE
-    main.c
- )
-
-target_link_libraries(ez_unit_test PRIVATE
-    $<$<BOOL:${ENABLE_EZ_EVENT_NOTIFIER}>:ez_unit_test_event_notifier>
-    $<$<BOOL:${ENABLE_EZ_QUEUE}>:ez_unit_test_queue>
-    $<$<BOOL:${ENABLE_EZ_KERNEL}>:ez_unit_test_kernel>
-    $<$<BOOL:${ENABLE_EZ_HAL_ECHO}>:ez_unit_test_hal_echo>
-    $<$<BOOL:${ENABLE_EZ_HAL_UART}>:ez_unit_test_hal_uart>
-)
-
-add_test(NAME ez_unit_test
-    COMMAND ez_unit_test
-)
+# End of file
