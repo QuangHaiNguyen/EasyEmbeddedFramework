@@ -38,11 +38,21 @@ message(STATUS "* Generating {0}_{1} library build files")
 message(STATUS "**********************************************************")
 
 
-set(FRAMEWORK_ROOT_DIR ${{CMAKE_SOURCE_DIR}}/ezmsdk)
+set(FRAMEWORK_ROOT_DIR ${{CMAKE_SOURCE_DIR}}/easy_embedded)
 
 """
 
-cmake_body="""
+cmake_test_start="""
+add_executable({0}_{1})
+
+message(STATUS "**********************************************************")
+message(STATUS "* Generating {0}_{1} build files")
+message(STATUS "**********************************************************")
+
+"""
+
+
+cmake_lib_body="""
 # Source files ---------------------------------------------------------------
 target_sources({0}_{1}
     PRIVATE
@@ -81,6 +91,51 @@ target_link_libraries({0}_{1}
 # End of file
 """
 
+
+cmake_test_body="""
+# Source files ---------------------------------------------------------------
+target_sources({0}_{1}
+    PRIVATE
+        unittest_{0}.c
+)
+
+
+# Definitions ----------------------------------------------------------------
+target_compile_definitions({0}_{1}
+    PUBLIC
+        # Please add definitions here
+)
+
+
+# Include directory -----------------------------------------------------------
+target_include_directories({0}_{1}
+    PUBLIC
+        # Please add private folders here
+    PRIVATE
+        # Please add private folders here
+    INTERFACE
+        # Please add interface folders here
+)
+
+
+# Link libraries -------------------------------------------------------------
+target_link_libraries({0}_{1}
+    PUBLIC
+        # Please add public libraries
+    PRIVATE
+        unity
+        easy_embedded_lib
+    INTERFACE
+        # Please add interface libraries
+)
+
+add_test(NAME {0}_{1}
+    COMMAND {0}_{1}
+)
+
+# End of file
+"""
+
 # Create the parser
 my_parser = argparse.ArgumentParser(prog = 'cmake template generator',
                                     description='Create a template for cmake file')
@@ -113,8 +168,14 @@ def write_text_to_cmake(author:str, name:str, file_handle, target_type:str)->boo
     """
     if target_type == "lib" or target_type == "exec" or target_type == "test":
         file_handle.write(cmake_header.format(author, name, target_type))
-        file_handle.write(cmake_lib.format(name, target_type))
-        file_handle.write(cmake_body.format(name, target_type))
+        if target_type == "lib":
+            file_handle.write(cmake_lib.format(name, target_type))
+            file_handle.write(cmake_lib_body.format(name, target_type))
+        elif target_type == "test":
+            file_handle.write(cmake_test_start.format(name, target_type))
+            file_handle.write(cmake_test_body.format(name, target_type))
+        else:
+            logger.warning("Unsupported")
         return True
     else:
         return False
@@ -158,6 +219,26 @@ def generate_cmake_test(author:str, name:str, path:str) -> bool:
     else:
         logger.error("invalid targer name")
     return False
+
+def generate_cmake_execute(author:str, name:str, path:str) -> bool:
+    """Generate a cmake file for a test
+
+    Args:
+        author (str): author's name
+        name (str): target's name
+        path (str): path of the result CMake
+
+    Returns:
+        bool: True if success, else false
+    """
+    if is_tartget_name_valid(name) == True:
+        path = os.path.join(path, "CMakeLists.txt")
+        with open(path, "+a") as file:
+            return write_text_to_cmake(author, name, file, "test")
+    else:
+        logger.error("invalid targer name")
+    return False
+
 
 def main():
     """main, entry point of the application
