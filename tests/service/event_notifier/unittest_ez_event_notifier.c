@@ -1,55 +1,41 @@
-
-/*******************************************************************************
-* Filename:         ezEventNotifier.c
+/*****************************************************************************
+* Filename:         unittest_ez_event_notifier.c
 * Author:           Hai Nguyen
-* Original Date:    10.04.2023
-* Last Update:      10.04.2023
+* Original Date:    06.03.2024
 *
-* -----------------------------------------------------------------------------
-* Company:          Embedded Easy
-*                   Address Line 1
-*                   Address Line 2
+* ----------------------------------------------------------------------------
+* Contact:          Hai Nguyen
+*                   hainguyen.eeit@gmail.com
 *
-* -----------------------------------------------------------------------------
-* Contact:          Embedded Easy
-*                   hainguyen.ezm@gmail.com
+* ----------------------------------------------------------------------------
+* License: This file is published under the license described in LICENSE.md
 *
-* -----------------------------------------------------------------------------
-* Copyright Hai Nguyen - All Rights Reserved
-* Unauthorized copying of this file, via any medium is strictly prohibited
-* Proprietary and confidential
-* Written by Hai Nguyen 10.04.2023
-*
-*******************************************************************************/
+*****************************************************************************/
 
-/** @file   ezEventNotifier.c
+/** @file   unittest_ez_event_notifier.c
  *  @author Hai Nguyen
- *  @date   10.04.2023
- *  @brief  This is the source for a module
- *  
- *  @details
+ *  @date   06.03.2024
+ *  @brief  One line description of the component
+ *
+ *  @details Detail description of the component
  * 
  */
 
 /******************************************************************************
 * Includes
 *******************************************************************************/
-#include "unity.h"
-#include "unity_fixture.h"
 #include <stdint.h>
 #include <stdbool.h>
-#include "service/event_notifier/ez_event_notifier.h"
-#include "app/ezSdk_config.h"
+#include "unity.h"
+#include "unity_fixture.h"
+#include "ez_event_notifier.h"
 
-#if(EZ_EVENT_NOTIFIER == 1)
-
-TEST_GROUP(ezEventNotifier);
-
+TEST_GROUP(ez_event_notifier);
 
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
-#define NOTIFY_CODE_1   1
+#define NOTIFY_CODE_1           1
 #define NUM_OF_TEST_OBSERVER    2
 
 
@@ -57,6 +43,7 @@ TEST_GROUP(ezEventNotifier);
 * Module Typedefs
 *******************************************************************************/
 /* None */
+
 
 /******************************************************************************
 * Module Variable Definitions
@@ -68,35 +55,25 @@ static ezObserver observer2;
 static uint32_t observer1_notiffy_code;
 static uint32_t observer2_notiffy_code;
 
+
 /******************************************************************************
 * Function Definitions
 *******************************************************************************/
-/* None */
+static void RunAllTests(void);
+int Observer1_Callback(uint32_t event_code, void *param1, void *param2);
+int Observer2_Callback(uint32_t event_code, void *param1, void *param2);
+
 
 /******************************************************************************
 * External functions
 *******************************************************************************/
-/* None */
-
-
-/******************************************************************************
-* Internal functions
-*******************************************************************************/
-int Observer1_Callback(uint32_t event_code, void *param1, void *param2)
+int main(int argc, const char *argv[])
 {
-    observer1_notiffy_code = event_code;
-    return 0;
+    return UnityMain(argc, argv, RunAllTests);
 }
 
 
-int Observer2_Callback(uint32_t event_code, void *param1, void *param2)
-{
-    observer2_notiffy_code = event_code;
-    return 0;
-}
-
-
-TEST_SETUP(ezEventNotifier)
+TEST_SETUP(ez_event_notifier)
 {
     bool success = true;
 
@@ -114,20 +91,29 @@ TEST_SETUP(ezEventNotifier)
 }
 
 
-TEST_TEAR_DOWN(ezEventNotifier)
+TEST_TEAR_DOWN(ez_event_notifier)
 {
     ezEventNotifier_ResetSubject(&test_subject);
 }
 
 
-TEST(ezEventNotifier, SubscribeToSubject)
+TEST_GROUP_RUNNER(ez_event_notifier)
+{
+    RUN_TEST_CASE(ez_event_notifier, SubscribeToSubject);
+    RUN_TEST_CASE(ez_event_notifier, UnsubscribeFromSubject);
+    RUN_TEST_CASE(ez_event_notifier, ResetSubject);
+    RUN_TEST_CASE(ez_event_notifier, NotifyEvent1);
+}
+
+
+TEST(ez_event_notifier, SubscribeToSubject)
 {
     uint16_t num_of_observers = ezEventNotifier_GetNumOfObservers(&test_subject);
     TEST_ASSERT_EQUAL(num_of_observers, NUM_OF_TEST_OBSERVER);
 }
 
 
-TEST(ezEventNotifier, UnsubscribeFromSubject)
+TEST(ez_event_notifier, UnsubscribeFromSubject)
 {
     uint16_t num_of_observers = ezEventNotifier_GetNumOfObservers(&test_subject);
     TEST_ASSERT_EQUAL(num_of_observers, NUM_OF_TEST_OBSERVER);
@@ -142,7 +128,7 @@ TEST(ezEventNotifier, UnsubscribeFromSubject)
 }
 
 
-TEST(ezEventNotifier, ResetSubject)
+TEST(ez_event_notifier, ResetSubject)
 {
     uint16_t num_of_observers = ezEventNotifier_GetNumOfObservers(&test_subject);
     TEST_ASSERT_EQUAL(num_of_observers, NUM_OF_TEST_OBSERVER);
@@ -153,7 +139,7 @@ TEST(ezEventNotifier, ResetSubject)
 }
 
 
-TEST(ezEventNotifier, NotifyEvent1)
+TEST(ez_event_notifier, NotifyEvent1)
 {
     uint16_t num_of_observers = ezEventNotifier_GetNumOfObservers(&test_subject);
     TEST_ASSERT_EQUAL(num_of_observers, NUM_OF_TEST_OBSERVER);
@@ -163,6 +149,28 @@ TEST(ezEventNotifier, NotifyEvent1)
     TEST_ASSERT_EQUAL(NOTIFY_CODE_1, observer2_notiffy_code);
 }
 
-#endif /* EZ_EVENT_NOTIFIER */
-/* End of file */
 
+/******************************************************************************
+* Internal functions
+*******************************************************************************/
+static void RunAllTests(void)
+{
+    RUN_TEST_GROUP(ez_event_notifier);
+}
+
+
+int Observer1_Callback(uint32_t event_code, void *param1, void *param2)
+{
+    observer1_notiffy_code = event_code;
+    return 0;
+}
+
+
+int Observer2_Callback(uint32_t event_code, void *param1, void *param2)
+{
+    observer2_notiffy_code = event_code;
+    return 0;
+}
+
+
+/* End of file */

@@ -1,20 +1,55 @@
-#build the unit tests
-add_library(ez_unit_test_event_notifier)
+# ----------------------------------------------------------------------------
+# Author: Hai Nguyen
+# Name: ez_event_notifier_test
+# License: This file is published under the license described in LICENSE.md
+# Description: CMake file for event notifier unit test
+# ----------------------------------------------------------------------------
 
-#include directory
-target_include_directories(ez_unit_test_event_notifier PRIVATE
-.
-../../../ezmsdk)
+add_executable(ez_event_notifier_test)
 
-target_link_libraries(ez_unit_test_event_notifier PRIVATE unity easy_embedded_lib)
+message(STATUS "**********************************************************")
+message(STATUS "* Generating ez_event_notifier_test build files")
+message(STATUS "**********************************************************")
 
-target_compile_definitions(ez_unit_test_event_notifier
-PRIVATE 
-EZ_EVENT_NOTIFIER=$<BOOL:${ENABLE_EZ_EVENT_NOTIFIER}>
+
+# Source files ---------------------------------------------------------------
+target_sources(ez_event_notifier_test
+    PRIVATE
+        unittest_ez_event_notifier.c
 )
 
 
-# Service module
-target_sources(ez_unit_test_event_notifier PRIVATE
-Test_ezEventNotifier.c
-Test_ezEventNotifier_Runner.c)
+# Definitions ----------------------------------------------------------------
+target_compile_definitions(ez_event_notifier_test
+    PUBLIC
+        # Please add definitions here
+)
+
+
+# Include directory -----------------------------------------------------------
+target_include_directories(ez_event_notifier_test
+    PUBLIC
+        # Please add private folders here
+    PRIVATE
+        # Please add private folders here
+    INTERFACE
+        # Please add interface folders here
+)
+
+
+# Link libraries -------------------------------------------------------------
+target_link_libraries(ez_event_notifier_test
+    PUBLIC
+        # Please add public libraries
+    PRIVATE
+        unity
+        easy_embedded_lib
+    INTERFACE
+        # Please add interface libraries
+)
+
+add_test(NAME ez_event_notifier_test
+    COMMAND ez_event_notifier_test
+)
+
+# End of file
