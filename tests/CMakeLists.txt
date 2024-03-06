@@ -34,4 +34,8 @@ if(ENABLE_EZ_LINKEDLIST)
     add_subdirectory(utilities/linked_list)
 endif()
 
+if(ENABLE_EZ_STATIC_ALLOC)
+    add_subdirectory(utilities/static_alloc)
+endif()
+
 # End of file

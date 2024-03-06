@@ -87,6 +87,11 @@ TEST_TEAR_DOWN(ez_linked_list)
 TEST_GROUP_RUNNER(ez_linked_list)
 {
     RUN_TEST_CASE(ez_linked_list, Test_Macro);
+    RUN_TEST_CASE(ez_linked_list, LinkedList_InsertNewHead);
+    RUN_TEST_CASE(ez_linked_list, LinkedList_UnlinkCurrentHead);
+    RUN_TEST_CASE(ez_linked_list, ezmLL_IsNodeInList);
+    RUN_TEST_CASE(ez_linked_list, Unlink_node);
+    RUN_TEST_CASE(ez_linked_list, ezmLL_AppendNode);
 }
 
 
