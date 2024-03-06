@@ -15,9 +15,9 @@
 /** @file   ez_queue.c
  *  @author Hai Nguyen
  *  @date   05.03.2024
- *  @brief  One line description of the component
+ *  @brief  unit test of queue module
  *
- *  @details Detail description of the component
+ *  @details
  * 
  */
 
