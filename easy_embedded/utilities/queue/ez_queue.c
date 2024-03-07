@@ -80,7 +80,7 @@ ezSTATUS ezQueue_CreateQueue(ezQueue *queue, uint8_t *buff, uint32_t buff_size)
 
     if (queue != NULL && buff != NULL && buff_size > 0)
     {
-        ezmLL_InitNode(&queue->q_item_list);
+        ezLinkedList_InitNode(&queue->q_item_list);
         if (ezmStcMem_InitMemList(&queue->mem_list, buff, buff_size) == true)
         {
             status = ezSUCCESS;
@@ -102,8 +102,8 @@ ezSTATUS ezQueue_PopFront(ezQueue* queue)
     {
         if (ezQueue_GetNumOfElement(queue) > 0)
         {
-            popped_item = EZMLL_GET_PARENT_OF(queue->q_item_list.next, node, ezQueueItem);
-            EZMLL_UNLINK_NODE(&popped_item->node);
+            popped_item = EZ_LINKEDLIST_GET_PARENT_OF(queue->q_item_list.next, node, ezQueueItem);
+            EZ_LINKEDLIST_UNLINK_NODE(&popped_item->node);
 
             if (ezmStcMem_Free(&queue->mem_list, popped_item->data) == false)
             {
@@ -141,8 +141,8 @@ ezSTATUS ezQueue_PopBack(ezQueue *queue)
     {
         if (ezQueue_GetNumOfElement(queue) > 0)
         {
-            popped_item = EZMLL_GET_PARENT_OF(queue->q_item_list.prev, node, ezQueueItem);
-            EZMLL_UNLINK_NODE(&popped_item->node);
+            popped_item = EZ_LINKEDLIST_GET_PARENT_OF(queue->q_item_list.prev, node, ezQueueItem);
+            EZ_LINKEDLIST_UNLINK_NODE(&popped_item->node);
 
             if (ezmStcMem_Free(&queue->mem_list, popped_item->data) == false)
             {
@@ -208,7 +208,7 @@ ezSTATUS ezQueue_PushReservedElement(ezQueue *queue, ezReservedElement element)
 
     if (queue != NULL && element != NULL)
     {
-        EZMLL_ADD_TAIL(&queue->q_item_list, &item->node);
+        EZ_LINKEDLIST_ADD_TAIL(&queue->q_item_list, &item->node);
     }
     else
     {
@@ -279,7 +279,7 @@ ezSTATUS ezQueue_GetFront(ezQueue* queue, void **data, uint32_t *data_size)
     {
         if (ezQueue_GetNumOfElement(queue) > 0)
         {
-            front_item = EZMLL_GET_PARENT_OF(queue->q_item_list.next, node, ezQueueItem);
+            front_item = EZ_LINKEDLIST_GET_PARENT_OF(queue->q_item_list.next, node, ezQueueItem);
             *data = front_item->data;
             *data_size = front_item->data_size;
 
@@ -318,7 +318,7 @@ ezSTATUS ezQueue_GetBack(ezQueue* queue, void **data, uint32_t *data_size)
     {
         if (ezQueue_GetNumOfElement(queue) > 0)
         {
-            back_item = EZMLL_GET_PARENT_OF(queue->q_item_list.prev, node, ezQueueItem);
+            back_item = EZ_LINKEDLIST_GET_PARENT_OF(queue->q_item_list.prev, node, ezQueueItem);
             *data = back_item->data;
             *data_size = back_item->data_size;
 
@@ -348,7 +348,7 @@ uint32_t ezQueue_GetNumOfElement(ezQueue* queue)
 
     if (queue != NULL)
     {
-        num_of_element = ezmLL_GetListSize(&queue->q_item_list);
+        num_of_element = ezLinkedList_GetListSize(&queue->q_item_list);
     }
 
     return num_of_element;

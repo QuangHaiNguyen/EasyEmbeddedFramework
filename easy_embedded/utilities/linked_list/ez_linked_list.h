@@ -42,12 +42,12 @@
 /*@brief: iterate thru a link list starting from head
  *
  */
-#define EZMLL_FOR_EACH(node,head)               for(node = (head)->next; node != head; node = (node)->next)
+#define EZ_LINKEDLIST_FOR_EACH(node,head)     for(node = (head)->next; node != head; node = (node)->next)
 
 /*@brief: initialize a node
  *
  */
-#define EZMLL_INIT_NODE(name)                   {&(name), &(name)}
+#define EZ_LINKEDLIST_INIT_NODE(name)         {&(name), &(name)}
 
 /* It deserves a whole story. Generally speaking, it use the same concept 
  * as in the linked list of the linux kernel
@@ -60,27 +60,27 @@
 /*@brief Get the parent of the data structure, where the linked list is embedded
  *
  */
-#define EZMLL_GET_PARENT_OF(ptr,member,type) (type*)((char*)ptr - OFFSET(type, member))
+#define EZ_LINKEDLIST_GET_PARENT_OF(ptr,member,type) (type*)((char*)ptr - OFFSET(type, member))
 
 /*@brief advance a node to next node
  *
  */
-#define EZMLL_TO_NEXT_NODE(node) node = node->next
+#define EZ_LINKEDLIST_TO_NEXT_NODE(node) node = node->next
 
 /*@brief Insert a node to head
  *
  */
-#define EZMLL_ADD_HEAD(list_head,node) ezmLL_AppendNode(node, (list_head)->next)
+#define EZ_LINKEDLIST_ADD_HEAD(list_head,node) ezLinkedList_AppendNode(node, (list_head)->next)
 
 /*@brief Insert a node to tail
   *
  */
-#define EZMLL_ADD_TAIL(list_head,node) ezmLL_AppendNode(node, (list_head)->prev)
+#define EZ_LINKEDLIST_ADD_TAIL(list_head,node) ezLinkedList_AppendNode(node, (list_head)->prev)
 
 /*@brief unlink a node
  *
  */
-#define EZMLL_UNLINK_NODE(node) (node)->prev->next = (node)->next;(node)->next->prev = (node)->prev;ezmLL_InitNode(node);
+#define EZ_LINKEDLIST_UNLINK_NODE(node) (node)->prev->next = (node)->next;(node)->next->prev = (node)->prev;ezLinkedList_InitNode(node);
 
 /*@brief check if a list is empty
  *
@@ -112,27 +112,7 @@ struct Node
 *****************************************************************************/
 
 /*****************************************************************************
-* Function : ezmLL_Initialization
-*//** 
-* @brief Inititialize the linked list component
-*
-* @details This function has empty body (aka, there is no implementation)
-*
-* @return   None
-*
-* @pre None
-* @post None
-*
-* @code
-* ezmLL_Initialization();
-* @endcode
-*
-*****************************************************************************/
-void ezmLL_Initialization(void);
-
-
-/*****************************************************************************
-* Function : ezmLL_InitNode
+* Function : ezLinkedList_InitNode
 *//** 
 * @brief Initialize a new node
 *
@@ -147,16 +127,16 @@ void ezmLL_Initialization(void);
 *
 * @code
 * struct Node new_node;
-* ezmLL_InitNode(&new_node);
+* ezLinkedList_InitNode(&new_node);
 * @endcode
 *
 *
 *****************************************************************************/
-void ezmLL_InitNode (struct Node* node);
+void ezLinkedList_InitNode (struct Node* node);
 
 
 /*****************************************************************************
-* Function : ezmLL_GetListSize
+* Function : ezLinkedList_GetListSize
 *//** 
 * @brief Return number of node in a list
 *
@@ -170,15 +150,15 @@ void ezmLL_InitNode (struct Node* node);
 * @post None
 *
 * @code
-* uint16_t size = ezmLL_GetListSize(head);
+* uint16_t size = ezLinkedList_GetListSize(head);
 * @endcode
 *
 *****************************************************************************/
-uint16_t ezmLL_GetListSize(struct Node* list_head);
+uint16_t ezLinkedList_GetListSize(struct Node* list_head);
 
 
 /*****************************************************************************
-* Function : ezmLL_AppendNode
+* Function : ezLinkedList_AppendNode
 *//** 
 * @brief Append a node after a node
 *
@@ -195,19 +175,19 @@ uint16_t ezmLL_GetListSize(struct Node* list_head);
 * @code
 * struct Node new_node;
 * struct Node appended_node;
-* ezmLL_InitNode(&new_node);
-* ezmLL_InitNode(&appended_node);
-* ezmLL_AppendNode(&new_node, &appended_node);
+* ezLinkedList_InitNode(&new_node);
+* ezLinkedList_InitNode(&appended_node);
+* ezLinkedList_AppendNode(&new_node, &appended_node);
 * @endcode
 *
 * @see ezmLL_InitNode
 *
 *****************************************************************************/
-bool ezmLL_AppendNode(struct Node *new_node, struct Node *appended_node);
+bool ezLinkedList_AppendNode(struct Node *new_node, struct Node *appended_node);
 
 
 /*****************************************************************************
-* Function : ezmLL_InsertNewHead
+* Function : ezLinkedList_InsertNewHead
 *//** 
 * @brief Add a new node to the current head position
 *
@@ -222,19 +202,19 @@ bool ezmLL_AppendNode(struct Node *new_node, struct Node *appended_node);
 *
 * @code
 * struct Node new_node;
-* ezmLL_InitNode(&new_node);
-* struct Node *new_head = ezmLL_InsertNewHead(&new_node, current_head);
+* ezLinkedList_InitNode(&new_node);
+* struct Node *new_head = ezLinkedList_InsertNewHead(&new_node, current_head);
 * @endcode
 *
 * @see ezmLL_InitNode
 *
 *****************************************************************************/
-struct Node *ezmLL_InsertNewHead (struct Node * current_head,
-                                  struct Node *new_node);
+struct Node *ezLinkedList_InsertNewHead (struct Node * current_head,
+                                         struct Node *new_node);
 
 
 /*****************************************************************************
-* Function : ezmLL_UnlinkCurrentHead
+* Function : ezLinkedList_UnlinkCurrentHead
 *//** 
 * @brief Unlink the current head of the linked list
 *
@@ -248,15 +228,15 @@ struct Node *ezmLL_InsertNewHead (struct Node * current_head,
 * @post None
 *
 * @code
-* struct Node *unlinked_head = ezmLL_UnlinkCurrentHead(head);
+* struct Node *unlinked_head = ezLinkedList_UnlinkCurrentHead(head);
 * @endcode
 *
 *****************************************************************************/
-struct Node *ezmLL_UnlinkCurrentHead(struct Node *head);
+struct Node *ezLinkedList_UnlinkCurrentHead(struct Node *head);
 
 
 /*****************************************************************************
-* Function : ezmLL_IsNodeInList
+* Function : ezLinkedList_IsNodeInList
 *//** 
 * @brief Check if a node is in a list
 *
@@ -270,11 +250,11 @@ struct Node *ezmLL_UnlinkCurrentHead(struct Node *head);
 * @post none
 *
 * @code
-* bool exist = ezmLL_IsNodeInList(list, &checked_node);
+* bool exist = ezLinkedList_IsNodeInList(list, &checked_node);
 * @endcode
 *
 *****************************************************************************/
-bool ezmLL_IsNodeInList(struct Node *head, struct Node *searched_node);
+bool ezLinkedList_IsNodeInList(struct Node *head, struct Node *searched_node);
 
 #endif /* _LINKEDLIST_H */
 

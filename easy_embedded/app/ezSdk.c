@@ -179,11 +179,6 @@ void ezSdk_Initialization(void)
     Logging_DemoFeatures();
 #endif /* EZ_LOGGING == 1 */
 
-#if (EZ_LINKEDLIST == 1)
-    EZINFO("Initialized EZ_LINKEDLIST module");
-    //INFO("Module Id: 0x%02x", HELPER_LINKEDLIST_MOD_ID);
-    ezmLL_Initialization();
-#endif /* EZ_LINKEDLIST == 1 */
 
 #if (EZ_HEXDUMP == 1)
     /* DEBUG module has no init function*/

@@ -59,9 +59,9 @@
 #define CONFIG_NUM_OF_MEM_BLOCK 128
 #endif /*CONFIG_NUM_OF_MEM_BLOCK*/
 
-#define INIT_BLOCK(block, buff_ptr, size) {ezmLL_InitNode(&block->node);block->buff = buff_ptr;block->buff_size = size; }
+#define INIT_BLOCK(block, buff_ptr, size) {ezLinkedList_InitNode(&block->node);block->buff = buff_ptr;block->buff_size = size; }
 #define GET_LIST(x) ((struct MemList*)x)
-#define GET_BLOCK(node_ptr) (EZMLL_GET_PARENT_OF(node_ptr, node, struct MemBlock))
+#define GET_BLOCK(node_ptr) (EZ_LINKEDLIST_GET_PARENT_OF(node_ptr, node, struct MemBlock))
 
 /*****************************************************************************
 * Component Typedefs
@@ -106,8 +106,8 @@ bool ezmStcMem_InitMemList(ezmMemList* mem_list, void* buff, uint16_t buff_size)
     {
         GET_LIST(mem_list)->buff = buff;
         GET_LIST(mem_list)->buff_size = buff_size;
-        ezmLL_InitNode(&GET_LIST(mem_list)->alloc_list_head);
-        ezmLL_InitNode(&GET_LIST(mem_list)->free_list_head);
+        ezLinkedList_InitNode(&GET_LIST(mem_list)->alloc_list_head);
+        ezLinkedList_InitNode(&GET_LIST(mem_list)->free_list_head);
 
         free_block = GetFreeBlock();
         
@@ -115,7 +115,7 @@ bool ezmStcMem_InitMemList(ezmMemList* mem_list, void* buff, uint16_t buff_size)
         {
             INIT_BLOCK(free_block, buff, buff_size);
 
-            is_success = is_success && EZMLL_ADD_HEAD(&GET_LIST(mem_list)->free_list_head, &free_block->node);
+            is_success = is_success && EZ_LINKEDLIST_ADD_HEAD(&GET_LIST(mem_list)->free_list_head, &free_block->node);
         }
         else
         {
@@ -173,11 +173,11 @@ bool ezmStcMem_Free(ezmMemList *mem_list, void *alloc_addr)
 
     if (mem_list != NULL && alloc_addr != NULL)
     {
-        EZMLL_FOR_EACH(it_node, &GET_LIST(mem_list)->alloc_list_head)
+        EZ_LINKEDLIST_FOR_EACH(it_node, &GET_LIST(mem_list)->alloc_list_head)
         {
             if (GET_BLOCK(it_node)->buff == (uint8_t*)alloc_addr)
             {
-                EZMLL_UNLINK_NODE(it_node);
+                EZ_LINKEDLIST_UNLINK_NODE(it_node);
                 ezmStcMem_ReturnHeaderToFreeList(&GET_LIST(mem_list)->free_list_head, it_node);
                 ezmSmalloc_Merge(&GET_LIST(mem_list)->free_list_head);
                 is_success = true;
@@ -233,7 +233,7 @@ void ezmStcMem_PrintFreeList(ezmMemList *mem_list)
 
     STCMEMPRINT("*****************************************");
     STCMEMPRINT("free list");
-    EZMLL_FOR_EACH(it_node, &GET_LIST(mem_list)->free_list_head)
+    EZ_LINKEDLIST_FOR_EACH(it_node, &GET_LIST(mem_list)->free_list_head)
     {
         STCMEMPRINT1("[addr = %p]", it_node);
         STCMEMPRINT1("[next = %p]", it_node->next);
@@ -255,7 +255,7 @@ void ezmStcMem_PrintAllocList(ezmMemList * mem_list)
 
     STCMEMPRINT("*****************************************");
     STCMEMPRINT("allocated list");
-    EZMLL_FOR_EACH(it_node, &GET_LIST(mem_list)->alloc_list_head)
+    EZ_LINKEDLIST_FOR_EACH(it_node, &GET_LIST(mem_list)->alloc_list_head)
     {
         STCMEMPRINT1("[addr = %p]", it_node);
         STCMEMPRINT1("[next = %p]", it_node->next);
@@ -272,13 +272,13 @@ void ezmStcMem_PrintAllocList(ezmMemList * mem_list)
 
 uint16_t ezmStcMem_GetNumOfAllocBlock(ezmMemList* mem_list)
 {
-    return ezmLL_GetListSize(&GET_LIST(mem_list)->alloc_list_head);
+    return ezLinkedList_GetListSize(&GET_LIST(mem_list)->alloc_list_head);
 }
 
 
 uint16_t ezmStcMem_GetNumOfFreeBlock(ezmMemList* mem_list)
 {
-    return ezmLL_GetListSize(&GET_LIST(mem_list)->free_list_head);
+    return ezLinkedList_GetListSize(&GET_LIST(mem_list)->free_list_head);
 }
 /**************************** Private function *******************************/
 
@@ -308,21 +308,21 @@ static void ezmStcMem_ReturnHeaderToFreeList(struct Node* free_list_head, struct
     {
         if (IS_LIST_EMPTY(free_list_head))
         {
-            EZMLL_ADD_HEAD(free_list_head, free_node);
+            EZ_LINKEDLIST_ADD_HEAD(free_list_head, free_node);
         }
         else
         {
             /* tranverse the list to add the node, we aort the address in the order so merge operation will be easier*/
-            EZMLL_FOR_EACH(it_node, free_list_head)
+            EZ_LINKEDLIST_FOR_EACH(it_node, free_list_head)
             {
                 if (GET_BLOCK(free_node)->buff < GET_BLOCK(it_node)->buff)
                 {
-                    ezmLL_AppendNode(free_node, it_node->prev);
+                    ezLinkedList_AppendNode(free_node, it_node->prev);
                     break;
                 }
                 else if (GET_BLOCK(free_node)->buff > GET_BLOCK(it_node)->buff)
                 {
-                    ezmLL_AppendNode(free_node, it_node);
+                    ezLinkedList_AppendNode(free_node, it_node);
                     break;
                 }
                 else
@@ -363,7 +363,7 @@ static void ezmSmalloc_Merge(struct Node* free_list_head)
 
         STCMEMPRINT("Next adjacent block is free");
         GET_BLOCK(it_node)->buff_size += GET_BLOCK(it_next)->buff_size;
-        EZMLL_UNLINK_NODE(it_next);
+        EZ_LINKEDLIST_UNLINK_NODE(it_next);
         ReleaseBlock(GET_BLOCK(it_next));
         it_next = it_node->next;
     }
@@ -377,7 +377,7 @@ struct MemBlock* GetFreeBlock(void)
         if (block_pool[i].buff == NULL)
         {
             free_block = &block_pool[i];
-            ezmLL_InitNode(&free_block->node);
+            ezLinkedList_InitNode(&free_block->node);
             break;
         }
     }
@@ -399,7 +399,7 @@ struct Node* ezmStcMem_ReserveMemoryBlock(struct Node* free_list_head, uint16_t 
 
     if (NULL != free_list_head &&  block_size_byte > 0)
     {
-        EZMLL_FOR_EACH(iterate_Node, free_list_head)
+        EZ_LINKEDLIST_FOR_EACH(iterate_Node, free_list_head)
         {
             if (GET_BLOCK(iterate_Node)->buff_size >= block_size_byte)
             {
@@ -412,7 +412,7 @@ struct Node* ezmStcMem_ReserveMemoryBlock(struct Node* free_list_head, uint16_t 
                 {
                     remain_block->buff_size = GET_BLOCK(iterate_Node)->buff_size - block_size_byte;
                     remain_block->buff = (uint8_t*)GET_BLOCK(iterate_Node)->buff + block_size_byte;
-                    EZMLL_ADD_TAIL(free_list_head, &remain_block->node);
+                    EZ_LINKEDLIST_ADD_TAIL(free_list_head, &remain_block->node);
                 }
 
                 GET_BLOCK(iterate_Node)->buff_size = block_size_byte;
@@ -438,10 +438,10 @@ bool ezmStcMem_MoveBlock(struct Node* move_node, struct Node* from_list_head, st
     if (NULL != move_node 
         && NULL != from_list_head 
         && NULL != to_list_head
-        && ezmLL_IsNodeInList(from_list_head, move_node))
+        && ezLinkedList_IsNodeInList(from_list_head, move_node))
     {
-        EZMLL_UNLINK_NODE(move_node);
-        EZMLL_ADD_TAIL(to_list_head, move_node);
+        EZ_LINKEDLIST_UNLINK_NODE(move_node);
+        EZ_LINKEDLIST_ADD_TAIL(to_list_head, move_node);
     }
 
     return is_success;
