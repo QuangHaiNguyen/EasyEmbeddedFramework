@@ -67,7 +67,7 @@ ezSTATUS ezEventNotifier_CreateSubject(ezSubject *subject)
 
     if (subject)
     {
-        ezmLL_InitNode(subject);
+        ezLinkedList_InitNode(subject);
         status = ezSUCCESS;
         EZDEBUG("  Create OK");
     }
@@ -84,7 +84,7 @@ void ezEventNotifier_ResetSubject(ezSubject * subject)
 {
     if (subject)
     {
-        ezmLL_InitNode(subject);
+        ezLinkedList_InitNode(subject);
     }
 }
 
@@ -119,10 +119,10 @@ ezSTATUS ezEventNotifier_SubscribeToSubject(ezSubject *subject,
     if (subject != NULL
         && observer != NULL)
     {
-        EZMLL_ADD_HEAD(subject, &observer->node);
+        EZ_LINKEDLIST_ADD_HEAD(subject, &observer->node);
 
         EZDEBUG("  subscribing success");
-        EZDEBUG("  num of subscriber [num = %d]", ezmLL_GetListSize(subject));
+        EZDEBUG("  num of subscriber [num = %d]", ezLinkedList_GetListSize(subject));
         status = ezSUCCESS;
     }
     else
@@ -142,12 +142,12 @@ ezSTATUS ezEventNotifier_UnsubscribeFromSubject(ezSubject *subject,
 
     if (subject != NULL &&
         observer != NULL &&
-        ezmLL_IsNodeInList(subject, &observer->node))
+        ezLinkedList_IsNodeInList(subject, &observer->node))
     {
-        EZMLL_UNLINK_NODE(&observer->node);
+        EZ_LINKEDLIST_UNLINK_NODE(&observer->node);
 
         EZDEBUG("  unsubscribing success");
-        EZDEBUG("  num of subscriber [num = %d]", ezmLL_GetListSize(subject));
+        EZDEBUG("  num of subscriber [num = %d]", ezLinkedList_GetListSize(subject));
         status = ezSUCCESS;
     }
     else
@@ -167,7 +167,7 @@ uint16_t ezEventNotifier_GetNumOfObservers(ezSubject *subject)
 
     if (subject)
     {
-        num_of_observers = ezmLL_GetListSize(subject);
+        num_of_observers = ezLinkedList_GetListSize(subject);
         EZDEBUG("  num of observer = %d", num_of_observers);
     }
     else
@@ -190,9 +190,9 @@ void ezEventNotifier_NotifyEvent(ezSubject *subject,
 
     if (subject != NULL)
     {
-        EZMLL_FOR_EACH(iterate, subject)
+        EZ_LINKEDLIST_FOR_EACH(iterate, subject)
         {
-            sub = EZMLL_GET_PARENT_OF(iterate, node, struct ezObserver);
+            sub = EZ_LINKEDLIST_GET_PARENT_OF(iterate, node, struct ezObserver);
             if (sub->callback)
             {
                 EZDEBUG("  notify observer");

@@ -52,25 +52,19 @@
 /*****************************************************************************
 * External functions
 *****************************************************************************/
-void ezmLL_Initialization(void)
-{
-    /* Do nothing */
-}
-
-
-void ezmLL_InitNode(struct Node* node)
+void ezLinkedList_InitNode(struct Node* node)
 {
     node->next = node;
     node->prev = node;
 }
 
 
-uint16_t ezmLL_GetListSize(struct Node* list_head)
+uint16_t ezLinkedList_GetListSize(struct Node* list_head)
 {
     uint16_t size = 0;
     struct Node* it_node = NULL;
  
-    EZMLL_FOR_EACH(it_node, list_head)
+    EZ_LINKEDLIST_FOR_EACH(it_node, list_head)
     {
         size++;
     }
@@ -78,7 +72,7 @@ uint16_t ezmLL_GetListSize(struct Node* list_head)
 }
 
 
-bool ezmLL_AppendNode(struct Node* new_node, struct Node* node)
+bool ezLinkedList_AppendNode(struct Node* new_node, struct Node* node)
 {
     bool is_success = false;
     if (new_node != NULL && node != NULL)
@@ -95,13 +89,13 @@ bool ezmLL_AppendNode(struct Node* new_node, struct Node* node)
 }
 
 
-struct Node* ezmLL_InsertNewHead(struct Node *current_head, struct Node * new_node)
+struct Node* ezLinkedList_InsertNewHead(struct Node *current_head, struct Node * new_node)
 {
     struct Node* new_head = NULL;
 
     if(current_head != NULL 
         && new_node != NULL
-        && ezmLL_AppendNode(new_node, current_head->prev) == true)
+        && ezLinkedList_AppendNode(new_node, current_head->prev) == true)
     {
         new_head = new_node;
     }
@@ -110,21 +104,21 @@ struct Node* ezmLL_InsertNewHead(struct Node *current_head, struct Node * new_no
 }
 
 
-struct Node * ezmLL_UnlinkCurrentHead(struct Node * head)
+struct Node * ezLinkedList_UnlinkCurrentHead(struct Node * head)
 {
     struct Node* new_head = head;
 
     if(head->next != head)
     {
         new_head = head->next;
-        EZMLL_UNLINK_NODE(head);
+        EZ_LINKEDLIST_UNLINK_NODE(head);
     }
 
     return new_head;
 }
 
 
-bool ezmLL_IsNodeInList(struct Node* head, struct Node* searched_node)
+bool ezLinkedList_IsNodeInList(struct Node* head, struct Node* searched_node)
 {
     bool is_existing = false;
     struct Node* node;
@@ -135,7 +129,7 @@ bool ezmLL_IsNodeInList(struct Node* head, struct Node* searched_node)
     }
     else if (head != NULL && searched_node != NULL)
     {
-        EZMLL_FOR_EACH(node, head)
+        EZ_LINKEDLIST_FOR_EACH(node, head)
         {
             if (node == searched_node)
             {
