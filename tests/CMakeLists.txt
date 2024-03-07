@@ -10,6 +10,10 @@ message(STATUS "************************************")
 
 
 # activate test depend on the activated module
+if(ENABLE_DATA_MODEL)
+    add_subdirectory(app/data_model)
+endif()
+
 if(ENABLE_EZ_EVENT_NOTIFIER)
     add_subdirectory(service/event_notifier)
 endif()
