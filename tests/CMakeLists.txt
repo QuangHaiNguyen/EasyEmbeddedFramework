@@ -1,57 +1,49 @@
-#build the unit tests
-add_executable(ez_unit_test)
+# ----------------------------------------------------------------------------
+# Author: Hai Nguyen
+# License: This file is published under the license described in LICENSE.md
+# Description: CMake file to build unit tests
+# ----------------------------------------------------------------------------
 
 message(STATUS "************************************")
 message(STATUS "* Building unit tests")
 message(STATUS "************************************")
 
-#include directory
-target_include_directories(ez_unit_test PRIVATE
-    .
-    ../ezmsdk
-)
-
-target_link_libraries(ez_unit_test PUBLIC unity easy_embedded_lib)
 
 # activate test depend on the activated module
+if(ENABLE_DATA_MODEL)
+    add_subdirectory(app/data_model)
+endif()
+
 if(ENABLE_EZ_EVENT_NOTIFIER)
-    message(STATUS "Test for event notifier is activated")
     add_subdirectory(service/event_notifier)
 endif()
 
 if(ENABLE_EZ_KERNEL)
-    message(STATUS "Test for kernel is activated")
     add_subdirectory(service/kernel)
 endif()
 
-if(ENABLE_EZ_QUEUE)
-    message(STATUS "Test for queue is activated")
-    add_subdirectory(utilities/queue)
-endif()
-
 if(ENABLE_EZ_HAL_ECHO)
-    message(STATUS "Test for hal echo is activated")
     add_subdirectory(service/driver/hal_echo)
 endif()
 
 if(ENABLE_EZ_HAL_UART)
-    message(STATUS "Test for hal uart is activated")
     add_subdirectory(service/driver/hal_uart)
 endif()
 
-# Service module
-target_sources(ez_unit_test PRIVATE
-    main.c
- )
+if(ENABLE_EZ_QUEUE)
+    add_subdirectory(utilities/queue)
+endif()
 
-target_link_libraries(ez_unit_test PRIVATE
-    $<$<BOOL:${ENABLE_EZ_EVENT_NOTIFIER}>:ez_unit_test_event_notifier>
-    $<$<BOOL:${ENABLE_EZ_QUEUE}>:ez_unit_test_queue>
-    $<$<BOOL:${ENABLE_EZ_KERNEL}>:ez_unit_test_kernel>
-    $<$<BOOL:${ENABLE_EZ_HAL_ECHO}>:ez_unit_test_hal_echo>
-    $<$<BOOL:${ENABLE_EZ_HAL_UART}>:ez_unit_test_hal_uart>
-)
+if(ENABLE_EZ_LINKEDLIST)
+    add_subdirectory(utilities/linked_list)
+endif()
 
-add_test(NAME ez_unit_test
-    COMMAND ez_unit_test
-)
+if(ENABLE_EZ_STATIC_ALLOC)
+    add_subdirectory(utilities/static_alloc)
+endif()
+
+if(ENABLE_EZ_RING_BUFFER)
+    add_subdirectory(utilities/ring_buffer)
+endif()
+
+# End of file

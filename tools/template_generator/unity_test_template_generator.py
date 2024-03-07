@@ -27,7 +27,7 @@ my_parser = argparse.ArgumentParser(prog = 'Module Source header template genera
 
 _file_header ="""\
 /*****************************************************************************
-* Filename:         {0}
+* Filename:         unittest_{0}
 * Author:           {1}
 * Original Date:    {2}
 *
@@ -43,7 +43,7 @@ _file_header ="""\
 
 _doxygen_file_header=\
 """
-/** @file   {0}
+/** @file   unittest_{0}
  *  @author {1}
  *  @date   {2}
  *  @brief  One line description of the component
@@ -58,15 +58,17 @@ _doxygen_source_body=\
 /******************************************************************************
 * Includes
 *******************************************************************************/
-#include "unity_test_platform/unity.h"
-#include "unity_test_platform/unity_fixture.h"
 #include <stdint.h>
 #include <stdbool.h>
+#include "unity.h"
+#include "unity_fixture.h"
 """
 
 
 _test_file_body=\
 """
+TEST_GROUP({0});
+
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
@@ -85,12 +87,15 @@ _test_file_body=\
 /******************************************************************************
 * Function Definitions
 *******************************************************************************/
-/* None */
+static void RunAllTests(void);
 
 /******************************************************************************
 * External functions
 *******************************************************************************/
-TEST_GROUP({0});
+int main(int argc, const char *argv[])
+{{
+    return UnityMain(argc, argv, RunAllTests);
+}}
 
 
 TEST_SETUP({0})
@@ -118,7 +123,10 @@ TEST({0}, TestTempPlate)
 /******************************************************************************
 * Internal functions
 *******************************************************************************/
-/* None */
+static void RunAllTests(void)
+{{
+    RUN_TEST_GROUP({0});
+}}
 
 
 /* End of file */

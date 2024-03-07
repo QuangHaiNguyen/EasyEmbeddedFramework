@@ -182,7 +182,7 @@ void DataModel_ReleaseDataPoint(DataPoint data_point);
 * @see DataModel_Initialization, DataModel_CreateDataPoint
 *
 *****************************************************************************/
-bool DataModel_ReadDataPoint(DataPoint data_point,
+bool DataModel_WriteDataPoint(DataPoint data_point,
                               void* data,
                               uint32_t size);
 
