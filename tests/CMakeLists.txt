@@ -38,4 +38,8 @@ if(ENABLE_EZ_STATIC_ALLOC)
     add_subdirectory(utilities/static_alloc)
 endif()
 
+if(ENABLE_EZ_RING_BUFFER)
+    add_subdirectory(utilities/ring_buffer)
+endif()
+
 # End of file
