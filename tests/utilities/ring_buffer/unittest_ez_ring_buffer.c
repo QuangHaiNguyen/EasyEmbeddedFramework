@@ -88,10 +88,10 @@ TEST_GROUP_RUNNER(ez_ring_buffer)
 TEST(ez_ring_buffer, Init)
 {
     bool status;
-    status = ezmRingBuffer_Init(&r_buff, au8TestBuffer, BUFF_SIZE);
+    status = ezRingBuffer_Init(&r_buff, au8TestBuffer, BUFF_SIZE);
     TEST_ASSERT_EQUAL(status, true);
-    TEST_ASSERT_EQUAL(r_buff.u16Capacity, BUFF_SIZE);
-    status = ezmRingBuffer_IsEmpty(&r_buff);
+    TEST_ASSERT_EQUAL(r_buff.capacity, BUFF_SIZE);
+    status = ezRingBuffer_IsEmpty(&r_buff);
     TEST_ASSERT_EQUAL(status, true);
 }
 
@@ -100,30 +100,30 @@ TEST(ez_ring_buffer, Push)
     bool status;
     uint16_t u16Bytes;
     uint8_t push_10[BUFF_SIZE] = { 0,1,2,3,4,5,6,7,8,9 };
-    status = ezmRingBuffer_Init(&r_buff, au8TestBuffer, BUFF_SIZE);
+    status = ezRingBuffer_Init(&r_buff, au8TestBuffer, BUFF_SIZE);
     TEST_ASSERT_EQUAL(status, true);
 
-    u16Bytes = ezmRingBuffer_Push(&r_buff, push_10, 10);
+    u16Bytes = ezRingBuffer_Push(&r_buff, push_10, 10);
     TEST_ASSERT_EQUAL(u16Bytes, BUFF_SIZE);
-    status = ezmRingBuffer_IsFull(&r_buff);
+    status = ezRingBuffer_IsFull(&r_buff);
     TEST_ASSERT_EQUAL(status, true);
 
     for (uint8_t i = 0; i < 10; i++)
     {
-        TEST_ASSERT_EQUAL(r_buff.pu8Buff[i], i);
+        TEST_ASSERT_EQUAL(r_buff.buff[i], i);
     }
 
     /*Push another round to see if we get over flow error*/ 
-    status = ezmRingBuffer_Push(&r_buff, push_10, 10);
+    status = ezRingBuffer_Push(&r_buff, push_10, 10);
     TEST_ASSERT_EQUAL(u16Bytes, BUFF_SIZE);
 
     /*see which memory we have left, must be 0 since buff is full*/
     uint16_t avai_mem = 10;
-    avai_mem = ezmRingBuffer_GetAvailableMemory(&r_buff);
+    avai_mem = ezRingBuffer_GetAvailableMemory(&r_buff);
     TEST_ASSERT_EQUAL(avai_mem, 0);
 
     /*Push 0 byte, should be OKr*/
-    u16Bytes = ezmRingBuffer_Push(&r_buff, push_10, 0);
+    u16Bytes = ezRingBuffer_Push(&r_buff, push_10, 0);
     TEST_ASSERT_EQUAL(u16Bytes, 0);
 }
 
@@ -133,14 +133,14 @@ TEST(ez_ring_buffer, Pop)
     uint16_t u16Bytes;
     uint8_t push_10[BUFF_SIZE] = { 0,1,2,3,4,5,6,7,8,9 };
     uint8_t pop_5[5];
-    status = ezmRingBuffer_Init(&r_buff, au8TestBuffer, BUFF_SIZE);
+    status = ezRingBuffer_Init(&r_buff, au8TestBuffer, BUFF_SIZE);
     TEST_ASSERT_EQUAL(status, true);
 
-    u16Bytes = ezmRingBuffer_Push(&r_buff, push_10, BUFF_SIZE);
+    u16Bytes = ezRingBuffer_Push(&r_buff, push_10, BUFF_SIZE);
     TEST_ASSERT_EQUAL(u16Bytes, BUFF_SIZE);
 
     /*pop out the first 5*/
-    u16Bytes = ezmRingBuffer_Pop(&r_buff, pop_5, 5);
+    u16Bytes = ezRingBuffer_Pop(&r_buff, pop_5, 5);
     TEST_ASSERT_EQUAL(u16Bytes, 5);
 
     for (uint8_t i = 0; i < 5; i++)
@@ -149,11 +149,11 @@ TEST(ez_ring_buffer, Pop)
     }
 
     uint16_t avail_mem = 0;
-    avail_mem = ezmRingBuffer_GetAvailableMemory(&r_buff);
+    avail_mem = ezRingBuffer_GetAvailableMemory(&r_buff);
     TEST_ASSERT_EQUAL(avail_mem, 5);
 
     /*Get the rest 5 byte*/
-    u16Bytes = ezmRingBuffer_Pop(&r_buff, pop_5, 5);
+    u16Bytes = ezRingBuffer_Pop(&r_buff, pop_5, 5);
     TEST_ASSERT_EQUAL(u16Bytes, 5);
 
     for (uint8_t i = 0; i < 5; i++)
@@ -161,14 +161,14 @@ TEST(ez_ring_buffer, Pop)
         TEST_ASSERT_EQUAL(pop_5[i], i + 5);
     }
 
-    status = ezmRingBuffer_IsEmpty(&r_buff);
+    status = ezRingBuffer_IsEmpty(&r_buff);
     TEST_ASSERT_EQUAL(status, true);
 
-    avail_mem = ezmRingBuffer_GetAvailableMemory(&r_buff);
+    avail_mem = ezRingBuffer_GetAvailableMemory(&r_buff);
     TEST_ASSERT_EQUAL(avail_mem, 10);
 
     /*Get the pop another  5 byte*/
-    u16Bytes = ezmRingBuffer_Pop(&r_buff, pop_5, 5);
+    u16Bytes = ezRingBuffer_Pop(&r_buff, pop_5, 5);
     TEST_ASSERT_EQUAL(u16Bytes, 0);
 }
 
@@ -178,16 +178,16 @@ TEST(ez_ring_buffer, wrapping_point_push)
     uint16_t u16Bytes;
     uint8_t push_10[BUFF_SIZE] = { 0,1,2,3,4,5,6,7,8,9 };
     uint8_t pop_5[5];
-    status = ezmRingBuffer_Init(&r_buff, au8TestBuffer, BUFF_SIZE);
+    status = ezRingBuffer_Init(&r_buff, au8TestBuffer, BUFF_SIZE);
     TEST_ASSERT_EQUAL(status, true);
 
-    u16Bytes = ezmRingBuffer_Push(&r_buff, push_10, 7);
+    u16Bytes = ezRingBuffer_Push(&r_buff, push_10, 7);
     TEST_ASSERT_EQUAL(u16Bytes, 7);
 
-    u16Bytes = ezmRingBuffer_Pop(&r_buff, pop_5, 2);
+    u16Bytes = ezRingBuffer_Pop(&r_buff, pop_5, 2);
     TEST_ASSERT_EQUAL(u16Bytes, 2);
 
-    u16Bytes = ezmRingBuffer_Push(&r_buff, push_10, 5);
+    u16Bytes = ezRingBuffer_Push(&r_buff, push_10, 5);
     TEST_ASSERT_EQUAL(u16Bytes, 5);
 
     TEST_ASSERT_EQUAL(au8TestBuffer[0], 3);
@@ -208,16 +208,16 @@ TEST(ez_ring_buffer, wrapping_point_pop)
     uint16_t u16Bytes;
     uint8_t push_10[BUFF_SIZE] = { 0,1,2,3,4,5,6,7,8,9 };
     uint8_t pop_10[10];
-    status = ezmRingBuffer_Init(&r_buff, au8TestBuffer, BUFF_SIZE);
+    status = ezRingBuffer_Init(&r_buff, au8TestBuffer, BUFF_SIZE);
     TEST_ASSERT_EQUAL(status, true);
 
-    u16Bytes = ezmRingBuffer_Push(&r_buff, push_10, 7);
+    u16Bytes = ezRingBuffer_Push(&r_buff, push_10, 7);
     TEST_ASSERT_EQUAL(u16Bytes, 7);
 
-    u16Bytes = ezmRingBuffer_Pop(&r_buff, pop_10, 2);
+    u16Bytes = ezRingBuffer_Pop(&r_buff, pop_10, 2);
     TEST_ASSERT_EQUAL(u16Bytes, 2);
 
-    u16Bytes = ezmRingBuffer_Push(&r_buff, push_10, 5);
+    u16Bytes = ezRingBuffer_Push(&r_buff, push_10, 5);
     TEST_ASSERT_EQUAL(u16Bytes, 5);
 
     TEST_ASSERT_EQUAL(au8TestBuffer[0], 3);
@@ -231,7 +231,7 @@ TEST(ez_ring_buffer, wrapping_point_pop)
     TEST_ASSERT_EQUAL(au8TestBuffer[8], 1);
     TEST_ASSERT_EQUAL(au8TestBuffer[9], 2);
 
-    u16Bytes = ezmRingBuffer_Pop(&r_buff, pop_10, 10);
+    u16Bytes = ezRingBuffer_Pop(&r_buff, pop_10, 10);
     TEST_ASSERT_EQUAL(u16Bytes, 10);
 
     TEST_ASSERT_EQUAL(pop_10[0], 2);

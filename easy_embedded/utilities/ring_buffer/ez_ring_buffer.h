@@ -42,15 +42,15 @@
  */
 typedef struct
 {
-    uint8_t *pu8Buff;
+    uint8_t *buff;
     /**< pointer to the data buffer*/
-    uint16_t u16Capacity;
+    uint16_t capacity;
     /**< size of the buffer*/
-    uint16_t u16Head;
+    uint16_t head_index;
     /**< buffer head*/
-    uint16_t u16Tail;
+    uint16_t tail_index;
     /**< buffer tail*/
-    uint16_t u16Count;
+    uint16_t written_byte_count;
     /**< number of byte written*/
 }RingBuffer;
 
@@ -65,14 +65,15 @@ typedef struct
 *******************************************************************************/
 
 /*****************************************************************************
-* Function : ezmRingBuffer_Init
+* Function : ezRingBuffer_Init
 *//** 
 * @brief This function initializes the ring buffer
 *
 * @details
 *
-* @param[out]   pstBuff: pointer to the ring buffer
-* @param[in]    u16Size: size of the ring buffer
+* @param[in]    ring_buff: pointer to the ring buffer
+* @param[in]    buff: pointer of buffer holding data
+* @param[in]    size: size of buff
 * @return       true if success, else false
 *
 * @pre None
@@ -84,20 +85,20 @@ typedef struct
 * RingBuffer_Init(&buffer, 30);
 * @endcode
 *
-* @see ezmRingBuffer_Init
+* @see
 *
 *****************************************************************************/
-bool ezmRingBuffer_Init(RingBuffer* pstBuff, uint8_t * pu8Buff, uint16_t u16Size);
+bool ezRingBuffer_Init(RingBuffer *ring_buff, uint8_t *buff, uint16_t size);
 
 
 /*****************************************************************************
-* Function : ezmRingBuffer_IsEmpty
+* Function : ezRingBuffer_IsEmpty
 *//** 
 * @brief Check if the buffer is empty
 *
 * @details
 *
-* @param[in]    pstBuff: (IN)pointer to the ring buffer
+* @param[in]    ring_buff: pointer to the ring buffer
 * @return       true if empty, otherwise false
 *
 * @pre A RingBuffer is exsiting
@@ -111,20 +112,20 @@ bool ezmRingBuffer_Init(RingBuffer* pstBuff, uint8_t * pu8Buff, uint16_t u16Size
 * status = RingBuffer_IsEmpty(&buffer);
 * @endcode
 *
-* @see ezmRingBuffer_Init
+* @see ezRingBuffer_Init
 *
 *****************************************************************************/
-bool ezmRingBuffer_IsEmpty(RingBuffer * pstBuff);
+bool ezRingBuffer_IsEmpty(RingBuffer *ring_buff);
 
 
 /*****************************************************************************
-* Function : ezmRingBuffer_IsFull
+* Function : ezRingBuffer_IsFull
 *//** 
 * @brief Check if the buffer is full
 *
 * @details
 *
-* @param[in]    pstBuff: pointer to the ring buffer
+* @param[in]    ring_buff: pointer to the ring buffer
 * @return       True if full, else false
 *
 * @pre a RingBuffer is exsiting
@@ -138,22 +139,22 @@ bool ezmRingBuffer_IsEmpty(RingBuffer * pstBuff);
 * status = RingBuffer_IsFull(&buffer);
 * @endcode
 *
-* @see ezmRingBuffer_Init
+* @see ezRingBuffer_Init
 *
 *****************************************************************************/
-bool ezmRingBuffer_IsFull(RingBuffer * pstBuff);
+bool ezRingBuffer_IsFull(RingBuffer *ring_buff);
 
 
 /*****************************************************************************
-* Function : ezmRingBuffer_Push
+* Function : ezRingBuffer_Push
 *//** 
 * @brief Push data into the ring buffet
 *
 * @details
 *
-* @param[in]    pstBuff: pointer to the ring buffer
-* @param[in]    pu8Data: pointer to the pushed data
-* @param[in]    u16Size: size of the data
+* @param[in]    ring_buff: pointer to the ring buffer
+* @param[in]    data: pointer to the pushed data
+* @param[in]    size: size of the data
 * @return       Number of bytes pushed into the ring buffer
 *
 * @pre a RingBuffer is exsiting
@@ -167,22 +168,22 @@ bool ezmRingBuffer_IsFull(RingBuffer * pstBuff);
 * RingBuffer_Push(&buffer, u8Data, 3U);
 * @endcode
 *
-* @see ezmRingBuffer_Init
+* @see ezRingBuffer_Init
 *
 *****************************************************************************/
-uint16_t ezmRingBuffer_Push(RingBuffer * pstBuff, uint8_t * pu8Data, uint16_t u16Size);
+uint16_t ezRingBuffer_Push(RingBuffer * ring_buff, uint8_t *data, uint16_t size);
 
 
 /*****************************************************************************
-* Function : ezmRingBuffer_Pop
+* Function : ezRingBuffer_Pop
 *//** 
 * @brief Pop data out of the ring buffer
 *
 * @details
 *
-* @param[in]    pstBuff: pointer to the ring buffer
-* @param[out]   pu8Data: pointer to the popped data
-* @param[in]    u16Size: size of the popped data
+* @param[in]    ring_buff: pointer to the ring buffer
+* @param[out]   data: pointer to the popped data
+* @param[in]    size: size of the popped data
 * @return       Number of bytes popped out of the ring buffer
 *
 * @pre a RingBuffer is exsiting
@@ -196,20 +197,20 @@ uint16_t ezmRingBuffer_Push(RingBuffer * pstBuff, uint8_t * pu8Data, uint16_t u1
 * RingBuffer_Pop(&buffer, u8Data, 3U);
 * @endcode
 *
-* @see ezmRingBuffer_Init
+* @see ezRingBuffer_Init
 *
 *****************************************************************************/
-uint16_t ezmRingBuffer_Pop(RingBuffer * pstBuff, uint8_t * pu8Data, uint16_t u16Size);
+uint16_t ezRingBuffer_Pop(RingBuffer *ring_buff, uint8_t *data, uint16_t size);
 
 
 /*****************************************************************************
-* Function : ezmRingBuffer_Reset
+* Function : ezRingBuffer_Reset
 *//** 
 * @brief A RingBuffer is exsiting
 *
 * @details
 *
-* @param[in]    pstBuff: pointer to the ring buffer
+* @param[in]    ring_buff: pointer to the ring buffer
 * @return       None
 *
 * @pre a RingBuffer is exsiting
@@ -220,21 +221,20 @@ uint16_t ezmRingBuffer_Pop(RingBuffer * pstBuff, uint8_t * pu8Data, uint16_t u16
 * RingBuffer_Reset(&buffer);
 * @endcode
 *
-* @see ezmRingBuffer_Init
+* @see ezRingBuffer_Init
 *
 *****************************************************************************/
-void ezmRingBuffer_Reset(RingBuffer * pstBuff);
+void ezRingBuffer_Reset(RingBuffer *ring_buff);
 
 
 /*****************************************************************************
-* Function : ezmRingBuffer_GetAvailableMemory
+* Function : ezRingBuffer_GetAvailableMemory
 *//** 
 * @brief Return number of bytes available
 *
 * @details
 *
-* @param[in]    pstBuff: pointer to the ring buffer
-* @param[out]   avail_mem: pointer to the variable holding the available memory
+* @param[in]    ring_buff: pointer to the ring buffer
 * @return       Number of available bytes
 *
 * \b Example
@@ -248,7 +248,7 @@ void ezmRingBuffer_Reset(RingBuffer * pstBuff);
 * @see RingBuffer_Init
 *
 *****************************************************************************/
-uint16_t ezmRingBuffer_GetAvailableMemory( RingBuffer * pstBuff);
+uint16_t ezRingBuffer_GetAvailableMemory( RingBuffer *ring_buff);
 
 #endif	/* RING_BUFFER_H */
 

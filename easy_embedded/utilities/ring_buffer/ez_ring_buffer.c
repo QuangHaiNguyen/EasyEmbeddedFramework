@@ -56,123 +56,118 @@
 /*****************************************************************************
 * Public functions
 *****************************************************************************/
-bool ezmRingBuffer_Init(RingBuffer* pstBuff, uint8_t* pu8Buff, uint16_t u16Size)
+bool ezRingBuffer_Init(RingBuffer *ring_buff, uint8_t *buff, uint16_t size)
 {
-    bool bResult = true;
-
-    pstBuff->u16Head = 0;
-    pstBuff->u16Tail = 0;
-    pstBuff->u16Count = 0;
-
-    if(pu8Buff == NULL && u16Size == 0)
+    bool ret = false;
+    if(buff != NULL && size > 0)
     {
-        bResult = false;
+        ring_buff->head_index = 0;
+        ring_buff->tail_index = 0;
+        ring_buff->written_byte_count = 0;
+        ring_buff->buff = buff;
+        ring_buff->capacity = size;
+        ret = true;
     }
-    else
-    {
-        pstBuff->pu8Buff = pu8Buff;
-        pstBuff->u16Capacity = u16Size;
-    }
-    return bResult;
+    return ret;
 }
 
 
-bool ezmRingBuffer_IsEmpty(RingBuffer * pstBuff)
+bool ezRingBuffer_IsEmpty(RingBuffer *ring_buff)
 {
-    return (0 == pstBuff->u16Count);
+    return (0 == ring_buff->written_byte_count);
 }
 
 
-bool ezmRingBuffer_IsFull(RingBuffer * pstBuff)
+bool ezRingBuffer_IsFull(RingBuffer * ring_buff)
 {
-    return (pstBuff->u16Count == pstBuff->u16Capacity);
+    return (ring_buff->written_byte_count == ring_buff->capacity);
 }
 
 
-uint16_t ezmRingBuffer_Push(RingBuffer * pstBuff, uint8_t * pu8Data, uint16_t u16Size)
+uint16_t ezRingBuffer_Push(RingBuffer * ring_buff, uint8_t *data, uint16_t size)
 {
-    uint16_t u16RemainByte = 0U;
-    uint16_t u16NumPushedData = pstBuff->u16Capacity - pstBuff->u16Count;
+    uint16_t remain_byte_count = 0U;
+    uint16_t push_byte_count = ring_buff->capacity - ring_buff->written_byte_count;
 
-    if(u16NumPushedData >= u16Size)
+    if(push_byte_count >= size)
     {
-        u16NumPushedData = u16Size;
+        push_byte_count = size;
     }
 
-    if (pstBuff->u16Capacity - pstBuff->u16Head >= u16NumPushedData)
+    if (ring_buff->capacity - ring_buff->head_index >= push_byte_count)
     {
-        memcpy(&pstBuff->pu8Buff[pstBuff->u16Head], pu8Data, u16NumPushedData);
-        pstBuff->u16Head = pstBuff->u16Head + u16NumPushedData;
-        pstBuff->u16Count = pstBuff->u16Count + u16NumPushedData;
+        memcpy(&ring_buff->buff[ring_buff->head_index], data, push_byte_count);
+        ring_buff->head_index = ring_buff->head_index + push_byte_count;
+        ring_buff->written_byte_count = ring_buff->written_byte_count + push_byte_count;
     }
     else
     {
         /* Handle warpping */
-        u16RemainByte = pstBuff->u16Capacity - pstBuff->u16Head;
-        memcpy(&pstBuff->pu8Buff[pstBuff->u16Head], pu8Data, u16RemainByte);
-        pstBuff->u16Head = 0;
-        pstBuff->u16Count = pstBuff->u16Count + u16RemainByte;
-        pu8Data = pu8Data + u16RemainByte;
+        remain_byte_count = ring_buff->capacity - ring_buff->head_index;
+        memcpy(&ring_buff->buff[ring_buff->head_index], data, remain_byte_count);
+        ring_buff->head_index = 0;
+        ring_buff->written_byte_count = ring_buff->written_byte_count + remain_byte_count;
+        data = data + remain_byte_count;
 
-        u16RemainByte = u16NumPushedData - u16RemainByte;
-        memcpy(&pstBuff->pu8Buff[pstBuff->u16Head], pu8Data, u16RemainByte);
-        pstBuff->u16Head = pstBuff->u16Head + u16RemainByte;
-        pstBuff->u16Count = pstBuff->u16Count + u16RemainByte;
+        remain_byte_count = push_byte_count - remain_byte_count;
+        memcpy(&ring_buff->buff[ring_buff->head_index], data, remain_byte_count);
+        ring_buff->head_index = ring_buff->head_index + remain_byte_count;
+        ring_buff->written_byte_count = ring_buff->written_byte_count + remain_byte_count;
     }
 
-    return u16NumPushedData;
+    return push_byte_count;
 }
 
 
-uint16_t ezmRingBuffer_Pop(RingBuffer * pstBuff, uint8_t * pu8Data, uint16_t u16Size)
+uint16_t ezRingBuffer_Pop(RingBuffer *ring_buff, uint8_t *data, uint16_t size)
 {
 
-    uint16_t u16NumPoppedData = u16Size;
-    uint16_t u16RemainByte = 0U;
+    uint16_t popped_byte_count = size;
+    uint16_t remained_byte_count = 0U;
 
-    if(pstBuff->u16Count < u16NumPoppedData)
+    if(ring_buff->written_byte_count < popped_byte_count)
     {
-        u16NumPoppedData = pstBuff->u16Count;
+        popped_byte_count = ring_buff->written_byte_count;
     }
 
-    if (pstBuff->u16Capacity - pstBuff->u16Tail >= u16NumPoppedData)
+    if (ring_buff->capacity - ring_buff->tail_index >= popped_byte_count)
     {
-        memcpy(pu8Data, &pstBuff->pu8Buff[pstBuff->u16Tail], u16NumPoppedData);
-        pstBuff->u16Tail = pstBuff->u16Tail + u16NumPoppedData;
-        pstBuff->u16Count = pstBuff->u16Count - u16NumPoppedData;
+        memcpy(data, &ring_buff->buff[ring_buff->tail_index], popped_byte_count);
+        ring_buff->tail_index = ring_buff->tail_index + popped_byte_count;
+        ring_buff->written_byte_count = ring_buff->written_byte_count - popped_byte_count;
     }
     else
     {
         /* Handle warpping */
-        u16RemainByte = pstBuff->u16Capacity - pstBuff->u16Tail;
-        memcpy(pu8Data, &pstBuff->pu8Buff[pstBuff->u16Tail], u16RemainByte);
-        pstBuff->u16Tail = 0;
-        pstBuff->u16Count = pstBuff->u16Count - u16RemainByte;
+        remained_byte_count = ring_buff->capacity - ring_buff->tail_index;
+        memcpy(data, &ring_buff->buff[ring_buff->tail_index], remained_byte_count);
+        ring_buff->tail_index = 0;
+        ring_buff->written_byte_count = ring_buff->written_byte_count - remained_byte_count;
 
-        pu8Data = pu8Data + u16RemainByte;
+        data = data + remained_byte_count;
 
-        u16RemainByte = u16NumPoppedData - u16RemainByte;
-        memcpy(pu8Data, &pstBuff->pu8Buff[pstBuff->u16Tail], u16RemainByte);
-        pstBuff->u16Tail = pstBuff->u16Tail + u16RemainByte;
-        pstBuff->u16Count = pstBuff->u16Count - u16RemainByte;
+        remained_byte_count = popped_byte_count - remained_byte_count;
+        memcpy(data, &ring_buff->buff[ring_buff->tail_index], remained_byte_count);
+        ring_buff->tail_index = ring_buff->tail_index + remained_byte_count;
+        ring_buff->written_byte_count = ring_buff->written_byte_count - remained_byte_count;
     }
 
-    return u16NumPoppedData;
+    return popped_byte_count;
 }
 
 
-void ezmRingBuffer_Reset(RingBuffer * pstBuff)
+void ezRingBuffer_Reset(RingBuffer * ring_buff)
 {
-    pstBuff->u16Head = 0;
-    pstBuff->u16Tail = 0;
-    pstBuff->u16Count = 0;
-    memset(pstBuff->pu8Buff, 0, pstBuff->u16Capacity);
+    ring_buff->head_index = 0;
+    ring_buff->tail_index = 0;
+    ring_buff->written_byte_count = 0;
+    memset(ring_buff->buff, 0, ring_buff->capacity);
 }
 
 
-uint16_t ezmRingBuffer_GetAvailableMemory( RingBuffer * pstBuff)
+uint16_t ezRingBuffer_GetAvailableMemory(RingBuffer *ring_buff)
 {
-    return pstBuff->u16Capacity - pstBuff->u16Count;
+    return ring_buff->capacity - ring_buff->written_byte_count;
 }
 
 #endif /* CONFIG_RING_BUFFER */
