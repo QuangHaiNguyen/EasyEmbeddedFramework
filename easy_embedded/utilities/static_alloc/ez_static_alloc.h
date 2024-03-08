@@ -82,12 +82,12 @@ typedef struct MemList ezmMemList;
 *******************************************************************************/
 
 /*****************************************************************************
-* Function : ezmStcMem_InitMemList
+* Function : ezStaticAlloc_InitMemList
 *//** 
 * @brief This function initializes memory handle to manage the memory buffer
 *
 * @details After the initialization, the memory buffer can not be used
-* directly, but through the ezmStcMem API
+* directly, but through the ezStaticAlloc API
 *
 * @param[in]    *mem_list:      handle to manage memory buffer
 * @param[in]    *buffer:        buffer to be managed
@@ -101,20 +101,20 @@ typedef struct MemList ezmMemList;
 * @code
 * ezmMemList mem_list;
 * uint8_t buff[32];
-* bool success = ezmStcMem_InitMemList(&mem_list, buff, 32);
+* bool success = ezStaticAlloc_InitMemList(&mem_list, buff, 32);
 * @endcode
 *
 *****************************************************************************/
-bool ezmStcMem_InitMemList(ezmMemList* mem_list, void* buff, uint16_t buff_size);
+bool ezStaticAlloc_InitMemList(ezmMemList* mem_list, void* buff, uint16_t buff_size);
 
 
 /*****************************************************************************
-* Function : ezmStcMem_IsMemListReady
+* Function : ezStaticAlloc_IsMemListReady
 *//** 
 * @brief Return the status if the mem list is ready 
 *
 * @details List is ready when it is initialized with the function
-* ezmStcMem_InitMemList
+* ezStaticAlloc_InitMemList
 *
 * @param[in]    *mem_list:  handle to manage memory buffer
 * @return       true if ready, else false
@@ -124,17 +124,17 @@ bool ezmStcMem_InitMemList(ezmMemList* mem_list, void* buff, uint16_t buff_size)
 *
 * \b Example
 * @code
-* bool ready = ezmStcMem_IsMemListReady(&mem_list);
+* bool ready = ezStaticAlloc_IsMemListReady(&mem_list);
 * @endcode
 *
-* @see ezmStcMem_InitMemList
+* @see ezStaticAlloc_InitMemList
 *
 *****************************************************************************/
-bool ezmStcMem_IsMemListReady(ezmMemList *mem_list);
+bool ezStaticAlloc_IsMemListReady(ezmMemList *mem_list);
 
 
 /*****************************************************************************
-* Function : ezmStcMem_Malloc
+* Function : ezStaticAlloc_Malloc
 *//** 
 * @brief This function allocate the number of bytes in the initialized memory
 *
@@ -151,22 +151,22 @@ bool ezmStcMem_IsMemListReady(ezmMemList *mem_list);
 * @code
 * ezmMemList mem_list;
 * uint8_t buff[32];
-* bool success = ezmStcMem_InitMemList(&mem_list, buff, 32);
-* uint32_t *foo = (uint32_t*)ezmStcMem_Malloc(&mem_list, sizeof(uint32_t));
+* bool success = ezStaticAlloc_InitMemList(&mem_list, buff, 32);
+* uint32_t *foo = (uint32_t*)ezStaticAlloc_Malloc(&mem_list, sizeof(uint32_t));
 * if(foo != NULL)
 * {
 *     printf("ok");
 * }
 * @endcode
 *
-* @see ezmStcMem_InitMemList
+* @see ezStaticAlloc_InitMemList
 *
 *****************************************************************************/
-void *ezmStcMem_Malloc(ezmMemList* mem_list, uint16_t alloc_size);
+void *ezStaticAlloc_Malloc(ezmMemList* mem_list, uint16_t alloc_size);
 
 
 /*****************************************************************************
-* Function : ezmStcMem_Free
+* Function : ezStaticAlloc_Free
 *//** 
 * @brief This function frees the allocated memory in the memory buffer
 *
@@ -183,27 +183,27 @@ void *ezmStcMem_Malloc(ezmMemList* mem_list, uint16_t alloc_size);
 * @code
 * ezmMemList mem_list;
 * uint8_t buff[32];
-* bool success = ezmStcMem_InitMemList(&mem_list, buff, 32);
-* uint32_t *foo = (uint32_t*)ezmStcMem_Malloc(&mem_list, sizeof(uint32_t));
+* bool success = ezStaticAlloc_InitMemList(&mem_list, buff, 32);
+* uint32_t *foo = (uint32_t*)ezStaticAlloc_Malloc(&mem_list, sizeof(uint32_t));
 * if(foo == NULL)
 * {
 *     printf("error");
 * }
 *
-* if(ezmStcMem_Free(&mem_list, foo) == false)
+* if(ezStaticAlloc_Free(&mem_list, foo) == false)
 * {
 *     printf(error");
 * }
 * @endcode
 *
-* @see ezmStcMem_InitMemList
+* @see ezStaticAlloc_InitMemList
 *
 *****************************************************************************/
-bool ezmStcMem_Free(ezmMemList *mem_list, void *alloc_addr);
+bool ezStaticAlloc_Free(ezmMemList *mem_list, void *alloc_addr);
 
 
 /*****************************************************************************
-* Function : ezmStcMem_GetNumOfAllocBlock
+* Function : ezStaticAlloc_GetNumOfAllocBlock
 *//** 
 * @brief Return the number of allocated memory block
 *
@@ -217,17 +217,17 @@ bool ezmStcMem_Free(ezmMemList *mem_list, void *alloc_addr);
 *
 * \b Example
 * @code
-* ezmStcMem_GetNumOfAllocBlock(&mem_list);
+* ezStaticAlloc_GetNumOfAllocBlock(&mem_list);
 * @endcode
 *
-* @see ezmStcMem_InitMemList
+* @see ezStaticAlloc_InitMemList
 *
 *****************************************************************************/
-uint16_t ezmStcMem_GetNumOfAllocBlock(ezmMemList* mem_list);
+uint16_t ezStaticAlloc_GetNumOfAllocBlock(ezmMemList* mem_list);
 
 
 /*****************************************************************************
-* Function : ezmStcMem_GetNumOfFreeBlock
+* Function : ezStaticAlloc_GetNumOfFreeBlock
 *//** 
 * @brief Return the number of freed memory block
 *
@@ -241,17 +241,17 @@ uint16_t ezmStcMem_GetNumOfAllocBlock(ezmMemList* mem_list);
 *
 * \b Example
 * @code
-* ezmStcMem_GetNumOfFreeBlock(&mem_list);
+* ezStaticAlloc_GetNumOfFreeBlock(&mem_list);
 * @endcode
 *
-* @see ezmStcMem_InitMemList
+* @see ezStaticAlloc_InitMemList
 *
 *****************************************************************************/
-uint16_t ezmStcMem_GetNumOfFreeBlock(ezmMemList* mem_list);
+uint16_t ezStaticAlloc_GetNumOfFreeBlock(ezmMemList* mem_list);
 
 
 /*****************************************************************************
-* Function : ezmStcMem_HexdumpBuffer
+* Function : ezStaticAlloc_HexdumpBuffer
 *//** 
 * @brief This function prints the content of the memory list.
 *
@@ -265,17 +265,17 @@ uint16_t ezmStcMem_GetNumOfFreeBlock(ezmMemList* mem_list);
 *
 * \b Example
 * @code
-* ezmStcMem_HexdumpBuffer(&mem_list);
+* ezStaticAlloc_HexdumpBuffer(&mem_list);
 * @endcode
 *
-* @see ezmStcMem_InitMemList
+* @see ezStaticAlloc_InitMemList
 *
 *****************************************************************************/
-void ezmStcMem_HexdumpBuffer (ezmMemList* mem_list);
+void ezStaticAlloc_HexdumpBuffer (ezmMemList* mem_list);
 
 
 /*****************************************************************************
-* Function : ezmStcMem_PrintFreeList
+* Function : ezStaticAlloc_PrintFreeList
 *//** 
 * @brief This function prints the memory headers of the free list.
 *
@@ -289,17 +289,17 @@ void ezmStcMem_HexdumpBuffer (ezmMemList* mem_list);
 *
 * \b Example
 * @code
-* ezmStcMem_PrintFreeList(&mem_list);
+* ezStaticAlloc_PrintFreeList(&mem_list);
 * @endcode
 *
-* @see ezmStcMem_InitMemList
+* @see ezStaticAlloc_InitMemList
 *
 *****************************************************************************/
-void ezmStcMem_PrintFreeList (ezmMemList* mem_list);
+void ezStaticAlloc_PrintFreeList (ezmMemList* mem_list);
 
 
 /*****************************************************************************
-* Function : ezmStcMem_PrintAllocList
+* Function : ezStaticAlloc_PrintAllocList
 *//** 
 * @brief This function prints the memory headers of the allocated list.
 *
@@ -313,13 +313,13 @@ void ezmStcMem_PrintFreeList (ezmMemList* mem_list);
 *
 * \b Example
 * @code
-* ezmStcMem_PrintAllocList(&mem_list);
+* ezStaticAlloc_PrintAllocList(&mem_list);
 * @endcode
 *
-* @see ezmStcMem_InitMemList
+* @see ezStaticAlloc_InitMemList
 *
 *****************************************************************************/
-void ezmStcMem_PrintAllocList(ezmMemList* mem_list);
+void ezStaticAlloc_PrintAllocList(ezmMemList* mem_list);
 
 #endif /* EZ_STATIC_ALLOC == 1*/
 #endif /* _EZ_STATIC_ALLOC_H */

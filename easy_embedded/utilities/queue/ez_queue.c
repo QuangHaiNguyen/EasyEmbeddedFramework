@@ -81,7 +81,7 @@ ezSTATUS ezQueue_CreateQueue(ezQueue *queue, uint8_t *buff, uint32_t buff_size)
     if (queue != NULL && buff != NULL && buff_size > 0)
     {
         ezLinkedList_InitNode(&queue->q_item_list);
-        if (ezmStcMem_InitMemList(&queue->mem_list, buff, buff_size) == true)
+        if (ezStaticAlloc_InitMemList(&queue->mem_list, buff, buff_size) == true)
         {
             status = ezSUCCESS;
             EZDEBUG("create queue success");
@@ -105,7 +105,7 @@ ezSTATUS ezQueue_PopFront(ezQueue* queue)
             popped_item = EZ_LINKEDLIST_GET_PARENT_OF(queue->q_item_list.next, node, ezQueueItem);
             EZ_LINKEDLIST_UNLINK_NODE(&popped_item->node);
 
-            if (ezmStcMem_Free(&queue->mem_list, popped_item->data) == false)
+            if (ezStaticAlloc_Free(&queue->mem_list, popped_item->data) == false)
             {
                 status = ezFAIL;
                 EZTRACE("free fail");
@@ -113,7 +113,7 @@ ezSTATUS ezQueue_PopFront(ezQueue* queue)
 
             if (status == ezSUCCESS)
             {
-                if (ezmStcMem_Free(&queue->mem_list, (void*)popped_item) == false)
+                if (ezStaticAlloc_Free(&queue->mem_list, (void*)popped_item) == false)
                 {
                     status = ezFAIL;
                     EZTRACE("free fail");
@@ -144,7 +144,7 @@ ezSTATUS ezQueue_PopBack(ezQueue *queue)
             popped_item = EZ_LINKEDLIST_GET_PARENT_OF(queue->q_item_list.prev, node, ezQueueItem);
             EZ_LINKEDLIST_UNLINK_NODE(&popped_item->node);
 
-            if (ezmStcMem_Free(&queue->mem_list, popped_item->data) == false)
+            if (ezStaticAlloc_Free(&queue->mem_list, popped_item->data) == false)
             {
                 status = ezFAIL;
                 EZTRACE("free fail");
@@ -152,7 +152,7 @@ ezSTATUS ezQueue_PopBack(ezQueue *queue)
 
             if (status == ezSUCCESS)
             {
-                if (ezmStcMem_Free(&queue->mem_list, (void *)popped_item) == false)
+                if (ezStaticAlloc_Free(&queue->mem_list, (void *)popped_item) == false)
                 {
                     status = ezFAIL;
                     EZTRACE("free fail");
@@ -177,16 +177,16 @@ ezReservedElement ezQueue_ReserveElement(ezQueue *queue, void **data, uint32_t d
 
     if (queue != NULL && data != NULL && data_size > 0)
     {
-        item = (ezQueueItem*)ezmStcMem_Malloc(&queue->mem_list, sizeof(ezQueueItem));
+        item = (ezQueueItem*)ezStaticAlloc_Malloc(&queue->mem_list, sizeof(ezQueueItem));
 
         if (item != NULL)
         {
             item->data_size = data_size;
-            item->data = ezmStcMem_Malloc(&queue->mem_list, data_size);
+            item->data = ezStaticAlloc_Malloc(&queue->mem_list, data_size);
 
             if (item->data == NULL)
             {
-                ezmStcMem_Free(&queue->mem_list, (void*)item);
+                ezStaticAlloc_Free(&queue->mem_list, (void*)item);
                 item = NULL;
                 EZTRACE("allocate data fail");
             }
@@ -226,8 +226,8 @@ ezSTATUS ezQueue_ReleaseReservedElement( ezQueue *queue, ezReservedElement eleme
 
     if (queue != NULL && item != NULL)
     {
-        if (ezmStcMem_Free(&queue->mem_list, (void *)item->data) == true
-            && ezmStcMem_Free(&queue->mem_list, (void *)item) == true)
+        if (ezStaticAlloc_Free(&queue->mem_list, (void *)item->data) == true
+            && ezStaticAlloc_Free(&queue->mem_list, (void *)item) == true)
         {
             status = ezSUCCESS;
         }
@@ -359,7 +359,7 @@ uint32_t ezQueue_IsQueueReady(ezQueue *queue)
 {
     bool is_ready = false;
 
-    if (queue != NULL && ezmStcMem_IsMemListReady(&queue->mem_list) == true)
+    if (queue != NULL && ezStaticAlloc_IsMemListReady(&queue->mem_list) == true)
     {
         is_ready = true;
     }

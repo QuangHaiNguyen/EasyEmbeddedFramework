@@ -89,95 +89,95 @@ TEST(ez_static_alloc, u8_var)
 {
     ezmMemList stMemList = {0};
     
-    ezmStcMem_InitMemList(&stMemList, au8Buffer, 512);
+    ezStaticAlloc_InitMemList(&stMemList, au8Buffer, 512);
 
-    uint8_t* pu8TestU8Var1 = (uint8_t*)ezmStcMem_Malloc(&stMemList, sizeof(uint8_t));
+    uint8_t* pu8TestU8Var1 = (uint8_t*)ezStaticAlloc_Malloc(&stMemList, sizeof(uint8_t));
     *pu8TestU8Var1 = 100;
-    ezmStcMem_HexdumpBuffer(&stMemList);
+    ezStaticAlloc_HexdumpBuffer(&stMemList);
     TEST_ASSERT_EQUAL(*pu8TestU8Var1, au8Buffer[0]);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfAllocBlock(&stMemList), 1U);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfFreeBlock(&stMemList), 1U);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfAllocBlock(&stMemList), 1U);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfFreeBlock(&stMemList), 1U);
 
-    uint8_t* pu8TestU8Var2 = (uint8_t*)ezmStcMem_Malloc(&stMemList, sizeof(uint8_t));
+    uint8_t* pu8TestU8Var2 = (uint8_t*)ezStaticAlloc_Malloc(&stMemList, sizeof(uint8_t));
     *pu8TestU8Var2 = 123;
     TEST_ASSERT_EQUAL(*pu8TestU8Var2, au8Buffer[1]);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfFreeBlock(&stMemList), 1U);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfAllocBlock(&stMemList), 2U);
-    ezmStcMem_HexdumpBuffer(&stMemList); 
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfFreeBlock(&stMemList), 1U);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfAllocBlock(&stMemList), 2U);
+    ezStaticAlloc_HexdumpBuffer(&stMemList); 
 
-    ezmStcMem_Free(&stMemList, pu8TestU8Var1);
-    ezmStcMem_HexdumpBuffer(&stMemList);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfFreeBlock(&stMemList), 2U);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfAllocBlock(&stMemList), 1U);
+    ezStaticAlloc_Free(&stMemList, pu8TestU8Var1);
+    ezStaticAlloc_HexdumpBuffer(&stMemList);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfFreeBlock(&stMemList), 2U);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfAllocBlock(&stMemList), 1U);
 
-    ezmStcMem_Free(&stMemList, pu8TestU8Var2);
-    ezmStcMem_HexdumpBuffer(&stMemList);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfFreeBlock(&stMemList), 1U);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfAllocBlock(&stMemList), 0U);
+    ezStaticAlloc_Free(&stMemList, pu8TestU8Var2);
+    ezStaticAlloc_HexdumpBuffer(&stMemList);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfFreeBlock(&stMemList), 1U);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfAllocBlock(&stMemList), 0U);
     }
 
 TEST(ez_static_alloc, u16_var)
 {
     ezmMemList stMemList;
 
-    ezmStcMem_InitMemList(&stMemList, au8Buffer, 512);
-    ezmStcMem_HexdumpBuffer(&stMemList);
+    ezStaticAlloc_InitMemList(&stMemList, au8Buffer, 512);
+    ezStaticAlloc_HexdumpBuffer(&stMemList);
 
-    uint16_t* pu16TestU16Var1 = (uint16_t*)ezmStcMem_Malloc(&stMemList, sizeof(uint16_t));
+    uint16_t* pu16TestU16Var1 = (uint16_t*)ezStaticAlloc_Malloc(&stMemList, sizeof(uint16_t));
     *pu16TestU16Var1 = 0xABCD;
     TEST_ASSERT_EQUAL(*pu16TestU16Var1, *(uint16_t*)&au8Buffer[0]);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfAllocBlock(&stMemList), 1U);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfFreeBlock(&stMemList), 1U);
-    ezmStcMem_HexdumpBuffer(&stMemList);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfAllocBlock(&stMemList), 1U);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfFreeBlock(&stMemList), 1U);
+    ezStaticAlloc_HexdumpBuffer(&stMemList);
 
-    uint16_t* pu16TestU16Var2 = (uint16_t*)ezmStcMem_Malloc(&stMemList, sizeof(uint16_t));
+    uint16_t* pu16TestU16Var2 = (uint16_t*)ezStaticAlloc_Malloc(&stMemList, sizeof(uint16_t));
     *pu16TestU16Var2 = 0xCDEF;
     TEST_ASSERT_EQUAL(*pu16TestU16Var2, *(uint16_t*)&au8Buffer[2]);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfFreeBlock(&stMemList), 1U);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfAllocBlock(&stMemList), 2U);
-    ezmStcMem_HexdumpBuffer(&stMemList);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfFreeBlock(&stMemList), 1U);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfAllocBlock(&stMemList), 2U);
+    ezStaticAlloc_HexdumpBuffer(&stMemList);
 
-    ezmStcMem_Free(&stMemList, pu16TestU16Var1);
-    ezmStcMem_HexdumpBuffer(&stMemList);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfFreeBlock(&stMemList), 2U);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfAllocBlock(&stMemList), 1U);
+    ezStaticAlloc_Free(&stMemList, pu16TestU16Var1);
+    ezStaticAlloc_HexdumpBuffer(&stMemList);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfFreeBlock(&stMemList), 2U);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfAllocBlock(&stMemList), 1U);
 
-    ezmStcMem_Free(&stMemList, pu16TestU16Var2);
-    ezmStcMem_HexdumpBuffer(&stMemList);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfFreeBlock(&stMemList), 1U);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfAllocBlock(&stMemList), 0U);
+    ezStaticAlloc_Free(&stMemList, pu16TestU16Var2);
+    ezStaticAlloc_HexdumpBuffer(&stMemList);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfFreeBlock(&stMemList), 1U);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfAllocBlock(&stMemList), 0U);
 }
 
 TEST(ez_static_alloc, u32_var)
 {
     ezmMemList stMemList;
 
-    ezmStcMem_InitMemList(&stMemList, au8Buffer, 512);
-    ezmStcMem_HexdumpBuffer(&stMemList);
+    ezStaticAlloc_InitMemList(&stMemList, au8Buffer, 512);
+    ezStaticAlloc_HexdumpBuffer(&stMemList);
 
-    uint32_t* pu32TestU32Var1 = (uint32_t*)ezmStcMem_Malloc(&stMemList, sizeof(uint32_t));
+    uint32_t* pu32TestU32Var1 = (uint32_t*)ezStaticAlloc_Malloc(&stMemList, sizeof(uint32_t));
     *pu32TestU32Var1 = 0xABCDCDEF;
     TEST_ASSERT_EQUAL(*pu32TestU32Var1, *(uint32_t*)&au8Buffer[0]);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfAllocBlock(&stMemList), 1U);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfFreeBlock(&stMemList), 1U);
-    ezmStcMem_HexdumpBuffer(&stMemList);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfAllocBlock(&stMemList), 1U);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfFreeBlock(&stMemList), 1U);
+    ezStaticAlloc_HexdumpBuffer(&stMemList);
 
-    uint32_t* pu32TestU32Var2 = (uint32_t*)ezmStcMem_Malloc(&stMemList, sizeof(uint32_t));
+    uint32_t* pu32TestU32Var2 = (uint32_t*)ezStaticAlloc_Malloc(&stMemList, sizeof(uint32_t));
     *pu32TestU32Var2 = 0xCDEFEFAB;
     TEST_ASSERT_EQUAL(*pu32TestU32Var2, *(uint32_t*)&au8Buffer[4]);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfFreeBlock(&stMemList), 1U);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfAllocBlock(&stMemList), 2U);
-    ezmStcMem_HexdumpBuffer(&stMemList);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfFreeBlock(&stMemList), 1U);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfAllocBlock(&stMemList), 2U);
+    ezStaticAlloc_HexdumpBuffer(&stMemList);
 
-    ezmStcMem_Free(&stMemList, pu32TestU32Var1);
-    ezmStcMem_HexdumpBuffer(&stMemList);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfFreeBlock(&stMemList), 2U);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfAllocBlock(&stMemList), 1U);
+    ezStaticAlloc_Free(&stMemList, pu32TestU32Var1);
+    ezStaticAlloc_HexdumpBuffer(&stMemList);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfFreeBlock(&stMemList), 2U);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfAllocBlock(&stMemList), 1U);
 
-    ezmStcMem_Free(&stMemList, pu32TestU32Var2);
-    ezmStcMem_HexdumpBuffer(&stMemList);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfFreeBlock(&stMemList), 1U);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfAllocBlock(&stMemList), 0U);
+    ezStaticAlloc_Free(&stMemList, pu32TestU32Var2);
+    ezStaticAlloc_HexdumpBuffer(&stMemList);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfFreeBlock(&stMemList), 1U);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfAllocBlock(&stMemList), 0U);
 }
 
 TEST(ez_static_alloc, array_1)
@@ -185,105 +185,105 @@ TEST(ez_static_alloc, array_1)
     ezmMemList stMemList;
     bool bIsEqual;
 
-    ezmStcMem_InitMemList(&stMemList, au8Buffer, 512);
-    ezmStcMem_HexdumpBuffer(&stMemList);
+    ezStaticAlloc_InitMemList(&stMemList, au8Buffer, 512);
+    ezStaticAlloc_HexdumpBuffer(&stMemList);
 
     /* alloc 256 bytes */
-    uint8_t* au8Array256_1 = (uint8_t*)ezmStcMem_Malloc(&stMemList, 256 * sizeof(uint8_t));
+    uint8_t* au8Array256_1 = (uint8_t*)ezStaticAlloc_Malloc(&stMemList, 256 * sizeof(uint8_t));
     memset(au8Array256_1, 1, 256 * sizeof(uint8_t));
     bIsEqual = memcmp(au8Array256_1, &au8Buffer[0], 256 * sizeof(uint8_t));
 
     TEST_ASSERT_EQUAL(bIsEqual, 0U);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfFreeBlock(&stMemList), 1U);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfAllocBlock(&stMemList), 1U);
-    ezmStcMem_HexdumpBuffer(&stMemList);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfFreeBlock(&stMemList), 1U);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfAllocBlock(&stMemList), 1U);
+    ezStaticAlloc_HexdumpBuffer(&stMemList);
 
     /* alloc another 256 bytes, buffer is fulled */
-    uint8_t* au8Array256_2 = (uint8_t*)ezmStcMem_Malloc(&stMemList, 256 * sizeof(uint8_t));
+    uint8_t* au8Array256_2 = (uint8_t*)ezStaticAlloc_Malloc(&stMemList, 256 * sizeof(uint8_t));
     memset(au8Array256_2, 2, 256 * sizeof(uint8_t));
     bIsEqual = memcmp(au8Array256_2, &au8Buffer[256], 256 * sizeof(uint8_t));
 
     TEST_ASSERT_EQUAL(bIsEqual, 0U);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfFreeBlock(&stMemList), 0U);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfAllocBlock(&stMemList),2U);
-    ezmStcMem_HexdumpBuffer(&stMemList);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfFreeBlock(&stMemList), 0U);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfAllocBlock(&stMemList),2U);
+    ezStaticAlloc_HexdumpBuffer(&stMemList);
 
     /* Free first half 256 bytes */
-    ezmStcMem_Free(&stMemList, au8Array256_1);
-    ezmStcMem_HexdumpBuffer(&stMemList);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfFreeBlock(&stMemList), 1U);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfAllocBlock(&stMemList), 1U);
+    ezStaticAlloc_Free(&stMemList, au8Array256_1);
+    ezStaticAlloc_HexdumpBuffer(&stMemList);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfFreeBlock(&stMemList), 1U);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfAllocBlock(&stMemList), 1U);
 
     /* Allocate 128 bytes */
-    uint8_t* au8Array128_1 = (uint8_t*)ezmStcMem_Malloc(&stMemList, 128 * sizeof(uint8_t));
+    uint8_t* au8Array128_1 = (uint8_t*)ezStaticAlloc_Malloc(&stMemList, 128 * sizeof(uint8_t));
     TEST_ASSERT_NOT_EQUAL(au8Array128_1, NULL);
     memset(au8Array128_1, 3, 128 * sizeof(uint8_t));
-    ezmStcMem_HexdumpBuffer(&stMemList);
+    ezStaticAlloc_HexdumpBuffer(&stMemList);
 
     bIsEqual = memcmp(au8Array128_1, &au8Buffer[0], 128 * sizeof(uint8_t));
     TEST_ASSERT_EQUAL(bIsEqual, 0U);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfFreeBlock(&stMemList), 1U);
-    TEST_ASSERT_EQUAL(2U, ezmStcMem_GetNumOfAllocBlock(&stMemList));
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfFreeBlock(&stMemList), 1U);
+    TEST_ASSERT_EQUAL(2U, ezStaticAlloc_GetNumOfAllocBlock(&stMemList));
 
     /* Allocate another 128 bytes */
-    uint8_t* au8Array128_2 = (uint8_t*)ezmStcMem_Malloc(&stMemList, 128 * sizeof(uint8_t));
+    uint8_t* au8Array128_2 = (uint8_t*)ezStaticAlloc_Malloc(&stMemList, 128 * sizeof(uint8_t));
     TEST_ASSERT_NOT_EQUAL(au8Array128_2, NULL);
     memset(au8Array128_2, 4, 128 * sizeof(uint8_t));
-    ezmStcMem_HexdumpBuffer(&stMemList);
+    ezStaticAlloc_HexdumpBuffer(&stMemList);
 
     bIsEqual = memcmp(au8Array128_2, &au8Buffer[128], 128 * sizeof(uint8_t));
     TEST_ASSERT_EQUAL(bIsEqual, 0U);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfFreeBlock(&stMemList), 0U);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfAllocBlock(&stMemList), 3U);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfFreeBlock(&stMemList), 0U);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfAllocBlock(&stMemList), 3U);
 
     /* Free second 128 byte */
-    ezmStcMem_Free(&stMemList, au8Array128_2);
-    ezmStcMem_HexdumpBuffer(&stMemList);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfFreeBlock(&stMemList), 1U);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfAllocBlock(&stMemList), 2U);
+    ezStaticAlloc_Free(&stMemList, au8Array128_2);
+    ezStaticAlloc_HexdumpBuffer(&stMemList);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfFreeBlock(&stMemList), 1U);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfAllocBlock(&stMemList), 2U);
 
     /* Allocate another 64 bytes */
-    uint8_t* au8Array64_1 = (uint8_t*)ezmStcMem_Malloc(&stMemList, 64 * sizeof(uint8_t));
+    uint8_t* au8Array64_1 = (uint8_t*)ezStaticAlloc_Malloc(&stMemList, 64 * sizeof(uint8_t));
     TEST_ASSERT_NOT_EQUAL(au8Array64_1, NULL);
     memset(au8Array64_1, 5, 64 * sizeof(uint8_t));
-    ezmStcMem_HexdumpBuffer(&stMemList);
+    ezStaticAlloc_HexdumpBuffer(&stMemList);
 
     bIsEqual = memcmp(au8Array64_1, &au8Buffer[128], 64 * sizeof(uint8_t));
     TEST_ASSERT_EQUAL(bIsEqual, 0U);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfFreeBlock(&stMemList), 1U);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfAllocBlock(&stMemList), 3U);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfFreeBlock(&stMemList), 1U);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfAllocBlock(&stMemList), 3U);
 
     /* Allocate another 64 bytes */
-    uint8_t* au8Array64_2 = (uint8_t*)ezmStcMem_Malloc(&stMemList, 64 * sizeof(uint8_t));
+    uint8_t* au8Array64_2 = (uint8_t*)ezStaticAlloc_Malloc(&stMemList, 64 * sizeof(uint8_t));
     TEST_ASSERT_NOT_EQUAL(au8Array64_2, NULL);
     memset(au8Array64_2, 6, 64 * sizeof(uint8_t));
-    ezmStcMem_HexdumpBuffer(&stMemList);
+    ezStaticAlloc_HexdumpBuffer(&stMemList);
 
     bIsEqual = memcmp(au8Array64_2, &au8Buffer[192], 64 * sizeof(uint8_t));
     TEST_ASSERT_EQUAL(bIsEqual, 0U);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfFreeBlock(&stMemList), 0U);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfAllocBlock(&stMemList), 4U);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfFreeBlock(&stMemList), 0U);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfAllocBlock(&stMemList), 4U);
 
     /* Free everything let see if it breaks */
-    ezmStcMem_Free(&stMemList, au8Array256_2);
-    ezmStcMem_HexdumpBuffer(&stMemList);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfFreeBlock(&stMemList), 1U);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfAllocBlock(&stMemList), 3U);
+    ezStaticAlloc_Free(&stMemList, au8Array256_2);
+    ezStaticAlloc_HexdumpBuffer(&stMemList);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfFreeBlock(&stMemList), 1U);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfAllocBlock(&stMemList), 3U);
 
-    ezmStcMem_Free(&stMemList, au8Array128_1);
-    ezmStcMem_HexdumpBuffer(&stMemList);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfFreeBlock(&stMemList), 2U);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfAllocBlock(&stMemList), 2U);
+    ezStaticAlloc_Free(&stMemList, au8Array128_1);
+    ezStaticAlloc_HexdumpBuffer(&stMemList);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfFreeBlock(&stMemList), 2U);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfAllocBlock(&stMemList), 2U);
 
-    ezmStcMem_Free(&stMemList, au8Array64_1);
-    ezmStcMem_HexdumpBuffer(&stMemList);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfFreeBlock(&stMemList), 2U);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfAllocBlock(&stMemList), 1U);
+    ezStaticAlloc_Free(&stMemList, au8Array64_1);
+    ezStaticAlloc_HexdumpBuffer(&stMemList);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfFreeBlock(&stMemList), 2U);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfAllocBlock(&stMemList), 1U);
 
-    ezmStcMem_Free(&stMemList, au8Array64_2);
-    ezmStcMem_HexdumpBuffer(&stMemList);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfFreeBlock(&stMemList), 1U);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfAllocBlock(&stMemList), 0U);
+    ezStaticAlloc_Free(&stMemList, au8Array64_2);
+    ezStaticAlloc_HexdumpBuffer(&stMemList);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfFreeBlock(&stMemList), 1U);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfAllocBlock(&stMemList), 0U);
 
 }
 
@@ -292,100 +292,100 @@ TEST(ez_static_alloc, array_2)
     ezmMemList stMemList;
     bool bIsEqual;
 
-    ezmStcMem_InitMemList(&stMemList, au8Buffer, 512);
-    ezmStcMem_HexdumpBuffer(&stMemList);
+    ezStaticAlloc_InitMemList(&stMemList, au8Buffer, 512);
+    ezStaticAlloc_HexdumpBuffer(&stMemList);
 
     /* alloc 256 bytes */
-    uint8_t* au8Array256_1 = (uint8_t*)ezmStcMem_Malloc(&stMemList, 256 * sizeof(uint8_t));
+    uint8_t* au8Array256_1 = (uint8_t*)ezStaticAlloc_Malloc(&stMemList, 256 * sizeof(uint8_t));
     memset(au8Array256_1, 1, 256 * sizeof(uint8_t));
     bIsEqual = memcmp(au8Array256_1, &au8Buffer[0], 256 * sizeof(uint8_t));
 
     TEST_ASSERT_EQUAL(bIsEqual, 0U);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfFreeBlock(&stMemList), 1U);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfAllocBlock(&stMemList), 1U);
-    ezmStcMem_HexdumpBuffer(&stMemList);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfFreeBlock(&stMemList), 1U);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfAllocBlock(&stMemList), 1U);
+    ezStaticAlloc_HexdumpBuffer(&stMemList);
 
     /* alloc another 256 bytes, buffer is fulled */
-    uint8_t* au8Array256_2 = (uint8_t*)ezmStcMem_Malloc(&stMemList, 256 * sizeof(uint8_t));
+    uint8_t* au8Array256_2 = (uint8_t*)ezStaticAlloc_Malloc(&stMemList, 256 * sizeof(uint8_t));
     memset(au8Array256_2, 2, 256 * sizeof(uint8_t));
     bIsEqual = memcmp(au8Array256_2, &au8Buffer[256], 256 * sizeof(uint8_t));
 
     TEST_ASSERT_EQUAL(bIsEqual, 0U);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfFreeBlock(&stMemList), 0U);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfAllocBlock(&stMemList), 2U);
-    ezmStcMem_HexdumpBuffer(&stMemList);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfFreeBlock(&stMemList), 0U);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfAllocBlock(&stMemList), 2U);
+    ezStaticAlloc_HexdumpBuffer(&stMemList);
 
     /* Free first half 256 bytes */
-    ezmStcMem_Free(&stMemList, au8Array256_1);
-    ezmStcMem_HexdumpBuffer(&stMemList);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfFreeBlock(&stMemList), 1U);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfAllocBlock(&stMemList), 1U);
+    ezStaticAlloc_Free(&stMemList, au8Array256_1);
+    ezStaticAlloc_HexdumpBuffer(&stMemList);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfFreeBlock(&stMemList), 1U);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfAllocBlock(&stMemList), 1U);
 
     /* Allocate 128 bytes */
-    uint8_t* au8Array128_1 = (uint8_t*)ezmStcMem_Malloc(&stMemList, 128 * sizeof(uint8_t));
+    uint8_t* au8Array128_1 = (uint8_t*)ezStaticAlloc_Malloc(&stMemList, 128 * sizeof(uint8_t));
     TEST_ASSERT_NOT_EQUAL(au8Array128_1, NULL);
     memset(au8Array128_1, 3, 128 * sizeof(uint8_t));
-    ezmStcMem_HexdumpBuffer(&stMemList);
+    ezStaticAlloc_HexdumpBuffer(&stMemList);
 
     bIsEqual = memcmp(au8Array128_1, &au8Buffer[0], 128 * sizeof(uint8_t));
     TEST_ASSERT_EQUAL(bIsEqual, 0U);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfFreeBlock(&stMemList), 1U);
-    TEST_ASSERT_EQUAL(2U, ezmStcMem_GetNumOfAllocBlock(&stMemList));
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfFreeBlock(&stMemList), 1U);
+    TEST_ASSERT_EQUAL(2U, ezStaticAlloc_GetNumOfAllocBlock(&stMemList));
 
     /* Allocate another 128 bytes */
-    uint8_t* au8Array128_2 = (uint8_t*)ezmStcMem_Malloc(&stMemList, 128 * sizeof(uint8_t));
+    uint8_t* au8Array128_2 = (uint8_t*)ezStaticAlloc_Malloc(&stMemList, 128 * sizeof(uint8_t));
     TEST_ASSERT_NOT_EQUAL(au8Array128_2, NULL);
     memset(au8Array128_2, 4, 128 * sizeof(uint8_t));
-    ezmStcMem_HexdumpBuffer(&stMemList);
+    ezStaticAlloc_HexdumpBuffer(&stMemList);
 
     bIsEqual = memcmp(au8Array128_2, &au8Buffer[128], 128 * sizeof(uint8_t));
     TEST_ASSERT_EQUAL(bIsEqual, 0U);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfFreeBlock(&stMemList), 0U);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfAllocBlock(&stMemList), 3U);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfFreeBlock(&stMemList), 0U);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfAllocBlock(&stMemList), 3U);
 
     /* Free second 128 byte */
-    ezmStcMem_Free(&stMemList, au8Array128_2);
-    ezmStcMem_HexdumpBuffer(&stMemList);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfFreeBlock(&stMemList), 1U);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfAllocBlock(&stMemList), 2U);
+    ezStaticAlloc_Free(&stMemList, au8Array128_2);
+    ezStaticAlloc_HexdumpBuffer(&stMemList);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfFreeBlock(&stMemList), 1U);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfAllocBlock(&stMemList), 2U);
 
     /* Allocate another 64 bytes */
-    uint8_t* au8Array64_1 = (uint8_t*)ezmStcMem_Malloc(&stMemList, 64 * sizeof(uint8_t));
+    uint8_t* au8Array64_1 = (uint8_t*)ezStaticAlloc_Malloc(&stMemList, 64 * sizeof(uint8_t));
     TEST_ASSERT_NOT_EQUAL(au8Array64_1, NULL);
     memset(au8Array64_1, 5, 64 * sizeof(uint8_t));
-    ezmStcMem_HexdumpBuffer(&stMemList);
+    ezStaticAlloc_HexdumpBuffer(&stMemList);
 
     bIsEqual = memcmp(au8Array64_1, &au8Buffer[128], 64 * sizeof(uint8_t));
     TEST_ASSERT_EQUAL(bIsEqual, 0U);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfFreeBlock(&stMemList), 1U);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfAllocBlock(&stMemList), 3U);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfFreeBlock(&stMemList), 1U);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfAllocBlock(&stMemList), 3U);
 
     /* Allocate another 64 bytes */
-    uint8_t* au8Array64_2 = (uint8_t*)ezmStcMem_Malloc(&stMemList, 64 * sizeof(uint8_t));
+    uint8_t* au8Array64_2 = (uint8_t*)ezStaticAlloc_Malloc(&stMemList, 64 * sizeof(uint8_t));
     TEST_ASSERT_NOT_EQUAL(au8Array64_2, NULL);
     memset(au8Array64_2, 6, 64 * sizeof(uint8_t));
-    ezmStcMem_HexdumpBuffer(&stMemList);
+    ezStaticAlloc_HexdumpBuffer(&stMemList);
 
     bIsEqual = memcmp(au8Array64_2, &au8Buffer[192], 64 * sizeof(uint8_t));
     TEST_ASSERT_EQUAL(bIsEqual, 0U);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfFreeBlock(&stMemList), 0U);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfAllocBlock(&stMemList), 4U);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfFreeBlock(&stMemList), 0U);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfAllocBlock(&stMemList), 4U);
 
     /* Free everything let see if it breaks */
-    ezmStcMem_Free(&stMemList, au8Array64_1);
-    ezmStcMem_HexdumpBuffer(&stMemList);
+    ezStaticAlloc_Free(&stMemList, au8Array64_1);
+    ezStaticAlloc_HexdumpBuffer(&stMemList);
 
-    ezmStcMem_Free(&stMemList, au8Array64_2);
-    ezmStcMem_HexdumpBuffer(&stMemList);
+    ezStaticAlloc_Free(&stMemList, au8Array64_2);
+    ezStaticAlloc_HexdumpBuffer(&stMemList);
 
-    ezmStcMem_Free(&stMemList, au8Array128_1);
-    ezmStcMem_HexdumpBuffer(&stMemList);
+    ezStaticAlloc_Free(&stMemList, au8Array128_1);
+    ezStaticAlloc_HexdumpBuffer(&stMemList);
 
-    ezmStcMem_Free(&stMemList, au8Array256_2);
-    ezmStcMem_HexdumpBuffer(&stMemList);
+    ezStaticAlloc_Free(&stMemList, au8Array256_2);
+    ezStaticAlloc_HexdumpBuffer(&stMemList);
 
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfFreeBlock(&stMemList), 1U);
-    TEST_ASSERT_EQUAL(ezmStcMem_GetNumOfAllocBlock(&stMemList), 0U);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfFreeBlock(&stMemList), 1U);
+    TEST_ASSERT_EQUAL(ezStaticAlloc_GetNumOfAllocBlock(&stMemList), 0U);
 
 }
 
