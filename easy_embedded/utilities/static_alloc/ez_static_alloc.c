@@ -78,11 +78,11 @@ static struct MemBlock block_pool[CONFIG_NUM_OF_MEM_BLOCK] = { 0U };
 /*****************************************************************************
 * Function Definitions
 *****************************************************************************/
-static void ezmStcMem_ReturnHeaderToFreeList(struct Node *free_list_head, struct Node *free_node);
+static void ezStaticAlloc_ReturnHeaderToFreeList(struct Node *free_list_head, struct Node *free_node);
 static void ezmSmalloc_Merge(struct Node *free_list_head);
 
-struct Node* ezmStcMem_ReserveMemoryBlock(struct Node* free_list_head, uint16_t block_size_byte);
-bool ezmStcMem_MoveBlock(struct Node* move_node, struct Node* from_list_head, struct Node* to_list_head);
+struct Node* ezStaticAlloc_ReserveMemoryBlock(struct Node* free_list_head, uint16_t block_size_byte);
+bool ezStaticAlloc_MoveBlock(struct Node* move_node, struct Node* from_list_head, struct Node* to_list_head);
 struct MemBlock* GetFreeBlock(void);
 void ReleaseBlock(struct MemBlock* block);
 
@@ -90,12 +90,12 @@ void ReleaseBlock(struct MemBlock* block);
 /*****************************************************************************
 * Public functions
 *****************************************************************************/
-bool ezmStcMem_InitMemList(ezmMemList* mem_list, void* buff, uint16_t buff_size)
+bool ezStaticAlloc_InitMemList(ezmMemList* mem_list, void* buff, uint16_t buff_size)
 {
     bool    is_success = true;
     struct MemBlock *free_block = NULL;
 
-    STCMEMPRINT("ezmStcMem_InitMemList()");
+    STCMEMPRINT("ezStaticAlloc_InitMemList()");
     STCMEMPRINT1("size = %d", sizeof(struct MemList));
     if (mem_list == NULL || buff == NULL || buff_size == 0)
     {
@@ -123,19 +123,19 @@ bool ezmStcMem_InitMemList(ezmMemList* mem_list, void* buff, uint16_t buff_size)
         }
     }
 
-    ezmStcMem_PrintAllocList(mem_list);
-    ezmStcMem_PrintFreeList(mem_list);
+    ezStaticAlloc_PrintAllocList(mem_list);
+    ezStaticAlloc_PrintFreeList(mem_list);
     return is_success;
 }
 
 
-void *ezmStcMem_Malloc(ezmMemList *mem_list, uint16_t alloc_size)
+void *ezStaticAlloc_Malloc(ezmMemList *mem_list, uint16_t alloc_size)
 {
     void    *alloc_addr = NULL;
     bool    is_success = true;
     struct Node  *reserved_node = NULL;
 
-    STCMEMPRINT("ezmStcMem_Malloc()");
+    STCMEMPRINT("ezStaticAlloc_Malloc()");
 
     if (NULL == mem_list || 0U == alloc_size)
     {
@@ -144,12 +144,12 @@ void *ezmStcMem_Malloc(ezmMemList *mem_list, uint16_t alloc_size)
 
     if (is_success)
     {
-        reserved_node = ezmStcMem_ReserveMemoryBlock(&GET_LIST(mem_list)->free_list_head, alloc_size);
+        reserved_node = ezStaticAlloc_ReserveMemoryBlock(&GET_LIST(mem_list)->free_list_head, alloc_size);
     }
 
     if (NULL != reserved_node)
     {
-        is_success = is_success && ezmStcMem_MoveBlock(reserved_node, &GET_LIST(mem_list)->free_list_head, &GET_LIST(mem_list)->alloc_list_head);
+        is_success = is_success && ezStaticAlloc_MoveBlock(reserved_node, &GET_LIST(mem_list)->free_list_head, &GET_LIST(mem_list)->alloc_list_head);
 
         if (is_success)
         {
@@ -157,19 +157,19 @@ void *ezmStcMem_Malloc(ezmMemList *mem_list, uint16_t alloc_size)
         }
     }
 
-    ezmStcMem_PrintFreeList(mem_list);
-    ezmStcMem_PrintAllocList(mem_list);
+    ezStaticAlloc_PrintFreeList(mem_list);
+    ezStaticAlloc_PrintAllocList(mem_list);
 
     return alloc_addr;
 }
 
 
-bool ezmStcMem_Free(ezmMemList *mem_list, void *alloc_addr)
+bool ezStaticAlloc_Free(ezmMemList *mem_list, void *alloc_addr)
 {
     bool        is_success = false;
     struct Node* it_node = NULL;
 
-    STCMEMPRINT1("ezmStcMem_Free() - [address = %p]", alloc_addr);
+    STCMEMPRINT1("ezStaticAlloc_Free() - [address = %p]", alloc_addr);
 
     if (mem_list != NULL && alloc_addr != NULL)
     {
@@ -178,7 +178,7 @@ bool ezmStcMem_Free(ezmMemList *mem_list, void *alloc_addr)
             if (GET_BLOCK(it_node)->buff == (uint8_t*)alloc_addr)
             {
                 EZ_LINKEDLIST_UNLINK_NODE(it_node);
-                ezmStcMem_ReturnHeaderToFreeList(&GET_LIST(mem_list)->free_list_head, it_node);
+                ezStaticAlloc_ReturnHeaderToFreeList(&GET_LIST(mem_list)->free_list_head, it_node);
                 ezmSmalloc_Merge(&GET_LIST(mem_list)->free_list_head);
                 is_success = true;
                 STCMEMPRINT("Free OK");
@@ -187,14 +187,14 @@ bool ezmStcMem_Free(ezmMemList *mem_list, void *alloc_addr)
         }
     }
 
-    ezmStcMem_PrintFreeList(mem_list);
-    ezmStcMem_PrintAllocList(mem_list);
+    ezStaticAlloc_PrintFreeList(mem_list);
+    ezStaticAlloc_PrintAllocList(mem_list);
 
     return is_success;
 }
 
 
-bool ezmStcMem_IsMemListReady(ezmMemList *mem_list)
+bool ezStaticAlloc_IsMemListReady(ezmMemList *mem_list)
 {
     bool is_ready = false;
 
@@ -207,7 +207,7 @@ bool ezmStcMem_IsMemListReady(ezmMemList *mem_list)
 }
 
 
-void ezmStcMem_HexdumpBuffer(ezmMemList *mem_list)
+void ezStaticAlloc_HexdumpBuffer(ezmMemList *mem_list)
 {
 #if (VERBOSE == 1U)
     if (mem_list)
@@ -226,7 +226,7 @@ void ezmStcMem_HexdumpBuffer(ezmMemList *mem_list)
 }
 
 
-void ezmStcMem_PrintFreeList(ezmMemList *mem_list)
+void ezStaticAlloc_PrintFreeList(ezmMemList *mem_list)
 {
 #if (VERBOSE == 1U)
     struct Node* it_node = NULL;
@@ -248,7 +248,7 @@ void ezmStcMem_PrintFreeList(ezmMemList *mem_list)
 }
 
 
-void ezmStcMem_PrintAllocList(ezmMemList * mem_list)
+void ezStaticAlloc_PrintAllocList(ezmMemList * mem_list)
 {
 #if (VERBOSE == 1U)
     struct Node* it_node = NULL;
@@ -270,20 +270,20 @@ void ezmStcMem_PrintAllocList(ezmMemList * mem_list)
 }
 
 
-uint16_t ezmStcMem_GetNumOfAllocBlock(ezmMemList* mem_list)
+uint16_t ezStaticAlloc_GetNumOfAllocBlock(ezmMemList* mem_list)
 {
     return ezLinkedList_GetListSize(&GET_LIST(mem_list)->alloc_list_head);
 }
 
 
-uint16_t ezmStcMem_GetNumOfFreeBlock(ezmMemList* mem_list)
+uint16_t ezStaticAlloc_GetNumOfFreeBlock(ezmMemList* mem_list)
 {
     return ezLinkedList_GetListSize(&GET_LIST(mem_list)->free_list_head);
 }
 /**************************** Private function *******************************/
 
 /******************************************************************************
-* Function : ezmStcMem_ReturnHeaderToFreeList
+* Function : ezStaticAlloc_ReturnHeaderToFreeList
 *//**
 * \b Description:
 *
@@ -299,7 +299,7 @@ uint16_t ezmStcMem_GetNumOfFreeBlock(ezmMemList* mem_list)
 * @return   None
 *
 *******************************************************************************/
-static void ezmStcMem_ReturnHeaderToFreeList(struct Node* free_list_head, struct Node* free_node)
+static void ezStaticAlloc_ReturnHeaderToFreeList(struct Node* free_list_head, struct Node* free_node)
 {
     memset(GET_BLOCK(free_node)->buff, 0, GET_BLOCK(free_node)->buff_size);
     struct Node* it_node = NULL;
@@ -389,13 +389,13 @@ void ReleaseBlock(struct MemBlock* block)
     INIT_BLOCK(block, NULL, 0U);
 }
 
-struct Node* ezmStcMem_ReserveMemoryBlock(struct Node* free_list_head, uint16_t block_size_byte)
+struct Node* ezStaticAlloc_ReserveMemoryBlock(struct Node* free_list_head, uint16_t block_size_byte)
 {
     struct MemBlock* remain_block = NULL;
     struct Node* iterate_Node = NULL;
     bool success = false;
 
-    STCMEMPRINT("ezmStcMem_ReserveMemoryBlock()");
+    STCMEMPRINT("ezStaticAlloc_ReserveMemoryBlock()");
 
     if (NULL != free_list_head &&  block_size_byte > 0)
     {
@@ -431,7 +431,7 @@ struct Node* ezmStcMem_ReserveMemoryBlock(struct Node* free_list_head, uint16_t 
     return iterate_Node;
 }
 
-bool ezmStcMem_MoveBlock(struct Node* move_node, struct Node* from_list_head, struct Node* to_list_head)
+bool ezStaticAlloc_MoveBlock(struct Node* move_node, struct Node* from_list_head, struct Node* to_list_head)
 {
     bool is_success = true;
 
