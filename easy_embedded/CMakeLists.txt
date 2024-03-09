@@ -20,7 +20,6 @@ include(features.cmake)
 
 
 # Sub directory --------------------------------------------------------------
-add_subdirectory(targets)
 add_subdirectory(utilities)
 add_subdirectory(service)
 add_subdirectory(app)
@@ -29,7 +28,7 @@ add_subdirectory(app)
 # Source files ---------------------------------------------------------------
 target_sources(easy_embedded_lib
     PRIVATE
-        app/ezSdk.c
+        ez_easy_embedded.c
 )
 
 
@@ -38,9 +37,7 @@ target_compile_definitions(easy_embedded_lib
     PUBLIC
         # Please add definitions here
     PRIVATE
-        WINDOWS_TARGET=$<BOOL:${ENABLE_WINDOWS_TARGET}>
-        LINUX_TARGET=$<BOOL:${ENABLE_LINUX_TARGET}>
-        EMBEDDED_TARGET=$<BOOL:${ENABLE_EMBEDDED_TARGET}>
+        # Please add definitions here
 )
 
 
@@ -63,9 +60,8 @@ target_link_libraries(easy_embedded_lib
         $<$<BOOL:${ENABLE_EZ_EVENT_NOTIFIER}>:ez_event_notifier_lib>
         $<$<BOOL:${ENABLE_EZ_KERNEL}>:ez_kernel>
         $<$<BOOL:${ENABLE_EZ_HAL_DRIVER}>:ez_driver>
-        $<$<BOOL:${ENABLE_DATA_MODEL}>:ez_data_model_lib>
         $<$<BOOL:${ENABLE_LITTLE_FS}>:littlefs>
-        ez_app
+        ez_app_lib
     PRIVATE
         # Please add private libraries
     INTERFACE

@@ -12,14 +12,7 @@ endif()
 
 add_subdirectory(easy_embedded)
 add_subdirectory(extern)
-
-add_executable(main
-    targets/linux/main.c
-)
-
-target_include_directories(main PRIVATE easy_embedded)
-
-target_link_libraries(main PRIVATE easy_embedded_lib)
+add_subdirectory(${TARGET_PATH})
 
 if(BUILD_TESTING)
     add_subdirectory(tests)

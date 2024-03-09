@@ -26,11 +26,9 @@
 /*****************************************************************************
 * Includes
 *****************************************************************************/
-#include "ezSdk_config.h"
-
 #if (EZ_QUEUE == 1U)
-
 #include <stdint.h>
+#include "ez_utilities_common.h"
 #include "ez_linked_list.h"
 #include "ez_static_alloc.h"
 

@@ -54,7 +54,7 @@ target_include_directories(ez_utilities_lib
         ${CMAKE_CURRENT_LIST_DIR}/static_alloc
         ${CMAKE_CURRENT_LIST_DIR}/system_error
         ${CMAKE_CURRENT_LIST_DIR}/queue
-        ${FRAMEWORK_ROOT_DIR}/app
+        ${CMAKE_CURRENT_LIST_DIR}
 )
 
 
