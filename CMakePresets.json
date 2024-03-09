@@ -16,6 +16,9 @@
                 "type": "equals",
                 "lhs": "${hostSystemName}",
                 "rhs": "Linux"
+            },
+            "cacheVariables": {
+                "TARGET_PATH": "targets/linux"
             }
         },
         {

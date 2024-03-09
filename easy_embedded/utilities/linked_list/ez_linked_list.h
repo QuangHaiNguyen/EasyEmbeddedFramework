@@ -32,7 +32,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-#include "ezSdk_config.h"
+#include "ez_utilities_common.h"
 
 
 /*****************************************************************************
