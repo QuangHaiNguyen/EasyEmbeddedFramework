@@ -1,64 +1,47 @@
-
-/*******************************************************************************
-* Filename:         ezRpc.h
+/*****************************************************************************
+* Filename:         ez_rpc.h
 * Author:           Hai Nguyen
-* Original Date:    31.08.2022
-* Last Update:      31.08.2022
+* Original Date:    10.03.2024
 *
-* -----------------------------------------------------------------------------
-* Company:          Embedded Easy
-*                   Address Line 1
-*                   Address Line 2
+* ----------------------------------------------------------------------------
+* Contact:          Hai Nguyen
+*                   hainguyen.eeit@gmail.com
 *
-* -----------------------------------------------------------------------------
-* Contact:          Embedded Easy
-*                   hainguyen.ezm@gmail.com
+* ----------------------------------------------------------------------------
+* License: This file is published under the license described in LICENSE.md
 *
-* -----------------------------------------------------------------------------
-* Copyright Hai Nguyen - All Rights Reserved
-* Unauthorized copying of this file, via any medium is strictly prohibited
-* Proprietary and confidential
-* Written by Hai Nguyen 31.08.2022
-*
-*******************************************************************************/
+*****************************************************************************/
 
-/** @file   ezRpc.h
+/** @file   ez_rpc.h
  *  @author Hai Nguyen
- *  @date   31.08.2022
- *  @brief  Remote Procedure Module (RPC)
- *  
+ *  @date   10.03.2024
+ *  @brief  Public API of remote procedure call (rpc) component
+ *
  *  @details
- * 
  */
 
-#ifndef _EZRPC_H
-#define _EZRPC_H
+#ifndef _EZ_RPC_H
+#define _EZ_RPC_H
 
-/*******************************************************************************
+/*****************************************************************************
 * Includes
-*******************************************************************************/
-#include "ezApp/ezSdk_config.h"
-
-#if (CONFIG_RPC == 1U)
+*****************************************************************************/
+#if (EZ_RPC_ENABLE == 1)
 #include "stdint.h"
 #include "stdbool.h"
+#include "ez_queue.h"
 
-#if(CONFIG_STCMEM == 1U)
-#include "ezUtilities/ez_queue/ez_queue.h"
-#else
-#error STCMEM must be activated
-#endif /* STCMEM */
-
-/******************************************************************************
-* Module Preprocessor Macros
-*******************************************************************************/
-/* None */
-
-/******************************************************************************
-* Module Typedefs
-*******************************************************************************/
+/*****************************************************************************
+* Component Preprocessor Macros
+*****************************************************************************/
+#ifndef CONFIG_NUM_OF_REQUEST
+#define CONFIG_NUM_OF_REQUEST       4
+#endif
 
 
+/*****************************************************************************
+* Component Typedefs
+*****************************************************************************/
 /** @brief Message type enumeration
  *
  */
@@ -181,18 +164,41 @@ struct ezRpc
     RpcTransmit         RpcTransmit;        /**< Function to transmit RPC message */
     RpcReceive          RpcReceive;         /**< Function to receive RPC message */
     struct ezRpcRequestRecord records[CONFIG_NUM_OF_REQUEST]; /* num of request*/
-
 };
 
 
-/******************************************************************************
-* Module Variable Definitions
-*******************************************************************************/
+/*****************************************************************************
+* Component Variable Definitions
+*****************************************************************************/
 /* None */
 
-/******************************************************************************
+/*****************************************************************************
 * Function Prototypes
-*******************************************************************************/
+*****************************************************************************/
+
+/*****************************************************************************
+* Function: sum
+*//** 
+* @brief one line description
+*
+* @details Detail description
+*
+* @param    a: (IN)pointer to the ring buffer
+* @param    b: (IN)size of the ring buffer
+* @return   None
+*
+* @pre None
+* @post None
+*
+* \b Example
+* @code
+* sum(a, b);
+* @endcode
+*
+* @see sum
+*
+*****************************************************************************/
+
 
 
 /******************************************************************************
@@ -348,9 +354,8 @@ uint32_t ezRPC_NumOfPendingRecords(struct ezRpc *rpc_inst);
 *******************************************************************************/
 bool ezRpc_IsRpcInstanceReady(struct ezRpc *rpc_inst);
 
+#endif /* EZ_RPC_ENABLE == 1 */
+#endif /* _EZ_RPC_H */
 
-#endif /* CONFIG_RPC == 1U */
-#endif /* _EZRPC_H */
 
 /* End of file */
-
