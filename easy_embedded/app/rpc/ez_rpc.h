@@ -199,24 +199,31 @@ struct ezRpc
 *
 *****************************************************************************/
 
-
-
-/******************************************************************************
-* Function : ezRpc_Initialization
-*//**
-* @Description:
+/*****************************************************************************
+* Function: ezRpc_Initialization
+*//** 
+* @brief This function initializes RPC instance of the RPC module
 *
-* This function initializes RPC instance of the RPC module
+* @details
 *
-* @param    *rpc_inst:          (IN)pointer to the rpc instance
-* @param    *buff:              (IN)pointer to memory provided to this rpc instance
-* @param    buff_size:          (IN)size of the buff
-* @param    *service_table:     (IN)pointer to the table containing services, see
-*                               ezRpcService
-* @param    service_table_size: (IN)size of the table
+* @param[in]    *rpc_inst: pointer to the rpc instance
+* @param[in]    *buff: pointer to memory provided to this rpc instance
+* @param[in]    buff_size: size of the buff
+* @param[in]    *service_table: pointer to the table containing services, see ezRpcService
+* @param[in]    service_table_size: size of the table
 * @return   ezSUCCESS or ezFAIL
 *
-*******************************************************************************/
+* @pre None
+* @post None
+*
+* \b Example
+* @code
+* TBD
+* @endcode
+*
+* @see TBD
+*
+*****************************************************************************/
 ezSTATUS ezRpc_Initialization(struct ezRpc *rpc_inst,
                                 uint8_t *buff,
                                 uint32_t buff_size,
@@ -224,79 +231,119 @@ ezSTATUS ezRpc_Initialization(struct ezRpc *rpc_inst,
                                 uint32_t service_table_size);
 
 
-/******************************************************************************
-* Function : ezRpc_SetCrcFunctions
-*//**
-* @Description:
+/*****************************************************************************
+* Function: ezRpc_SetCrcFunctions
+*//** 
+* @brief This function enables the CRC check capability of an RPC instance
 *
-* This function enables the CRC check capability of an RPC instance
+* @details
 *
-* @param    *rpc_inst:      (IN)pointer to the rpc instance
-* @param    crc_size:       (IN)size of the crc value
-* @param    verify_func:    (IN)function to verify crc value
-* @param    cal_func:       (IN)function to calculate crc value
+* @param[in]    *rpc_inst: pointer to the rpc instance
+* @param[in]    crc_size: size of the crc value
+* @param[in]    verify_func:function to verify crc value
+* @param[in]    cal_func: function to calculate crc value
 * @return   ezSUCCESS or ezFAIL
 *
-*******************************************************************************/
+* @pre None
+* @post None
+*
+* \b Example
+* @code
+* TBD
+* @endcode
+*
+* @see TBD
+*
+*****************************************************************************/
 ezSTATUS ezRpc_SetCrcFunctions(struct ezRpc *rpc_inst,
                                 uint32_t crc_size,
                                 CrcVerify verify_func,
                                 CrcCalculate cal_func);
 
 
-/******************************************************************************
-* Function : ezRpc_SetTxRxFunctions
-*//**
-* @Description:
+/*****************************************************************************
+* Function: ezRpc_SetTxRxFunctions
+*//** 
+* @brief This function set the interface for transmitting and receiving data
 *
-* This function set the interface for transmitting and receiving data
+* @details
 *
-* @param    *rpc_inst:      (IN)pointer to the rpc instance
-* @param    tx_function:    (IN)function to transmit data
-* @param    rx_function:    (IN)function to receive data
+* @param[in]    *rpc_inst: pointer to the rpc instance
+* @param[in]    tx_function: function to transmit data
+* @param[in]    rx_function: function to receive data
 * @return   ezSUCCESS or ezFAIL
 *
-*******************************************************************************/
+* @pre None
+* @post None
+*
+* \b Example
+* @code
+* TBD
+* @endcode
+*
+* @see TBD
+*
+*****************************************************************************/
 ezSTATUS ezRpc_SetTxRxFunctions(struct ezRpc *rpc_inst,
                                 RpcTransmit tx_function,
                                 RpcReceive rx_function);
 
 
-/******************************************************************************
-* Function : ezRPC_CreateRpcRequest
-*//**
-* @Description:
+/*****************************************************************************
+* Function: ezRPC_CreateRpcRequest
+*//** 
+* @brief This function creates an RPC request and put it in the transmit queue
 *
-* This function creates an RPC request and put it in the transmit queue
+* @details
 *
-* @param    *rpc_inst:      (IN)pointer to the rpc instance
-* @param    tag:            (IN)tag value
-* @param    *payload:       (IN)pointer to payload to send
-* @param    payload_size:   (IN)siez of the payload
-* @return   ezSUCCESS or ezFAIL
+* @param[in]    *rpc_inst: pointer to the rpc instance
+* @param[in]    tag: tag value
+* @param[in]    *payload: pointer to payload to send
+* @param[in]    payload_size: siez of the payload
+* @return       ezSUCCESS or ezFAIL
 *
-*******************************************************************************/
+* @pre None
+* @post None
+*
+* \b Example
+* @code
+* TBD
+* @endcode
+*
+* @see TBD
+*
+*****************************************************************************/
 ezSTATUS ezRPC_CreateRpcRequest(struct ezRpc *rpc_inst,
     uint8_t tag,
     uint8_t *payload,
     uint32_t payload_size);
 
 
-/******************************************************************************
-* Function : ezRPC_CreateRpcResponse
-*//**
-* @Description:
+/*****************************************************************************
+* Function: ezRPC_CreateRpcResponse
+*//** 
+* @brief This function creates an RPC response and put it in the transmit queue
 *
-* This function creates an RPC response and put it in the transmit queue
+* @details
 *
-* @param    *rpc_inst:      (IN)pointer to the rpc instance
-* @param    uuid:           (IN)uuid value, must match the request value
-* @param    tag:            (IN)tag value
-* @param    *payload:       (IN)pointer to payload to send
-* @param    payload_size:   (IN)siez of the payload
+* @param[in]    *rpc_inst: pointer to the rpc instance
+* @param[in]    uuid: uuid value, must match the request value
+* @param[in]    tag: tag value
+* @param[in]    *payload: pointer to payload to send
+* @param[in]    payload_size: siez of the payload
 * @return   ezSUCCESS or ezFAIL
 *
-*******************************************************************************/
+* @pre None
+* @post None
+*
+* \b Example
+* @code
+* TBD
+* @endcode
+*
+* @see TBD
+*
+*****************************************************************************/
 ezSTATUS ezRPC_CreateRpcResponse(struct ezRpc *rpc_inst,
     uint8_t tag,
     uint32_t uuid,
@@ -304,54 +351,102 @@ ezSTATUS ezRPC_CreateRpcResponse(struct ezRpc *rpc_inst,
     uint32_t payload_size);
 
 
-/******************************************************************************
-* Function : ezRPC_Run
-*//**
-* @Description: Run the RPC instance, must be call in a tick function, a loop or
-* a task to advance the internal state machine
+/*****************************************************************************
+* Function: ezRPC_Run
+*//** 
+* @brief Run the RPC instance
 *
-* @param    *rpc_inst:      (IN)pointer to the rpc instance
-* @return   None
+* @details  must be call in a tick function, a loop or a task to advance the
+* internal state machine
 *
-*******************************************************************************/
+* @param[in]    *rpc_inst: pointer to the rpc instance
+* @return       None
+*
+* @pre None
+* @post None
+*
+* \b Example
+* @code
+* TBD
+* @endcode
+*
+* @see TBD
+*
+*****************************************************************************/
 void ezRPC_Run(struct ezRpc *rpc_inst);
 
 
-/******************************************************************************
-* Function : ezRPC_NumOfTxPendingMsg
-*//**
-* @Description: Return the number of messages waiting to be transmitted.
-*               It is used for disagnostic or testing purpose
+/*****************************************************************************
+* Function: ezRPC_NumOfTxPendingMsg
+*//** 
+* @brief Return the number of messages waiting to be transmitted.
+* It is used for disagnostic or testing purpose
 *
-* @param    *rpc_inst:      (IN)pointer to the rpc instance
-* @return   number of messages
+* @details
 *
-*******************************************************************************/
+* @param[in]    *rpc_inst: ointer to the rpc instance
+* @return       number of messages
+*
+* @pre None
+* @post None
+*
+* \b Example
+* @code
+* TBD
+* @endcode
+*
+* @see TBD
+*
+*****************************************************************************/
 uint32_t ezRPC_NumOfTxPendingMsg(struct ezRpc *rpc_inst);
 
 
-/******************************************************************************
-* Function : ezRPC_NumOfPendingRecords
-*//**
-* @Description: Return the number pending records, i.e. requests that is waiting
+/*****************************************************************************
+* Function: ezRPC_NumOfPendingRecords
+*//** 
+* @brief Return the number pending records, i.e. requests that is waiting
 * for the responses
 *
-* @param    *rpc_inst:      (IN)pointer to the rpc instance
-* @return   number of records
+* @details
 *
-*******************************************************************************/
+* @param[in]    *rpc_inst: pointer to the rpc instance
+* @return       number of records
+*
+* @pre None
+* @post None
+*
+* \b Example
+* @code
+* TBD
+* @endcode
+*
+* @see TBD
+*
+*****************************************************************************/
 uint32_t ezRPC_NumOfPendingRecords(struct ezRpc *rpc_inst);
 
 
-/******************************************************************************
-* Function : ezRpc_IsRpcInstanceReady
-*//**
-* @Description: Return the status if the rpc instance is ready
+/*****************************************************************************
+* Function: ezRpc_IsRpcInstanceReady
+*//** 
+* @brief Return the status if the rpc instance is ready
 *
-* @param    *rpc_inst:      (IN)pointer to the rpc instance
+* @details
+*
+* @param[in]    *rpc_inst: pointer to the rpc instance
 * @return   true if ready, else false
 *
-*******************************************************************************/
+* @pre None
+* @post None
+*
+* \b Example
+* @code
+* TBD
+* @endcode
+*
+* @see TBD
+*
+*****************************************************************************/
 bool ezRpc_IsRpcInstanceReady(struct ezRpc *rpc_inst);
 
 #endif /* EZ_RPC_ENABLE == 1 */
