@@ -15,9 +15,9 @@
 /** @file   ez_ipc.c
  *  @author Hai Nguyen
  *  @date   11.03.2024
- *  @brief  One line description of the component
+ *  @brief  Implementation of ipc component
  *
- *  @details Detail description of the component
+ *  @details
  */
 
 /*****************************************************************************
