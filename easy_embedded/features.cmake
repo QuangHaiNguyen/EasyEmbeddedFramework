@@ -16,7 +16,8 @@ option(ENABLE_EZ_KERNEL            "Enable the Kernel service"              OFF)
 # Configure application framework
 option(ENABLE_DATA_MODEL        "Enable the Event Notifier module"          ON)
 option(ENABLE_EZ_CLI            "Enable command line interface"             ON)
-option(ENABLE_EZ_RPC            "Enable Remote procedure call"              ON)
+option(ENABLE_EZ_RPC            "Enable remote procedure call"              ON)
+option(ENABLE_EZ_IPC            "Enable inter process communication"        ON)
 option(ENABLE_EZ_HAL_DRIVER     "Enable the Driver module"                  OFF)
 
 # Configure HAL driver
