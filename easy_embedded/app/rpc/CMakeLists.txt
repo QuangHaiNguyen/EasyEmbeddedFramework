@@ -1,52 +1,36 @@
 # ----------------------------------------------------------------------------
 # Author: Hai Nguyen
-# Name: ez_app_lib
+# Name: ez_rpc_lib
 # License: This file is published under the license described in LICENSE.md
 # Description: PLEASE ADD TEXT HERE
 # ----------------------------------------------------------------------------
 
-add_library(ez_app_lib STATIC)
+add_library(ez_rpc_lib STATIC)
 
 message(STATUS "**********************************************************")
-message(STATUS "* Generating ez_app_lib library build files")
+message(STATUS "* Generating ez_rpc_lib library build files")
 message(STATUS "**********************************************************")
 
 
 set(FRAMEWORK_ROOT_DIR ${CMAKE_SOURCE_DIR}/easy_embedded)
 
 
-if(ENABLE_DATA_MODEL)
-    add_subdirectory(data_model)
-endif()
-
-if(ENABLE_EZ_CLI)
-    add_subdirectory(cli)
-endif()
-
-if(ENABLE_EZ_RPC)
-    add_subdirectory(rpc)
-endif()
-
-if(ENABLE_EZ_IPC)
-    add_subdirectory(ipc)
-endif()
-
 # Source files ---------------------------------------------------------------
-target_sources(ez_app_lib
+target_sources(ez_rpc_lib
     PRIVATE
-        ez_app.c
+        ez_rpc.c
 )
 
 
 # Definitions ----------------------------------------------------------------
-target_compile_definitions(ez_app_lib
+target_compile_definitions(ez_rpc_lib
     PUBLIC
-        DATA_MODEL=$<BOOL:${ENABLE_DATA_MODEL}>
+        EZ_RPC_ENABLE=$<BOOL:${ENABLE_EZ_RPC}>
 )
 
 
 # Include directory -----------------------------------------------------------
-target_include_directories(ez_app_lib
+target_include_directories(ez_rpc_lib
     PUBLIC
         ${CMAKE_CURRENT_LIST_DIR}
     PRIVATE
@@ -57,14 +41,11 @@ target_include_directories(ez_app_lib
 
 
 # Link libraries -------------------------------------------------------------
-target_link_libraries(ez_app_lib
+target_link_libraries(ez_rpc_lib
     PUBLIC
-        $<$<BOOL:${ENABLE_DATA_MODEL}>:ez_data_model_lib>
-        $<$<BOOL:${ENABLE_EZ_CLI}>:ez_cli_lib>
-        $<$<BOOL:${ENABLE_EZ_RPC}>:ez_rpc_lib>
-        $<$<BOOL:${ENABLE_EZ_IPC}>:ez_ipc_lib>
+        # Please add public libraries
     PRIVATE
-        # Please add private libraries
+        ez_utilities_lib
     INTERFACE
         # Please add interface libraries
 )

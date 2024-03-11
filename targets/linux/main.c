@@ -1,26 +1,24 @@
-
-/*******************************************************************************
+/*****************************************************************************
 * Filename:         main.c
 * Author:           Hai Nguyen
-* Original Date:    02.05.2023
-* Last Update:      02.05.2023
+* Original Date:    11.03.2024
 *
-* -----------------------------------------------------------------------------
-* Company:          Embedded Easy
-*                   Address Line 1
-*                   Address Line 2
+* ----------------------------------------------------------------------------
+* Contact:          Hai Nguyen
+*                   hainguyen.eeit@gmail.com
 *
-* -----------------------------------------------------------------------------
-* Contact:          Embedded Easy
-*                   hainguyen.ezm@gmail.com
+* ----------------------------------------------------------------------------
+* License: This file is published under the license described in LICENSE.md
 *
-* -----------------------------------------------------------------------------
-* Copyright Hai Nguyen - All Rights Reserved
-* Unauthorized copying of this file, via any medium is strictly prohibited
-* Proprietary and confidential
-* Written by Hai Nguyen 02.05.2023
-*
-*******************************************************************************/
+*****************************************************************************/
+
+/** @file   main.c
+ *  @author Hai Nguyen
+ *  @date   11.03.2024
+ *  @brief  main.c file for linux target
+ *
+ *  @details
+ */
 
 /** @file   main.c
  *  @author Hai Nguyen

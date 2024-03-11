@@ -56,12 +56,12 @@ target_include_directories(easy_embedded_lib
 # Link libraries -------------------------------------------------------------
 target_link_libraries(easy_embedded_lib
     PUBLIC
+        ez_app_lib
         ez_utilities_lib
         $<$<BOOL:${ENABLE_EZ_EVENT_NOTIFIER}>:ez_event_notifier_lib>
         $<$<BOOL:${ENABLE_EZ_KERNEL}>:ez_kernel>
         $<$<BOOL:${ENABLE_EZ_HAL_DRIVER}>:ez_driver>
         $<$<BOOL:${ENABLE_LITTLE_FS}>:littlefs>
-        ez_app_lib
     PRIVATE
         # Please add private libraries
     INTERFACE

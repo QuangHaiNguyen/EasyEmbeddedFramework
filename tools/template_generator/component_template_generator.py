@@ -63,6 +63,8 @@ _doxygen_header_body=\
 *****************************************************************************/
 /* INCLUDE HEADER HERE */
 
+#if ({0}_ENABLE == 1)
+
 /*****************************************************************************
 * Component Preprocessor Macros
 *****************************************************************************/
@@ -115,6 +117,7 @@ typedef struct
 *****************************************************************************/
 int sum(int a, int b);
 
+#endif /* {0}_ENABLE == 1 */
 #endif /* _{0}_H */
 
 
@@ -127,6 +130,8 @@ _doxygen_source_body=\
 * Includes
 *****************************************************************************/
 #include "{0}.h"
+
+#if ({1}_ENABLE == 1)
 
 #define DEBUG_LVL   LVL_TRACE   /**< logging level */
 #define MOD_NAME    "{0}"       /**< module name */
@@ -166,6 +171,7 @@ int sum(int a, int b)
 * Local functions
 *****************************************************************************/
 
+#endif /* {1}_ENABLE == 1 */
 /* End of file*/
 """
 
@@ -202,7 +208,7 @@ def generate_source_file(path:str, filename:str, author:str):
     with open(path, "a") as header:
         header.write(_file_header.format(filename + ".c", author, dt_string))
         header.write(_doxygen_file_header.format(filename + ".c", author, dt_string))
-        header.write(_doxygen_source_body.format(filename))
+        header.write(_doxygen_source_body.format(filename, filename.upper()))
     logger.info("complete")
 
 def main():

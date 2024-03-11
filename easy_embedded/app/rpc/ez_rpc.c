@@ -1,67 +1,54 @@
-
-/*******************************************************************************
-* Filename:         ezRpc.c
+/*****************************************************************************
+* Filename:         ez_rpc.c
 * Author:           Hai Nguyen
-* Original Date:    31.08.2022
-* Last Update:      31.08.2022
+* Original Date:    10.03.2024
 *
-* -----------------------------------------------------------------------------
-* Company:          Embedded Easy
-*                   Address Line 1
-*                   Address Line 2
+* ----------------------------------------------------------------------------
+* Contact:          Hai Nguyen
+*                   hainguyen.eeit@gmail.com
 *
-* -----------------------------------------------------------------------------
-* Contact:          Embedded Easy
-*                   hainguyen.ezm@gmail.com
+* ----------------------------------------------------------------------------
+* License: This file is published under the license described in LICENSE.md
 *
-* -----------------------------------------------------------------------------
-* Copyright Hai Nguyen - All Rights Reserved
-* Unauthorized copying of this file, via any medium is strictly prohibited
-* Proprietary and confidential
-* Written by Hai Nguyen 31.08.2022
-*
-*******************************************************************************/
+*****************************************************************************/
 
-/** @file   ezRpc.c
+/** @file   ez_rpc.c
  *  @author Hai Nguyen
- *  @date   31.08.2022
- *  @brief  This is the source for a module
- *  
- *  @details
- * 
+ *  @date   10.03.2024
+ *  @brief  One line description of the component
+ *
+ *  @details Detail description of the component
  */
 
-/******************************************************************************
+/*****************************************************************************
 * Includes
-*******************************************************************************/
-#include "ezRpc.h"
-
-#if (CONFIG_RPC == 1U)
-
-#define DEBUG_LVL   LVL_ERROR   /**< logging level */
-#define MOD_NAME    "ezRpc"        /**< module name */
-
-#include "ezUtilities/logging/logging.h"
-#include "ezApp/ezmKernel/ezmKernel.h"
-
+*****************************************************************************/
 #include <string.h>
+#include "ez_rpc.h"
 
+#if (EZ_RPC_ENABLE == 1)
 
-/******************************************************************************
-* Module Preprocessor Macros
-*******************************************************************************/
+#define DEBUG_LVL   LVL_TRACE   /**< logging level */
+#define MOD_NAME    "ez_rpc"       /**< module name */
+#include "ez_logging.h"
+
+#if 0 /* TODO */
+#include "ezmKernel.h"
+#endif
+
+/*****************************************************************************
+* Component Preprocessor Macros
+*****************************************************************************/
 #define RPC_HEADER_SIZE     12      /**< size of the RPC message header in bytes*/
 #define SOF                 0x80    /**< start of frame, for syncronisation */
 #define RPC_BYTE_READ       1U      /**< number of byte being read by RPC */
 #define WAIT_TIME           3000U   /**< time a request waiting for its response in millisec*/
 
-/******************************************************************************
-* Module Typedefs
-*******************************************************************************/
 
-
+/*****************************************************************************
+* Component Typedefs
+*****************************************************************************/
 /** @brief Message type enumeration
- *
  */
 typedef enum
 {
@@ -76,14 +63,15 @@ typedef enum
 }RPC_DESERIALIZE_STATES;
 
 
-/******************************************************************************
-* Module Variable Definitions
-*******************************************************************************/
+/*****************************************************************************
+* Component Variable Definitions
+*****************************************************************************/
 /* None */
 
-/******************************************************************************
+
+/*****************************************************************************
 * Function Definitions
-*******************************************************************************/
+*****************************************************************************/
 static void ezRpc_ResetAllRecords(struct ezRpcRequestRecord *records);
 
 static ezSTATUS ezRPC_CreateRpcMessage(struct ezRpc *rpc_inst,
@@ -108,10 +96,9 @@ void ezRpc_PrintCrc(uint8_t *crc, uint32_t size);
 #endif /* DEBUG_LVL == LVL_TRACE */
 
 
-/******************************************************************************
-* External functions
-*******************************************************************************/
-
+/*****************************************************************************
+* Public functions
+*****************************************************************************/
 
 ezSTATUS ezRpc_Initialization(struct ezRpc *rpc_inst,
                                 uint8_t *buff,
@@ -121,7 +108,7 @@ ezSTATUS ezRpc_Initialization(struct ezRpc *rpc_inst,
 {
     ezSTATUS status = ezSUCCESS;
 
-    TRACE("ezRpc_Initialization()");
+    EZTRACE("ezRpc_Initialization()");
 
     if (rpc_inst != NULL
         && buff != NULL
@@ -171,7 +158,7 @@ ezSTATUS ezRpc_SetCrcFunctions(struct ezRpc *rpc_inst,
 {
     ezSTATUS status = ezSUCCESS;
 
-    TRACE("ezRpc_SetCrcFunctions()");
+    EZTRACE("ezRpc_SetCrcFunctions()");
 
     if (rpc_inst != NULL
         && verify_func != NULL
@@ -353,10 +340,9 @@ uint32_t ezRPC_NumOfPendingRecords(struct ezRpc *rpc_inst)
 }
 
 
-/******************************************************************************
-* Internal functions
-*******************************************************************************/
-
+/*****************************************************************************
+* Local functions
+*****************************************************************************/
 
 /******************************************************************************
 * Function : ezRpc_ResetAllRecords
@@ -488,7 +474,7 @@ static void ezRpc_DeserializedData(struct ezRpc *rpc_inst, uint8_t rx_byte)
         switch (rpc_inst->deserializer.state)
         {
         case STATE_SOF:
-            TRACE("STATE_SOF");
+            EZTRACE("STATE_SOF");
 
             if (rx_byte == SOF)
             {
@@ -504,13 +490,13 @@ static void ezRpc_DeserializedData(struct ezRpc *rpc_inst, uint8_t rx_byte)
                     rpc_inst->deserializer.curr_hdr->payload_size = 0;
 
                     rpc_inst->deserializer.state = STATE_UUID;
-                    DEBUG("Got SOF");
+                    EZDEBUG("Got SOF");
                 }
             }
             break;
 
         case STATE_UUID:
-            TRACE("STATE_UUID");
+            EZTRACE("STATE_UUID");
             if (rpc_inst->deserializer.curr_hdr != NULL)
             {
                 rpc_inst->deserializer.curr_hdr->uuid = 
@@ -531,7 +517,7 @@ static void ezRpc_DeserializedData(struct ezRpc *rpc_inst, uint8_t rx_byte)
             break;
 
         case STATE_MSG_TYPE:
-            TRACE("STATE_MSG_TYPE");
+            EZTRACE("STATE_MSG_TYPE");
             if (rx_byte == RPC_MSG_REQ || rx_byte == RPC_MSG_RESP)
             {
                 rpc_inst->deserializer.curr_hdr->type = rx_byte;
@@ -539,25 +525,25 @@ static void ezRpc_DeserializedData(struct ezRpc *rpc_inst, uint8_t rx_byte)
             }
             else
             {
-                DEBUG("wrong message type");
+                EZDEBUG("wrong message type");
                 rpc_inst->deserializer.state = STATE_SOF;
             }
             break;
 
         case STATE_TAG:
-            TRACE("STATE_TAG");
+            EZTRACE("STATE_TAG");
             rpc_inst->deserializer.curr_hdr->tag = rx_byte;
             rpc_inst->deserializer.state = STATE_ENCRYPT_FLAG;
             break;
 
         case STATE_ENCRYPT_FLAG:
-            TRACE("STATE_ENCRYPT_FLAG");
+            EZTRACE("STATE_ENCRYPT_FLAG");
             rpc_inst->deserializer.curr_hdr->is_encrypted = rx_byte;
             rpc_inst->deserializer.state = STATE_PAYLOAD_SIZE;
             break;
 
         case STATE_PAYLOAD_SIZE:
-            TRACE("STATE_PAYLOAD_SIZE");
+            EZTRACE("STATE_PAYLOAD_SIZE");
             rpc_inst->deserializer.curr_hdr->payload_size = 
                 (rpc_inst->deserializer.curr_hdr->payload_size << 8) | rx_byte;
 
@@ -582,7 +568,7 @@ static void ezRpc_DeserializedData(struct ezRpc *rpc_inst, uint8_t rx_byte)
                     rpc_inst->deserializer.state = STATE_PAYLOAD;
 
 #if(DEBUG_LVL == LVL_TRACE)
-                    ezRpc_PrintHeader(temp_header);
+                    ezRpc_PrintHeader(rpc_inst->deserializer.curr_hdr);
 #endif /* DEBUG_LVL == LVL_TRACE */
                 }
                 else
@@ -592,14 +578,14 @@ static void ezRpc_DeserializedData(struct ezRpc *rpc_inst, uint8_t rx_byte)
                         rpc_inst->deserializer.header_elem);
 
                     rpc_inst->deserializer.state = STATE_SOF;
-                    DEBUG("Queue operation error");
+                    EZDEBUG("Queue operation error");
                 }
 
             }
             break;
 
         case STATE_PAYLOAD:
-            TRACE("STATE_PAYLOAD");
+            EZTRACE("STATE_PAYLOAD");
 
             *(rpc_inst->deserializer.payload + rpc_inst->deserializer.byte_count) = rx_byte;
             rpc_inst->deserializer.byte_count++;
@@ -607,7 +593,7 @@ static void ezRpc_DeserializedData(struct ezRpc *rpc_inst, uint8_t rx_byte)
             if (rpc_inst->deserializer.byte_count >= rpc_inst->deserializer.curr_hdr->payload_size)
             {
 #if(DEBUG_LVL == LVL_TRACE)
-                ezRpc_PrintPayload(payload, temp_header->payload_size);
+                ezRpc_PrintPayload(rpc_inst->deserializer.payload, rpc_inst->deserializer.curr_hdr->payload_size);
 #endif /* DEBUG_LVL == LVL_TRACE */
 
                 if (ezRpc_IsCrcActivated(rpc_inst))
@@ -635,7 +621,7 @@ static void ezRpc_DeserializedData(struct ezRpc *rpc_inst, uint8_t rx_byte)
                             rpc_inst->deserializer.payload_elem);
 
                         rpc_inst->deserializer.state = STATE_SOF;
-                        DEBUG("Queue operation error");
+                        EZDEBUG("Queue operation error");
                     }
                 }
                 else
@@ -654,7 +640,7 @@ static void ezRpc_DeserializedData(struct ezRpc *rpc_inst, uint8_t rx_byte)
             break;
 
         case STATE_CRC:
-            TRACE("STATE_CRC");
+            EZTRACE("STATE_CRC");
 
             *(rpc_inst->deserializer.crc + rpc_inst->deserializer.byte_count) = rx_byte;
             rpc_inst->deserializer.byte_count++;
@@ -662,7 +648,7 @@ static void ezRpc_DeserializedData(struct ezRpc *rpc_inst, uint8_t rx_byte)
             if (rpc_inst->deserializer.byte_count >= rpc_inst->crc.size)
             {
 #if(DEBUG_LVL == LVL_TRACE)
-                ezRpc_PrintCrc(crc, rpc_inst->crc_size);
+                ezRpc_PrintCrc(rpc_inst->deserializer.crc, rpc_inst->crc.size);
 #endif /* DEBUG_LVL == LVL_TRACE */
                 
                 if (rpc_inst->crc.IsCorrect)
@@ -672,7 +658,7 @@ static void ezRpc_DeserializedData(struct ezRpc *rpc_inst, uint8_t rx_byte)
                             rpc_inst->deserializer.crc,
                             rpc_inst->crc.size))
                     {
-                        DEBUG("crc correct");
+                        EZDEBUG("crc correct");
                         status = ezQueue_PushReservedElement(
                             &rpc_inst->rx_msg_queue,
                             rpc_inst->deserializer.header_elem);
@@ -683,7 +669,7 @@ static void ezRpc_DeserializedData(struct ezRpc *rpc_inst, uint8_t rx_byte)
                     }
                     else
                     {
-                        DEBUG("crc wrong");
+                        EZDEBUG("crc wrong");
                         (void)ezQueue_ReleaseReservedElement(
                             &rpc_inst->rx_msg_queue,
                             rpc_inst->deserializer.header_elem);
@@ -737,7 +723,7 @@ static ezSTATUS ezRPC_CreateRpcMessage(struct ezRpc *rpc_inst,
     struct ezRpcRequestRecord *record = NULL;
     ezReservedElement elem = NULL;
 
-    TRACE("ezRPC_CreateRpcMessage()");
+    EZTRACE("ezRPC_CreateRpcMessage()");
 
     if (rpc_inst != NULL && header != NULL)
     {
@@ -751,7 +737,7 @@ static ezSTATUS ezRPC_CreateRpcMessage(struct ezRpc *rpc_inst,
             alloc_size += rpc_inst->crc.size;
         }
 
-        DEBUG("[ total size = %d bytes]", alloc_size);
+        EZDEBUG("[ total size = %d bytes]", alloc_size);
 
         record = ezRpc_GetAvailRecord(rpc_inst);
 
@@ -759,7 +745,7 @@ static ezSTATUS ezRPC_CreateRpcMessage(struct ezRpc *rpc_inst,
         {
             elem = ezQueue_ReserveElement(
                 &rpc_inst->tx_msg_queue,
-                &buff,
+                (void**)&buff,
                 alloc_size);
 
             if (elem != NULL)
@@ -785,8 +771,8 @@ static ezSTATUS ezRPC_CreateRpcMessage(struct ezRpc *rpc_inst,
 
             memcpy(buff, payload, payload_size);
 
-            DEBUG("payload value:");
-            HEXDUMP(buff, payload_size);
+            EZDEBUG("payload value:");
+            EZHEXDUMP(buff, payload_size);
         }
 
         if (status == ezSUCCESS && ezRpc_IsCrcActivated(rpc_inst))
@@ -802,8 +788,8 @@ static ezSTATUS ezRPC_CreateRpcMessage(struct ezRpc *rpc_inst,
                     buff,
                     rpc_inst->crc.size);
 
-                DEBUG("crc value:");
-                HEXDUMP(buff, rpc_inst->crc_size);
+                EZDEBUG("crc value:");
+                EZHEXDUMP(buff, rpc_inst->crc.size);
             }
             else
             {
@@ -817,7 +803,9 @@ static ezSTATUS ezRPC_CreateRpcMessage(struct ezRpc *rpc_inst,
             {
                 record->uuid = header->uuid;
                 record->name = NULL;
+#if 0 /* TODO */
                 record->timestamp = ezmKernel_GetTickMillis();
+#endif
             }
             else
             {
@@ -831,8 +819,8 @@ static ezSTATUS ezRPC_CreateRpcMessage(struct ezRpc *rpc_inst,
                 &rpc_inst->tx_msg_queue,
                 elem);
 #if (DEBUG_LVL == LVL_TRACE)
-            TRACE("serialized data:");
-            HEXDUMP(buff, alloc_size);
+            EZTRACE("serialized data:");
+            EZHEXDUMP(buff, alloc_size);
 #endif /* DEBUG_LVL == LVL_TRACE */
         }
         else
@@ -897,7 +885,7 @@ static void ezRpc_HandleReceivedMsg(struct ezRpc *rpc_inst)
 
                         /* record found, so we clear it */
                         rpc_inst->records[i].is_available = true;
-                        DEBUG("found request in record [uuid = %d]",
+                        EZDEBUG("found request in record [uuid = %d]",
                             rpc_inst->records[i].uuid);
                     }
                 }
@@ -910,7 +898,7 @@ static void ezRpc_HandleReceivedMsg(struct ezRpc *rpc_inst)
                     /* discard payload */
                     (void)ezQueue_PopFront(&rpc_inst->rx_msg_queue);
 
-                    DEBUG("no record found, discard message");
+                    EZDEBUG("no record found, discard message");
                 }
             }
         }
@@ -921,7 +909,7 @@ static void ezRpc_HandleReceivedMsg(struct ezRpc *rpc_inst)
             {
                 if (rpc_inst->service_table[i].tag == header->tag)
                 {
-                    DEBUG("service supported [tag = %d]",
+                    EZDEBUG("service supported [tag = %d]",
                         rpc_inst->service_table[i].tag);
 
                     /* pop header to read payload */
@@ -979,6 +967,7 @@ static void ezRpc_CheckTimeoutRecords(struct ezRpc *rpc_inst)
     {
         for (uint32_t i = 0; i < CONFIG_NUM_OF_REQUEST; i++)
         {
+#if 0 /* TODO */
             if (rpc_inst->records[i].is_available == false
                 && rpc_inst->records[i].timestamp + (int)WAIT_TIME < ezmKernel_GetTickMillis())
             {
@@ -987,10 +976,11 @@ static void ezRpc_CheckTimeoutRecords(struct ezRpc *rpc_inst)
                 rpc_inst->records[i].uuid = 0;
                 rpc_inst->records[i].name = NULL;
 
-                DEBUG("record [i = %d] [uuid = %d] is time out",
+                EZDEBUG("record [i = %d] [uuid = %d] is time out",
                     i,
                     rpc_inst->records[i].uuid);
             }
+#endif
         }
     }
 }
@@ -1051,7 +1041,7 @@ void ezRpc_PrintPayload(uint8_t *payload, uint32_t size)
     {
         dbg_print("\nRPC payload\n");
         dbg_print("------------------------\n");
-        HEXDUMP(payload, size);
+        EZHEXDUMP(payload, size);
         dbg_print("\n");
     }
 }
@@ -1073,11 +1063,12 @@ void ezRpc_PrintCrc(uint8_t *crc, uint32_t size)
     {
         dbg_print("\nRPC CRC\n");
         dbg_print("------------------------\n");
-        HEXDUMP(crc, size);
+        EZHEXDUMP(crc, size);
         dbg_print("\n");
     }
 }
 #endif /* DEBUG_LVL == LVL_TRACE */
 
-#endif /* CONFIG_RPC == 1U */
+
+#endif /* EZ_RPC_ENABLE == 1 */
 /* End of file*/
