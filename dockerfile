@@ -1,4 +1,4 @@
-FROM ubuntu
+FROM debian
 
 # General update
 RUN apt-get update -y && apt-get upgrade -y
