@@ -18,6 +18,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - uses: lukka/get-cmake@latest
+    - uses: threeal/gcovr-action@latest
 
     - name: Configure CMake
       working-directory: ${{github.workspace}}
