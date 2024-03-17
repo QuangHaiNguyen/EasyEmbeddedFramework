@@ -21,3 +21,9 @@ endif()
 add_custom_target(doxygen
     COMMAND doxygen Doxyfile
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+
+add_custom_target(coverage
+    COMMAND cd ${CMAKE_SOURCE_DIR} && cmake --build --preset=linux_coverage
+    COMMAND cd ${CMAKE_SOURCE_DIR} && ctest --preset=github_ci
+    COMMAND cd ${CMAKE_SOURCE_DIR} && rm -rf coverage && mkdir coverage
+    COMMAND cd ${CMAKE_SOURCE_DIR} && gcovr -r . --filter=easy_embedded --html --html-details -o coverage/coverage.html)

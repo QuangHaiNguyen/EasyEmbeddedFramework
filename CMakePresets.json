@@ -10,7 +10,7 @@
             "name": "linux_base",
             "displayName": "Linux base configuration",
             "description": "Base configuration using ninja generator on linux",
-            "generator": "Ninja",
+            "generator": "Unix Makefiles",
             "hidden": true,
             "condition": {
                 "type": "equals",
@@ -23,22 +23,33 @@
         },
         {
             "name": "linux_debug",
-            "displayName": "Linux debug configuration",
+            "displayName": "linux_debug",
             "description": "Debug configuration using ninja generator on linux",
             "inherits": "linux_base",
-            "binaryDir": "${sourceDir}/build/linux_debug",
+            "binaryDir": "${sourceDir}/build_linux_debug",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug"
             }
         },
         {
             "name": "linux_release",
-            "displayName": "Linux release configuration",
+            "displayName": "linux_release",
             "description": "Release configuration using ninja generator on linux",
             "inherits": "linux_base",
-            "binaryDir": "${sourceDir}/build/linux_release",
+            "binaryDir": "${sourceDir}/build_linux_release",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "linux_test_debug",
+            "displayName": "linux_test_debug",
+            "description": "Build, run unit test and measure coverage",
+            "inherits": "linux_base",
+            "binaryDir": "${sourceDir}/build_linux_test_debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_C_FLAGS":"-fprofile-arcs -ftest-coverage -fPIC"
             }
         }
     ],
@@ -50,12 +61,16 @@
         {
             "name": "linux_release",
             "configurePreset": "linux_release"
+        },
+        {
+            "name": "linux_test_debug",
+            "configurePreset": "linux_test_debug"
         }
     ],
     "testPresets": [
         {
-          "name": "github_ci",
-          "configurePreset": "linux_debug",
+          "name": "linux_test_debug",
+          "configurePreset": "linux_test_debug",
           "output": {"outputOnFailure": true},
           "execution": {"noTestsAction": "error", "stopOnFailure": true}
         }

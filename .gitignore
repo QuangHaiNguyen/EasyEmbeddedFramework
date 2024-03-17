@@ -1,6 +1,6 @@
 .vscode/
 .vs/
-build/
+build_*/
 tools/StateMachineGenerator/*.c
 tools/StateMachineGenerator/*.h
 tools/template_generator/*.c
@@ -9,3 +9,4 @@ tools/template_generator/CMakeLists.txt
 doxygen/
 tools/template_generator/__pycache__/
 Testing/
+coverage/
