@@ -47,8 +47,11 @@
 /*****************************************************************************
 * Component Variable Definitions
 *****************************************************************************/
-static struct Node hw_driver_list;  /**< List of HW driver implementation  */
-static struct Node instance_list;   /**< Keep tracks of instance register to this driver */
+static struct Node hw_driver_list = EZ_LINKEDLIST_INIT_NODE(hw_driver_list);
+/**< List of HW driver implementation  */
+
+static struct Node instance_list = EZ_LINKEDLIST_INIT_NODE(instance_list);
+/**< Keep tracks of instance register to this driver */
 
 /*****************************************************************************
 * Function Definitions
@@ -58,6 +61,47 @@ static struct Node instance_list;   /**< Keep tracks of instance register to thi
 /*****************************************************************************
 * Public functions
 *****************************************************************************/
+EZ_DRV_STATUS ezUart_SystemRegisterHwDriver(struct ezUartDriver *hw_uart_driver)
+{
+    EZ_DRV_STATUS status = STATUS_ERR_GENERIC;
+
+    EZTRACE("ezUart_SystemRegisterHwDriver()");
+    if(hw_uart_driver == NULL)
+    {
+        status = STATUS_ERR_ARG;
+        EZERROR("hw_uart_driver == NULL");
+    }
+    else
+    {
+        EZ_LINKEDLIST_ADD_TAIL(&hw_driver_list, &hw_uart_driver->ll_node);
+        status = STATUS_OK;
+    }
+
+    return status;
+}
+
+
+EZ_DRV_STATUS ezUart_SystemUnregisterHwDriver(struct ezUartDriver *hw_uart_driver)
+{
+    EZ_DRV_STATUS status = STATUS_ERR_GENERIC;
+
+    EZTRACE("ezUart_SystemUnregisterHwDriver()");
+    if(hw_uart_driver == NULL)
+    {
+        status = STATUS_ERR_ARG;
+        EZERROR("hw_uart_driver == NULL");
+    }
+    else
+    {
+        EZ_LINKEDLIST_UNLINK_NODE(&hw_uart_driver->ll_node);
+        status = STATUS_OK;
+    }
+
+    return status;
+}
+
+
+
 EZ_DRV_STATUS ezUart_RegisterInstance(ezUartDrvInstance_t *inst,
                                       const char *driver_name)
 {

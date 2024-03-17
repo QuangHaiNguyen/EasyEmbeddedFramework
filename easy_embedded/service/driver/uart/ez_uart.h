@@ -133,6 +133,8 @@ struct ezHwUartInterface
     ezHwUart_AsyncReceive   async_receive;  /**< */
     ezHwUart_SyncTransmit   sync_transmit;  /**< */
     ezHwUart_SyncReceive    sync_receive;   /**< */
+    ezHwUart_GetConfig      get_conf;       /**< */
+    ezHwUart_UpdateConfig   update_conf;    /**< */
 };
 
 
@@ -156,6 +158,9 @@ struct ezUartDriver
 /*****************************************************************************
 * Function Prototypes
 *****************************************************************************/
+EZ_DRV_STATUS ezUart_SystemRegisterHwDriver(struct ezUartDriver *hw_uart_driver);
+EZ_DRV_STATUS ezUart_SystemUnregisterHwDriver(struct ezUartDriver *hw_uart_driver);
+
 EZ_DRV_STATUS ezUart_RegisterInstance(ezUartDrvInstance_t *inst, const char *driver_name);
 EZ_DRV_STATUS ezUart_UnregisterInstance(ezUartDrvInstance_t *inst);
 EZ_DRV_STATUS ezUart_Initialize(ezUartDrvInstance_t *inst);
