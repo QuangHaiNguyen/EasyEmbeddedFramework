@@ -42,6 +42,18 @@
 /*****************************************************************************
 * Component Typedefs
 *****************************************************************************/
+/** @brief Uart event
+ */
+typedef enum
+{
+    UART_EVENT_TX_CMPLT,
+    UART_EVENT_TX_ERR,
+    UART_EVENT_RX_CMPLT,
+    UART_EVENT_RX_ERR,
+    UART_EVENT_TIMEOUT,
+    UART_NUM_EVENTS,
+}EZ_UART_EVENT;
+
 
 /** @brief Parity value
  */
@@ -94,7 +106,7 @@ typedef EZ_DRV_STATUS(*ezHwUart_Deinitialize)(uint8_t index);
 
 /** @brief
  */
-typedef EZ_DRV_STATUS(*ezHwUart_AsyncTransmit)(uint8_t index, uint8_t *tx_buff, uint16_t buff_size);
+typedef EZ_DRV_STATUS(*ezHwUart_AsyncTransmit)(uint8_t index, const uint8_t *tx_buff, uint16_t buff_size);
 
 
 /** @brief
@@ -104,17 +116,12 @@ typedef EZ_DRV_STATUS(*ezHwUart_AsyncReceive)(uint8_t index, uint8_t *rx_buff, u
 
 /** @brief
  */
-typedef EZ_DRV_STATUS(*ezHwUart_SyncTransmit)(uint8_t index, uint8_t *tx_buff, uint16_t buff_size, uint32_t timeout_millis);
+typedef EZ_DRV_STATUS(*ezHwUart_SyncTransmit)(uint8_t index, const uint8_t *tx_buff, uint16_t buff_size, uint32_t timeout_millis);
 
 
 /** @brief
  */
 typedef EZ_DRV_STATUS(*ezHwUart_SyncReceive)(uint8_t index, uint8_t *rx_buff, uint16_t buff_size, uint32_t timeout_millis);
-
-
-/** @brief
- */
-typedef EZ_DRV_STATUS(*ezHwUart_GetConfig)(uint8_t index, struct ezUartConfiguration *config);
 
 
 /** @brief
@@ -127,13 +134,12 @@ typedef EZ_DRV_STATUS(*ezHwUart_UpdateConfig)(uint8_t index);
 struct ezHwUartInterface
 {
     uint8_t                 index;          /**< Index of the driver instance */
-    ezHwUart_Initialize     initialize;
-    ezHwUart_Deinitialize   deinitialize;
+    ezHwUart_Initialize     initialize;     /**< */
+    ezHwUart_Deinitialize   deinitialize;   /**< */
     ezHwUart_AsyncTransmit  async_transmit; /**< */
     ezHwUart_AsyncReceive   async_receive;  /**< */
     ezHwUart_SyncTransmit   sync_transmit;  /**< */
     ezHwUart_SyncReceive    sync_receive;   /**< */
-    ezHwUart_GetConfig      get_conf;       /**< */
     ezHwUart_UpdateConfig   update_conf;    /**< */
 };
 
@@ -161,15 +167,16 @@ struct ezUartDriver
 EZ_DRV_STATUS ezUart_SystemRegisterHwDriver(struct ezUartDriver *hw_uart_driver);
 EZ_DRV_STATUS ezUart_SystemUnregisterHwDriver(struct ezUartDriver *hw_uart_driver);
 
-EZ_DRV_STATUS ezUart_RegisterInstance(ezUartDrvInstance_t *inst, const char *driver_name);
+EZ_DRV_STATUS ezUart_RegisterInstance(ezUartDrvInstance_t *inst, const char *driver_name, ezDrvCallback callback);
 EZ_DRV_STATUS ezUart_UnregisterInstance(ezUartDrvInstance_t *inst);
+
 EZ_DRV_STATUS ezUart_Initialize(ezUartDrvInstance_t *inst);
 EZ_DRV_STATUS ezUart_Deinitialize(ezUartDrvInstance_t *inst);
-EZ_DRV_STATUS ezUart_AsyncTransmit(ezUartDrvInstance_t *inst, uint8_t tx_buff, uint16_t buff_size);
-EZ_DRV_STATUS ezUart_AsyncReceive(ezUartDrvInstance_t *inst, uint8_t rx_buff, uint16_t buff_size);
-EZ_DRV_STATUS ezUart_SyncTransmit(ezUartDrvInstance_t *inst, uint8_t *tx_buff, uint16_t buff_size, uint32_t timeout_millis);
-EZ_DRV_STATUS ezUart_SyncReceive(ezUartDrvInstance_t *inst, uint8_t *tx_buff, uint16_t buff_size, uint32_t timeout_millis);
-EZ_DRV_STATUS ezUart_GetConfig(ezUartDrvInstance_t *inst, struct ezUartConfiguration *config);
+EZ_DRV_STATUS ezUart_AsyncTransmit(ezUartDrvInstance_t *inst, const uint8_t *tx_buff, uint16_t buff_size);
+EZ_DRV_STATUS ezUart_AsyncReceive(ezUartDrvInstance_t *inst, uint8_t *rx_buff, uint16_t buff_size);
+EZ_DRV_STATUS ezUart_SyncTransmit(ezUartDrvInstance_t *inst, const uint8_t *tx_buff, uint16_t buff_size, uint32_t timeout_millis);
+EZ_DRV_STATUS ezUart_SyncReceive(ezUartDrvInstance_t *inst, uint8_t *rx_buff, uint16_t buff_size, uint32_t timeout_millis);
+EZ_DRV_STATUS ezUart_GetConfig(ezUartDrvInstance_t *inst, struct ezUartConfiguration **config);
 EZ_DRV_STATUS ezUart_UpdateConfig(ezUartDrvInstance_t *inst);
 
 #endif /* EZ_UART_ENABLE == 1 */

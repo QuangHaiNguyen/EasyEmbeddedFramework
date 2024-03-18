@@ -57,7 +57,7 @@ typedef void (*ezDrvCallback)(uint8_t event_code, void *param1, void *param2);
 
 struct ezDrvInstance
 {
-    ezDrvCallback   *calback;   /**< Callback funtion to handle the event from the HW driver */
+    ezDrvCallback   calback;   /**< Callback funtion to handle the event from the HW driver */
     void            *driver;    /**< Pointer to the HAL driver, depending on the implmentation */
 };
 
@@ -82,7 +82,45 @@ struct ezDriverCommon
 /*****************************************************************************
 * Function Prototypes
 *****************************************************************************/
-/* None */
+static inline void *ezDriver_GetDriverFromInstance(ezDrvInstance_t *inst)
+{
+    void *drv = NULL;
+    if(inst != NULL && inst->driver != NULL)
+    {
+        drv = inst->driver;
+    }
+
+    return drv;
+}
+
+
+static inline bool ezDriver_IsDriverAvailable(ezDrvInstance_t *inst, struct ezDriverCommon *drv_common)
+{
+    bool ret = false;
+    if(inst != NULL && drv_common != NULL)
+    {
+        ret = ((drv_common->curr_inst == NULL) || (drv_common->curr_inst == inst));
+    }
+    return ret;
+}
+
+
+static inline void ezDriver_LockDriver(ezDrvInstance_t *inst, struct ezDriverCommon *drv_common)
+{
+    if(inst != NULL && drv_common != NULL)
+    {
+        drv_common->curr_inst = inst;
+    }
+}
+
+
+static inline void ezDriver_UnlockDriver(struct ezDriverCommon *drv_common)
+{
+    if(drv_common != NULL)
+    {
+        drv_common->curr_inst = NULL;
+    }
+}
 
 
 #endif /* EZ_DRIVER_ENABLE == 1 */
