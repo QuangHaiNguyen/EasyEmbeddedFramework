@@ -15,9 +15,9 @@
 /** @file   ez_uart.c
  *  @author Hai Nguyen
  *  @date   15.03.2024
- *  @brief  One line description of the component
+ *  @brief  Implementation of the UART component
  *
- *  @details Detail description of the component
+ *  @details
  */
 
 /*****************************************************************************
@@ -396,6 +396,29 @@ EZ_DRV_STATUS ezUart_UpdateConfig(ezUartDrvInstance_t *inst)
 
 /*****************************************************************************
 * Local functions
+*****************************************************************************/
+
+
+/*****************************************************************************
+* Function: ezUart_PrintStatus
+*//** 
+* @brief Print the EZ_DRV_STATUS
+*
+* @details This function is activated only when DEBUG_LVL >= LVL_DEBUG
+*
+* @param[in]    status: status to be printed
+* @return       None
+*
+* @pre DEBUG_LVL >= LVL_DEBUG
+* @post None
+*
+* \b Example
+* @code
+* ezUart_PrintStatus(STATUS_ERR_ARG);
+* @endcode
+*
+* @see
+*
 *****************************************************************************/
 static void ezUart_PrintStatus(EZ_DRV_STATUS status)
 {

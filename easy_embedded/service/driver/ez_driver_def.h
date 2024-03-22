@@ -40,6 +40,9 @@
 /*****************************************************************************
 * Component Typedefs
 *****************************************************************************/
+
+/** @brief Return status of the Driver API
+ */
 typedef enum
 {
     STATUS_OK,                  /**< OK, working as expected */
@@ -52,9 +55,18 @@ typedef enum
 }EZ_DRV_STATUS;
 
 
+/** @brief Callback to receive event from the HW implementation
+ *
+ *  @param[out]  event_code: index of the HW Uart instance
+ *  @param[out]  param1: point to the first parameter. Depending on event_code
+ *  @param[out]  param2: point to the second parameter. Depending on event_code
+ *  @return      None
+ */
 typedef void (*ezDrvCallback)(uint8_t event_code, void *param1, void *param2);
 
 
+/** @brief Define a driver instance.
+ */
 struct ezDrvInstance
 {
     ezDrvCallback   calback;   /**< Callback funtion to handle the event from the HW driver */
@@ -62,9 +74,13 @@ struct ezDrvInstance
 };
 
 
+/** @brief Define a driver instance type.
+ */
 typedef struct ezDrvInstance ezDrvInstance_t;
 
 
+/** @brief Define structure holding common data of a driver
+ */
 struct ezDriverCommon
 {
     const char*     name;           /* Name of the driver instance */
@@ -82,6 +98,28 @@ struct ezDriverCommon
 /*****************************************************************************
 * Function Prototypes
 *****************************************************************************/
+
+/*****************************************************************************
+* Function: ezDriver_GetDriverFromInstance
+*//** 
+* @brief Return the driver which the instance is registered to.
+*
+* @details Helper function used by other components. THe user are not
+*          supposed to used this function
+*
+* @param[in]    inst: Instance to be register. @see ezUartDrvInstance_t
+* @return       Pointer driver if success, else NULL
+*
+* @pre None
+* @post None
+*
+* \b Example
+* @code
+* @endcode
+*
+* @see
+*
+*****************************************************************************/
 static inline void *ezDriver_GetDriverFromInstance(ezDrvInstance_t *inst)
 {
     void *drv = NULL;
@@ -94,7 +132,31 @@ static inline void *ezDriver_GetDriverFromInstance(ezDrvInstance_t *inst)
 }
 
 
-static inline bool ezDriver_IsDriverAvailable(ezDrvInstance_t *inst, struct ezDriverCommon *drv_common)
+/*****************************************************************************
+* Function: ezDriver_IsDriverAvailable
+*//** 
+* @brief Check if the driver is availabe and ready to be used
+*
+* @details Helper function used by other components. THe user are not
+*          supposed to used this function
+*
+* @param[in]    inst: Driver instance
+* @param[in]    drv_common: Pointer to the common structure of the driver.
+*               @see ezDriverCommon
+* @return       true is the driver is available, else false
+*
+* @pre None
+* @post None
+*
+* \b Example
+* @code
+* @endcode
+*
+* @see
+*
+*****************************************************************************/
+static inline bool ezDriver_IsDriverAvailable(ezDrvInstance_t *inst,
+                                              struct ezDriverCommon *drv_common)
 {
     bool ret = false;
     if(inst != NULL && drv_common != NULL)
@@ -105,7 +167,27 @@ static inline bool ezDriver_IsDriverAvailable(ezDrvInstance_t *inst, struct ezDr
 }
 
 
-static inline void ezDriver_LockDriver(ezDrvInstance_t *inst, struct ezDriverCommon *drv_common)
+/*****************************************************************************
+* Function: ezDriver_LockDriver
+*//** 
+* @brief Lock the driver. Prevent other instances use it
+*
+* @param[in]    inst: Driver instance
+* @param[in]    drv_common: Pointer to the common structure of the driver.
+* @return       None
+*
+* @pre None
+* @post None
+*
+* \b Example
+* @code
+* @endcode
+*
+* @see
+*
+*****************************************************************************/
+static inline void ezDriver_LockDriver(ezDrvInstance_t *inst,
+                                       struct ezDriverCommon *drv_common)
 {
     if(inst != NULL && drv_common != NULL)
     {
@@ -114,6 +196,25 @@ static inline void ezDriver_LockDriver(ezDrvInstance_t *inst, struct ezDriverCom
 }
 
 
+/*****************************************************************************
+* Function: ezDriver_UnlockDriver
+*//** 
+* @brief Unlock the driver.
+*
+* @param[in]    inst: Driver instance
+* @param[in]    drv_common: Pointer to the common structure of the driver.
+* @return       None
+*
+* @pre None
+* @post None
+*
+* \b Example
+* @code
+* @endcode
+*
+* @see
+*
+*****************************************************************************/
 static inline void ezDriver_UnlockDriver(struct ezDriverCommon *drv_common)
 {
     if(drv_common != NULL)

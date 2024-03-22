@@ -2,7 +2,7 @@
 # Author: Hai Nguyen
 # Name: ez_driver_lib
 # License: This file is published under the license described in LICENSE.md
-# Description: Cmake file for uart component
+# Description: Cmake file for driver component
 # ----------------------------------------------------------------------------
 
 add_library(ez_driver_lib STATIC)
@@ -21,7 +21,6 @@ set(FRAMEWORK_ROOT_DIR ${CMAKE_SOURCE_DIR}/easy_embedded)
 # Source files ---------------------------------------------------------------
 target_sources(ez_driver_lib
     PRIVATE
-        ez_driver.c
         $<$<BOOL:${ENABLE_EZ_UART}>:uart/ez_uart.c>
 )
 
