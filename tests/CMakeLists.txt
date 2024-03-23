@@ -26,8 +26,8 @@ if(ENABLE_EZ_HAL_ECHO)
     add_subdirectory(service/driver/hal_echo)
 endif()
 
-if(ENABLE_EZ_HAL_UART)
-    add_subdirectory(service/driver/hal_uart)
+if(ENABLE_EZ_UART)
+    add_subdirectory(service/driver/uart)
 endif()
 
 if(ENABLE_EZ_QUEUE)

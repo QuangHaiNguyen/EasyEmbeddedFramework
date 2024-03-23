@@ -1,43 +1,35 @@
 # ----------------------------------------------------------------------------
 # Author: Hai Nguyen
-# Name: ez_driver_lib
+# Name: ez_uart_test
 # License: This file is published under the license described in LICENSE.md
-# Description: Cmake file for driver component
+# Description: PLEASE ADD TEXT HERE
 # ----------------------------------------------------------------------------
 
-add_library(ez_driver_lib STATIC)
+add_executable(ez_uart_test)
 
 message(STATUS "**********************************************************")
-message(STATUS "* Generating ez_driver_lib library build files")
+message(STATUS "* Generating ez_uart_test build files")
 message(STATUS "**********************************************************")
-
-
-set(FRAMEWORK_ROOT_DIR ${CMAKE_SOURCE_DIR}/easy_embedded)
-
-
-# Sub directory --------------------------------------------------------------
 
 
 # Source files ---------------------------------------------------------------
-target_sources(ez_driver_lib
+target_sources(ez_uart_test
     PRIVATE
-        $<$<BOOL:${ENABLE_EZ_UART}>:uart/ez_uart.c>
+        unittest_ez_uart.c
 )
 
 
 # Definitions ----------------------------------------------------------------
-target_compile_definitions(ez_driver_lib
+target_compile_definitions(ez_uart_test
     PUBLIC
-        EZ_DRIVER_ENABLE=$<BOOL:${ENABLE_EZ_HAL_DRIVER}>
-        EZ_UART_ENABLE=$<BOOL:${ENABLE_EZ_UART}>
+        # Please add definitions here
 )
 
 
 # Include directory -----------------------------------------------------------
-target_include_directories(ez_driver_lib
+target_include_directories(ez_uart_test
     PUBLIC
-        ${CMAKE_CURRENT_LIST_DIR}
-        uart
+        # Please add private folders here
     PRIVATE
         # Please add private folders here
     INTERFACE
@@ -46,13 +38,18 @@ target_include_directories(ez_driver_lib
 
 
 # Link libraries -------------------------------------------------------------
-target_link_libraries(ez_driver_lib
+target_link_libraries(ez_uart_test
     PUBLIC
-        # Unused
+        # Please add public libraries
     PRIVATE
-        ez_utilities_lib
+        unity
+        easy_embedded_lib
     INTERFACE
         # Please add interface libraries
+)
+
+add_test(NAME ez_uart_test
+    COMMAND ez_uart_test
 )
 
 # End of file
