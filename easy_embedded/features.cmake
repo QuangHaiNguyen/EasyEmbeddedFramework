@@ -12,6 +12,7 @@ option(ENABLE_EZ_QUEUE          "Enable queue feature"                  ON)
 # Configure Service modules
 option(ENABLE_EZ_EVENT_NOTIFIER    "Enable the Event Notifier module"       ON)
 option(ENABLE_EZ_KERNEL            "Enable the Kernel service"              OFF)
+option(ENABLE_EZ_TASK_WORKER       "Enable the task worker"                 ON)
 
 # Configure application framework
 option(ENABLE_DATA_MODEL        "Enable the Event Notifier module"          ON)
