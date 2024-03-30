@@ -2,7 +2,7 @@
 # Author: Hai Nguyen
 # Name: ez_task_worker_lib
 # License: This file is published under the license described in LICENSE.md
-# Description: PLEASE ADD TEXT HERE
+# Description: CMake file for task worker component
 # ----------------------------------------------------------------------------
 
 add_library(ez_task_worker_lib STATIC)

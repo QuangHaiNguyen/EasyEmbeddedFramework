@@ -30,7 +30,8 @@ extern "C" {
 /*****************************************************************************
 * Includes
 *****************************************************************************/
-/* INCLUDE HEADER HERE */
+#include "ez_linked_list.h"
+#include "ez_queue.h"
 
 #if (EZ_TASK_WORKER_ENABLE == 1)
 
@@ -71,7 +72,6 @@ struct ezTaskWorker
 {
     struct Node node;           /**< Linked list node */
     ezQueue msg_queue;          /**< Queue containing the tasks to be executed */
-    TaskWorker_Execute execute; /**< Execute function */
 };
 
 
@@ -128,7 +128,6 @@ typedef ezReservedElement ezTaskBlock;
 *
 *****************************************************************************/
 bool ezTaskWorker_InitializeWorker(struct ezTaskWorker *worker,
-                                   TaskWorker_Execute exec_func,
                                    uint8_t *queue_buffer,
                                    uint32_t queue_buffer_size);
 

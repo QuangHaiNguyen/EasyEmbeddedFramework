@@ -31,8 +31,6 @@
 #define DEBUG_LVL   LVL_TRACE   /**< logging level */
 #define MOD_NAME    "ez_task_worker"       /**< module name */
 #include "ez_logging.h"
-#include "ez_linked_list.h"
-#include "ez_queue.h"
 #include "ez_utilities_common.h"
 #include "ez_task_worker.h"
 
@@ -63,7 +61,6 @@ static struct Node worker_list = EZ_LINKEDLIST_INIT_NODE(worker_list);
 * Public functions
 *****************************************************************************/
 bool ezTaskWorker_InitializeWorker(struct ezTaskWorker *worker,
-                                   TaskWorker_Execute exec_func,
                                    uint8_t *queue_buffer,
                                    uint32_t queue_buffer_size)
 {
@@ -72,7 +69,6 @@ bool ezTaskWorker_InitializeWorker(struct ezTaskWorker *worker,
     EZTRACE("ezTaskWorker_InitializeWorker()");
 
     if((worker != NULL)
-        && (exec_func != NULL)
         && (queue_buffer != NULL)
         && (queue_buffer_size > 0))
     {
