@@ -11,6 +11,8 @@ message(STATUS "**********************************************************")
 message(STATUS "* Generating ez_linked_list_test build files")
 message(STATUS "**********************************************************")
 
+# Source files ---------------------------------------------------------------
+include(features.cmake)
 
 # Source files ---------------------------------------------------------------
 target_sources(ez_target

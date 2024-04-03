@@ -64,7 +64,7 @@ target_link_libraries(ez_app_lib
         $<$<BOOL:${ENABLE_EZ_RPC}>:ez_rpc_lib>
         $<$<BOOL:${ENABLE_EZ_IPC}>:ez_ipc_lib>
     PRIVATE
-        # Please add private libraries
+        ez_utilities_lib
     INTERFACE
         # Please add interface libraries
 )

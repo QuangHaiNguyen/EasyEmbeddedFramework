@@ -16,7 +16,7 @@ set(FRAMEWORK_ROOT_DIR ${CMAKE_SOURCE_DIR}/easy_embedded)
 
 
 # Include --------------------------------------------------------------------
-include(features.cmake)
+# Unused
 
 
 # Sub directory --------------------------------------------------------------
