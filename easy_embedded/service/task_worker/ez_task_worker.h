@@ -15,9 +15,9 @@
 /** @file   ez_task_worker.h
  *  @author Hai Nguyen
  *  @date   29.03.2024
- *  @brief  One line description of the component
+ *  @brief  Public API of task worker component
  *
- *  @details Detail description of the component
+ *  @details
  */
 
 #ifndef _EZ_TASK_WORKER_H
@@ -38,17 +38,11 @@ extern "C" {
 /*****************************************************************************
 * Component Preprocessor Macros
 *****************************************************************************/
-#define A_MACRO     1   /**< a macro*/
+/* None */
 
 /*****************************************************************************
 * Component Typedefs
 *****************************************************************************/
-
-/** @brief Definition of function executing the tasks
- *  @return: true if a task is executed successfully, otherwise false
- */
-typedef bool (*TaskWorker_Execute)(void);
-
 
 /** @brief Definition of callback function to notify a task is finished or
  *         error occurs
@@ -56,7 +50,7 @@ typedef bool (*TaskWorker_Execute)(void);
  *  @param[out] ret_data: return data, depending on the task
  *  @return: true if a task is executed successfully, otherwise false
  */
-typedef void (*TaskWorker_Callback)(uint8_t event, void *ret_data);
+typedef void (*ezTaskWorkerCallbackFunc)(uint8_t event, void *ret_data);
 
 
 /** @brief Definition of task function.
@@ -64,7 +58,7 @@ typedef void (*TaskWorker_Callback)(uint8_t event, void *ret_data);
  *  @param[in] callback: callback to notify the caller about the status of the task
  *  @return: true if a task is executed successfully, otherwise false
  */
-typedef bool (*TaskWorker_Task)(void *context, TaskWorker_Callback callback);
+typedef bool (*ezTaskWorkerTaskFunc)(void *context, ezTaskWorkerCallbackFunc callback);
 
 
 /** @brief definition of an ezTaskWorker
@@ -74,18 +68,6 @@ struct ezTaskWorker
     struct Node node;           /**< Linked list node */
     ezQueue msg_queue;          /**< Queue containing the tasks to be executed */
 };
-
-
-/** @brief definition of an Header of the message
- */
-struct ezTaskWorker_Header
-{
-    TaskWorker_Task task;
-    TaskWorker_Callback callback;
-};
-
-
-typedef ezReservedElement ezTaskMemoryBlock_t;
 
 
 /*****************************************************************************
@@ -160,8 +142,8 @@ bool ezTaskWorker_InitializeWorker(struct ezTaskWorker *worker,
 *
 *****************************************************************************/
 bool ezTaskWorker_EnqueueTask(struct ezTaskWorker *worker,
-                              TaskWorker_Task task,
-                              TaskWorker_Callback callback,
+                              ezTaskWorkerTaskFunc task,
+                              ezTaskWorkerCallbackFunc callback,
                               void *context,
                               uint32_t contex_size);
 

@@ -67,7 +67,7 @@ static int worker1_sum = 0;
 *******************************************************************************/
 static void RunAllTests(void);
 static bool worker1_sum_external(int a, int b);
-static bool worker1_sum_internal(void *context, TaskWorker_Callback callback);
+static bool worker1_sum_internal(void *context, ezTaskWorkerCallbackFunc callback);
 static void callback1(uint8_t event, void *ret_data);
 
 /******************************************************************************
@@ -148,11 +148,11 @@ static bool worker1_sum_external(int a, int b)
     contxt.a = a;
     contxt.b = b;
 
-    ezTaskWorker_EnqueueTask(&worker1, worker1_sum_internal, callback1, &contxt, sizeof(struct Worker1SumContext));
+    ezTaskWorker_EnqueueTask(&worker1, worker1_sum_internal, callback1, (void*)&contxt, sizeof(struct Worker1SumContext));
     return true;
 }
 
-static bool worker1_sum_internal(void *context, TaskWorker_Callback callback)
+static bool worker1_sum_internal(void *context, ezTaskWorkerCallbackFunc callback)
 {
     bool ret = false;
     int sum = 0;
@@ -161,7 +161,7 @@ static bool worker1_sum_internal(void *context, TaskWorker_Callback callback)
     if(sum_context != NULL && callback != NULL)
     {
         sum = sum_context->a + sum_context->b;
-        callback(WORKER1_EVENT_SUM_CMPLT, &sum);
+        callback(WORKER1_EVENT_SUM_CMPLT, (void*)&sum);
         ret = true;
     }
 

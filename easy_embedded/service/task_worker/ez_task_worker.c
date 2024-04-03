@@ -15,9 +15,9 @@
 /** @file   ez_task_worker.c
  *  @author Hai Nguyen
  *  @date   29.03.2024
- *  @brief  One line description of the component
+ *  @brief  Implementation of the task worker component
  *
- *  @details Detail description of the component
+ *  @details
  */
 
 /*****************************************************************************
@@ -40,17 +40,26 @@
 /*****************************************************************************
 * Component Preprocessor Macros
 *****************************************************************************/
-#define A_MACRO     1   /**< a macro*/
+/* None*/
+
 
 /*****************************************************************************
 * Component Typedefs
 *****************************************************************************/
-struct foo
+
+/** @brief definition of a task block
+ */
+typedef ezReservedElement ezTaskBlock_t;
+
+
+/** @brief definition of common data that every task block must have.
+ */
+struct ezTaskBlockCommon
 {
-    TaskWorker_Task task;
-    TaskWorker_Callback callback;
-    void *data;
+    ezTaskWorkerTaskFunc task;          /* Task that will be executed by the worker */
+    ezTaskWorkerCallbackFunc callback;  /* Callback function to notify the result of the task execution */
 };
+
 
 /*****************************************************************************
 * Component Variable Definitions
@@ -94,92 +103,59 @@ bool ezTaskWorker_InitializeWorker(struct ezTaskWorker *worker,
 }
 
 
-ezTaskMemoryBlock_t ezTaskWorker_GetTaskBlock(struct ezTaskWorker *worker,
-                                      void **data,
-                                      uint32_t data_size)
-{
-    ezTaskMemoryBlock_t element = NULL;
-    if(worker != NULL && data != NULL && data_size > 0)
-    {
-        element = (ezTaskMemoryBlock_t)ezQueue_ReserveElement(&worker->msg_queue, data, data_size);
-    }
-    return element;
-}
-
-
-bool ezTaskWorker_ReleaseTaskBlock(struct ezTaskWorker *worker,
-                                   ezTaskMemoryBlock_t task_block)
-{
-    bool bRet = false;
-    ezSTATUS status = ezFAIL;
-
-    if(worker != NULL && task_block != NULL)
-    {
-        status = ezQueue_ReleaseReservedElement(&worker->msg_queue,
-                                                (ezReservedElement)task_block);
-        if(status == ezSUCCESS)
-        {
-            bRet = true;
-        }
-    }
-
-    return bRet;
-}
-
-
-bool ezTaskWorker_EnqueueTaskBlock(struct ezTaskWorker *worker, ezTaskMemoryBlock_t task_block)
-{
-    bool bRet = false;
-    ezSTATUS status = ezFAIL;
-
-    if(worker != NULL && task_block != NULL)
-    {
-        status = ezQueue_PushReservedElement(&worker->msg_queue,
-                                             (ezReservedElement)task_block);
-        if(status == ezSUCCESS)
-        {
-            bRet = true;
-        }
-    }
-
-    return bRet;
-}
-
 bool ezTaskWorker_EnqueueTask(struct ezTaskWorker *worker,
-                              TaskWorker_Task task,
-                              TaskWorker_Callback callback,
+                              ezTaskWorkerTaskFunc task,
+                              ezTaskWorkerCallbackFunc callback,
                               void *context,
                               uint32_t context_size)
 {
     bool bRet = false;
-    void *data = NULL;
-    struct ezTaskWorker_Header* header = NULL;
-    ezTaskMemoryBlock_t element = NULL;
+    void *buff = NULL;
+    ezTaskBlock_t task_block = NULL;
     ezSTATUS status = ezFAIL;
 
-    if(worker != NULL && task != NULL && callback != NULL)
+    EZTRACE("ezTaskWorker_EnqueueTask()");
+
+    if((worker != NULL) && (task != NULL) && (callback != NULL))
     {
-        element = (ezTaskMemoryBlock_t)ezQueue_ReserveElement(&worker->msg_queue,
-                                                              &data,
-                                                              sizeof(struct ezTaskWorker_Header) + context_size);
-        if(element != NULL && data != NULL)
+        /**The idea to store common data and context data is we reserve a buffer
+         * with the size = common size + context size. Then, the buffer is convert to
+         * ezTaskBlockCommon to store common data. After that it is offseted to the
+         * address = common address + sizeof(ezTaskBlockCommon). Then the context
+         * is copied to that address.
+         */
+        task_block = (ezTaskBlock_t)ezQueue_ReserveElement(&worker->msg_queue,
+                                                           &buff,
+                                                           sizeof(struct ezTaskBlockCommon) + context_size);
+        if(task_block != NULL && buff != NULL)
         {
-            header = (struct ezTaskWorker_Header*)data;
-            header->callback = callback;
-            header->task = task;
-            data += sizeof(struct ezTaskWorker_Header);
-            memcpy(data, context, context_size);
+            /* Set common data */
+            ((struct ezTaskBlockCommon*)buff)->callback = callback;
+            ((struct ezTaskBlockCommon*)buff)->task = task;
+
+            /* Offset the pointer */
+            buff += sizeof(struct ezTaskBlockCommon);
+
+            /* Copy context data */
+            memcpy(buff, context, context_size);
+            
             status = ezQueue_PushReservedElement(&worker->msg_queue,
-                                             (ezReservedElement)element);
+                                                 (ezReservedElement)task_block);
             if(status == ezSUCCESS)
             {
                 bRet = true;
+                EZINFO("Add new task to queue");
             }
             else
             {
                 ezQueue_ReleaseReservedElement(&worker->msg_queue,
-                                               (ezReservedElement)element);
+                                               (ezReservedElement)task_block);
+                EZERROR("Cannot push task to queue");
             }
+        }
+        else
+        {
+            EZERROR("Do not have enough memory in the queue");
         }
     }
 
@@ -189,23 +165,25 @@ bool ezTaskWorker_EnqueueTask(struct ezTaskWorker *worker,
 void ezTaskWorker_Run(void)
 {
     struct Node *it = NULL;
-    struct ezTaskWorker_Header *header = NULL;
+    struct ezTaskBlockCommon *common = NULL;
     void *context = NULL;
     struct ezTaskWorker *worker = NULL;
     ezSTATUS status = ezFAIL;
     uint32_t data_size = 0;
+
+    EZTRACE("ezTaskWorker_Run()");
 
     EZ_LINKEDLIST_FOR_EACH(it, &worker_list)
     {
         worker = EZ_LINKEDLIST_GET_PARENT_OF(it, node, struct ezTaskWorker);
         if(ezQueue_GetNumOfElement(&worker->msg_queue) > 0)
         {
-            status = ezQueue_GetFront(&worker->msg_queue, (void**)&header, &data_size);
-            if(status == ezSUCCESS && header->task != NULL)
+            status = ezQueue_GetFront(&worker->msg_queue, (void**)&common, &data_size);
+            if(status == ezSUCCESS && common->task != NULL)
             {
-                context = header;
-                context += sizeof(struct ezTaskWorker_Header);
-                header->task(context, header->callback);
+                context = common;
+                context += sizeof(struct ezTaskBlockCommon);
+                common->task(context, common->callback);
             }
             status = ezQueue_PopFront(&worker->msg_queue);
         }
