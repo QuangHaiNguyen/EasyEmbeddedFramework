@@ -60,10 +60,11 @@ typedef void (*TaskWorker_Callback)(uint8_t event, void *ret_data);
 
 
 /** @brief Definition of task function.
- *  @param[out] context: context containing data of a task
+ *  @param[in] context: context containing data of a task
+ *  @param[in] callback: callback to notify the caller about the status of the task
  *  @return: true if a task is executed successfully, otherwise false
  */
-typedef bool (*TaskWorker_Task)(void *context);
+typedef bool (*TaskWorker_Task)(void *context, TaskWorker_Callback callback);
 
 
 /** @brief definition of an ezTaskWorker
@@ -84,7 +85,7 @@ struct ezTaskWorker_Header
 };
 
 
-typedef ezReservedElement ezTaskBlock;
+typedef ezReservedElement ezTaskMemoryBlock_t;
 
 
 /*****************************************************************************
@@ -104,10 +105,9 @@ typedef ezReservedElement ezTaskBlock;
 * @details This function intitializes the task queue, add the worker to list
 *          of worker for managing
 *
-* @param[in]    worker
-* @param[in]    exec_func
-* @param[in]    queue_buffer
-* @param[in]    queue_buffer_size
+* @param[in]    worker: Worker to be initialized
+* @param[in]    queue_buffer: buffer to queue task and data
+* @param[in]    queue_buffer_size; size of the buffer
 * @return       Return true if success, otherwise false
 *
 * @pre None
@@ -115,13 +115,11 @@ typedef ezReservedElement ezTaskBlock;
 *
 * \b Example
 * @code
-* 
-* bool ExecuteTask(void); // Demonstration only
 *
 * uint8_t queue_buff[128];
 * struct ezTaskWorker worker;
 *
-* bool bResult = ezTaskWorker_InitializeWorker(&worker, ExecuteTask, queue_buff, 128);
+* bool bResult = ezTaskWorker_InitializeWorker(&worker, queue_buff, 128);
 * @endcode
 *
 * @see
@@ -131,16 +129,71 @@ bool ezTaskWorker_InitializeWorker(struct ezTaskWorker *worker,
                                    uint8_t *queue_buffer,
                                    uint32_t queue_buffer_size);
 
-ezTaskBlock ezTaskWorker_GetTaskBlock(struct ezTaskWorker *worker,
-                                      void **data,
-                                      uint32_t data_size);
+/*****************************************************************************
+* Function: ezTaskWorker_EnqueueTask
+*//** 
+* @brief Enqueue a task and its data so that they can be executed later
+*
+* @details
+*
+* @param[in]    worker: worker that will execute the task
+* @param[in]    task: pointing to the task function
+* @param[in]    callback: callback to return result of the task's execution.
+* @param[in]    context: context data of the task function. Normally it contains
+*                        the task's function parameters
+* @param[in]    contex_size: size of the context
+* @return       Return true if success, otherwise false
+*
+* @pre None
+* @post None
+*
+* \b Example
+* @code
+*
+* struct Context context;
+* struct ezTaskWorker worker;
+*
+* bool bResult = ezTaskWorker_EnqueueTask(&worker, worker_task, callback, &context, sizeof(struct Context));
+* @endcode
+*
+* @see
+*
+*****************************************************************************/
+bool ezTaskWorker_EnqueueTask(struct ezTaskWorker *worker,
+                              TaskWorker_Task task,
+                              TaskWorker_Callback callback,
+                              void *context,
+                              uint32_t contex_size);
 
-bool ezTaskWorker_ReleaseTaskBlock(struct ezTaskWorker *worker,
-                                   ezTaskBlock task_block);
 
-bool ezTaskWorker_EnqueueTaskBlock(struct ezTaskWorker *worker,
-                                   ezTaskBlock task_block);
-
+/*****************************************************************************
+* Function: ezTaskWorker_Run
+*//** 
+* @brief If no RTOS is used, this function provides the processing time to
+*        the worker
+*
+* @details This function must be called periodically to provide processing time
+*
+* @param    None
+* @return   None
+*
+* @pre None
+* @post None
+*
+* \b Example
+* @code
+*
+* //super loop
+* while(1)
+* {
+*     ezTaskWorker_Run();
+* }
+*
+* @endcode
+*
+* @see
+*
+*****************************************************************************/
 void ezTaskWorker_Run(void);
 
 #ifdef __cplusplus

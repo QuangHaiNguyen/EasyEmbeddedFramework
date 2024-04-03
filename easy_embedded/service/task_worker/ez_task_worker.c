@@ -27,6 +27,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <string.h>
 
 #define DEBUG_LVL   LVL_TRACE   /**< logging level */
 #define MOD_NAME    "ez_task_worker"       /**< module name */
@@ -44,7 +45,12 @@
 /*****************************************************************************
 * Component Typedefs
 *****************************************************************************/
-/* None */
+struct foo
+{
+    TaskWorker_Task task;
+    TaskWorker_Callback callback;
+    void *data;
+};
 
 /*****************************************************************************
 * Component Variable Definitions
@@ -76,7 +82,7 @@ bool ezTaskWorker_InitializeWorker(struct ezTaskWorker *worker,
         if(status == ezSUCCESS)
         {
             ezLinkedList_InitNode(&worker->node);
-            bRet = ezLinkedList_AppendNode(&worker_list, &worker->node);
+            bRet = EZ_LINKEDLIST_ADD_TAIL(&worker_list, &worker->node);
         }
     }
     else
@@ -88,21 +94,21 @@ bool ezTaskWorker_InitializeWorker(struct ezTaskWorker *worker,
 }
 
 
-ezTaskBlock ezTaskWorker_GetTaskBlock(struct ezTaskWorker *worker,
+ezTaskMemoryBlock_t ezTaskWorker_GetTaskBlock(struct ezTaskWorker *worker,
                                       void **data,
                                       uint32_t data_size)
 {
-    ezTaskBlock element = NULL;
+    ezTaskMemoryBlock_t element = NULL;
     if(worker != NULL && data != NULL && data_size > 0)
     {
-        element = (ezTaskBlock)ezQueue_ReserveElement(&worker->msg_queue, data, data_size);
+        element = (ezTaskMemoryBlock_t)ezQueue_ReserveElement(&worker->msg_queue, data, data_size);
     }
     return element;
 }
 
 
 bool ezTaskWorker_ReleaseTaskBlock(struct ezTaskWorker *worker,
-                                   ezTaskBlock task_block)
+                                   ezTaskMemoryBlock_t task_block)
 {
     bool bRet = false;
     ezSTATUS status = ezFAIL;
@@ -121,7 +127,7 @@ bool ezTaskWorker_ReleaseTaskBlock(struct ezTaskWorker *worker,
 }
 
 
-bool ezTaskWorker_EnqueueTaskBlock(struct ezTaskWorker *worker, ezTaskBlock task_block)
+bool ezTaskWorker_EnqueueTaskBlock(struct ezTaskWorker *worker, ezTaskMemoryBlock_t task_block)
 {
     bool bRet = false;
     ezSTATUS status = ezFAIL;
@@ -139,11 +145,52 @@ bool ezTaskWorker_EnqueueTaskBlock(struct ezTaskWorker *worker, ezTaskBlock task
     return bRet;
 }
 
+bool ezTaskWorker_EnqueueTask(struct ezTaskWorker *worker,
+                              TaskWorker_Task task,
+                              TaskWorker_Callback callback,
+                              void *context,
+                              uint32_t context_size)
+{
+    bool bRet = false;
+    void *data = NULL;
+    struct ezTaskWorker_Header* header = NULL;
+    ezTaskMemoryBlock_t element = NULL;
+    ezSTATUS status = ezFAIL;
+
+    if(worker != NULL && task != NULL && callback != NULL)
+    {
+        element = (ezTaskMemoryBlock_t)ezQueue_ReserveElement(&worker->msg_queue,
+                                                              &data,
+                                                              sizeof(struct ezTaskWorker_Header) + context_size);
+        if(element != NULL && data != NULL)
+        {
+            header = (struct ezTaskWorker_Header*)data;
+            header->callback = callback;
+            header->task = task;
+            data += sizeof(struct ezTaskWorker_Header);
+            memcpy(data, context, context_size);
+            status = ezQueue_PushReservedElement(&worker->msg_queue,
+                                             (ezReservedElement)element);
+            if(status == ezSUCCESS)
+            {
+                bRet = true;
+            }
+            else
+            {
+                ezQueue_ReleaseReservedElement(&worker->msg_queue,
+                                               (ezReservedElement)element);
+            }
+        }
+    }
+
+    return bRet;
+}
 
 void ezTaskWorker_Run(void)
 {
     struct Node *it = NULL;
     struct ezTaskWorker_Header *header = NULL;
+    void *context = NULL;
     struct ezTaskWorker *worker = NULL;
     ezSTATUS status = ezFAIL;
     uint32_t data_size = 0;
@@ -156,7 +203,9 @@ void ezTaskWorker_Run(void)
             status = ezQueue_GetFront(&worker->msg_queue, (void**)&header, &data_size);
             if(status == ezSUCCESS && header->task != NULL)
             {
-                header->task(header);
+                context = header;
+                context += sizeof(struct ezTaskWorker_Header);
+                header->task(context, header->callback);
             }
             status = ezQueue_PopFront(&worker->msg_queue);
         }

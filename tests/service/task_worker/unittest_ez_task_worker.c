@@ -42,7 +42,6 @@ TEST_GROUP(ez_task_worker);
 *******************************************************************************/
 struct Worker1SumContext
 {
-    struct ezTaskWorker_Header header;
     int a;
     int b;
 };
@@ -52,6 +51,7 @@ typedef enum
     WORKER1_EVENT_SUM_CMPLT,
     WORKER1_EVENT_ERROR,
 }WORKER1_EVENT;
+
 
 /******************************************************************************
 * Module Variable Definitions
@@ -67,7 +67,7 @@ static int worker1_sum = 0;
 *******************************************************************************/
 static void RunAllTests(void);
 static bool worker1_sum_external(int a, int b);
-static bool worker1_sum_internal(void *context);
+static bool worker1_sum_internal(void *context, TaskWorker_Callback callback);
 static void callback1(uint8_t event, void *ret_data);
 
 /******************************************************************************
@@ -85,7 +85,7 @@ TEST_SETUP(ez_task_worker)
 
     ret = ezTaskWorker_InitializeWorker(&worker1, buff1, BUFF_SIZE);
     TEST_ASSERT_EQUAL(true, ret);
-    ret = ezTaskWorker_InitializeWorker(&worker1, buff1, BUFF_SIZE);
+    ret = ezTaskWorker_InitializeWorker(&worker2, buff2, BUFF_SIZE);
     TEST_ASSERT_EQUAL(true, ret);
 }
 
@@ -97,29 +97,11 @@ TEST_TEAR_DOWN(ez_task_worker)
 
 TEST_GROUP_RUNNER(ez_task_worker)
 {
-    RUN_TEST_CASE(ez_task_worker, AddTaskToWorker1);
-    RUN_TEST_CASE(ez_task_worker, ExecuteTaskOfWorker1);
+    RUN_TEST_CASE(ez_task_worker, Test_ezTaskWorker_EnqueueTask);
 }
 
 
-TEST(ez_task_worker, AddTaskToWorker1)
-{
-    bool ret = false;
-    ret = worker1_sum_external(10, 12);
-    TEST_ASSERT_EQUAL(true, ret);
-    TEST_ASSERT_EQUAL(1, ezQueue_GetNumOfElement(&worker1.msg_queue));
-
-    ret = worker1_sum_external(4, 5);
-    TEST_ASSERT_EQUAL(true, ret);
-    TEST_ASSERT_EQUAL(2, ezQueue_GetNumOfElement(&worker1.msg_queue));
-
-    ret = worker1_sum_external(100, 200);
-    TEST_ASSERT_EQUAL(true, ret);
-    TEST_ASSERT_EQUAL(3, ezQueue_GetNumOfElement(&worker1.msg_queue));
-}
-
-
-TEST(ez_task_worker, ExecuteTaskOfWorker1)
+TEST(ez_task_worker, Test_ezTaskWorker_EnqueueTask)
 {
     bool ret = false;
     ret = worker1_sum_external(10, 12);
@@ -156,36 +138,30 @@ static void RunAllTests(void)
     RUN_TEST_GROUP(ez_task_worker);
 }
 
+
 static bool worker1_sum_external(int a, int b)
 {
+
+    struct Worker1SumContext contxt;
     bool ret = false;
 
-    struct Worker1SumContext *context = NULL;
-    ezTaskBlock block = ezTaskWorker_GetTaskBlock(&worker1, (void**)&context, sizeof(struct Worker1SumContext));
-    if(context != NULL)
-    {
-        context->a = a;
-        context->b = b;
-        context->header.callback = callback1;
-        context->header.task = worker1_sum_internal;
-        ret = ezTaskWorker_EnqueueTaskBlock(&worker1, block);
-    }
-    return ret;
+    contxt.a = a;
+    contxt.b = b;
+
+    ezTaskWorker_EnqueueTask(&worker1, worker1_sum_internal, callback1, &contxt, sizeof(struct Worker1SumContext));
+    return true;
 }
 
-static bool worker1_sum_internal(void *context)
+static bool worker1_sum_internal(void *context, TaskWorker_Callback callback)
 {
     bool ret = false;
     int sum = 0;
     struct Worker1SumContext *sum_context = (struct Worker1SumContext*)context; 
 
-    if(sum_context != NULL)
+    if(sum_context != NULL && callback != NULL)
     {
         sum = sum_context->a + sum_context->b;
-        if(sum_context->header.callback != NULL)
-        {
-            sum_context->header.callback(WORKER1_EVENT_SUM_CMPLT, &sum);
-        }
+        callback(WORKER1_EVENT_SUM_CMPLT, &sum);
         ret = true;
     }
 
