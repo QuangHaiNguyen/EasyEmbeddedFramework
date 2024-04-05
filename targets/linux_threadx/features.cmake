@@ -28,4 +28,4 @@ option(ENABLE_EZ_HAL_UART       "Enable HAL uart driver"                    OFF)
 
 # Configure 3rd Party
 option(ENABLE_LITTLE_FS         "Enable littlefs library"                   OFF)
-option(ENABLE_THREADX           "Enable threadx RTOS"                       OFF)
+option(ENABLE_THREADX           "Enable threadx RTOS"                       ON)

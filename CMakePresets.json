@@ -9,7 +9,7 @@
         {
             "name": "linux_base",
             "displayName": "Linux base configuration",
-            "description": "Base configuration using ninja generator on linux",
+            "description": "Base configuration using Makefiles",
             "generator": "Unix Makefiles",
             "hidden": true,
             "condition": {
@@ -19,6 +19,23 @@
             },
             "cacheVariables": {
                 "TARGET_PATH": "targets/linux"
+            }
+        },
+        {
+            "name": "linux_threadx",
+            "displayName": "Linux base configuration using threadx rtos",
+            "description": "Base configuration using threadx rtos",
+            "generator": "Unix Makefiles",
+            "hidden": true,
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Linux"
+            },
+            "cacheVariables": {
+                "TARGET_PATH": "targets/linux_threadx",
+                "THREADX_ARCH": "linux",
+                "THREADX_TOOLCHAIN": "gnu"
             }
         },
         {
@@ -51,6 +68,16 @@
                 "CMAKE_BUILD_TYPE": "Debug",
                 "CMAKE_C_FLAGS":"-fprofile-arcs -ftest-coverage -fPIC"
             }
+        },
+        {
+            "name": "linux_threadx_debug",
+            "displayName": "linux_threadx_debug",
+            "description": "Debug configuration using threadx rtos on linux",
+            "inherits": "linux_threadx",
+            "binaryDir": "${sourceDir}/build_linux_debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
         }
     ],
     "buildPresets": [
@@ -65,6 +92,10 @@
         {
             "name": "linux_test_debug",
             "configurePreset": "linux_test_debug"
+        },
+        {
+            "name": "linux_threadx_debug",
+            "configurePreset": "linux_threadx_debug"
         }
     ],
     "testPresets": [

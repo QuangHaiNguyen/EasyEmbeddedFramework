@@ -10,9 +10,9 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     include(CTest)
 endif()
 
-add_subdirectory(easy_embedded)
-add_subdirectory(extern)
 add_subdirectory(${TARGET_PATH})
+add_subdirectory(extern)
+add_subdirectory(easy_embedded)
 
 if(BUILD_TESTING)
     add_subdirectory(tests)

@@ -16,6 +16,13 @@ FetchContent_Declare(
     #SOURCE_DIR        ${CMAKE_SOURCE_DIR}/extern/littlefs
 )
 
+FetchContent_Declare(
+    threadx
+    GIT_REPOSITORY    https://github.com/eclipse-threadx/threadx.git
+    GIT_TAG           v6.4.1_rel
+    SOURCE_DIR        ${CMAKE_SOURCE_DIR}/extern/threadx
+)
+
 
 FetchContent_GetProperties(unity)
 if(NOT unity_POPULATED)
@@ -40,3 +47,12 @@ if(NOT littlefs_POPULATED)
 endif()
 
 add_subdirectory(littlefs)
+
+FetchContent_GetProperties(threadx)
+if(NOT threadx)
+    message(STATUS "threadx is not available, downloading...")
+    FetchContent_Populate(threadx)
+    message(STATUS "Download completed")
+endif()
+
+add_subdirectory(threadx)

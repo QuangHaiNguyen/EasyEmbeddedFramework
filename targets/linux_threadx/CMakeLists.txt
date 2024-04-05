@@ -15,6 +15,7 @@ message(STATUS "**********************************************************")
 # Include --------------------------------------------------------------------
 include(features.cmake)
 
+
 # Source files ---------------------------------------------------------------
 target_sources(ez_target
     PRIVATE
@@ -46,6 +47,7 @@ target_link_libraries(ez_target
         # Please add public libraries
     PRIVATE
         easy_embedded_lib
+        threadx
     INTERFACE
         # Please add interface libraries
 )
