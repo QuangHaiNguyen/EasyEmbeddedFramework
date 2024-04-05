@@ -2,27 +2,13 @@ cmake_minimum_required(VERSION 3.11 FATAL_ERROR)
 
 include(FetchContent)
 
+#Adding Unity test framework -------------------------------------------------
 FetchContent_Declare(
     unity
     GIT_REPOSITORY    https://github.com/ThrowTheSwitch/Unity.git
     GIT_TAG           v2.5.2
     #SOURCE_DIR        ${CMAKE_SOURCE_DIR}/extern/unity
 )
-
-FetchContent_Declare(
-    littlefs
-    GIT_REPOSITORY    https://github.com/littlefs-project/littlefs.git
-    GIT_TAG           v2.7.0
-    #SOURCE_DIR        ${CMAKE_SOURCE_DIR}/extern/littlefs
-)
-
-FetchContent_Declare(
-    threadx
-    GIT_REPOSITORY    https://github.com/eclipse-threadx/threadx.git
-    GIT_TAG           v6.4.1_rel
-    SOURCE_DIR        ${CMAKE_SOURCE_DIR}/extern/threadx
-)
-
 
 FetchContent_GetProperties(unity)
 if(NOT unity_POPULATED)
@@ -39,20 +25,42 @@ if(NOT unity_POPULATED)
 endif()
 
 
-FetchContent_GetProperties(littlefs)
-if(NOT littlefs_POPULATED)
-    message(STATUS "littlefs is not available, downloading...")
-    FetchContent_Populate(littlefs)
-    message(STATUS "Download completed")
+#Adding littlefs file system -------------------------------------------------
+    if(ENABLE_LITTLE_FS)
+    FetchContent_Declare(
+        littlefs
+        GIT_REPOSITORY    https://github.com/littlefs-project/littlefs.git
+        GIT_TAG           v2.7.0
+        #SOURCE_DIR        ${CMAKE_SOURCE_DIR}/extern/littlefs
+    )
+
+    FetchContent_GetProperties(littlefs)
+    if(NOT littlefs_POPULATED)
+        message(STATUS "littlefs is not available, downloading...")
+        FetchContent_Populate(littlefs)
+        message(STATUS "Download completed")
+    endif()
+
+    add_subdirectory(littlefs)
 endif()
 
-add_subdirectory(littlefs)
+#Adding threadx rtos ---------------------------------------------------------
+if(ENABLE_THREADX)
+    FetchContent_Declare(
+        threadx
+        GIT_REPOSITORY    https://github.com/eclipse-threadx/threadx.git
+        GIT_TAG           v6.4.1_rel
+        SOURCE_DIR        ${CMAKE_SOURCE_DIR}/extern/threadx
+    )
 
-FetchContent_GetProperties(threadx)
-if(NOT threadx)
-    message(STATUS "threadx is not available, downloading...")
-    FetchContent_Populate(threadx)
-    message(STATUS "Download completed")
+    FetchContent_GetProperties(threadx)
+    if(NOT threadx)
+        message(STATUS "threadx is not available, downloading...")
+        FetchContent_Populate(threadx)
+        message(STATUS "Download completed")
+    endif()
+
+    add_subdirectory(threadx)
 endif()
 
-add_subdirectory(threadx)
+
