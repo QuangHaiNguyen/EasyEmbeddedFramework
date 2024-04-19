@@ -83,9 +83,9 @@ TEST_SETUP(ez_task_worker)
 {
     bool ret = false;
 
-    ret = ezTaskWorker_InitializeWorker(&worker1, buff1, BUFF_SIZE);
+    ret = ezTaskWorker_CreateWorker(&worker1, buff1, BUFF_SIZE, NULL);
     TEST_ASSERT_EQUAL(true, ret);
-    ret = ezTaskWorker_InitializeWorker(&worker2, buff2, BUFF_SIZE);
+    ret = ezTaskWorker_CreateWorker(&worker2, buff2, BUFF_SIZE, NULL);
     TEST_ASSERT_EQUAL(true, ret);
 }
 
@@ -116,15 +116,15 @@ TEST(ez_task_worker, Test_ezTaskWorker_EnqueueTask)
     TEST_ASSERT_EQUAL(true, ret);
     TEST_ASSERT_EQUAL(3, ezQueue_GetNumOfElement(&worker1.msg_queue));
 
-    ezTaskWorker_Run();
+    ezTaskWorker_ExecuteTaskNoRTOS();
     TEST_ASSERT_EQUAL(22, worker1_sum);
     TEST_ASSERT_EQUAL(2, ezQueue_GetNumOfElement(&worker1.msg_queue));
 
-    ezTaskWorker_Run();
+    ezTaskWorker_ExecuteTaskNoRTOS();
     TEST_ASSERT_EQUAL(9, worker1_sum);
     TEST_ASSERT_EQUAL(1, ezQueue_GetNumOfElement(&worker1.msg_queue));
 
-    ezTaskWorker_Run();
+    ezTaskWorker_ExecuteTaskNoRTOS();
     TEST_ASSERT_EQUAL(300, worker1_sum);
     TEST_ASSERT_EQUAL(0, ezQueue_GetNumOfElement(&worker1.msg_queue));
 }
@@ -148,7 +148,11 @@ static bool worker1_sum_external(int a, int b)
     contxt.a = a;
     contxt.b = b;
 
-    ezTaskWorker_EnqueueTask(&worker1, worker1_sum_internal, callback1, (void*)&contxt, sizeof(struct Worker1SumContext));
+    ezTaskWorker_EnqueueTask(&worker1,
+                             worker1_sum_internal,
+                             callback1,
+                             (void*)&contxt,
+                             sizeof(struct Worker1SumContext), 0);
     return true;
 }
 

@@ -18,9 +18,9 @@ if(ENABLE_EZ_EVENT_NOTIFIER)
     add_subdirectory(service/event_notifier)
 endif()
 
-#if(ENABLE_EZ_TASK_WORKER)
-#    add_subdirectory(service/task_worker)
-#endif()
+if(ENABLE_EZ_TASK_WORKER)
+    add_subdirectory(service/task_worker)
+endif()
 
 if(ENABLE_EZ_KERNEL)
     add_subdirectory(service/kernel)

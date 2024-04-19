@@ -42,9 +42,9 @@ extern "C" {
 /*****************************************************************************
 * Component Preprocessor Macros
 *****************************************************************************/
-#define EZ_THREAD_WAIT_NO       0x00
-#define EZ_THREAD_WAIT_FOREVER  0xFFFFFFFF
-#define EZ_EVENT_TASK_AVAIL     0x01
+#define EZ_THREAD_WAIT_NO       0x00        /* Thread does not wait for event, semaphore */
+#define EZ_THREAD_WAIT_FOREVER  0xFFFFFFFF  /* Thread waits for event, semaphore forever */
+#define EZ_EVENT_TASK_AVAIL     0x01        /* Task avaialble event */
 
 #if (EZ_THREADX_PORT_ENABLE == 1)
 #define INIT_THREAD_FUNCTIONS(worker_name) \
@@ -65,20 +65,23 @@ extern "C" {
         }\
     }\
     static void worker_name##_thread_body(void)
+
+#define INIT_WORKER(name, worker_sleep_ticks, worker_priority, worker_stack_size) \
+    struct ezTaskWorker name =\
+    {\
+        .worker_name = #name,\
+        .sleep_ticks = worker_sleep_ticks,\
+        .priority = worker_priority,\
+        .stack_size = worker_stack_size,\
+    }
 #else
     #define INIT_THREAD_FUNCTIONS(worker_name)
     #define GET_THREAD_FUNC(worker_name)
     #define THREAD_FUNC(worker_name)
+    #define INIT_WORKER(name, worker_sleep_ticks, worker_priority, worker_stack_size)
 #endif
 
-#define INIT_WORKER(name, worker_sleep_ticks, worker_priority, worker_stack_size) \
-struct ezTaskWorker name =\
-{\
-    .worker_name = #name,\
-    .sleep_ticks = worker_sleep_ticks,\
-    .priority = worker_priority,\
-    .stack_size = worker_stack_size,\
-}\
+
 
 /*****************************************************************************
 * Component Typedefs

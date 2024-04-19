@@ -70,6 +70,7 @@ static struct ezTaskWorkerThreadInterfaces *rtos_interfaces = NULL;
 * Function Definitions
 *****************************************************************************/
 
+#if (EZ_THREADX_PORT_ENABLE == 1)
 /*****************************************************************************
 * Function: ezTaskWorker_CheckRtosInterfaceSanity
 *//** 
@@ -91,6 +92,7 @@ static struct ezTaskWorkerThreadInterfaces *rtos_interfaces = NULL;
 *
 *****************************************************************************/
 static bool ezTaskWorker_CheckRtosInterfaceSanity(struct ezTaskWorkerThreadInterfaces *rtos_interfaces);
+#endif
 
 /*****************************************************************************
 * Public functions
@@ -104,19 +106,21 @@ bool ezTaskWorker_CreateWorker(struct ezTaskWorker *worker,
     ezSTATUS status = ezFAIL;
     EZTRACE("ezTaskWorker_CreateWorker()");
 
-    if((worker != NULL)
-        && (rtos_interfaces != NULL))
+    if(worker != NULL)
     {
         status = ezQueue_CreateQueue(&worker->msg_queue, queue_buffer, queue_buffer_size);
         if(status == ezSUCCESS)
         {
 #if (EZ_THREADX_PORT_ENABLE == 1)
-            bRet = rtos_interfaces->create_event(worker);
-            bRet &= rtos_interfaces->create_semaphore(worker);
-            bRet &= rtos_interfaces->create_thread(worker, thread_func);
+            if(rtos_interfaces != NULL)
+            {
+                bRet = rtos_interfaces->create_event(worker);
+                bRet &= rtos_interfaces->create_semaphore(worker);
+                bRet &= rtos_interfaces->create_thread(worker, thread_func);
+            }
 #else
             ezLinkedList_InitNode(&worker->node);
-            bRet &= EZ_LINKEDLIST_ADD_TAIL(&worker_list, &worker->node);
+            bRet = EZ_LINKEDLIST_ADD_TAIL(&worker_list, &worker->node);
 #endif
         }
     }
@@ -128,6 +132,7 @@ bool ezTaskWorker_CreateWorker(struct ezTaskWorker *worker,
     return bRet;
 }
 
+#if (EZ_THREADX_PORT_ENABLE == 1)
 bool ezTaskWorker_SetRtosInterface(struct ezTaskWorkerThreadInterfaces *interfaces)
 {
     bool ret = false;
@@ -139,7 +144,7 @@ bool ezTaskWorker_SetRtosInterface(struct ezTaskWorkerThreadInterfaces *interfac
     }
     return ret;
 }
-
+#endif
 
 bool ezTaskWorker_EnqueueTask(struct ezTaskWorker *worker,
                               ezTaskWorkerTaskFunc task,
@@ -298,6 +303,8 @@ void ezTaskWorker_ExecuteTask(struct ezTaskWorker *worker, uint32_t ticks_to_wai
 /*****************************************************************************
 * Local functions
 *****************************************************************************/
+
+#if (EZ_THREADX_PORT_ENABLE == 1)
 static bool ezTaskWorker_CheckRtosInterfaceSanity(struct ezTaskWorkerThreadInterfaces *rtos_interfaces)
 {
     bool ret = false;
@@ -316,6 +323,7 @@ static bool ezTaskWorker_CheckRtosInterfaceSanity(struct ezTaskWorkerThreadInter
 
     return ret;
 }
+#endif
 
 #endif /* EZ_TASK_WORKER_ENABLE == 1 */
 /* End of file*/
