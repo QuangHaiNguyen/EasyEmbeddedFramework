@@ -1,0 +1,42 @@
+name: Github Linux Build
+
+on:
+  push:
+    branches: [ "**" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Configure linux_threadx_debug
+      working-directory: ${{github.workspace}}
+      run: cmake --preset=linux_threadx_debug
+
+    - name: Build linux_threadx_debug
+      run: cmake --build --preset=linux_threadx_debug
+
+    - name: Configure linux_test_debug
+      working-directory: ${{github.workspace}}
+      run: cmake --preset=linux_test_debug
+
+    - name: Build linux_test_debug
+      run: cmake --build --preset=linux_test_debug
+
+    - name: Configure linux_debug
+      working-directory: ${{github.workspace}}
+      run: cmake --preset=linux_debug
+
+    - name: Build linux_test
+      run: cmake --build --preset=linux_debug
+  
+    - name: Configure linux_release
+      working-directory: ${{github.workspace}}
+      run: cmake --preset=linux_release
+
+    - name: Build linux_release
+      run: cmake --build --preset=linux_release
