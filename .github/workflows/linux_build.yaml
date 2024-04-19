@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  build-multiple-configurations:
     runs-on: ubuntu-latest
 
     steps:

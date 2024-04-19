@@ -18,7 +18,7 @@ if(ENABLE_EZ_EVENT_NOTIFIER)
     add_subdirectory(service/event_notifier)
 endif()
 
-if(ENABLE_EZ_TASK_WORKER)
+if(ENABLE_EZ_TASK_WORKER AND NOT ENABLE_THREADX)
     add_subdirectory(service/task_worker)
 endif()
 
