@@ -33,16 +33,150 @@ extern "C" {
 #include "ez_linked_list.h"
 #include "ez_queue.h"
 
+#if (EZ_THREADX_PORT_ENABLE == 1)
+#include "tx_api.h"
+#endif
+
 #if (EZ_TASK_WORKER_ENABLE == 1)
 
 /*****************************************************************************
 * Component Preprocessor Macros
 *****************************************************************************/
-/* None */
+#define EZ_THREAD_WAIT_NO       0x00
+#define EZ_THREAD_WAIT_FOREVER  0xFFFFFFFF
+#define EZ_EVENT_TASK_AVAIL     0x01
+
+#if (EZ_THREADX_PORT_ENABLE == 1)
+#define INIT_THREAD_FUNCTIONS(worker_name) \
+    static void worker_name##_thread(ULONG thread_input);\
+    static void worker_name##_thread_body(void);\
+
+#define GET_THREAD_FUNC(worker_name) \
+    worker_name##_thread\
+
+#define THREAD_FUNC(worker_name) \
+    static void worker_name##_thread(ULONG thread_input)\
+    {\
+        while(1)\
+        {\
+            worker_name##_thread_body();\
+            if(worker_name.sleep_ticks > 0)\
+            { tx_thread_sleep(worker_name.sleep_ticks); }\
+        }\
+    }\
+    static void worker_name##_thread_body(void)
+#else
+    #define INIT_THREAD_FUNCTIONS(worker_name)
+    #define GET_THREAD_FUNC(worker_name)
+    #define THREAD_FUNC(worker_name)
+#endif
+
+#define INIT_WORKER(name, worker_sleep_ticks, worker_priority, worker_stack_size) \
+struct ezTaskWorker name =\
+{\
+    .worker_name = #name,\
+    .sleep_ticks = worker_sleep_ticks,\
+    .priority = worker_priority,\
+    .stack_size = worker_stack_size,\
+}\
 
 /*****************************************************************************
 * Component Typedefs
 *****************************************************************************/
+
+/** @brief definition of an ezTaskWorker
+ */
+struct ezTaskWorker
+{
+    struct Node node;               /**< Linked list node */
+    ezQueue msg_queue;              /**< Queue containing the tasks to be executed */
+    char* worker_name;              /**< Name of the worker */
+#if (EZ_THREADX_PORT_ENABLE == 1)
+    uint8_t priority;               /**< Priority of the worker thread, the value must match the number of the activated RTOS */
+    uint32_t stack_size;            /**< Stask size of the worker thread, in bytes */
+    uint32_t sleep_ticks;           /**< Number of tick the thread must sleep before being activated again */
+    TX_THREAD thread;               /**< ThreadX thread */
+    TX_SEMAPHORE sem;               /**< ThreadX semaphore */
+    TX_EVENT_FLAGS_GROUP events;    /**< ThreadX event */
+#endif /* EZ_THREADX_PORT_ENABLE == 1 */
+};
+
+
+#if (EZ_THREADX_PORT_ENABLE == 1)
+/** @brief definition of an ezTaskWorkerCreateThread.
+ *  @param[in]  worker: pointer to the worker 
+ *  @param[in]  thread_func; pointer to the RTOS thread function
+ *  @return     true if success, else false
+ */
+typedef bool (*ezTaskWorkerCreateThread)(struct ezTaskWorker *worker,
+                                         void *thread_func);
+
+
+/** @brief definition of an ezTaskWorkerCreateSemaphore
+ *  @param[in]  worker: pointer to the worker 
+ *  @return     true if success, else false
+ */
+typedef bool (*ezTaskWorkerCreateSemaphore) (struct ezTaskWorker *worker);
+
+
+/** @brief definition of an ezTaskWorkerGiveSemaphore
+ *  @param[in]  worker: pointer to the worker 
+ *  @return     true if success, else false
+ */
+typedef bool (*ezTaskWorkerGiveSemaphore)   (struct ezTaskWorker *worker);
+
+
+/** @brief definition of an ezTaskWorkerTakeSemaphore
+ *  @param[in]  worker: pointer to the worker
+ *  @param[in]  tick_to_wait: number of tick to wait for the semaphore.
+ *                            EZ_THREAD_WAIT_NO: do not wait for semaphore
+ *                            EZ_THREAD_WAIT_FOREVER: wait forever
+ *  @return     true if success, else false
+ */
+typedef bool (*ezTaskWorkerTakeSemaphore)(struct ezTaskWorker *worker, uint32_t tick_to_wait);
+
+
+/** @brief definition of an ezTaskWorkerCreateEvent
+ *  @param[in]  worker: pointer to the worker
+ *  @return     true if success, else false
+ */
+typedef bool (*ezTaskWorkerCreateEvent)(struct ezTaskWorker *worker);
+
+
+/** @brief definition of an ezTaskWorkerSetEvent
+ *  @param[in]  worker: pointer to the worker
+ *  @param[in]  events: event to set. Supported event: EZ_EVENT_TASK_AVAIL
+ *  @return     true if success, else false
+ */
+typedef bool (*ezTaskWorkerSetEvent)(struct ezTaskWorker *worker, uint32_t events);
+
+
+/** @brief definition of an ezTaskWorkerGetEvent
+ *  @param[in]  worker: pointer to the worker
+ *  @param[in]  events: event to get. Supported event: EZ_EVENT_TASK_AVAIL
+ *  @param[in]  tick_to_wait: number of tick to wait for the event.
+ *                            EZ_THREAD_WAIT_NO: do not wait for event
+ *                            EZ_THREAD_WAIT_FOREVER: wait forever
+ *  @return     true if success, else false
+ */
+typedef bool (*ezTaskWorkerGetEvent)(struct ezTaskWorker *worker, uint32_t events, uint32_t tick_to_wait);
+
+
+/** @brief Definition of the interfaces that RTOS porting
+ *         must follow to let task worker running with RTOS
+ */
+struct ezTaskWorkerThreadInterfaces
+{
+    ezTaskWorkerCreateThread    create_thread;      /**< Create thread function pointer */
+    ezTaskWorkerCreateSemaphore create_semaphore;   /**< Create semaphore function pointer */
+    ezTaskWorkerGiveSemaphore   give_semaphore;     /**< Give semaphore function pointer */
+    ezTaskWorkerTakeSemaphore   take_semaphore;     /**< Take semaphore function pointer */
+    ezTaskWorkerCreateEvent     create_event;       /**< Create event function pointer */
+    ezTaskWorkerSetEvent        set_events;         /**< Set event function pointer */
+    ezTaskWorkerGetEvent        get_events;         /**< Get event function pointer */
+};
+#endif
+
 
 /** @brief Definition of callback function to notify a task is finished or
  *         error occurs
@@ -61,15 +195,6 @@ typedef void (*ezTaskWorkerCallbackFunc)(uint8_t event, void *ret_data);
 typedef bool (*ezTaskWorkerTaskFunc)(void *context, ezTaskWorkerCallbackFunc callback);
 
 
-/** @brief definition of an ezTaskWorker
- */
-struct ezTaskWorker
-{
-    struct Node node;           /**< Linked list node */
-    ezQueue msg_queue;          /**< Queue containing the tasks to be executed */
-};
-
-
 /*****************************************************************************
 * Component Variable Definitions
 *****************************************************************************/
@@ -80,16 +205,18 @@ struct ezTaskWorker
 *****************************************************************************/
 
 /*****************************************************************************
-* Function: ezTaskWorker_InitializeWorker
+* Function: ezTaskWorker_CreateWorker
 *//** 
-* @brief Initialize a TaskWorker
+* @brief Create a Task Worker
 *
-* @details This function intitializes the task queue, add the worker to list
-*          of worker for managing
+* @details This function create the task queue, add the worker to list
+*          of worker for managing. If an RTOS is activated, it will create a
+*          thread, a semephore, and an event group of the worker.
 *
 * @param[in]    worker: Worker to be initialized
 * @param[in]    queue_buffer: buffer to queue task and data
 * @param[in]    queue_buffer_size; size of the buffer
+* @param[in]    thread_func: pointer to the RTOS function. Set to NULL if no RTOS is used.
 * @return       Return true if success, otherwise false
 *
 * @pre None
@@ -107,9 +234,40 @@ struct ezTaskWorker
 * @see
 *
 *****************************************************************************/
-bool ezTaskWorker_InitializeWorker(struct ezTaskWorker *worker,
-                                   uint8_t *queue_buffer,
-                                   uint32_t queue_buffer_size);
+bool ezTaskWorker_CreateWorker(struct ezTaskWorker *worker,
+                               uint8_t *queue_buffer,
+                               uint32_t queue_buffer_size,
+                               void *thread_func);
+
+
+#if (EZ_THREADX_PORT_ENABLE == 1)
+/*****************************************************************************
+* Function: ezTaskWorker_SetRtosInterface
+*//** 
+* @brief Provide the porting RTOS interface so that the task workers can run
+*        with RTOS
+*
+* @details Check er_threadx_port.h and .c
+*
+* @param[in]    interfaces: pointer to the interfaces
+* @return       Return true if success, otherwise false
+*
+* @pre RTOS must be initialized. See ezThreadXPort_Init
+* @post None
+*
+* \b Example
+* @code
+*
+* struct ezTaskWorkerThreadInterfaces *threadx_interfaces = NULL;
+* threadx_interfaces = ezThreadXPort_GetInterface();
+* (void)ezTaskWorker_SetRtosInterface(threadx_interfaces);
+* @endcode
+*
+* @see ezThreadXPort_Init
+*
+*****************************************************************************/
+bool ezTaskWorker_SetRtosInterface(struct ezTaskWorkerThreadInterfaces *interfaces);
+#endif
 
 /*****************************************************************************
 * Function: ezTaskWorker_EnqueueTask
@@ -145,11 +303,11 @@ bool ezTaskWorker_EnqueueTask(struct ezTaskWorker *worker,
                               ezTaskWorkerTaskFunc task,
                               ezTaskWorkerCallbackFunc callback,
                               void *context,
-                              uint32_t contex_size);
-
+                              uint32_t context_size,
+                              uint32_t ticks_to_wait);
 
 /*****************************************************************************
-* Function: ezTaskWorker_Run
+* Function: ezTaskWorker_ExecuteTaskNoRTOS
 *//** 
 * @brief If no RTOS is used, this function provides the processing time to
 *        the worker
@@ -168,7 +326,7 @@ bool ezTaskWorker_EnqueueTask(struct ezTaskWorker *worker,
 * //super loop
 * while(1)
 * {
-*     ezTaskWorker_Run();
+*     ezTaskWorker_ExecuteTaskNoRTOS();
 * }
 *
 * @endcode
@@ -176,7 +334,43 @@ bool ezTaskWorker_EnqueueTask(struct ezTaskWorker *worker,
 * @see
 *
 *****************************************************************************/
-void ezTaskWorker_Run(void);
+void ezTaskWorker_ExecuteTaskNoRTOS(void);
+
+
+#if (EZ_THREADX_PORT_ENABLE == 1)
+/*****************************************************************************
+* Function: ezTaskWorker_ExecuteTask
+*//** 
+* @brief This function is call within the THREAD_FUNC to let the worker execute
+*        available task
+*
+* @details This function is used when RTOS is activated
+*
+* @param[in]    worker: pointer to the worker which execute the task
+* @param[in]    ticks_to_wait: number of tick to wait for task available
+*               event (EZ_EVENT_TASK_AVAIL) and to wait for semaphore available.
+*               Use EZ_THREAD_WAIT_NO to not to wait or EZ_THREAD_WAIT_FOREVER to
+*               wait unti the event and semaphore available
+* @return       None
+*
+* @pre worker is created by ezTaskWorker_CreateWorker and RTOS interface is set
+* @post None
+*
+* \b Example
+* @code
+*
+* THREAD_FUNC(worker1)
+* {
+*     ezTaskWorker_ExecuteTask(&worker1, EZ_THREAD_WAIT_FOREVER);
+* }
+*
+* @endcode
+*
+* @see ezTaskWorker_CreateWorker, ezTaskWorker_SetRtosInterface
+*
+*****************************************************************************/
+void ezTaskWorker_ExecuteTask(struct ezTaskWorker *worker, uint32_t ticks_to_wait);
+#endif
 
 #ifdef __cplusplus
 }

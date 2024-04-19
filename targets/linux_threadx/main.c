@@ -33,16 +33,22 @@
 * Includes
 *******************************************************************************/
 #include <stdio.h>
+#include <stdlib.h>
+
+
+#define DEBUG_LVL   LVL_TRACE   /**< logging level */
+#define MOD_NAME    "main"       /**< module name */
+#include "ez_logging.h"
 #include "ez_easy_embedded.h"
-#include "tx_api.h"
+#include "ez_task_worker.h"
+#include "ez_threadx_port.h"
 
 /******************************************************************************
 * Module Preprocessor Macros
 *******************************************************************************/
-#define DEMO_STACK_SIZE 1024
-#define DEMO_BYTE_POOL_SIZE 9120
-#define DEMO_BLOCK_POOL_SIZE 100
-#define DEMO_QUEUE_SIZE 100
+#define BUFF_SIZE   256
+#define PRIORITY    10
+#define STACK_SIZE  512
 
 /******************************************************************************
 * Module Typedefs
@@ -52,27 +58,37 @@
 /******************************************************************************
 * Module Variable Definitions
 *******************************************************************************/
-TX_THREAD thread_0;
-TX_THREAD thread_1;
+typedef struct
+{
+    int a;
+    int b;
+}Worker1_SumContext;
+
+static struct ezTaskWorkerThreadInterfaces *threadx_interfaces = NULL;
+static INIT_WORKER(worker1, 0, PRIORITY, STACK_SIZE);
+static INIT_WORKER(worker2, 200, PRIORITY, STACK_SIZE);
+static uint8_t buff2[BUFF_SIZE] = {0};
+static uint8_t buff1[BUFF_SIZE] = {0};
 
 /******************************************************************************
 * Function Definitions
 *******************************************************************************/
-TX_BYTE_POOL byte_pool_0;
-TX_BLOCK_POOL block_pool_0;
+INIT_THREAD_FUNCTIONS(worker1);
+INIT_THREAD_FUNCTIONS(worker2);
+
+static bool worker1_sum(int a, int b,  ezTaskWorkerCallbackFunc callback);
+static bool worker1_sum_intern(void *context, ezTaskWorkerCallbackFunc callback);
+static void worker2_callback(uint8_t event, void *ret_data);
 
 /******************************************************************************
 * External functions
 *******************************************************************************/
-void thread_0_entry(ULONG thread_input);
-void thread_1_entry(ULONG thread_input);
-void tx_application_define(void *first_unused_memory);
-
 void main(void)
 {
     /* Enter the ThreadX kernel. */
     tx_kernel_enter();
 }
+
 
 /******************************************************************************
 * Internal functions
@@ -80,66 +96,97 @@ void main(void)
 /* Define what the initial system looks like. */
 void tx_application_define(void *first_unused_memory)
 {
+    bool ret = false;
 
     ezEasyEmbedded_Initialize();
-
-    CHAR *pointer;
-
-    /* Create a byte memory pool from which to allocate the thread stacks. */
-    tx_byte_pool_create(&byte_pool_0, "byte pool 0", first_unused_memory,
-        DEMO_BYTE_POOL_SIZE);
-
-    /* Put system definition stuff in here, e.g., thread creates and other assorted
-        create information. */
-
-    /* Allocate the stack for thread 0. */
-    tx_byte_allocate(&byte_pool_0, &pointer, DEMO_STACK_SIZE, TX_NO_WAIT);
-
-    /* Create the main thread. */
-    tx_thread_create(&thread_0, "thread 0", thread_0_entry, 0,
-        pointer, DEMO_STACK_SIZE,
-        1, 1, TX_NO_TIME_SLICE, TX_AUTO_START);
-
-    /* Allocate the stack for thread 1. */
-    tx_byte_allocate(&byte_pool_0, &pointer, DEMO_STACK_SIZE, TX_NO_WAIT);
-
-    /* Create threads 1 and 2. These threads pass information through a ThreadX
-        message queue. It is also interesting to note that these threads have a time
-        slice. */
-    tx_thread_create(&thread_1, "thread 1", thread_1_entry, 1,
-        pointer, DEMO_STACK_SIZE,
-        16, 16, 4, TX_AUTO_START);
-}
-
-
-/* Define the test threads. */
-void thread_0_entry(ULONG thread_input)
-{
-    UINT status;
-
-
-    /* This thread simply sits in while-forever-sleep loop. */
-    while(1)
+    ezThreadXPort_Init(first_unused_memory);
+    threadx_interfaces = ezThreadXPort_GetInterface();
+    ret = (threadx_interfaces != NULL);
+    if(ret == true)
     {
-        printf("thread 0\n");
-        /* Sleep for 10 ticks. */
-        tx_thread_sleep(10);
+        ret = ezTaskWorker_SetRtosInterface(threadx_interfaces);
+        if(ret == false)
+        {
+            EZERROR("Set interface failed");
+        }
+    }
+
+    if(ret == true)
+    {
+        ret = ezTaskWorker_CreateWorker(&worker1,
+                                        buff1,
+                                        BUFF_SIZE,
+                                        GET_THREAD_FUNC(worker1));
+
+        ret &= ezTaskWorker_CreateWorker(&worker2,
+                                         buff2,
+                                         BUFF_SIZE,
+                                         GET_THREAD_FUNC(worker2));
     }
 }
 
 
-void thread_1_entry(ULONG thread_input)
+THREAD_FUNC(worker1)
 {
-    UINT status;
+    ezTaskWorker_ExecuteTask(&worker1, EZ_THREAD_WAIT_FOREVER);
+}
 
-
-    /* This thread simply sends messages to a queue shared by thread 2. */
-    while(1)
+THREAD_FUNC(worker2)
+{
+    bool ret = worker1_sum(rand() % 255, rand() % 255, worker2_callback);
+    if(ret == true)
     {
-        printf("thread 1\n");
-        /* Sleep for 10 ticks. */
-        tx_thread_sleep(50);
+        EZINFO("Call sum service success");
     }
 }
+
+
+static bool worker1_sum(int a, int b, ezTaskWorkerCallbackFunc callback)
+{
+    bool ret = false;
+    Worker1_SumContext context;
+    context.a = a;
+    context.b = b;
+
+    ret = ezTaskWorker_EnqueueTask(&worker1,
+                                   worker1_sum_intern,
+                                   callback,
+                                   (void*)&context,
+                                   sizeof(context),
+                                   EZ_THREAD_WAIT_FOREVER);
+    return ret;
+}
+
+static bool worker1_sum_intern(void *context, ezTaskWorkerCallbackFunc callback)
+{
+    bool ret = false;
+    int sum = 0;
+    Worker1_SumContext *sum_context = (Worker1_SumContext *)context;
+    if(sum_context != NULL && callback != NULL)
+    {
+        sum = sum_context->a + sum_context->b;
+        callback(0, &sum);
+        ret = true;
+    }
+
+    return true;
+}
+
+static void worker2_callback(uint8_t event, void *ret_data)
+{
+    switch (event)
+    {
+    case 0:
+        if(ret_data != NULL)
+        {
+            EZINFO("sum = %d", *(int*)ret_data);
+        }
+        break;
+    
+    default:
+        break;
+    }
+}
+
 /* End of file*/
 

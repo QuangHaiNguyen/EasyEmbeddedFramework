@@ -18,6 +18,7 @@ set(FRAMEWORK_ROOT_DIR ${CMAKE_SOURCE_DIR}/easy_embedded)
 # Source files ---------------------------------------------------------------
 target_sources(ez_task_worker_lib
     PRIVATE
+        $<$<BOOL:${ENABLE_THREADX}>:threadx_port/ez_threadx_port.c>
         ez_task_worker.c
 )
 
@@ -26,6 +27,7 @@ target_sources(ez_task_worker_lib
 target_compile_definitions(ez_task_worker_lib
     PUBLIC
         EZ_TASK_WORKER_ENABLE=$<BOOL:${ENABLE_EZ_TASK_WORKER}>
+        EZ_THREADX_PORT_ENABLE=$<BOOL:${ENABLE_THREADX}>
 )
 
 
@@ -33,8 +35,9 @@ target_compile_definitions(ez_task_worker_lib
 target_include_directories(ez_task_worker_lib
     PUBLIC
         ${CMAKE_CURRENT_LIST_DIR}
+        $<$<BOOL:${ENABLE_THREADX}>:${CMAKE_CURRENT_LIST_DIR}/threadx_port>
     PRIVATE
-        # Please add private folders here
+        #
     INTERFACE
         # Please add interface folders here
 )
@@ -46,6 +49,7 @@ target_link_libraries(ez_task_worker_lib
         # Please add public libraries
     PRIVATE
         ez_utilities_lib
+        $<$<BOOL:${ENABLE_THREADX}>:threadx>
     INTERFACE
         # Please add interface libraries
 )
