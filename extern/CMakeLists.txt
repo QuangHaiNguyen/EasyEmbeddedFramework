@@ -63,4 +63,34 @@ if(ENABLE_THREADX)
     add_subdirectory(threadx)
 endif()
 
+#Adding FreeRTOS -------------------------------------------------------------
+if(ENABLE_FREERTOS)
+    FetchContent_Declare(
+        freertos_kernel
+        GIT_REPOSITORY    https://github.com/FreeRTOS/FreeRTOS-Kernel.git
+        GIT_TAG           V11.0.1
+        SOURCE_DIR        ${CMAKE_SOURCE_DIR}/extern/freertos
+    )
+
+    FetchContent_GetProperties(freertos_kernel)
+    if(NOT freertos_kernel)
+        message(STATUS "freertos is not available, downloading...")
+        FetchContent_Populate(freertos_kernel)
+        message(STATUS "freertos completed")
+    endif()
+
+    add_library(freertos_config INTERFACE)
+
+    target_include_directories(freertos_config SYSTEM
+    INTERFACE
+        ${CMAKE_SOURCE_DIR}/targets/linux_freertos/
+    )
+
+    target_compile_definitions(freertos_config
+    INTERFACE
+        projCOVERAGE_TEST=0
+)
+
+    add_subdirectory(freertos)
+endif()
 

@@ -11,3 +11,4 @@ tools/template_generator/__pycache__/
 Testing/
 coverage/
 extern/threadx/
+extern/freertos

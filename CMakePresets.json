@@ -39,6 +39,23 @@
             }
         },
         {
+            "name": "linux_freertos",
+            "displayName": "Linux base configuration using freertos",
+            "description": "Base configuration using freertos",
+            "generator": "Unix Makefiles",
+            "hidden": true,
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Linux"
+            },
+            "cacheVariables": {
+                "TARGET_PATH": "targets/linux_freertos",
+                "FREERTOS_HEAP": "4",
+                "FREERTOS_PORT": "GCC_POSIX"
+            }
+        },
+        {
             "name": "linux_debug",
             "displayName": "linux_debug",
             "description": "Debug configuration using ninja generator on linux",
@@ -78,6 +95,16 @@
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug"
             }
+        },
+        {
+            "name": "linux_freertos_debug",
+            "displayName": "linux_freertos_debug",
+            "description": "Debug configuration using freertos on linux",
+            "inherits": "linux_freertos",
+            "binaryDir": "${sourceDir}/build_linux_freertos_debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
         }
     ],
     "buildPresets": [
@@ -96,6 +123,10 @@
         {
             "name": "linux_threadx_debug",
             "configurePreset": "linux_threadx_debug"
+        },
+        {
+            "name": "linux_freertos_debug",
+            "configurePreset": "linux_freertos_debug"
         }
     ],
     "testPresets": [

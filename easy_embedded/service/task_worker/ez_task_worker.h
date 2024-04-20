@@ -35,6 +35,11 @@ extern "C" {
 
 #if (EZ_THREADX_PORT_ENABLE == 1)
 #include "tx_api.h"
+#elif (EZ_FREERTOS_PORT_ENABLE == 1)
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
+#include "event_groups.h"
 #endif
 
 #if (EZ_TASK_WORKER_ENABLE == 1)
@@ -74,6 +79,37 @@ extern "C" {
         .priority = worker_priority,\
         .stack_size = worker_stack_size,\
     }
+
+#elif (EZ_FREERTOS_PORT_ENABLE == 1)
+    #define INIT_THREAD_FUNCTIONS(worker_name) \
+    static void worker_name##_thread(void * parameters);\
+    static void worker_name##_thread_body(void);\
+
+#define GET_THREAD_FUNC(worker_name) \
+    worker_name##_thread\
+
+#define THREAD_FUNC(worker_name) \
+    static void worker_name##_thread(void * parameters)\
+    {\
+        while(1)\
+        {\
+            worker_name##_thread_body();\
+            if(worker_name.sleep_ticks > 0)\
+            { vTaskDelay(worker_name.sleep_ticks); }\
+        }\
+    }\
+    static void worker_name##_thread_body(void)
+
+#define INIT_WORKER(name, worker_sleep_ticks, worker_priority, worker_stack_size) \
+    struct ezTaskWorker name =\
+    {\
+        .worker_name = #name,\
+        .sleep_ticks = worker_sleep_ticks,\
+        .priority = worker_priority,\
+        .stack_size = worker_stack_size,\
+        .semaphore_h = NULL,\
+        .events_h = NULL,\
+    }
 #else
     #define INIT_THREAD_FUNCTIONS(worker_name)
     #define GET_THREAD_FUNC(worker_name)
@@ -101,11 +137,20 @@ struct ezTaskWorker
     TX_THREAD thread;               /**< ThreadX thread */
     TX_SEMAPHORE sem;               /**< ThreadX semaphore */
     TX_EVENT_FLAGS_GROUP events;    /**< ThreadX event */
+#elif (EZ_FREERTOS_PORT_ENABLE == 1)
+    uint8_t priority;               /**< Priority of the worker thread, the value must match the number of the activated RTOS */
+    uint32_t stack_size;            /**< Stask size of the worker thread, in bytes */
+    uint32_t sleep_ticks;           /**< Number of tick the thread must sleep before being activated again */
+    StaticTask_t thread;
+    StaticSemaphore_t sem;
+    SemaphoreHandle_t semaphore_h;
+    StaticEventGroup_t events;
+    EventGroupHandle_t events_h;
 #endif /* EZ_THREADX_PORT_ENABLE == 1 */
 };
 
 
-#if (EZ_THREADX_PORT_ENABLE == 1)
+#if ((EZ_THREADX_PORT_ENABLE == 1) || (EZ_FREERTOS_PORT_ENABLE == 1))
 /** @brief definition of an ezTaskWorkerCreateThread.
  *  @param[in]  worker: pointer to the worker 
  *  @param[in]  thread_func; pointer to the RTOS thread function
@@ -178,7 +223,7 @@ struct ezTaskWorkerThreadInterfaces
     ezTaskWorkerSetEvent        set_events;         /**< Set event function pointer */
     ezTaskWorkerGetEvent        get_events;         /**< Get event function pointer */
 };
-#endif
+#endif /* ((EZ_THREADX_PORT_ENABLE == 1) || (EZ_FREERTOS_PORT_ENABLE == 1)) */
 
 
 /** @brief Definition of callback function to notify a task is finished or
@@ -243,7 +288,7 @@ bool ezTaskWorker_CreateWorker(struct ezTaskWorker *worker,
                                void *thread_func);
 
 
-#if (EZ_THREADX_PORT_ENABLE == 1)
+#if ((EZ_THREADX_PORT_ENABLE == 1) || (EZ_FREERTOS_PORT_ENABLE == 1))
 /*****************************************************************************
 * Function: ezTaskWorker_SetRtosInterface
 *//** 
@@ -340,7 +385,7 @@ bool ezTaskWorker_EnqueueTask(struct ezTaskWorker *worker,
 void ezTaskWorker_ExecuteTaskNoRTOS(void);
 
 
-#if (EZ_THREADX_PORT_ENABLE == 1)
+#if ((EZ_THREADX_PORT_ENABLE == 1) || (EZ_FREERTOS_PORT_ENABLE == 1))
 /*****************************************************************************
 * Function: ezTaskWorker_ExecuteTask
 *//** 
