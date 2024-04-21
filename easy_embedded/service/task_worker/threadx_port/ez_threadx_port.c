@@ -252,7 +252,7 @@ static EZ_RTOS_STATUS ezThreadXPort_CreateSemaphore(struct ezTaskWorker *worker)
 *               RTOS_STATUS_ERR: cannot give semaphore
 *               RTOS_STATUS_ERR_ARG: wrong input arguments
 *
-* @pre semaphore must be created  first
+* @pre semaphore must be created first
 * @post None
 *
 * \b Example
