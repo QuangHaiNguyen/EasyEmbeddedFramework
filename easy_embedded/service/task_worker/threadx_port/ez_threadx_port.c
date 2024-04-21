@@ -37,7 +37,7 @@
 /*****************************************************************************
 * Component Preprocessor Macros
 *****************************************************************************/
-/* None */
+#define SEMAPHORE_COUNT     1 /* support only semaphore with count 1 aka mutex*/
 
 /*****************************************************************************
 * Component Typedefs
@@ -55,16 +55,16 @@ static bool interface_initialized = false;
 /*****************************************************************************
 * Function Definitions
 *****************************************************************************/
-static bool ezThreadXPort_CreateThread(struct ezTaskWorker *worker,
-                                       void *thread_func);
-static bool ezThreadXPort_CreateSemaphore(struct ezTaskWorker *worker);
-static bool ezThreadXPort_GiveSemaphore(struct ezTaskWorker *worker);
-static bool ezThreadXPort_TakeSemaphore(struct ezTaskWorker *worker, uint32_t tick_to_wait);
-static bool ezThreadXPort_CreateEvent(struct ezTaskWorker *worker);
-static bool ezThreadXPort_SetEvent(struct ezTaskWorker *worker, uint32_t events);
-static bool ezThreadXPort_GetEvent(struct ezTaskWorker *worker,
-                                   uint32_t events,
-                                   uint32_t tick_to_wait);
+static EZ_RTOS_STATUS ezThreadXPort_CreateThread(struct ezTaskWorker *worker,
+                                                 void *thread_func);
+static EZ_RTOS_STATUS ezThreadXPort_CreateSemaphore(struct ezTaskWorker *worker);
+static EZ_RTOS_STATUS ezThreadXPort_GiveSemaphore(struct ezTaskWorker *worker);
+static EZ_RTOS_STATUS ezThreadXPort_TakeSemaphore(struct ezTaskWorker *worker, uint32_t tick_to_wait);
+static EZ_RTOS_STATUS ezThreadXPort_CreateEvent(struct ezTaskWorker *worker);
+static EZ_RTOS_STATUS ezThreadXPort_SetEvent(struct ezTaskWorker *worker, uint32_t events);
+static EZ_RTOS_STATUS ezThreadXPort_GetEvent(struct ezTaskWorker *worker,
+                                             uint32_t events,
+                                             uint32_t tick_to_wait);
 static void ezThreadXPort_PrintThreadXStatusCode(UINT code);
 
 
@@ -74,7 +74,7 @@ static void ezThreadXPort_PrintThreadXStatusCode(UINT code);
 bool ezThreadXPort_Init(void *first_unused_memory)
 {
     bool ret = false;
-    UINT status = TX_THREAD_ERROR;
+    UINT threadx_status = TX_THREAD_ERROR;
     EZTRACE("ezThreadXPort_Init()");
     interfaces.create_event = ezThreadXPort_CreateEvent;
     interfaces.create_semaphore = ezThreadXPort_CreateSemaphore;
@@ -86,11 +86,11 @@ bool ezThreadXPort_Init(void *first_unused_memory)
 
 
     /* Create a byte memory pool from which to allocate the thread stacks. */
-    status = tx_byte_pool_create(&threadx_byte_pool,
+    threadx_status = tx_byte_pool_create(&threadx_byte_pool,
                                  "threadx byte pool",
                                  first_unused_memory,
                                  THREADX_BYTE_POOL_SIZE);
-    if(status == TX_SUCCESS)
+    if(threadx_status == TX_SUCCESS)
     {
         EZINFO("Initialization success");
         interface_initialized = true;
@@ -124,7 +124,9 @@ struct ezTaskWorkerThreadInterfaces *ezThreadXPort_GetInterface(void)
 *
 * @param[in]    worker: pointer to the task worker who "owns" the thread
 * @param[in]    thread_func: threadx function
-* @return       true if success, else false
+* @return       RTOS_STATUS_OK: success
+*               RTOS_STATUS_ERR: cannot create thread
+*               RTOS_STATUS_ERR_ARG: wrong input arguments
 *
 * @pre ezThreadXPort_Init must be called first
 * @post None
@@ -136,49 +138,53 @@ struct ezTaskWorkerThreadInterfaces *ezThreadXPort_GetInterface(void)
 * @see ezThreadXPort_Init
 *
 *****************************************************************************/
-static bool ezThreadXPort_CreateThread(struct ezTaskWorker *worker,
-                                       void *thread_func)
+static EZ_RTOS_STATUS ezThreadXPort_CreateThread(struct ezTaskWorker *worker,
+                                                 void *thread_func)
 {
-    bool ret = false;
-    UINT status = TX_THREAD_ERROR;
+    EZ_RTOS_STATUS ret_status = RTOS_STATUS_ERR_ARG;
+    UINT threadx_status = TX_THREAD_ERROR;
 
     EZTRACE("ezThreadXPort_CreateThread()");
     if((worker != NULL) && (thread_func != NULL))
     {
-        status = tx_byte_allocate(&threadx_byte_pool, (void**)&mem_pointer, worker->stack_size, TX_NO_WAIT);
+        threadx_status = tx_byte_allocate(&threadx_byte_pool,
+                                          (void**)&mem_pointer,
+                                          worker->stack_size,
+                                          TX_NO_WAIT);
 
-        if(status != TX_SUCCESS)
+        if(threadx_status != TX_SUCCESS)
         {
             EZERROR("Allocate memory failed");
-            ezThreadXPort_PrintThreadXStatusCode(status);
+            ezThreadXPort_PrintThreadXStatusCode(threadx_status);
         }
         else
         {
-            status = tx_thread_create(&worker->thread,
-                                      worker->worker_name,
-                                      thread_func,
-                                      0,
-                                      mem_pointer,
-                                      worker->stack_size,
-                                      (UINT)worker->priority,
-                                      (UINT)worker->priority,
-                                      TX_NO_TIME_SLICE,
-                                      TX_AUTO_START);
+            threadx_status = tx_thread_create(&worker->thread,
+                                              worker->worker_name,
+                                              thread_func,
+                                              0,
+                                              mem_pointer,
+                                              worker->stack_size,
+                                              (UINT)worker->priority,
+                                              (UINT)worker->priority,
+                                              TX_NO_TIME_SLICE,
+                                              TX_AUTO_START);
         }
 
-        if(status != TX_SUCCESS)
+        if(threadx_status != TX_SUCCESS)
         {
+            ret_status = RTOS_STATUS_ERR;
             EZERROR("Create thread failed");
-            ezThreadXPort_PrintThreadXStatusCode(status);
+            ezThreadXPort_PrintThreadXStatusCode(threadx_status);
         }
         else
         {
             EZINFO("Create thread for worker = %s successfully", worker->worker_name);
-            ret = true;
+            ret_status = RTOS_STATUS_OK;
         }
     }
 
-    return ret;
+    return ret_status;
 }
 
 
@@ -190,7 +196,9 @@ static bool ezThreadXPort_CreateThread(struct ezTaskWorker *worker,
 * @details
 *
 * @param[in]    worker: pointer to the task worker who "owns" the thread
-* @return       true if success, else false
+* @return       RTOS_STATUS_OK: success
+*               RTOS_STATUS_ERR: cannot create semaphore
+*               RTOS_STATUS_ERR_ARG: wrong input arguments
 *
 * @pre ezThreadXPort_Init must be called first
 * @post None
@@ -202,30 +210,33 @@ static bool ezThreadXPort_CreateThread(struct ezTaskWorker *worker,
 * @see ezThreadXPort_Init
 *
 *****************************************************************************/
-static bool ezThreadXPort_CreateSemaphore(struct ezTaskWorker *worker)
+static EZ_RTOS_STATUS ezThreadXPort_CreateSemaphore(struct ezTaskWorker *worker)
 {
-    bool ret = false;
-    UINT status = TX_THREAD_ERROR;
+    EZ_RTOS_STATUS ret_status = RTOS_STATUS_ERR_ARG;
+    UINT threadx_status = TX_THREAD_ERROR;
 
     EZTRACE("ezThreadXPort_CreateSemaphore()");
 
     if(worker != NULL)
     {
-        status = tx_semaphore_create(&worker->sem, worker->worker_name, 1);
+        threadx_status = tx_semaphore_create(&worker->sem,
+                                             worker->worker_name,
+                                             SEMAPHORE_COUNT);
 
-        if(status != TX_SUCCESS)
+        if(threadx_status != TX_SUCCESS)
         {
+            ret_status = RTOS_STATUS_ERR;
             EZERROR("Create semaphore failed");
-            ezThreadXPort_PrintThreadXStatusCode(status);
+            ezThreadXPort_PrintThreadXStatusCode(threadx_status);
         }
         else
         {
             EZINFO("Create semaphore for worker = %s successfully", worker->worker_name);
-            ret = true;
+            ret_status = RTOS_STATUS_OK;
         }
     }
 
-    return ret;
+    return ret_status;
 }
 
 
@@ -237,7 +248,9 @@ static bool ezThreadXPort_CreateSemaphore(struct ezTaskWorker *worker)
 * @details
 *
 * @param[in]    worker: pointer to the task worker who "owns" the thread
-* @return       true if success, else false
+* @return       RTOS_STATUS_OK: success
+*               RTOS_STATUS_ERR: cannot give semaphore
+*               RTOS_STATUS_ERR_ARG: wrong input arguments
 *
 * @pre semaphore must be created  first
 * @post None
@@ -249,29 +262,30 @@ static bool ezThreadXPort_CreateSemaphore(struct ezTaskWorker *worker)
 * @see ezThreadXPort_CreateSemaphore
 *
 *****************************************************************************/
-static bool ezThreadXPort_GiveSemaphore(struct ezTaskWorker *worker)
+static EZ_RTOS_STATUS ezThreadXPort_GiveSemaphore(struct ezTaskWorker *worker)
 {
-    bool ret = false;
-    UINT status = TX_THREAD_ERROR;
+    EZ_RTOS_STATUS ret_status = RTOS_STATUS_ERR_ARG;
+    UINT threadx_status = TX_THREAD_ERROR;
 
     EZTRACE("ezThreadXPort_GiveSemaphore()");
 
     if(worker != NULL)
     {
-        status = tx_semaphore_put(&worker->sem);
+        threadx_status = tx_semaphore_put(&worker->sem);
 
-        if(status != TX_SUCCESS)
+        if(threadx_status != TX_SUCCESS)
         {
+            ret_status = RTOS_STATUS_ERR;
             EZERROR("Give semaphore failed");
-            ezThreadXPort_PrintThreadXStatusCode(status);
+            ezThreadXPort_PrintThreadXStatusCode(threadx_status);
         }
         else
         {
-            ret = true;
+            ret_status = RTOS_STATUS_OK;
         }
     }
 
-    return ret;
+    return ret_status;
 }
 
 
@@ -286,9 +300,12 @@ static bool ezThreadXPort_GiveSemaphore(struct ezTaskWorker *worker)
 * @param[in]    tick_to_wait: number of tick to wait for the semaphore's availability.
 *               EZ_THREAD_WAIT_NO for no wait and EZ_THREAD_WAIT_FOREVER to wait until
 *               semphore available
-* @return       true if success, else false
+* @return       RTOS_STATUS_OK: success
+*               RTOS_STATUS_OK_TIMEOUT: success but could not take semaphore within tick_to_wait
+*               RTOS_STATUS_ERR: take semaphore error
+*               RTOS_STATUS_ERR_ARG: wrong input arguments
 *
-* @pre semaphore must be created  first
+* @pre semaphore must be created first
 * @post None
 *
 * \b Example
@@ -298,11 +315,11 @@ static bool ezThreadXPort_GiveSemaphore(struct ezTaskWorker *worker)
 * @see ezThreadXPort_CreateSemaphore
 *
 *****************************************************************************/
-static bool ezThreadXPort_TakeSemaphore(struct ezTaskWorker *worker, uint32_t tick_to_wait)
+static EZ_RTOS_STATUS ezThreadXPort_TakeSemaphore(struct ezTaskWorker *worker, uint32_t tick_to_wait)
 {
-    bool ret = false;
-    UINT status = TX_THREAD_ERROR;
-    ULONG wait_option = TX_NO_WAIT;
+    EZ_RTOS_STATUS ret_status = RTOS_STATUS_ERR_ARG;
+    UINT threadx_status = TX_THREAD_ERROR;
+    ULONG wait_ticks = TX_NO_WAIT;
 
     EZTRACE("ezThreadXPort_TakeSemaphore()");
 
@@ -310,32 +327,41 @@ static bool ezThreadXPort_TakeSemaphore(struct ezTaskWorker *worker, uint32_t ti
     {
         if(tick_to_wait == EZ_THREAD_WAIT_NO)
         {
-            wait_option = TX_NO_WAIT;
+            wait_ticks = TX_NO_WAIT;
         }
         else if (tick_to_wait == EZ_THREAD_WAIT_FOREVER)
         {
-            wait_option = TX_WAIT_FOREVER ;
+            wait_ticks = TX_WAIT_FOREVER ;
         }
         else
         {
-            wait_option = tick_to_wait;
+            wait_ticks = tick_to_wait;
         }
 
-        status = tx_semaphore_get(&worker->sem, wait_option);
+        threadx_status = tx_semaphore_get(&worker->sem, wait_ticks);
 
-        if(status != TX_SUCCESS)
+        /* Operation OK */
+        if(threadx_status == TX_SUCCESS)
         {
-            EZERROR("Take semaphore failed");
-            ezThreadXPort_PrintThreadXStatusCode(status);
-        }
-        else
-        {
+            ret_status = RTOS_STATUS_OK;
             EZDEBUG("Semaphore taken");
-            ret = true;
+        }
+        /* Operation OK but could not get the semaphore within wait_ticks */
+        else if(threadx_status == TX_NO_INSTANCE)
+        {
+            ret_status = RTOS_STATUS_OK_TIMEOUT;
+            EZDEBUG("take semaphore timeout ");
+        }
+        /* Error */
+        else
+        {
+            ret_status = RTOS_STATUS_ERR;
+            ezThreadXPort_PrintThreadXStatusCode(threadx_status);
+            EZERROR("Take semaphore failed");
         }
     }
 
-    return ret;
+    return ret_status;
 }
 
 
@@ -347,7 +373,9 @@ static bool ezThreadXPort_TakeSemaphore(struct ezTaskWorker *worker, uint32_t ti
 * @details
 *
 * @param[in]    worker: pointer to the task worker who "owns" the thread
-* @return       true if success, else false
+* @return       RTOS_STATUS_OK: success
+*               RTOS_STATUS_ERR: cannot create event
+*               RTOS_STATUS_ERR_ARG: wrong input arguments
 *
 * @pre ezThreadXPort_Init must be called first
 * @post None
@@ -359,27 +387,30 @@ static bool ezThreadXPort_TakeSemaphore(struct ezTaskWorker *worker, uint32_t ti
 * @see ezThreadXPort_Init
 *
 *****************************************************************************/
-static bool ezThreadXPort_CreateEvent(struct ezTaskWorker *worker)
+static EZ_RTOS_STATUS ezThreadXPort_CreateEvent(struct ezTaskWorker *worker)
 {
-    bool ret = false;
-    UINT status = TX_THREAD_ERROR;
+    EZ_RTOS_STATUS ret_status = RTOS_STATUS_ERR_ARG;
+    UINT threadx_status = TX_THREAD_ERROR;
 
     EZTRACE("ezThreadXPort_CreateEvent()");
 
     if(worker != NULL)
     {
-        status = tx_event_flags_create(&worker->events, worker->worker_name);
+        threadx_status = tx_event_flags_create(&worker->events, worker->worker_name);
 
-        if(status != TX_SUCCESS)
+        if(threadx_status != TX_SUCCESS)
         {
+            ret_status = RTOS_STATUS_ERR;
             EZERROR("Create event failed");
-            ezThreadXPort_PrintThreadXStatusCode(status);
+            ezThreadXPort_PrintThreadXStatusCode(threadx_status);
         }
         else
         {
-            ret = true;
+            ret_status = RTOS_STATUS_OK;
         }
     }
+
+    return ret_status;
 }
 
 
@@ -392,7 +423,9 @@ static bool ezThreadXPort_CreateEvent(struct ezTaskWorker *worker)
 *
 * @param[in]    worker: pointer to the task worker who "owns" the thread
 * @param[in]    events: events to set
-* @return       true if success, else false
+* @return       RTOS_STATUS_OK: success
+*               RTOS_STATUS_ERR: cannot set event
+*               RTOS_STATUS_ERR_ARG: wrong input arguments
 *
 * @pre event must be created first
 * @post None
@@ -403,28 +436,31 @@ static bool ezThreadXPort_CreateEvent(struct ezTaskWorker *worker)
 * @see ezThreadXPort_CreateEvent
 *
 *****************************************************************************/
-static bool ezThreadXPort_SetEvent(struct ezTaskWorker *worker, uint32_t events)
+static EZ_RTOS_STATUS ezThreadXPort_SetEvent(struct ezTaskWorker *worker, uint32_t events)
 {
-    bool ret = false;
-    UINT status = TX_THREAD_ERROR;
+    EZ_RTOS_STATUS ret_status = RTOS_STATUS_ERR_ARG;
+    UINT threadx_status = TX_THREAD_ERROR;
 
     EZTRACE("ezThreadXPort_SetEvent()");
 
     if(worker != NULL)
     {
-        status = tx_event_flags_set(&worker->events, events, TX_OR);
+        threadx_status = tx_event_flags_set(&worker->events, events, TX_OR);
 
-        if(status != TX_SUCCESS)
+        if(threadx_status != TX_SUCCESS)
         {
+            ret_status = RTOS_STATUS_ERR;
             EZERROR("Set event failed");
-            ezThreadXPort_PrintThreadXStatusCode(status);
+            ezThreadXPort_PrintThreadXStatusCode(threadx_status);
         }
         else
         {
+            ret_status = RTOS_STATUS_OK;
             EZDEBUG("Set event = %x successfully", events);
-            ret = true;
         }
     }
+
+    return ret_status;
 }
 
 
@@ -440,9 +476,12 @@ static bool ezThreadXPort_SetEvent(struct ezTaskWorker *worker, uint32_t events)
 * @param[in]    tick_to_wait: number of tick to wait for the events' availability.
 *               EZ_THREAD_WAIT_NO for no wait and EZ_THREAD_WAIT_FOREVER to wait until
 *               events available
-* @return       true if success, else false
+* @return       RTOS_STATUS_OK: success
+*               RTOS_STATUS_OK_TIMEOUT: success but there is no event within tick_to_wait
+*               RTOS_STATUS_ERR: get event error
+*               RTOS_STATUS_ERR_ARG: wrong input arguments
 *
-* @pre eevent must be created first
+* @pre event must be created first
 * @post None
 *
 * \b Example
@@ -452,10 +491,10 @@ static bool ezThreadXPort_SetEvent(struct ezTaskWorker *worker, uint32_t events)
 * @see ezThreadXPort_CreateEvent
 *
 *****************************************************************************/
-static bool ezThreadXPort_GetEvent(struct ezTaskWorker *worker, uint32_t events, uint32_t tick_to_wait)
+static EZ_RTOS_STATUS ezThreadXPort_GetEvent(struct ezTaskWorker *worker, uint32_t events, uint32_t tick_to_wait)
 {
-    bool ret = false;
-    UINT status = TX_THREAD_ERROR;
+    EZ_RTOS_STATUS ret_status = RTOS_STATUS_ERR_ARG;
+    UINT threadx_status = TX_THREAD_ERROR;
     ULONG wait_option = TX_NO_WAIT;
     ULONG actual_flags;
 
@@ -476,21 +515,30 @@ static bool ezThreadXPort_GetEvent(struct ezTaskWorker *worker, uint32_t events,
             wait_option = tick_to_wait;
         }
 
-        status = tx_event_flags_get(&worker->events, events, TX_OR_CLEAR, &actual_flags, wait_option);
+        threadx_status = tx_event_flags_get(&worker->events, events, TX_OR_CLEAR, &actual_flags, wait_option);
 
-        if(status != TX_SUCCESS)
+        /* Operation OK */
+        if(threadx_status == TX_SUCCESS)
         {
-            EZERROR("Get event failed");
-            ezThreadXPort_PrintThreadXStatusCode(status);
+            ret_status = RTOS_STATUS_OK;
+            EZDEBUG("Get event = %x successfully", actual_flags);
         }
+        /* Operation OK but there is no event within wait_ticks */
+        else if(threadx_status == TX_NO_EVENTS )
+        {
+            ret_status = RTOS_STATUS_OK_TIMEOUT;
+            EZDEBUG("Get event = %x timeout", actual_flags);
+        }
+        /* Error */
         else
         {
-            EZDEBUG("Get event = %x successfully", actual_flags);
-            ret = true;
+            ret_status = RTOS_STATUS_ERR;
+            EZERROR("Get event failed");
+            ezThreadXPort_PrintThreadXStatusCode(threadx_status);
         }
     }
 
-    return ret;
+    return ret_status;
 }
 
 
@@ -498,7 +546,7 @@ static bool ezThreadXPort_GetEvent(struct ezTaskWorker *worker, uint32_t events,
 /*****************************************************************************
 * Function: ezThreadXPort_PrintThreadXStatusCode
 *//** 
-* @brief Print the status error code.
+* @brief Print the threadx_status error code.
 *
 * @details
 *

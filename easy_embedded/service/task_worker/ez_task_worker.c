@@ -157,17 +157,36 @@ bool ezTaskWorker_EnqueueTask(struct ezTaskWorker *worker,
     void *buff = NULL;
     ezTaskBlock_t task_block = NULL;
     ezSTATUS status = ezFAIL;
+#if ((EZ_THREADX_PORT_ENABLE == 1) || (EZ_FREERTOS_PORT_ENABLE == 1))
+    EZ_RTOS_STATUS rtos_status = RTOS_STATUS_ERR;
+#endif /* (EZ_THREADX_PORT_ENABLE == 1) || (EZ_FREERTOS_PORT_ENABLE == 1) */
 
     EZTRACE("ezTaskWorker_EnqueueTask()");
 
-    if((worker != NULL) && (task != NULL) && (callback != NULL))
+    if((rtos_interfaces != NULL) && (worker != NULL) && (task != NULL) && (callback != NULL))
     {
 #if ((EZ_THREADX_PORT_ENABLE == 1) || (EZ_FREERTOS_PORT_ENABLE == 1))
         EZTRACE("Getting semaphore from worker = %s", worker->worker_name);
-        ret = rtos_interfaces->take_semaphore(worker, ticks_to_wait);
+        rtos_status = rtos_interfaces->take_semaphore(worker, ticks_to_wait);
+        if(rtos_status == RTOS_STATUS_OK)
+        {
+            ret = true;
+        }
+        else if (rtos_status == RTOS_STATUS_OK_TIMEOUT)
+        {
+            /* get timeout for taking semaphore so we have to return
+             * false because we are not able to enqueue task
+             */
+            ret = false;
+        }
+        else
+        {
+            ret = false;
+        }
 #else
         ret = true;
 #endif /* (EZ_THREADX_PORT_ENABLE == 1) || (EZ_FREERTOS_PORT_ENABLE == 1) */
+
         if(ret == true)
         {
             EZTRACE("Get semaphore from worker = %s OK", worker->worker_name);
@@ -197,7 +216,11 @@ bool ezTaskWorker_EnqueueTask(struct ezTaskWorker *worker,
                 {
                     ret = true;
 #if ((EZ_THREADX_PORT_ENABLE == 1) || (EZ_FREERTOS_PORT_ENABLE == 1))
-                    rtos_interfaces->set_events(worker, EZ_EVENT_TASK_AVAIL);
+                    rtos_status = rtos_interfaces->set_events(worker, EZ_EVENT_TASK_AVAIL);
+                    if(rtos_status != RTOS_STATUS_OK)
+                    {
+                        ret = false;
+                    }
 #endif /* (EZ_THREADX_PORT_ENABLE == 1) || (EZ_FREERTOS_PORT_ENABLE == 1) */
                     EZINFO("Add new task to %s",worker->worker_name);
                 }
@@ -205,12 +228,13 @@ bool ezTaskWorker_EnqueueTask(struct ezTaskWorker *worker,
                 {
                     ret = false;
                     ezQueue_ReleaseReservedElement(&worker->msg_queue,
-                                                (ezReservedElement)task_block);
+                                                   (ezReservedElement)task_block);
                     EZERROR("Cannot add task to %s",worker->worker_name);
                 }
             }
 #if ((EZ_THREADX_PORT_ENABLE == 1) || (EZ_FREERTOS_PORT_ENABLE == 1))
-            ret &= rtos_interfaces->give_semaphore(worker);
+            /* Expect nothing wrong when giving semaphore */
+            (void)rtos_interfaces->give_semaphore(worker);
 #endif /* (EZ_THREADX_PORT_ENABLE == 1) || (EZ_FREERTOS_PORT_ENABLE == 1) */
         }
     }
@@ -226,35 +250,35 @@ bool ezTaskWorker_EnqueueTask(struct ezTaskWorker *worker,
 #if ((EZ_THREADX_PORT_ENABLE == 1) || (EZ_FREERTOS_PORT_ENABLE == 1))
 void ezTaskWorker_ExecuteTask(struct ezTaskWorker *worker, uint32_t ticks_to_wait)
 {
-    bool ret = false;
     ezSTATUS status = ezFAIL;
     void *context = NULL;
     struct ezTaskBlockCommon *common = NULL;
     uint32_t data_size = 0;
+    EZ_RTOS_STATUS rtos_status = RTOS_STATUS_ERR;
 
-    if(worker != NULL)
+    if((rtos_interfaces != NULL) && (worker != NULL))
     {
         EZTRACE("ezTaskWorker_ExecuteTask(woker = %s)", worker->worker_name);
-        ret = rtos_interfaces->get_events(worker, EZ_EVENT_TASK_AVAIL, ticks_to_wait);
+        rtos_status = rtos_interfaces->get_events(worker, EZ_EVENT_TASK_AVAIL, ticks_to_wait);
 
-        if(ret == false)
+        if(rtos_status == RTOS_STATUS_OK)
         {
-            EZERROR("Get event failed");
-        }
-        else
-        {
-            EZINFO("Receive EZ_EVENT_TASK_AVAIL");
-            ret = rtos_interfaces->take_semaphore(worker, ticks_to_wait);
+            EZDEBUG("Receive EZ_EVENT_TASK_AVAIL");
             EZTRACE("Getting semaphore from worker = %s", worker->worker_name);
+            rtos_status = rtos_interfaces->take_semaphore(worker, ticks_to_wait);
         }
-
-        if(ret == false)
+        else if (rtos_status == RTOS_STATUS_OK_TIMEOUT)
         {
-            EZERROR("Take semaphore failed");
+            EZDEBUG("Receive no event within %d ticks", ticks_to_wait);
         }
         else
         {
-            EZTRACE("Get semaphore from worker = %s OK", worker->worker_name);
+            EZERROR("Receive event error");
+        }
+
+        if(rtos_status == RTOS_STATUS_OK)
+        {
+            EZTRACE("Got semaphore from worker = %s OK", worker->worker_name);
             status = ezQueue_GetFront(&worker->msg_queue, (void**)&common, &data_size);
 
             if((status == ezSUCCESS) && (common->task != NULL))
@@ -265,12 +289,20 @@ void ezTaskWorker_ExecuteTask(struct ezTaskWorker *worker, uint32_t ticks_to_wai
             }
             else
             {
-                ret = false;
                 EZERROR("Get data from queue failed");
             }
 
             status = ezQueue_PopFront(&worker->msg_queue);
-            rtos_interfaces->give_semaphore(worker);
+            (void)rtos_interfaces->give_semaphore(worker);
+
+        }
+        else if (rtos_status == RTOS_STATUS_OK_TIMEOUT)
+        {
+            EZDEBUG("Cannot get semaphore within %d ticks", ticks_to_wait);
+        }
+        else
+        {
+            EZERROR("get semaphore error");
         }
     }
 }

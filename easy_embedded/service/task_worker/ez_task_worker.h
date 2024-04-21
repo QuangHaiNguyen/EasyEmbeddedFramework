@@ -153,27 +153,41 @@ struct ezTaskWorker
 
 
 #if ((EZ_THREADX_PORT_ENABLE == 1) || (EZ_FREERTOS_PORT_ENABLE == 1))
+
+/** @brief Return status of the RTOS interfaces
+ */
+typedef enum
+{
+    RTOS_STATUS_OK,         /**< OK */
+    RTOS_STATUS_OK_TIMEOUT, /**< Operation OK, but there is timeout in RTOS operation, e.g. wait or semaphore or event */
+    RTOS_STATUS_ERR,        /**< Generic error */
+    RTOS_STATUS_ERR_ARG,    /**< Invalid input arguments */
+    RTOS_STATUS_ERR_NO_INF, /**< No RTOS porting interface */
+    RTOS_STATUS_END_LIST,   /**< End of list */
+}EZ_RTOS_STATUS;
+
+
 /** @brief definition of an ezTaskWorkerCreateThread.
  *  @param[in]  worker: pointer to the worker 
  *  @param[in]  thread_func; pointer to the RTOS thread function
- *  @return     true if success, else false
+ *  @return     RTOS_STATUS_OK if success, else one of the error code RTOS_STATUS_ERR_XXX
  */
-typedef bool (*ezTaskWorkerCreateThread)(struct ezTaskWorker *worker,
-                                         void *thread_func);
+typedef EZ_RTOS_STATUS (*ezTaskWorkerCreateThread)(struct ezTaskWorker *worker,
+                                                   void *thread_func);
 
 
 /** @brief definition of an ezTaskWorkerCreateSemaphore
  *  @param[in]  worker: pointer to the worker 
- *  @return     true if success, else false
+ *  @return     RTOS_STATUS_OK if success, else one of the error code RTOS_STATUS_ERR_XXX
  */
-typedef bool (*ezTaskWorkerCreateSemaphore) (struct ezTaskWorker *worker);
+typedef EZ_RTOS_STATUS (*ezTaskWorkerCreateSemaphore)(struct ezTaskWorker *worker);
 
 
 /** @brief definition of an ezTaskWorkerGiveSemaphore
  *  @param[in]  worker: pointer to the worker 
- *  @return     true if success, else false
+ *  @return     RTOS_STATUS_OK if success, else one of the error code RTOS_STATUS_ERR_XXX
  */
-typedef bool (*ezTaskWorkerGiveSemaphore)   (struct ezTaskWorker *worker);
+typedef EZ_RTOS_STATUS (*ezTaskWorkerGiveSemaphore)(struct ezTaskWorker *worker);
 
 
 /** @brief definition of an ezTaskWorkerTakeSemaphore
@@ -181,24 +195,24 @@ typedef bool (*ezTaskWorkerGiveSemaphore)   (struct ezTaskWorker *worker);
  *  @param[in]  tick_to_wait: number of tick to wait for the semaphore.
  *                            EZ_THREAD_WAIT_NO: do not wait for semaphore
  *                            EZ_THREAD_WAIT_FOREVER: wait forever
- *  @return     true if success, else false
+ *  @return     RTOS_STATUS_OK if success, else one of the error code RTOS_STATUS_ERR_XXX
  */
-typedef bool (*ezTaskWorkerTakeSemaphore)(struct ezTaskWorker *worker, uint32_t tick_to_wait);
+typedef EZ_RTOS_STATUS (*ezTaskWorkerTakeSemaphore)(struct ezTaskWorker *worker, uint32_t tick_to_wait);
 
 
 /** @brief definition of an ezTaskWorkerCreateEvent
  *  @param[in]  worker: pointer to the worker
- *  @return     true if success, else false
+ *  @return     RTOS_STATUS_OK if success, else one of the error code RTOS_STATUS_ERR_XXX
  */
-typedef bool (*ezTaskWorkerCreateEvent)(struct ezTaskWorker *worker);
+typedef EZ_RTOS_STATUS (*ezTaskWorkerCreateEvent)(struct ezTaskWorker *worker);
 
 
 /** @brief definition of an ezTaskWorkerSetEvent
  *  @param[in]  worker: pointer to the worker
  *  @param[in]  events: event to set. Supported event: EZ_EVENT_TASK_AVAIL
- *  @return     true if success, else false
+ *  @return     RTOS_STATUS_OK if success, else one of the error code RTOS_STATUS_ERR_XXX
  */
-typedef bool (*ezTaskWorkerSetEvent)(struct ezTaskWorker *worker, uint32_t events);
+typedef EZ_RTOS_STATUS (*ezTaskWorkerSetEvent)(struct ezTaskWorker *worker, uint32_t events);
 
 
 /** @brief definition of an ezTaskWorkerGetEvent
@@ -207,9 +221,9 @@ typedef bool (*ezTaskWorkerSetEvent)(struct ezTaskWorker *worker, uint32_t event
  *  @param[in]  tick_to_wait: number of tick to wait for the event.
  *                            EZ_THREAD_WAIT_NO: do not wait for event
  *                            EZ_THREAD_WAIT_FOREVER: wait forever
- *  @return     true if success, else false
+ *  @return     RTOS_STATUS_OK if success, else one of the error code RTOS_STATUS_ERR_XXX
  */
-typedef bool (*ezTaskWorkerGetEvent)(struct ezTaskWorker *worker, uint32_t events, uint32_t tick_to_wait);
+typedef EZ_RTOS_STATUS (*ezTaskWorkerGetEvent)(struct ezTaskWorker *worker, uint32_t events, uint32_t tick_to_wait);
 
 
 /** @brief Definition of the interfaces that RTOS porting

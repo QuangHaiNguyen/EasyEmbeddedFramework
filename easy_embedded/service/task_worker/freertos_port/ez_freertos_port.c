@@ -140,12 +140,12 @@ static bool ezFreeRTOSPort_CreateThread(struct ezTaskWorker *worker,
             }
 
             xHandle = xTaskCreateStatic(thread_func,
-                                    worker->worker_name,
-                                    worker->stack_size,
-                                    NULL,
-                                    worker->priority,
-                                    &TaskStack[used_stack_size],
-                                    &worker->thread);
+                                        worker->worker_name,
+                                        worker->stack_size,
+                                        NULL,
+                                        worker->priority,
+                                        &TaskStack[used_stack_size],
+                                        &worker->thread);
             used_stack_size += worker->stack_size;
         }
 
