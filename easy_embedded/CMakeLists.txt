@@ -16,7 +16,7 @@ set(FRAMEWORK_ROOT_DIR ${CMAKE_SOURCE_DIR}/easy_embedded)
 
 
 # Include --------------------------------------------------------------------
-include(features.cmake)
+# Unused
 
 
 # Sub directory --------------------------------------------------------------
@@ -59,6 +59,7 @@ target_link_libraries(easy_embedded_lib
         ez_app_lib
         ez_utilities_lib
         $<$<BOOL:${ENABLE_EZ_EVENT_NOTIFIER}>:ez_event_notifier_lib>
+        $<$<BOOL:${ENABLE_EZ_TASK_WORKER}>:ez_task_worker_lib>
         $<$<BOOL:${ENABLE_EZ_KERNEL}>:ez_kernel>
         $<$<BOOL:${ENABLE_EZ_HAL_DRIVER}>:ez_driver_lib>
         $<$<BOOL:${ENABLE_LITTLE_FS}>:littlefs>

@@ -1,6 +1,6 @@
 # ----------------------------------------------------------------------------
 # Author: Hai Nguyen
-# Name: ez_linked_list_test
+# Name: ez_target
 # License: This file is published under the license described in LICENSE.md
 # Description: CMake file for building linux target
 # ----------------------------------------------------------------------------
@@ -8,9 +8,12 @@
 add_executable(ez_target)
 
 message(STATUS "**********************************************************")
-message(STATUS "* Generating ez_linked_list_test build files")
+message(STATUS "* Generating ez_target build files")
 message(STATUS "**********************************************************")
 
+
+# Include --------------------------------------------------------------------
+include(features.cmake)
 
 # Source files ---------------------------------------------------------------
 target_sources(ez_target

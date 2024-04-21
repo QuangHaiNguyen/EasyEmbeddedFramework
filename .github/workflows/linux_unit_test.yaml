@@ -1,0 +1,29 @@
+name: Github Linux unit test
+
+on:
+  push:
+    branches: [ "**" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-run-unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: threeal/gcovr-action@latest
+
+    - name: Configure linux_test_debug
+      working-directory: ${{github.workspace}}
+      run: cmake --preset=linux_test_debug
+
+    - name: Build linux_test_debug
+      run: cmake --build --preset=linux_test_debug
+
+    - name: Running unit test
+      working-directory: ${{github.workspace}}
+      run: ctest preset=linux_test_debug --test-dir build_linux_test_debug/
+    
+    - name: Coverage
+      working-directory: ${{github.workspace}}
+      run: gcovr -r  . --filter=easy_embedded

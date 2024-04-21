@@ -15,3 +15,7 @@ if(ENABLE_EZ_KERNEL)
     add_subdirectory(kernel)
 endif()
 
+if(ENABLE_EZ_TASK_WORKER)
+    add_subdirectory(task_worker)
+endif()
+

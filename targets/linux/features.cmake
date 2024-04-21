@@ -12,6 +12,7 @@ option(ENABLE_EZ_QUEUE          "Enable queue feature"                  ON)
 # Configure Service modules
 option(ENABLE_EZ_EVENT_NOTIFIER    "Enable the Event Notifier module"       ON)
 option(ENABLE_EZ_KERNEL            "Enable the Kernel service"              OFF)
+option(ENABLE_EZ_TASK_WORKER       "Enable the task worker"                 ON)
 
 # Configure application framework
 option(ENABLE_DATA_MODEL        "Enable the Event Notifier module"          ON)
@@ -27,3 +28,5 @@ option(ENABLE_EZ_HAL_UART       "Enable HAL uart driver"                    OFF)
 
 # Configure 3rd Party
 option(ENABLE_LITTLE_FS         "Enable littlefs library"                   OFF)
+option(ENABLE_THREADX           "Enable threadx RTOS"                       OFF)
+option(ENABLE_FREERTOS          "Enable FreeRTOS"                           OFF)
