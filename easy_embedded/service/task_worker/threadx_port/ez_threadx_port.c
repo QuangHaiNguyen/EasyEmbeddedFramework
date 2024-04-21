@@ -55,197 +55,16 @@ static bool interface_initialized = false;
 /*****************************************************************************
 * Function Definitions
 *****************************************************************************/
-
-/*****************************************************************************
-* Function: ezThreadXPort_CreateThread
-*//** 
-* @brief This function create a thread by calling tx_thread_create
-*
-* @details
-*
-* @param[in]    worker: pointer to the task worker who "owns" the thread
-* @param[in]    thread_func: threadx function
-* @return       true if success, else false
-*
-* @pre ezThreadXPort_Init must be called first
-* @post None
-*
-* \b Example
-* @code
-* @endcode
-*
-* @see ezThreadXPort_Init
-*
-*****************************************************************************/
 static bool ezThreadXPort_CreateThread(struct ezTaskWorker *worker,
                                        void *thread_func);
-
-
-/*****************************************************************************
-* Function: ezThreadXPort_CreateSemaphore
-*//** 
-* @brief Create the semaphore using tx_semaphore_create
-*
-* @details
-*
-* @param[in]    worker: pointer to the task worker who "owns" the thread
-* @return       true if success, else false
-*
-* @pre ezThreadXPort_Init must be called first
-* @post None
-*
-* \b Example
-* @code
-* @endcode
-*
-* @see ezThreadXPort_Init
-*
-*****************************************************************************/
 static bool ezThreadXPort_CreateSemaphore(struct ezTaskWorker *worker);
-
-
-/*****************************************************************************
-* Function: ezThreadXPort_GiveSemaphore
-*//** 
-* @brief Release the threadx semaphore by calling tx_semaphore_put
-*
-* @details
-*
-* @param[in]    worker: pointer to the task worker who "owns" the thread
-* @return       true if success, else false
-*
-* @pre semaphore must be created  first
-* @post None
-*
-* \b Example
-* @code
-* @endcode
-*
-* @see ezThreadXPort_CreateSemaphore
-*
-*****************************************************************************/
 static bool ezThreadXPort_GiveSemaphore(struct ezTaskWorker *worker);
-
-
-/*****************************************************************************
-* Function: ezThreadXPort_TakeSemaphore
-*//** 
-* @brief Take the threadx semaphore by calling tx_semaphore_get
-*
-* @details
-*
-* @param[in]    worker: pointer to the task worker who "owns" the thread
-* @param[in]    tick_to_wait: number of tick to wait for the semaphore's availability.
-*               EZ_THREAD_WAIT_NO for no wait and EZ_THREAD_WAIT_FOREVER to wait until
-*               semphore available
-* @return       true if success, else false
-*
-* @pre semaphore must be created  first
-* @post None
-*
-* \b Example
-* @code
-* @endcode
-*
-* @see ezThreadXPort_CreateSemaphore
-*
-*****************************************************************************/
 static bool ezThreadXPort_TakeSemaphore(struct ezTaskWorker *worker, uint32_t tick_to_wait);
-
-
-/*****************************************************************************
-* Function: ezThreadXPort_CreateEvent
-*//** 
-* @brief Create the threadx event group by calling tx_event_flags_create
-*
-* @details
-*
-* @param[in]    worker: pointer to the task worker who "owns" the thread
-* @return       true if success, else false
-*
-* @pre ezThreadXPort_Init must be called first
-* @post None
-*
-* \b Example
-* @code
-* @endcode
-*
-* @see ezThreadXPort_Init
-*
-*****************************************************************************/
 static bool ezThreadXPort_CreateEvent(struct ezTaskWorker *worker);
-
-
-/*****************************************************************************
-* Function: ezThreadXPort_SetEvent
-*//** 
-* @brief Set an event by calling tx_event_flags_set
-*
-* @details
-*
-* @param[in]    worker: pointer to the task worker who "owns" the thread
-* @param[in]    events: events to set
-* @return       true if success, else false
-*
-* @pre event must be created first
-* @post None
-*
-* \b Example
-* @endcode
-*
-* @see ezThreadXPort_CreateEvent
-*
-*****************************************************************************/
 static bool ezThreadXPort_SetEvent(struct ezTaskWorker *worker, uint32_t events);
-
-
-/*****************************************************************************
-* Function: ezThreadXPort_GetEvent
-*//** 
-* @brief Get the event by calling tx_event_flags_get
-*
-* @details
-*
-* @param[in]    worker: pointer to the task worker who "owns" the thread
-* @param[in]    events: events to get
-* @param[in]    tick_to_wait: number of tick to wait for the events' availability.
-*               EZ_THREAD_WAIT_NO for no wait and EZ_THREAD_WAIT_FOREVER to wait until
-*               events available
-* @return       true if success, else false
-*
-* @pre eevent must be created first
-* @post None
-*
-* \b Example
-* @code
-* @endcode
-*
-* @see ezThreadXPort_CreateEvent
-*
-*****************************************************************************/
-static bool ezThreadXPort_GetEvent(struct ezTaskWorker *worker, uint32_t events, uint32_t tick_to_wait);
-
-
-/*****************************************************************************
-* Function: ezThreadXPort_PrintThreadXStatusCode
-*//** 
-* @brief Print the status error code.
-*
-* @details
-*
-* @param[in]    code: error code to be printed
-* @return       None
-*
-* @pre None
-* @post None
-*
-* \b Example
-* @code
-* @endcode
-*
-* @see
-*
-*****************************************************************************/
+static bool ezThreadXPort_GetEvent(struct ezTaskWorker *worker,
+                                   uint32_t events,
+                                   uint32_t tick_to_wait);
 static void ezThreadXPort_PrintThreadXStatusCode(UINT code);
 
 
@@ -295,6 +114,28 @@ struct ezTaskWorkerThreadInterfaces *ezThreadXPort_GetInterface(void)
 /*****************************************************************************
 * Local functions
 *****************************************************************************/
+
+/*****************************************************************************
+* Function: ezThreadXPort_CreateThread
+*//** 
+* @brief This function create a thread by calling tx_thread_create
+*
+* @details
+*
+* @param[in]    worker: pointer to the task worker who "owns" the thread
+* @param[in]    thread_func: threadx function
+* @return       true if success, else false
+*
+* @pre ezThreadXPort_Init must be called first
+* @post None
+*
+* \b Example
+* @code
+* @endcode
+*
+* @see ezThreadXPort_Init
+*
+*****************************************************************************/
 static bool ezThreadXPort_CreateThread(struct ezTaskWorker *worker,
                                        void *thread_func)
 {
@@ -340,6 +181,27 @@ static bool ezThreadXPort_CreateThread(struct ezTaskWorker *worker,
     return ret;
 }
 
+
+/*****************************************************************************
+* Function: ezThreadXPort_CreateSemaphore
+*//** 
+* @brief Create the semaphore using tx_semaphore_create
+*
+* @details
+*
+* @param[in]    worker: pointer to the task worker who "owns" the thread
+* @return       true if success, else false
+*
+* @pre ezThreadXPort_Init must be called first
+* @post None
+*
+* \b Example
+* @code
+* @endcode
+*
+* @see ezThreadXPort_Init
+*
+*****************************************************************************/
 static bool ezThreadXPort_CreateSemaphore(struct ezTaskWorker *worker)
 {
     bool ret = false;
@@ -366,6 +228,27 @@ static bool ezThreadXPort_CreateSemaphore(struct ezTaskWorker *worker)
     return ret;
 }
 
+
+/*****************************************************************************
+* Function: ezThreadXPort_GiveSemaphore
+*//** 
+* @brief Release the threadx semaphore by calling tx_semaphore_put
+*
+* @details
+*
+* @param[in]    worker: pointer to the task worker who "owns" the thread
+* @return       true if success, else false
+*
+* @pre semaphore must be created  first
+* @post None
+*
+* \b Example
+* @code
+* @endcode
+*
+* @see ezThreadXPort_CreateSemaphore
+*
+*****************************************************************************/
 static bool ezThreadXPort_GiveSemaphore(struct ezTaskWorker *worker)
 {
     bool ret = false;
@@ -391,6 +274,30 @@ static bool ezThreadXPort_GiveSemaphore(struct ezTaskWorker *worker)
     return ret;
 }
 
+
+/*****************************************************************************
+* Function: ezThreadXPort_TakeSemaphore
+*//** 
+* @brief Take the threadx semaphore by calling tx_semaphore_get
+*
+* @details
+*
+* @param[in]    worker: pointer to the task worker who "owns" the thread
+* @param[in]    tick_to_wait: number of tick to wait for the semaphore's availability.
+*               EZ_THREAD_WAIT_NO for no wait and EZ_THREAD_WAIT_FOREVER to wait until
+*               semphore available
+* @return       true if success, else false
+*
+* @pre semaphore must be created  first
+* @post None
+*
+* \b Example
+* @code
+* @endcode
+*
+* @see ezThreadXPort_CreateSemaphore
+*
+*****************************************************************************/
 static bool ezThreadXPort_TakeSemaphore(struct ezTaskWorker *worker, uint32_t tick_to_wait)
 {
     bool ret = false;
@@ -431,6 +338,27 @@ static bool ezThreadXPort_TakeSemaphore(struct ezTaskWorker *worker, uint32_t ti
     return ret;
 }
 
+
+/*****************************************************************************
+* Function: ezThreadXPort_CreateEvent
+*//** 
+* @brief Create the threadx event group by calling tx_event_flags_create
+*
+* @details
+*
+* @param[in]    worker: pointer to the task worker who "owns" the thread
+* @return       true if success, else false
+*
+* @pre ezThreadXPort_Init must be called first
+* @post None
+*
+* \b Example
+* @code
+* @endcode
+*
+* @see ezThreadXPort_Init
+*
+*****************************************************************************/
 static bool ezThreadXPort_CreateEvent(struct ezTaskWorker *worker)
 {
     bool ret = false;
@@ -454,6 +382,27 @@ static bool ezThreadXPort_CreateEvent(struct ezTaskWorker *worker)
     }
 }
 
+
+/*****************************************************************************
+* Function: ezThreadXPort_SetEvent
+*//** 
+* @brief Set an event by calling tx_event_flags_set
+*
+* @details
+*
+* @param[in]    worker: pointer to the task worker who "owns" the thread
+* @param[in]    events: events to set
+* @return       true if success, else false
+*
+* @pre event must be created first
+* @post None
+*
+* \b Example
+* @endcode
+*
+* @see ezThreadXPort_CreateEvent
+*
+*****************************************************************************/
 static bool ezThreadXPort_SetEvent(struct ezTaskWorker *worker, uint32_t events)
 {
     bool ret = false;
@@ -478,6 +427,31 @@ static bool ezThreadXPort_SetEvent(struct ezTaskWorker *worker, uint32_t events)
     }
 }
 
+
+/*****************************************************************************
+* Function: ezThreadXPort_GetEvent
+*//** 
+* @brief Get the event by calling tx_event_flags_get
+*
+* @details
+*
+* @param[in]    worker: pointer to the task worker who "owns" the thread
+* @param[in]    events: events to get
+* @param[in]    tick_to_wait: number of tick to wait for the events' availability.
+*               EZ_THREAD_WAIT_NO for no wait and EZ_THREAD_WAIT_FOREVER to wait until
+*               events available
+* @return       true if success, else false
+*
+* @pre eevent must be created first
+* @post None
+*
+* \b Example
+* @code
+* @endcode
+*
+* @see ezThreadXPort_CreateEvent
+*
+*****************************************************************************/
 static bool ezThreadXPort_GetEvent(struct ezTaskWorker *worker, uint32_t events, uint32_t tick_to_wait)
 {
     bool ret = false;
@@ -519,6 +493,29 @@ static bool ezThreadXPort_GetEvent(struct ezTaskWorker *worker, uint32_t events,
     return ret;
 }
 
+
+
+/*****************************************************************************
+* Function: ezThreadXPort_PrintThreadXStatusCode
+*//** 
+* @brief Print the status error code.
+*
+* @details
+*
+* @param[in]    code: error code to be printed
+* @return       None
+*
+* @pre None
+* @post None
+*
+* \b Example
+* @code
+* ezThreadXPort_PrintThreadXStatusCode(TX_POOL_ERROR);
+* @endcode
+*
+* @see
+*
+*****************************************************************************/
 static void ezThreadXPort_PrintThreadXStatusCode(UINT code)
 {
     switch(code)

@@ -127,7 +127,7 @@ extern "C" {
  */
 struct ezTaskWorker
 {
-    struct Node node;               /**< Linked list node */
+    
     ezQueue msg_queue;              /**< Queue containing the tasks to be executed */
     char* worker_name;              /**< Name of the worker */
 #if (EZ_THREADX_PORT_ENABLE == 1)
@@ -146,6 +146,8 @@ struct ezTaskWorker
     SemaphoreHandle_t semaphore_h;
     StaticEventGroup_t events;
     EventGroupHandle_t events_h;
+#else
+    struct Node node;               /**< Linked list node */
 #endif /* EZ_THREADX_PORT_ENABLE == 1 */
 };
 
@@ -354,37 +356,6 @@ bool ezTaskWorker_EnqueueTask(struct ezTaskWorker *worker,
                               uint32_t context_size,
                               uint32_t ticks_to_wait);
 
-/*****************************************************************************
-* Function: ezTaskWorker_ExecuteTaskNoRTOS
-*//** 
-* @brief If no RTOS is used, this function provides the processing time to
-*        the worker
-*
-* @details This function must be called periodically to provide processing time
-*
-* @param    None
-* @return   None
-*
-* @pre None
-* @post None
-*
-* \b Example
-* @code
-*
-* //super loop
-* while(1)
-* {
-*     ezTaskWorker_ExecuteTaskNoRTOS();
-* }
-*
-* @endcode
-*
-* @see
-*
-*****************************************************************************/
-void ezTaskWorker_ExecuteTaskNoRTOS(void);
-
-
 #if ((EZ_THREADX_PORT_ENABLE == 1) || (EZ_FREERTOS_PORT_ENABLE == 1))
 /*****************************************************************************
 * Function: ezTaskWorker_ExecuteTask
@@ -418,6 +389,37 @@ void ezTaskWorker_ExecuteTaskNoRTOS(void);
 *
 *****************************************************************************/
 void ezTaskWorker_ExecuteTask(struct ezTaskWorker *worker, uint32_t ticks_to_wait);
+#else
+/*****************************************************************************
+* Function: ezTaskWorker_ExecuteTaskNoRTOS
+*//** 
+* @brief If no RTOS is used, this function provides the processing time to
+*        the worker
+*
+* @details This function must be called periodically to provide processing time
+*
+* @param    None
+* @return   None
+*
+* @pre None
+* @post None
+*
+* \b Example
+* @code
+*
+* //super loop
+* while(1)
+* {
+*     ezTaskWorker_ExecuteTaskNoRTOS();
+* }
+*
+* @endcode
+*
+* @see
+*
+*****************************************************************************/
+void ezTaskWorker_ExecuteTaskNoRTOS(void);
+
 #endif
 
 #ifdef __cplusplus

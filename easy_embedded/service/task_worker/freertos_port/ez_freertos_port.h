@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Filename:         ez_threadx_port.h
+* Filename:         ez_freertos_port.h
 * Author:           Hai Nguyen
 * Original Date:    06.04.2024
 *
@@ -12,7 +12,7 @@
 *
 *****************************************************************************/
 
-/** @file   ez_threadx_port.h
+/** @file   ez_freertos_port.h
  *  @author Hai Nguyen
  *  @date   06.04.2024
  *  @brief  Public API of the threadx porting for the task worker rtos interface
@@ -70,10 +70,7 @@ extern "C" {
 *
 * \b Example
 * @code
-* void tx_application_define(void *first_unused_memory)
-* {
-*     ezThreadXPort_Init(first_unused_memory);
-* }
+* ezFreeRTOSPort_Init();
 * @endcode
 *
 * @see

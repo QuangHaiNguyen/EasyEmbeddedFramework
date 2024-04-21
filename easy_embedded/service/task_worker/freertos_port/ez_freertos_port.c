@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Filename:         ez_threadx_port.c
+* Filename:         ez_freertos_port.c
 * Author:           Hai Nguyen
 * Original Date:    06.04.2024
 *
@@ -12,7 +12,7 @@
 *
 *****************************************************************************/
 
-/** @file   ez_threadx_port.c
+/** @file   ez_freertos_port.c
  *  @author Hai Nguyen
  *  @date   06.04.2024
  *  @brief  Porting of the task worker rtos interface
@@ -55,176 +55,14 @@ static StackType_t used_stack_size = 0;
 /*****************************************************************************
 * Function Definitions
 *****************************************************************************/
-
-/*****************************************************************************
-* Function: ezFreeRTOSPort_CreateThread
-*//** 
-* @brief This function create a thread by calling tx_thread_create
-*
-* @details
-*
-* @param[in]    worker: pointer to the task worker who "owns" the thread
-* @param[in]    thread_func: threadx function
-* @return       true if success, else false
-*
-* @pre ezFreeRTOSPort_Init must be called first
-* @post None
-*
-* \b Example
-* @code
-* @endcode
-*
-* @see ezFreeRTOSPort_Init
-*
-*****************************************************************************/
 static bool ezFreeRTOSPort_CreateThread(struct ezTaskWorker *worker,
                                        void *thread_func);
-
-
-/*****************************************************************************
-* Function: ezFreeRTOSPort_CreateSemaphore
-*//** 
-* @brief Create the semaphore using tx_semaphore_create
-*
-* @details
-*
-* @param[in]    worker: pointer to the task worker who "owns" the thread
-* @return       true if success, else false
-*
-* @pre ezFreeRTOSPort_Init must be called first
-* @post None
-*
-* \b Example
-* @code
-* @endcode
-*
-* @see ezFreeRTOSPort_Init
-*
-*****************************************************************************/
 static bool ezFreeRTOSPort_CreateSemaphore(struct ezTaskWorker *worker);
-
-
-/*****************************************************************************
-* Function: ezFreeRTOSPort_GiveSemaphore
-*//** 
-* @brief Release the threadx semaphore by calling tx_semaphore_put
-*
-* @details
-*
-* @param[in]    worker: pointer to the task worker who "owns" the thread
-* @return       true if success, else false
-*
-* @pre semaphore must be created  first
-* @post None
-*
-* \b Example
-* @code
-* @endcode
-*
-* @see ezFreeRTOSPort_CreateSemaphore
-*
-*****************************************************************************/
 static bool ezFreeRTOSPort_GiveSemaphore(struct ezTaskWorker *worker);
-
-
-/*****************************************************************************
-* Function: ezFreeRTOSPort_TakeSemaphore
-*//** 
-* @brief Take the threadx semaphore by calling tx_semaphore_get
-*
-* @details
-*
-* @param[in]    worker: pointer to the task worker who "owns" the thread
-* @param[in]    tick_to_wait: number of tick to wait for the semaphore's availability.
-*               EZ_THREAD_WAIT_NO for no wait and EZ_THREAD_WAIT_FOREVER to wait until
-*               semphore available
-* @return       true if success, else false
-*
-* @pre semaphore must be created  first
-* @post None
-*
-* \b Example
-* @code
-* @endcode
-*
-* @see ezFreeRTOSPort_CreateSemaphore
-*
-*****************************************************************************/
 static bool ezFreeRTOSPort_TakeSemaphore(struct ezTaskWorker *worker, uint32_t tick_to_wait);
-
-
-/*****************************************************************************
-* Function: ezFreeRTOSPort_CreateEvent
-*//** 
-* @brief Create the threadx event group by calling tx_event_flags_create
-*
-* @details
-*
-* @param[in]    worker: pointer to the task worker who "owns" the thread
-* @return       true if success, else false
-*
-* @pre ezFreeRTOSPort_Init must be called first
-* @post None
-*
-* \b Example
-* @code
-* @endcode
-*
-* @see ezFreeRTOSPort_Init
-*
-*****************************************************************************/
 static bool ezFreeRTOSPort_CreateEvent(struct ezTaskWorker *worker);
-
-
-/*****************************************************************************
-* Function: ezFreeRTOSPort_SetEvent
-*//** 
-* @brief Set an event by calling tx_event_flags_set
-*
-* @details
-*
-* @param[in]    worker: pointer to the task worker who "owns" the thread
-* @param[in]    events: events to set
-* @return       true if success, else false
-*
-* @pre event must be created first
-* @post None
-*
-* \b Example
-* @endcode
-*
-* @see ezFreeRTOSPort_CreateEvent
-*
-*****************************************************************************/
 static bool ezFreeRTOSPort_SetEvent(struct ezTaskWorker *worker, uint32_t events);
-
-
-/*****************************************************************************
-* Function: ezFreeRTOSPort_GetEvent
-*//** 
-* @brief Get the event by calling tx_event_flags_get
-*
-* @details
-*
-* @param[in]    worker: pointer to the task worker who "owns" the thread
-* @param[in]    events: events to get
-* @param[in]    tick_to_wait: number of tick to wait for the events' availability.
-*               EZ_THREAD_WAIT_NO for no wait and EZ_THREAD_WAIT_FOREVER to wait until
-*               events available
-* @return       true if success, else false
-*
-* @pre eevent must be created first
-* @post None
-*
-* \b Example
-* @code
-* @endcode
-*
-* @see ezFreeRTOSPort_CreateEvent
-*
-*****************************************************************************/
 static bool ezFreeRTOSPort_GetEvent(struct ezTaskWorker *worker, uint32_t events, uint32_t tick_to_wait);
-
 
 
 /*****************************************************************************
@@ -261,6 +99,28 @@ struct ezTaskWorkerThreadInterfaces *ezFreeRTOSPort_GetInterface(void)
 
 /*****************************************************************************
 * Local functions
+*****************************************************************************/
+
+/*****************************************************************************
+* Function: ezFreeRTOSPort_CreateThread
+*//** 
+* @brief This function create a thread by calling tx_thread_create
+*
+* @details
+*
+* @param[in]    worker: pointer to the task worker who "owns" the thread
+* @param[in]    thread_func: threadx function
+* @return       true if success, else false
+*
+* @pre ezFreeRTOSPort_Init must be called first
+* @post None
+*
+* \b Example
+* @code
+* @endcode
+*
+* @see ezFreeRTOSPort_Init
+*
 *****************************************************************************/
 static bool ezFreeRTOSPort_CreateThread(struct ezTaskWorker *worker,
                                        void *thread_func)
@@ -304,6 +164,26 @@ static bool ezFreeRTOSPort_CreateThread(struct ezTaskWorker *worker,
 }
 
 
+/*****************************************************************************
+* Function: ezFreeRTOSPort_CreateSemaphore
+*//** 
+* @brief Create the semaphore using tx_semaphore_create
+*
+* @details
+*
+* @param[in]    worker: pointer to the task worker who "owns" the thread
+* @return       true if success, else false
+*
+* @pre ezFreeRTOSPort_Init must be called first
+* @post None
+*
+* \b Example
+* @code
+* @endcode
+*
+* @see ezFreeRTOSPort_Init
+*
+*****************************************************************************/
 static bool ezFreeRTOSPort_CreateSemaphore(struct ezTaskWorker *worker)
 {
     bool ret = false;
@@ -329,6 +209,26 @@ static bool ezFreeRTOSPort_CreateSemaphore(struct ezTaskWorker *worker)
 }
 
 
+/*****************************************************************************
+* Function: ezFreeRTOSPort_GiveSemaphore
+*//** 
+* @brief Release the threadx semaphore by calling tx_semaphore_put
+*
+* @details
+*
+* @param[in]    worker: pointer to the task worker who "owns" the thread
+* @return       true if success, else false
+*
+* @pre semaphore must be created  first
+* @post None
+*
+* \b Example
+* @code
+* @endcode
+*
+* @see ezFreeRTOSPort_CreateSemaphore
+*
+*****************************************************************************/
 static bool ezFreeRTOSPort_GiveSemaphore(struct ezTaskWorker *worker)
 {
     bool ret = false;
@@ -353,6 +253,29 @@ static bool ezFreeRTOSPort_GiveSemaphore(struct ezTaskWorker *worker)
 }
 
 
+/*****************************************************************************
+* Function: ezFreeRTOSPort_TakeSemaphore
+*//** 
+* @brief Take the threadx semaphore by calling tx_semaphore_get
+*
+* @details
+*
+* @param[in]    worker: pointer to the task worker who "owns" the thread
+* @param[in]    tick_to_wait: number of tick to wait for the semaphore's availability.
+*               EZ_THREAD_WAIT_NO for no wait and EZ_THREAD_WAIT_FOREVER to wait until
+*               semphore available
+* @return       true if success, else false
+*
+* @pre semaphore must be created  first
+* @post None
+*
+* \b Example
+* @code
+* @endcode
+*
+* @see ezFreeRTOSPort_CreateSemaphore
+*
+*****************************************************************************/
 static bool ezFreeRTOSPort_TakeSemaphore(struct ezTaskWorker *worker, uint32_t tick_to_wait)
 {
     bool ret = false;
@@ -393,6 +316,26 @@ static bool ezFreeRTOSPort_TakeSemaphore(struct ezTaskWorker *worker, uint32_t t
 }
 
 
+/*****************************************************************************
+* Function: ezFreeRTOSPort_CreateEvent
+*//** 
+* @brief Create the threadx event group by calling tx_event_flags_create
+*
+* @details
+*
+* @param[in]    worker: pointer to the task worker who "owns" the thread
+* @return       true if success, else false
+*
+* @pre ezFreeRTOSPort_Init must be called first
+* @post None
+*
+* \b Example
+* @code
+* @endcode
+*
+* @see ezFreeRTOSPort_Init
+*
+*****************************************************************************/
 static bool ezFreeRTOSPort_CreateEvent(struct ezTaskWorker *worker)
 {
     bool ret = false;
@@ -415,7 +358,26 @@ static bool ezFreeRTOSPort_CreateEvent(struct ezTaskWorker *worker)
 }
 
 
-
+/*****************************************************************************
+* Function: ezFreeRTOSPort_SetEvent
+*//** 
+* @brief Set an event by calling tx_event_flags_set
+*
+* @details
+*
+* @param[in]    worker: pointer to the task worker who "owns" the thread
+* @param[in]    events: events to set
+* @return       true if success, else false
+*
+* @pre event must be created first
+* @post None
+*
+* \b Example
+* @endcode
+*
+* @see ezFreeRTOSPort_CreateEvent
+*
+*****************************************************************************/
 static bool ezFreeRTOSPort_SetEvent(struct ezTaskWorker *worker, uint32_t events)
 {
     bool ret = false;
@@ -431,6 +393,30 @@ static bool ezFreeRTOSPort_SetEvent(struct ezTaskWorker *worker, uint32_t events
 }
 
 
+/*****************************************************************************
+* Function: ezFreeRTOSPort_GetEvent
+*//** 
+* @brief Get the event by calling tx_event_flags_get
+*
+* @details
+*
+* @param[in]    worker: pointer to the task worker who "owns" the thread
+* @param[in]    events: events to get
+* @param[in]    tick_to_wait: number of tick to wait for the events' availability.
+*               EZ_THREAD_WAIT_NO for no wait and EZ_THREAD_WAIT_FOREVER to wait until
+*               events available
+* @return       true if success, else false
+*
+* @pre eevent must be created first
+* @post None
+*
+* \b Example
+* @code
+* @endcode
+*
+* @see ezFreeRTOSPort_CreateEvent
+*
+*****************************************************************************/
 static bool ezFreeRTOSPort_GetEvent(struct ezTaskWorker *worker, uint32_t events, uint32_t tick_to_wait)
 {
     bool ret = false;

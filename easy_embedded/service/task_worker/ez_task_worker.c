@@ -163,12 +163,14 @@ bool ezTaskWorker_EnqueueTask(struct ezTaskWorker *worker,
     if((worker != NULL) && (task != NULL) && (callback != NULL))
     {
 #if ((EZ_THREADX_PORT_ENABLE == 1) || (EZ_FREERTOS_PORT_ENABLE == 1))
+        EZTRACE("Getting semaphore from worker = %s", worker->worker_name);
         ret = rtos_interfaces->take_semaphore(worker, ticks_to_wait);
 #else
         ret = true;
 #endif /* (EZ_THREADX_PORT_ENABLE == 1) || (EZ_FREERTOS_PORT_ENABLE == 1) */
         if(ret == true)
         {
+            EZTRACE("Get semaphore from worker = %s OK", worker->worker_name);
             /**The idea to store common data and context data is we reserve a buffer
              * with the size = common size + context size. Then, the buffer is convert to
              * ezTaskBlockCommon to store common data. After that it is offseted to the
@@ -221,6 +223,58 @@ bool ezTaskWorker_EnqueueTask(struct ezTaskWorker *worker,
     return ret;
 }
 
+#if ((EZ_THREADX_PORT_ENABLE == 1) || (EZ_FREERTOS_PORT_ENABLE == 1))
+void ezTaskWorker_ExecuteTask(struct ezTaskWorker *worker, uint32_t ticks_to_wait)
+{
+    bool ret = false;
+    ezSTATUS status = ezFAIL;
+    void *context = NULL;
+    struct ezTaskBlockCommon *common = NULL;
+    uint32_t data_size = 0;
+
+    if(worker != NULL)
+    {
+        EZTRACE("ezTaskWorker_ExecuteTask(woker = %s)", worker->worker_name);
+        ret = rtos_interfaces->get_events(worker, EZ_EVENT_TASK_AVAIL, ticks_to_wait);
+
+        if(ret == false)
+        {
+            EZERROR("Get event failed");
+        }
+        else
+        {
+            EZINFO("Receive EZ_EVENT_TASK_AVAIL");
+            ret = rtos_interfaces->take_semaphore(worker, ticks_to_wait);
+            EZTRACE("Getting semaphore from worker = %s", worker->worker_name);
+        }
+
+        if(ret == false)
+        {
+            EZERROR("Take semaphore failed");
+        }
+        else
+        {
+            EZTRACE("Get semaphore from worker = %s OK", worker->worker_name);
+            status = ezQueue_GetFront(&worker->msg_queue, (void**)&common, &data_size);
+
+            if((status == ezSUCCESS) && (common->task != NULL))
+            {
+                context = common;
+                context += sizeof(struct ezTaskBlockCommon);
+                common->task(context, common->callback);
+            }
+            else
+            {
+                ret = false;
+                EZERROR("Get data from queue failed");
+            }
+
+            status = ezQueue_PopFront(&worker->msg_queue);
+            rtos_interfaces->give_semaphore(worker);
+        }
+    }
+}
+#else
 void ezTaskWorker_ExecuteTaskNoRTOS(void)
 {
     struct Node *it = NULL;
@@ -245,56 +299,6 @@ void ezTaskWorker_ExecuteTaskNoRTOS(void)
                 common->task(context, common->callback);
             }
             status = ezQueue_PopFront(&worker->msg_queue);
-        }
-    }
-}
-
-#if ((EZ_THREADX_PORT_ENABLE == 1) || (EZ_FREERTOS_PORT_ENABLE == 1))
-void ezTaskWorker_ExecuteTask(struct ezTaskWorker *worker, uint32_t ticks_to_wait)
-{
-    bool ret = false;
-    ezSTATUS status = ezFAIL;
-    void *context = NULL;
-    struct ezTaskBlockCommon *common = NULL;
-    uint32_t data_size = 0;
-
-    if(worker != NULL)
-    {
-        EZTRACE("ezTaskWorker_ExecuteTask(woker = %s)", worker->worker_name);
-        ret = rtos_interfaces->get_events(worker, EZ_EVENT_TASK_AVAIL, ticks_to_wait);
-
-        if(ret == false)
-        {
-            EZERROR("Get event failed");
-        }
-        else
-        {
-            EZINFO("Receive EZ_EVENT_TASK_AVAIL");
-            ret = rtos_interfaces->take_semaphore(worker, ticks_to_wait);
-        }
-
-        if(ret == false)
-        {
-            EZERROR("Take semaphore failed");
-        }
-        else
-        {
-            status = ezQueue_GetFront(&worker->msg_queue, (void**)&common, &data_size);
-
-            if((status == ezSUCCESS) && (common->task != NULL))
-            {
-                context = common;
-                context += sizeof(struct ezTaskBlockCommon);
-                common->task(context, common->callback);
-            }
-            else
-            {
-                ret = false;
-                EZERROR("Get data from queue failed");
-            }
-
-            status = ezQueue_PopFront(&worker->msg_queue);
-            rtos_interfaces->give_semaphore(worker);
         }
     }
 }
