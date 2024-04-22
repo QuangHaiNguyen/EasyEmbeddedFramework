@@ -94,3 +94,20 @@ if(ENABLE_FREERTOS)
     add_subdirectory(freertos)
 endif()
 
+#Adding pi_pico SDS -------------------------------------------------------
+if(${TARGET} MATCHES "pi_pico")
+    FetchContent_Declare(
+        pi_pico_sdk
+        GIT_REPOSITORY          https://github.com/raspberrypi/pico-sdk
+        GIT_TAG                 master
+        GIT_SUBMODULES_RECURSE  FALSE
+        SOURCE_DIR              ${CMAKE_SOURCE_DIR}/extern/pi_pico_sdk
+    )
+
+    FetchContent_GetProperties(freertos_kernel)
+    if(NOT pi_pico_sdk)
+        message(STATUS "pi_pico_sdk is not available, downloading...")
+        FetchContent_Populate(pi_pico_sdk)
+        message(STATUS "pi_pico_sdk completed")
+    endif()
+endif()
