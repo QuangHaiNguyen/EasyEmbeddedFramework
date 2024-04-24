@@ -15,6 +15,18 @@ message(STATUS "**********************************************************")
 # Include --------------------------------------------------------------------
 include(features.cmake)
 
+include(${CMAKE_SOURCE_DIR}/extern/pico-sdk/external/pico_sdk_import.cmake)
+pico_sdk_init()
+
+
+# Specify the cross compiler.
+set(CMAKE_C_COMPILER  "/usr/bin/arm/arm-none-eabi-gcc")
+set(CMAKE_CXX_COMPILER "/usr/bin/arm/arm-none-eabi-cpp")
+set(CMAKE_C_OUTPUT_EXTENSION .o)
+set(CMAKE_ASM_COMPILER "/usr/bin/arm/arm-none-eabi-as")
+set(CMAKE_ASM_COMPILE_OBJECT "<CMAKE_ASM_COMPILER> <DEFINES> <INCLUDES> <FLAGS> -o <OBJECT>   -c <SOURCE>")
+set(CMAKE_INCLUDE_FLAG_ASM "-I")
+
 # Source files ---------------------------------------------------------------
 target_sources(ez_target
     PRIVATE
@@ -46,8 +58,10 @@ target_link_libraries(ez_target
         # Please add public libraries
     PRIVATE
         easy_embedded_lib
+        pico_stdlib
     INTERFACE
         # Please add interface libraries
 )
+
 
 # End of file

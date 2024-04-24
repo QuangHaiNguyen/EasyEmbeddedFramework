@@ -97,17 +97,19 @@ endif()
 #Adding pi_pico SDS -------------------------------------------------------
 if(${TARGET} MATCHES "pi_pico")
     FetchContent_Declare(
-        pi_pico_sdk
+        pico-sdk
         GIT_REPOSITORY          https://github.com/raspberrypi/pico-sdk
         GIT_TAG                 master
         GIT_SUBMODULES_RECURSE  FALSE
-        SOURCE_DIR              ${CMAKE_SOURCE_DIR}/extern/pi_pico_sdk
+        SOURCE_DIR              ${CMAKE_SOURCE_DIR}/extern/pico-sdk
     )
 
     FetchContent_GetProperties(freertos_kernel)
-    if(NOT pi_pico_sdk)
-        message(STATUS "pi_pico_sdk is not available, downloading...")
-        FetchContent_Populate(pi_pico_sdk)
-        message(STATUS "pi_pico_sdk completed")
+    if(NOT pico-sdk)
+        message(STATUS "pico-sdk is not available, downloading...")
+        FetchContent_Populate(pico-sdk)
+        message(STATUS "pico-sdk completed")
+
+        set(PICO_SDK_PATH ${pico-sdk_SOURCE_DIR} CACHE FILEPATH "SDK path" FORCE)
     endif()
 endif()

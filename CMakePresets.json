@@ -59,7 +59,6 @@
             "name": "pi_pico",
             "displayName": "Cross compilation for pi-pico mcu",
             "description": "Cross compilation for pi-pico mcu",
-            "generator": "Unix Makefiles",
             "hidden": true,
             "condition": {
                 "type": "equals",
