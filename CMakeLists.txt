@@ -6,12 +6,13 @@ project(EzEmbeddedFramework
     DESCRIPTION "Easy Embedded Software Framework"
 )
 
+#Only build test, targets, and extern when being build as a project
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     include(CTest)
+    add_subdirectory(${TARGET_PATH})
+    add_subdirectory(extern)
 endif()
 
-add_subdirectory(${TARGET_PATH})
-add_subdirectory(extern)
 add_subdirectory(easy_embedded)
 
 if(BUILD_TESTING)
