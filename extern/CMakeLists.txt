@@ -3,30 +3,31 @@ cmake_minimum_required(VERSION 3.11 FATAL_ERROR)
 include(FetchContent)
 
 #Adding Unity test framework -------------------------------------------------
-FetchContent_Declare(
-    unity
-    GIT_REPOSITORY    https://github.com/ThrowTheSwitch/Unity.git
-    GIT_TAG           v2.5.2
-    #SOURCE_DIR        ${CMAKE_SOURCE_DIR}/extern/unity
-)
+if(BUILD_TESTING)
+    FetchContent_Declare(
+        unity
+        GIT_REPOSITORY    https://github.com/ThrowTheSwitch/Unity.git
+        GIT_TAG           v2.5.2
+        #SOURCE_DIR        ${CMAKE_SOURCE_DIR}/extern/unity
+    )
 
-FetchContent_GetProperties(unity)
-if(NOT unity_POPULATED)
-  message(STATUS "Unity framework is not available, downloading...")
-  
-  FetchContent_Populate(unity)
-  SET(UNITY_EXTENSION_FIXTURE ON CACHE BOOL "Build Unity with extension features")
-  add_subdirectory(
-    ${unity_SOURCE_DIR}
-    ${unity_BINARY_DIR}
-    EXCLUDE_FROM_ALL)
-  
-  message(STATUS "Download completed")
+    FetchContent_GetProperties(unity)
+    if(NOT unity_POPULATED)
+        message(STATUS "Unity framework is not available, downloading...")
+        
+        FetchContent_Populate(unity)
+        SET(UNITY_EXTENSION_FIXTURE ON CACHE BOOL "Build Unity with extension features")
+        add_subdirectory(
+            ${unity_SOURCE_DIR}
+            ${unity_BINARY_DIR}
+            EXCLUDE_FROM_ALL)
+        
+        message(STATUS "Download completed")
+    endif()
 endif()
 
-
 #Adding littlefs file system -------------------------------------------------
-    if(ENABLE_LITTLE_FS)
+if(ENABLE_LITTLE_FS)
     FetchContent_Declare(
         littlefs
         GIT_REPOSITORY    https://github.com/littlefs-project/littlefs.git
@@ -50,7 +51,7 @@ if(ENABLE_THREADX)
         threadx
         GIT_REPOSITORY    https://github.com/eclipse-threadx/threadx.git
         GIT_TAG           v6.4.1_rel
-        SOURCE_DIR        ${CMAKE_SOURCE_DIR}/extern/threadx
+        SOURCE_DIR        ${CMAKE_CURRENT_SOURCE_DIR}/threadx
     )
 
     FetchContent_GetProperties(threadx)
@@ -69,7 +70,7 @@ if(ENABLE_FREERTOS)
         freertos_kernel
         GIT_REPOSITORY    https://github.com/FreeRTOS/FreeRTOS-Kernel.git
         GIT_TAG           V11.0.1
-        SOURCE_DIR        ${CMAKE_SOURCE_DIR}/extern/freertos
+        SOURCE_DIR        ${CMAKE_CURRENT_SOURCE_DIR}/freertos
     )
 
     FetchContent_GetProperties(freertos_kernel)
