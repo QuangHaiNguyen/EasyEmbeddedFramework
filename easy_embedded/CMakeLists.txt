@@ -60,7 +60,7 @@ target_link_libraries(easy_embedded_lib
         ez_utilities_lib
         $<$<BOOL:${ENABLE_EZ_EVENT_NOTIFIER}>:ez_event_notifier_lib>
         $<$<BOOL:${ENABLE_EZ_TASK_WORKER}>:ez_task_worker_lib>
-        $<$<BOOL:${ENABLE_EZ_KERNEL}>:ez_kernel>
+        $<$<BOOL:${ENABLE_EZ_STATE_MACHINE}>:ez_state_machine_lib>
         $<$<BOOL:${ENABLE_EZ_HAL_DRIVER}>:ez_driver_lib>
         $<$<BOOL:${ENABLE_LITTLE_FS}>:littlefs>
     PRIVATE

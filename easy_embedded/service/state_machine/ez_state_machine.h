@@ -43,15 +43,15 @@ extern "C" {
 
 /* Macro to define an action function */
 #define DEFINE_ACTION_FUNCTION(state_name) \
-    static ezState_t* state_name##Action(StateMachine_t *sm)
+    static ezState_t* state_name##Action(ezStateMachine_t *sm)
 
 /* Macro to define an entry function */
 #define DEFINE_ENTRY_FUNCTION(state_name) \
-    static void state_name##Entry(StateMachine_t *sm)
+    static void state_name##Entry(ezStateMachine_t *sm)
 
 /* Macro to define an exit function */
 #define DEFINE_EXIT_FUNCTION(state_name) \
-    static void state_name##Exit(StateMachine_t *sm)
+    static void state_name##Exit(ezStateMachine_t *sm)
 
 /* Macro to define an event handler function */
 #define DEFINE_EVENT_HANDLER_FUNCTION(state_name) \
@@ -59,9 +59,9 @@ extern "C" {
 
 /* Macro to initialize a state */
 #define INIT_STATE(state_name, sub_state_machine)           \
-    static ezState_t* state_name##Action(StateMachine_t *sm); \
-    static void state_name##Entry(StateMachine_t *sm);      \
-    static void state_name##Exit(StateMachine_t *sm);       \
+    static ezState_t* state_name##Action(ezStateMachine_t *sm); \
+    static void state_name##Entry(ezStateMachine_t *sm);      \
+    static void state_name##Exit(ezStateMachine_t *sm);       \
     static ezState_t* state_name##HandleEvent(uint8_t event); \
     static ezState_t state_name = {                           \
         .name = #state_name,                                \
