@@ -3,7 +3,6 @@ message(STATUS "* Building Service framework")
 message(STATUS "************************************")
 
 if(ENABLE_EZ_HAL_DRIVER)
-    message(STATUS "HAL Driver service is activated")
     add_subdirectory(driver)
 endif()
 
@@ -17,5 +16,9 @@ endif()
 
 if(ENABLE_EZ_TASK_WORKER)
     add_subdirectory(task_worker)
+endif()
+
+if(ENABLE_EZ_STATE_MACHINE)
+    add_subdirectory(state_machine)
 endif()
 

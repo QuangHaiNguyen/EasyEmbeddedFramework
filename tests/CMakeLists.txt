@@ -22,6 +22,10 @@ if(ENABLE_EZ_TASK_WORKER AND NOT ENABLE_THREADX AND NOT ENABLE_FREERTOS)
     add_subdirectory(service/task_worker)
 endif()
 
+if(ENABLE_EZ_STATE_MACHINE)
+    add_subdirectory(service/state_machine)
+endif()
+
 if(ENABLE_EZ_KERNEL)
     add_subdirectory(service/kernel)
 endif()
