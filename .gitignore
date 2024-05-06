@@ -12,3 +12,4 @@ Testing/
 coverage/
 extern/threadx/
 extern/freertos
+docs/_build/
