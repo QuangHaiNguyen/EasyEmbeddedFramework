@@ -24,7 +24,6 @@ Table of contents:
    :maxdepth: 1
    :caption: Framework applications:
 
-   easy_embedded/welcome.rst
    easy_embedded/app/cli/cli.rst
    easy_embedded/app/data_model/data_model.rst
    easy_embedded/app/ipc/ipc.rst

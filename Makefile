@@ -10,7 +10,7 @@ docker_run_bash:
 	docker run --mount src=".",target=/home/framework,type=bind -it --rm toolchains
 
 build_document:
-	sphinx-build -c docs/_config/ -v docs/ docs/_build/
+	sphinx-build -c docs/ -v docs/ docs/_build/
 
 help:
 	$(info lists of commands:)
