@@ -88,7 +88,7 @@ static void ezEasyEmbedded_PrintHeader(void)
     EZINFO("******************************************************************************");
     EZINFO("* EASY EMBEDDED FRAMEWORK");
     EZINFO("* Author: Quang Hai Nguyen");
-    EZINFO("* Contact: hainguyen.ezm@gmail.com");
+    EZINFO("* Contact: hainguyen.eeit@gmail.com");
     EZINFO("******************************************************************************\n\n");
 }
 
