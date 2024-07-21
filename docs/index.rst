@@ -1,14 +1,12 @@
 Welcome to EasyEmbedded Framework's documentation
 ==================================================
 
-This area contains the design documents of the framework. The aim of those
+This document contains the design of the framework. The aim of those
 documents are to explain the users the purpose of the components, how they
 are design, why they are designed that way, and how to use them.
 
-If the user is new to the framework, please check system_overview_ document
-as a starting point.
-
-.. _system_overview: system_architecture.rst
+If the user is new to the framework, please check
+:ref:`system overview<system overview>` document as a starting point:
 
 Table of contents:
 ------------------

@@ -1,3 +1,5 @@
+.. _system overview:
+
 EasyEmbedded Framework Overview
 ==================================================
 
