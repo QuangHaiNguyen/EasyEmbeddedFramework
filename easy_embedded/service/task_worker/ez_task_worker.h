@@ -51,66 +51,79 @@ extern "C" {
 #define EZ_THREAD_WAIT_FOREVER  0xFFFFFFFF  /* Thread waits for event, semaphore forever */
 #define EZ_EVENT_TASK_AVAIL     0x01        /* Task avaialble event */
 
+
 #if (EZ_THREADX_PORT_ENABLE == 1)
-#define INIT_THREAD_FUNCTIONS(worker_name) \
-    static void worker_name##_thread(ULONG thread_input);\
-    static void worker_name##_thread_body(void);\
 
-#define GET_THREAD_FUNC(worker_name) \
-    worker_name##_thread\
+    #ifndef EZ_RTOS_USE_STATIC_ALLOC
+        #define EZ_RTOS_USE_STATIC_ALLOC        1
+    #endif
 
-#define THREAD_FUNC(worker_name) \
-    static void worker_name##_thread(ULONG thread_input)\
-    {\
-        while(1)\
-        {\
-            worker_name##_thread_body();\
-            if(worker_name.sleep_ticks > 0)\
-            { tx_thread_sleep(worker_name.sleep_ticks); }\
-        }\
-    }\
-    static void worker_name##_thread_body(void)
-
-#define INIT_WORKER(name, worker_sleep_ticks, worker_priority, worker_stack_size) \
-    struct ezTaskWorker name =\
-    {\
-        .worker_name = #name,\
-        .sleep_ticks = worker_sleep_ticks,\
-        .priority = worker_priority,\
-        .stack_size = worker_stack_size,\
-    }
-
-#elif (EZ_FREERTOS_PORT_ENABLE == 1)
     #define INIT_THREAD_FUNCTIONS(worker_name) \
-    static void worker_name##_thread(void * parameters);\
-    static void worker_name##_thread_body(void);\
+        static void worker_name##_thread(ULONG thread_input);\
+        static void worker_name##_thread_body(void);\
 
-#define GET_THREAD_FUNC(worker_name) \
-    worker_name##_thread\
+    #define GET_THREAD_FUNC(worker_name) \
+        worker_name##_thread\
 
-#define THREAD_FUNC(worker_name) \
-    static void worker_name##_thread(void * parameters)\
-    {\
-        while(1)\
+    #define THREAD_FUNC(worker_name) \
+        static void worker_name##_thread(ULONG thread_input)\
         {\
-            worker_name##_thread_body();\
-            if(worker_name.sleep_ticks > 0)\
-            { vTaskDelay(worker_name.sleep_ticks); }\
+            while(1)\
+            {\
+                worker_name##_thread_body();\
+                if(worker_name.sleep_ticks > 0)\
+                { tx_thread_sleep(worker_name.sleep_ticks); }\
+            }\
         }\
-    }\
-    static void worker_name##_thread_body(void)
+        static void worker_name##_thread_body(void)
 
-#define INIT_WORKER(name, worker_sleep_ticks, worker_priority, worker_stack_size) \
-    struct ezTaskWorker name =\
-    {\
-        .worker_name = #name,\
-        .sleep_ticks = worker_sleep_ticks,\
-        .priority = worker_priority,\
-        .stack_size = worker_stack_size,\
-        .semaphore_h = NULL,\
-        .events_h = NULL,\
-    }
+    #define INIT_WORKER(name, worker_sleep_ticks, worker_priority, worker_stack_size) \
+        struct ezTaskWorker name =\
+        {\
+            .worker_name = #name,\
+            .sleep_ticks = worker_sleep_ticks,\
+            .priority = worker_priority,\
+            .stack_size = worker_stack_size,\
+        }
+#elif (EZ_FREERTOS_PORT_ENABLE == 1)
+
+    #ifndef EZ_RTOS_USE_STATIC_ALLOC
+        #define EZ_RTOS_USE_STATIC_ALLOC        configSUPPORT_STATIC_ALLOCATION
+    #endif
+
+    #define INIT_THREAD_FUNCTIONS(worker_name) \
+        static void worker_name##_thread(void * parameters);\
+        static void worker_name##_thread_body(void);\
+
+    #define GET_THREAD_FUNC(worker_name) \
+        worker_name##_thread\
+
+    #define THREAD_FUNC(worker_name) \
+        static void worker_name##_thread(void * parameters)\
+        {\
+            while(1)\
+            {\
+                worker_name##_thread_body();\
+                if(worker_name.sleep_ticks > 0)\
+                { vTaskDelay(worker_name.sleep_ticks); }\
+            }\
+        }\
+        static void worker_name##_thread_body(void)
+
+    #define INIT_WORKER(name, worker_sleep_ticks, worker_priority, worker_stack_size) \
+        struct ezTaskWorker name =\
+        {\
+            .worker_name = #name,\
+            .sleep_ticks = worker_sleep_ticks,\
+            .priority = worker_priority,\
+            .stack_size = worker_stack_size,\
+            .semaphore_h = NULL,\
+            .events_h = NULL,\
+        }
 #else
+    #ifndef EZ_RTOS_USE_STATIC_ALLOC
+        #define EZ_RTOS_USE_STATIC_ALLOC        1
+    #endif
     #define INIT_THREAD_FUNCTIONS(worker_name)
     #define GET_THREAD_FUNC(worker_name)
     #define THREAD_FUNC(worker_name)
@@ -141,11 +154,13 @@ struct ezTaskWorker
     uint8_t priority;               /**< Priority of the worker thread, the value must match the number of the activated RTOS */
     uint32_t stack_size;            /**< Stask size of the worker thread, in bytes */
     uint32_t sleep_ticks;           /**< Number of tick the thread must sleep before being activated again */
-    StaticTask_t thread;
-    StaticSemaphore_t sem;
-    SemaphoreHandle_t semaphore_h;
-    StaticEventGroup_t events;
-    EventGroupHandle_t events_h;
+    SemaphoreHandle_t semaphore_h;  /**< FreeRTOS Semaphore handle */
+    EventGroupHandle_t events_h;    /**< FreeRTOS Events handle*/
+#if (EZ_RTOS_USE_STATIC_ALLOC == 1)
+    StaticTask_t thread;            /**< Pointer to the memory hold the static thread block */
+    StaticSemaphore_t sem;          /**< Pointer to the memory hold the static semaphore block */
+    StaticEventGroup_t events;      /**< Pointer to the memory hold the static events block */
+#endif /* (EZ_RTOS_USE_STATIC_ALLOC == 1) */
 #else
     struct Node node;               /**< Linked list node */
 #endif /* EZ_THREADX_PORT_ENABLE == 1 */

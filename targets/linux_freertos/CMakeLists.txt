@@ -40,6 +40,19 @@ target_include_directories(ez_target
         # Please add interface folders here
 )
 
+# Config RTOS -----------------------------------------------------------------
+set(FREERTOS_HEAP "4" CACHE INTERNAL "")
+set(FREERTOS_PORT "GCC_POSIX" CACHE INTERNAL "")
+
+add_library(freertos_config INTERFACE)
+target_include_directories(freertos_config SYSTEM
+INTERFACE
+    ${CMAKE_SOURCE_DIR}/targets/linux_freertos/
+)
+target_compile_definitions(freertos_config
+INTERFACE
+    projCOVERAGE_TEST=0
+)
 
 # Link libraries -------------------------------------------------------------
 target_link_libraries(ez_target
@@ -47,7 +60,6 @@ target_link_libraries(ez_target
         # Please add public libraries
     PRIVATE
         easy_embedded_lib
-        freertos_kernel
     INTERFACE
         # Please add interface libraries
 )

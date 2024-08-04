@@ -49,13 +49,11 @@ target_include_directories(ez_task_worker_lib
 # Link libraries -------------------------------------------------------------
 target_link_libraries(ez_task_worker_lib
     PUBLIC
-        # Please add public libraries
+        $<$<BOOL:${ENABLE_FREERTOS}>:freertos_kernel>
+        $<$<BOOL:${ENABLE_THREADX}>:threadx>
     PRIVATE
         ez_utilities_lib
-        $<$<BOOL:${ENABLE_THREADX}>:threadx>
-        $<$<BOOL:${ENABLE_FREERTOS}>:freertos_kernel>
     INTERFACE
-        # Please add interface libraries
 )
 
 # End of file
