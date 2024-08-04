@@ -39,6 +39,8 @@ target_include_directories(ez_task_worker_lib
         ${CMAKE_CURRENT_LIST_DIR}
         $<$<BOOL:${ENABLE_THREADX}>:${CMAKE_CURRENT_LIST_DIR}/threadx_port>
         $<$<BOOL:${ENABLE_FREERTOS}>:${CMAKE_CURRENT_LIST_DIR}/freertos_port>
+        ${CMAKE_SOURCE_DIR}/configs
+        ${FREERTOS_KERNEL_PATH}/include
     PRIVATE
         #
     INTERFACE
@@ -53,7 +55,7 @@ target_link_libraries(ez_task_worker_lib
     PRIVATE
         ez_utilities_lib
         $<$<BOOL:${ENABLE_THREADX}>:threadx>
-        $<$<BOOL:${ENABLE_FREERTOS}>:freertos_kernel>
+        $<$<BOOL:${ENABLE_FREERTOS}>:FreeRTOS-Kernel FreeRTOS-Kernel-Heap4>
     INTERFACE
         # Please add interface libraries
 )

@@ -132,7 +132,11 @@ static EZ_RTOS_STATUS ezFreeRTOSPort_CreateThread(struct ezTaskWorker *worker,
                                                   void *thread_func)
 {
     EZ_RTOS_STATUS ret_status = RTOS_STATUS_ERR_ARG;
+#if (EZ_RTOS_USE_STATIC_ALLOC == 1)
     TaskHandle_t xHandle = NULL;
+#else
+    BaseType_t xReturned = pdFAIL;
+#endif
 
     EZTRACE("ezFreeRTOSPort_CreateThread()");
     if((worker != NULL) && (thread_func != NULL))
@@ -145,6 +149,7 @@ static EZ_RTOS_STATUS ezFreeRTOSPort_CreateThread(struct ezTaskWorker *worker,
                 worker->priority = configMAX_PRIORITIES - 1U;
             }
 
+#if (EZ_RTOS_USE_STATIC_ALLOC == 1)
             xHandle = xTaskCreateStatic(thread_func,
                                         worker->worker_name,
                                         worker->stack_size,
@@ -153,9 +158,20 @@ static EZ_RTOS_STATUS ezFreeRTOSPort_CreateThread(struct ezTaskWorker *worker,
                                         &TaskStack[used_stack_size],
                                         &worker->thread);
             used_stack_size += worker->stack_size;
+#else
+            xReturned = xTaskCreate(thread_func,
+                                  worker->worker_name,
+                                  worker->stack_size,
+                                  NULL,
+                                  worker->priority,
+                                  NULL);
+#endif /* (EZ_RTOS_USE_STATIC_ALLOC == 1) */
         }
-
+#if (EZ_RTOS_USE_STATIC_ALLOC == 1)
         if(xHandle == NULL)
+#else
+        if(xReturned == pdFAIL)
+#endif /* (EZ_RTOS_USE_STATIC_ALLOC == 1) */
         {
             ret_status = RTOS_STATUS_ERR;
             EZERROR("Create thread failed");
@@ -200,8 +216,11 @@ static EZ_RTOS_STATUS ezFreeRTOSPort_CreateSemaphore(struct ezTaskWorker *worker
     EZTRACE("ezFreeRTOSPort_CreateSemaphore()");
     if(worker != NULL)
     {
+#if (EZ_RTOS_USE_STATIC_ALLOC == 1)
         worker->semaphore_h = xSemaphoreCreateMutexStatic(&worker->sem);
-
+#else
+        worker->semaphore_h = xSemaphoreCreateMutex();
+#endif /* (EZ_RTOS_USE_STATIC_ALLOC == 1) */
         if(worker->semaphore_h == NULL)
         {
             EZERROR("Create semaphore failed");
@@ -359,7 +378,11 @@ static EZ_RTOS_STATUS ezFreeRTOSPort_CreateEvent(struct ezTaskWorker *worker)
     EZTRACE("ezFreeRTOSPort_CreateEvent()");
     if(worker != NULL)
     {
+#if (EZ_RTOS_USE_STATIC_ALLOC == 1)
         worker->events_h = xEventGroupCreateStatic(&worker->events);
+#else
+        worker->events_h = xEventGroupCreate();
+#endif /* (EZ_RTOS_USE_STATIC_ALLOC == 1) */
 
         if(worker->events_h == NULL)
         {

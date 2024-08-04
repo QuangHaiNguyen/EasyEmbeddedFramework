@@ -80,18 +80,18 @@ if(ENABLE_FREERTOS)
         message(STATUS "freertos completed")
     endif()
 
-    add_library(freertos_config INTERFACE)
+    #add_library(freertos_config INTERFACE)
 
-    target_include_directories(freertos_config SYSTEM
-    INTERFACE
-        ${CMAKE_SOURCE_DIR}/targets/linux_freertos/
-    )
+    #target_include_directories(freertos_config SYSTEM
+    #INTERFACE
+    #    ${CMAKE_SOURCE_DIR}/targets/linux_freertos/
+    #)
 
-    target_compile_definitions(freertos_config
-    INTERFACE
-        projCOVERAGE_TEST=0
-)
+    #target_compile_definitions(freertos_config
+    #INTERFACE
+        #projCOVERAGE_TEST=0
+    #)
 
-    add_subdirectory(freertos)
+    #add_subdirectory(freertos)
 endif()
 
