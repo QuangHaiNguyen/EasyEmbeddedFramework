@@ -52,7 +52,6 @@ target_include_directories(easy_embedded_lib
         # Please add interface folders here
 )
 
-
 # Link libraries -------------------------------------------------------------
 target_link_libraries(easy_embedded_lib
     PUBLIC

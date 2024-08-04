@@ -10,10 +10,10 @@ project(EzEmbeddedFramework
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     include(CTest)
     add_subdirectory(${TARGET_PATH})
+    add_subdirectory(extern)
 endif()
 
 add_subdirectory(easy_embedded)
-add_subdirectory(extern)
 
 if(BUILD_TESTING)
     add_subdirectory(tests)

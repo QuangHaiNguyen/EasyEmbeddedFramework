@@ -41,9 +41,8 @@
 #include "ez_logging.h"
 #include "ez_easy_embedded.h"
 #include "ez_task_worker.h"
-#include <FreeRTOS.h>
-#include <task.h>
 #include "ez_freertos_port.h"
+
 
 /******************************************************************************
 * Module Preprocessor Macros

@@ -50,9 +50,7 @@
                 "rhs": "Linux"
             },
             "cacheVariables": {
-                "TARGET_PATH": "targets/linux_freertos",
-                "FREERTOS_HEAP": "4",
-                "FREERTOS_PORT": "GCC_POSIX"
+                "TARGET_PATH": "targets/linux_freertos"
             }
         },
         {
