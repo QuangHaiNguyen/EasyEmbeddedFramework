@@ -127,6 +127,12 @@ Last but not list, API document can be generated with the command:
 cmake --build --preset=linux_test_debug --target=doxygen
 ```
 
+## Integration
+Below is the list of projects demonstrating how to integrate EasyEmbedded
+framework into a specific target project:
+- [Pi Pico](https://github.com/QuangHaiNguyen/EasyEmbeddedFramework-Pico-Integration)
+
+
 ## License
 
 This framework is released under MIT license. Please see [LICENSE](LICENSE) for details.
