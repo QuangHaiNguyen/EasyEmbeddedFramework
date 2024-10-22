@@ -23,6 +23,10 @@
 #ifndef _EZ_QUEUE_H
 #define _EZ_QUEUE_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*****************************************************************************
 * Includes
 *****************************************************************************/
@@ -377,6 +381,9 @@ uint32_t ezQueue_GetNumOfElement(ezQueue* queue);
 *****************************************************************************/
 uint32_t ezQueue_IsQueueReady(ezQueue *queue);
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _EZ_QUEUE */
 #endif /* _EZ_QUEUE_H */

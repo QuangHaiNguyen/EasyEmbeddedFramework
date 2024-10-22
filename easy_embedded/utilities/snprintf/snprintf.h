@@ -21,6 +21,10 @@
 #ifndef _PRINTF_H
 #define _PRINTF_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*******************************************************************************
 * Includes
 *******************************************************************************/
@@ -45,6 +49,10 @@
 *******************************************************************************/
 int ezm_snprintf(char * buff, int buff_size, char* fmt, ...);
 int ezm_printf(char* fmt, ...);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* EZM_PRINTF */
 #endif /* _PRINTF_H */

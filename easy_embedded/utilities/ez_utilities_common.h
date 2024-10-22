@@ -23,6 +23,10 @@
 #ifndef _EZ_UTILITIES_COMMON_H
 #define _EZ_UTILITIES_COMMON_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*****************************************************************************
 * Includes
 *****************************************************************************/
@@ -69,8 +73,9 @@ typedef enum
 *****************************************************************************/
 /* None */
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _EZ_UTILITIES_COMMON_H */
-
-
 /* End of file */

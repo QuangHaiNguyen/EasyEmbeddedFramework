@@ -23,6 +23,10 @@
 #ifndef _EZ_CLI_H
 #define _EZ_CLI_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*****************************************************************************
 * Includes
 *****************************************************************************/
@@ -272,6 +276,10 @@ void ezCli_PrintMenu(void);
 *
 *******************************************************************************/
 void ezCli_Printf(char *fmt, ...);
+#endif
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif /* EZ_CLI_ENABLE == 1 */

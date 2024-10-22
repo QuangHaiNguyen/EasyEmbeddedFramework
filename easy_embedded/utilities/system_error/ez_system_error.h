@@ -31,6 +31,10 @@
 #ifndef _SYSTEM_ERROR_H
 #define _SYSTEM_ERROR_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #if (EZ_SYS_ERROR == 1U)
 
 /*******************************************************************************
@@ -90,9 +94,11 @@ void SystemError_HandleTestAttentionError(void);    /*demo function*/
 void SystemError_HandleTestCriticalError(void);     /*demo function*/
 void SystemError_HandleTestCastatrophicError(void); /*demo function*/
 
+#ifdef __cplusplus
+}
+#endif
+
 #endif /* CONFIG_SYSTEM_ERROR */
-
 #endif /* _SYSTEM_ERROR_H */
-
 /* End of file */
 

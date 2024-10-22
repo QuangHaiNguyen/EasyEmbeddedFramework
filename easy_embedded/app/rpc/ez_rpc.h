@@ -23,6 +23,10 @@
 #ifndef _EZ_RPC_H
 #define _EZ_RPC_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*****************************************************************************
 * Includes
 *****************************************************************************/
@@ -448,6 +452,10 @@ uint32_t ezRPC_NumOfPendingRecords(struct ezRpc *rpc_inst);
 *
 *****************************************************************************/
 bool ezRpc_IsRpcInstanceReady(struct ezRpc *rpc_inst);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* EZ_RPC_ENABLE == 1 */
 #endif /* _EZ_RPC_H */

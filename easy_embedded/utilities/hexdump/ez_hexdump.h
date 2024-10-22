@@ -23,6 +23,10 @@
 #ifndef _HEXDUMP_H
 #define _HEXDUMP_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*******************************************************************************
 * Includes
 *******************************************************************************/
@@ -72,6 +76,11 @@
 *
 *****************************************************************************/
 void ezHexdump(void *address, uint16_t size);
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif /* _HEXDUMP_H */
 
 /* End of file*/

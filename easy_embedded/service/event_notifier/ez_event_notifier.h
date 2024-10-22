@@ -23,6 +23,10 @@
 #ifndef _EZ_EVENT_NOTIFIER_H
 #define _EZ_EVENT_NOTIFIER_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #if(EZ_EVENT_NOTIFIER == 1U)
 
 /*****************************************************************************
@@ -263,6 +267,9 @@ void ezEventNotifier_NotifyEvent(ezSubject *subject,
                                  void* param1,
                                  void* param2);
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* (EZ_EVENT_NOTIFIER == 1U) */
 #endif /* _EZ_EVENT_NOTIFIER_H */

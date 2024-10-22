@@ -23,6 +23,10 @@
 #ifndef _EZ_IPC_H
 #define _EZ_IPC_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*****************************************************************************
 * Includes
 *****************************************************************************/
@@ -216,6 +220,9 @@ void *ezIpc_ReceiveMessage(ezmMailBox receive_from, uint16_t *message_size);
 *****************************************************************************/
 bool ezIpc_ReleaseMessage(ezmMailBox receive_from, void *message);
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* EZ_IPC_ENABLE == 1 */
 #endif /* _EZ_IPC_H */

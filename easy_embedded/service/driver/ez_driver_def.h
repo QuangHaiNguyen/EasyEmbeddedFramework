@@ -23,6 +23,10 @@
 #ifndef _EZ_DRIVER_DEF_H
 #define _EZ_DRIVER_DEF_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*****************************************************************************
 * Includes
 *****************************************************************************/
@@ -223,6 +227,9 @@ static inline void ezDriver_UnlockDriver(struct ezDriverCommon *drv_common)
     }
 }
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* EZ_DRIVER_ENABLE == 1 */
 #endif /* _EZ_DRIVER_DEF_H */
