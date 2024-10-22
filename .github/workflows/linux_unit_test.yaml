@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    - uses: threeal/gcovr-action@latest
+    - uses: threeal/gcovr-action@v1.1.0
 
     - name: Configure linux_test_debug
       working-directory: ${{github.workspace}}
