@@ -24,6 +24,10 @@
 #ifndef _EZ_EASY_EMBEDDED_H
 #define _EZ_EASY_EMBEDDED_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*****************************************************************************
 * Includes
 *****************************************************************************/
@@ -75,7 +79,9 @@
 *****************************************************************************/
 void ezEasyEmbedded_Initialize(void);
 
+#ifdef __cplusplus
+}
+#endif
+
 #endif /* _EZ_EASY_EMBEDDED_H */
-
-
 /* End of file */

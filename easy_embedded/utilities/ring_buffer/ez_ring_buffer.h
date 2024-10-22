@@ -24,6 +24,10 @@
 #ifndef RING_BUFFER_H
 #define RING_BUFFER_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*******************************************************************************
 * Includes
 *******************************************************************************/
@@ -249,6 +253,10 @@ void ezRingBuffer_Reset(RingBuffer *ring_buff);
 *
 *****************************************************************************/
 uint16_t ezRingBuffer_GetAvailableMemory( RingBuffer *ring_buff);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif	/* RING_BUFFER_H */
 

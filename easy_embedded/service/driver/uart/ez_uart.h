@@ -25,6 +25,10 @@
 #ifndef _EZ_UART_H
 #define _EZ_UART_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*****************************************************************************
 * Includes
 *****************************************************************************/
@@ -553,6 +557,10 @@ EZ_DRV_STATUS ezUart_GetConfig(ezUartDrvInstance_t *inst,
 *
 *****************************************************************************/
 EZ_DRV_STATUS ezUart_UpdateConfig(ezUartDrvInstance_t *inst);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* EZ_UART_ENABLE == 1 */
 #endif /* _EZ_UART_H */

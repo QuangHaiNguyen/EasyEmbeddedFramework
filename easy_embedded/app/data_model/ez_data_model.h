@@ -23,6 +23,10 @@
 #ifndef _EZ_DATA_MODEL_H
 #define _EZ_DATA_MODEL_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*****************************************************************************
 * Includes
 *****************************************************************************/
@@ -288,8 +292,10 @@ bool DataModel_SubscribeDataPointEvent(DataPoint data_point,
 bool DataModel_UnsubscribeDataPointEvent(DataPoint data_point,
                                          ezObserver *observer);
 
+#ifdef __cplusplus
+}
+#endif
+
 #endif /* CONFIG_DATA_MODEL == 1U */
-
 #endif /* _EZ_DATA_MODEL_H */
-
 /* End of file */

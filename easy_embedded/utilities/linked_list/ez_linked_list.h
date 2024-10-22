@@ -25,6 +25,10 @@
 #ifndef _LINKEDLIST_H
 #define _LINKEDLIST_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*****************************************************************************
 * Includes
 *****************************************************************************/
@@ -255,6 +259,10 @@ struct Node *ezLinkedList_UnlinkCurrentHead(struct Node *head);
 *
 *****************************************************************************/
 bool ezLinkedList_IsNodeInList(struct Node *head, struct Node *searched_node);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _LINKEDLIST_H */
 

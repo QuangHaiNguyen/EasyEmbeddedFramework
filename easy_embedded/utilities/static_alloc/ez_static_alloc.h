@@ -24,6 +24,10 @@
 #ifndef _EZ_STATIC_ALLOC_H
 #define _EZ_STATIC_ALLOC_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #if (EZ_STATIC_ALLOC == 1)
 
 /*****************************************************************************
@@ -320,6 +324,10 @@ void ezStaticAlloc_PrintFreeList (ezmMemList* mem_list);
 *
 *****************************************************************************/
 void ezStaticAlloc_PrintAllocList(ezmMemList* mem_list);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* EZ_STATIC_ALLOC == 1*/
 #endif /* _EZ_STATIC_ALLOC_H */
