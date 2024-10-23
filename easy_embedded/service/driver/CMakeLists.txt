@@ -30,6 +30,7 @@ target_compile_definitions(ez_driver_lib
     PUBLIC
         EZ_DRIVER_ENABLE=$<BOOL:${ENABLE_EZ_HAL_DRIVER}>
         EZ_UART_ENABLE=$<BOOL:${ENABLE_EZ_UART}>
+        EZ_BUILD_WITH_CMAKE=$<BOOL:${BUILD_WITH_CMAKE}>
 )
 
 

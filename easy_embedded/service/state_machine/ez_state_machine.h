@@ -30,11 +30,15 @@ extern "C" {
 /*****************************************************************************
 * Includes
 *****************************************************************************/
+#if (EZ_BUILD_WITH_CMAKE == 0U)
+#include "ez_target_config.h"
+#endif
+
+#if (EZ_STATE_MACHINE_ENABLE == 1)
+
 #include <stdint.h>
 #include <stdbool.h>
 #include "ez_ring_buffer.h"
-
-#if (EZ_STATE_MACHINE_ENABLE == 1)
 
 /*****************************************************************************
 * Component Preprocessor Macros

@@ -30,6 +30,11 @@ extern "C" {
 /*****************************************************************************
 * Includes
 *****************************************************************************/
+#if (EZ_BUILD_WITH_CMAKE == 0U)
+#include "ez_target_config.h"
+#endif
+
+#if (EZ_TASK_WORKER_ENABLE == 1)
 #include "ez_linked_list.h"
 #include "ez_queue.h"
 
@@ -41,8 +46,6 @@ extern "C" {
 #include "semphr.h"
 #include "event_groups.h"
 #endif
-
-#if (EZ_TASK_WORKER_ENABLE == 1)
 
 /*****************************************************************************
 * Component Preprocessor Macros

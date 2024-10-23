@@ -35,11 +35,15 @@
 extern "C" {
 #endif
 
-#if (EZ_SYS_ERROR == 1U)
 
 /*******************************************************************************
 * Includes
 *******************************************************************************/
+#if (EZ_BUILD_WITH_CMAKE == 0U)
+#include "ez_target_config.h"
+#endif
+
+#if (EZ_SYS_ERROR == 1U)
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdint.h>

@@ -26,6 +26,8 @@ target_sources(ez_data_model_lib
 target_compile_definitions(ez_data_model_lib
     PUBLIC
         DATA_MODEL=$<BOOL:${ENABLE_DATA_MODEL}>
+    PRIVATE
+        EZ_BUILD_WITH_CMAKE=$<BOOL:${BUILD_WITH_CMAKE}>
 )
 
 

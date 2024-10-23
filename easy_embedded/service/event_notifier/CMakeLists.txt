@@ -23,6 +23,8 @@ target_sources(ez_event_notifier_lib
 target_compile_definitions(ez_event_notifier_lib
     PUBLIC
         EZ_EVENT_NOTIFIER=$<BOOL:${ENABLE_EZ_EVENT_NOTIFIER}>
+    PRIVATE
+        EZ_BUILD_WITH_CMAKE=$<BOOL:${BUILD_WITH_CMAKE}>
 )
 
 

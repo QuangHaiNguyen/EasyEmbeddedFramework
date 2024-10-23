@@ -30,6 +30,10 @@ extern "C" {
 /*****************************************************************************
 * Includes
 *****************************************************************************/
+#if (EZ_BUILD_WITH_CMAKE == 0U)
+#include "ez_target_config.h"
+#endif
+
 #if (EZ_QUEUE == 1U)
 #include <stdint.h>
 #include "ez_utilities_common.h"

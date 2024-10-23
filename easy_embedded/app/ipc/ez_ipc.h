@@ -30,8 +30,11 @@ extern "C" {
 /*****************************************************************************
 * Includes
 *****************************************************************************/
-#if (EZ_IPC_ENABLE == 1)
+#if (EZ_BUILD_WITH_CMAKE == 0U)
+#include "ez_target_config.h"
+#endif
 
+#if (EZ_IPC_ENABLE == 1)
 #include "stdint.h"
 #include "stdbool.h"
 
