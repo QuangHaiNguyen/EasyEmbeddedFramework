@@ -30,6 +30,8 @@ target_compile_definitions(ez_task_worker_lib
         EZ_TASK_WORKER_ENABLE=$<BOOL:${ENABLE_EZ_TASK_WORKER}>
         EZ_THREADX_PORT_ENABLE=$<BOOL:${ENABLE_THREADX}>
         EZ_FREERTOS_PORT_ENABLE=$<BOOL:${ENABLE_FREERTOS}>
+    PRIVATE
+        EZ_BUILD_WITH_CMAKE=$<BOOL:${BUILD_WITH_CMAKE}>
 )
 
 

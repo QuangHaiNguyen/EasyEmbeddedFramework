@@ -30,8 +30,11 @@ extern "C" {
 /*****************************************************************************
 * Includes
 *****************************************************************************/
-#if (DATA_MODEL == 1U)
+#if (EZ_BUILD_WITH_CMAKE == 0U)
+#include "ez_target_config.h"
+#endif
 
+#if (DATA_MODEL == 1U)
 #include <stdbool.h>
 #include <stdint.h>
 #include "ez_utilities_common.h"

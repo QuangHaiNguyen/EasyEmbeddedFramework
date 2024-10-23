@@ -13,7 +13,7 @@ message(STATUS "**********************************************************")
 
 
 set(FRAMEWORK_ROOT_DIR ${CMAKE_SOURCE_DIR}/easy_embedded)
-
+option(BUILD_WITH_CMAKE "code base is built using CMake. Do not turn this OFF" ON)
 
 # Include --------------------------------------------------------------------
 # Unused

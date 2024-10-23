@@ -40,6 +40,8 @@ target_compile_definitions(ez_utilities_lib
         EZ_STATIC_ALLOC=$<BOOL:${ENABLE_EZ_STATIC_ALLOC}>
         EZ_SYS_ERROR=$<BOOL:${ENABLE_EZ_SYS_ERROR}>
         EZ_QUEUE=$<BOOL:${ENABLE_EZ_QUEUE}>
+    PRIVATE
+        EZ_BUILD_WITH_CMAKE=$<BOOL:${BUILD_WITH_CMAKE}>
 )
 
 

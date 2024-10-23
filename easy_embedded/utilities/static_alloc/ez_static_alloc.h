@@ -28,11 +28,16 @@
 extern "C" {
 #endif
 
-#if (EZ_STATIC_ALLOC == 1)
 
 /*****************************************************************************
 * Includes
 *****************************************************************************/
+#if (EZ_BUILD_WITH_CMAKE == 0U)
+#include "ez_target_config.h"
+#endif
+
+#if (EZ_STATIC_ALLOC == 1)
+
 #include "stdint.h"
 #include "ez_linked_list.h"
 

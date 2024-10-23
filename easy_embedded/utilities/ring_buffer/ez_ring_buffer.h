@@ -31,6 +31,10 @@ extern "C" {
 /*******************************************************************************
 * Includes
 *******************************************************************************/
+#if (EZ_BUILD_WITH_CMAKE == 0U)
+#include "ez_target_config.h"
+#endif
+
 #include <stdint.h>
 #include <stdbool.h>
 
