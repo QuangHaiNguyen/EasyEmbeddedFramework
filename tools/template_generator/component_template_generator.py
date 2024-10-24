@@ -65,7 +65,9 @@ extern "C" {{
 /*****************************************************************************
 * Includes
 *****************************************************************************/
-/* INCLUDE HEADER HERE */
+#if (EZ_BUILD_WITH_CMAKE == 0U)
+#include "ez_target_config.h"
+#endif
 
 #if ({0}_ENABLE == 1)
 
@@ -121,11 +123,12 @@ typedef struct
 *****************************************************************************/
 int sum(int a, int b);
 
+#endif /* {0}_ENABLE == 1 */
+
 #ifdef __cplusplus
 }}
 #endif
 
-#endif /* {0}_ENABLE == 1 */
 #endif /* _{0}_H */
 
 
