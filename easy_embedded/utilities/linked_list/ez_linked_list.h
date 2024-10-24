@@ -32,10 +32,14 @@ extern "C" {
 /*****************************************************************************
 * Includes
 *****************************************************************************/
+#if (EZ_BUILD_WITH_CMAKE == 0U)
+#include "ez_target_config.h"
+#endif
+
+#if (EZ_LINKEDLIST == 1U)
 #include <stdint.h>
 #include <stdbool.h>
 #include <stddef.h>
-
 #include "ez_utilities_common.h"
 
 
@@ -264,6 +268,7 @@ bool ezLinkedList_IsNodeInList(struct Node *head, struct Node *searched_node);
 }
 #endif
 
+#endif /* CONFIG_HELPER_LINKEDLIST */
 #endif /* _LINKEDLIST_H */
 
 /* End of file*/

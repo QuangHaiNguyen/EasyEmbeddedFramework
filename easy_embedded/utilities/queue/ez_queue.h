@@ -385,11 +385,12 @@ uint32_t ezQueue_GetNumOfElement(ezQueue* queue);
 *****************************************************************************/
 uint32_t ezQueue_IsQueueReady(ezQueue *queue);
 
+#endif /* _EZ_QUEUE */
+
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _EZ_QUEUE */
 #endif /* _EZ_QUEUE_H */
 
 /* End of file */
