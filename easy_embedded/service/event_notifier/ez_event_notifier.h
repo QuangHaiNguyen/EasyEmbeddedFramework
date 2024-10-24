@@ -271,11 +271,12 @@ void ezEventNotifier_NotifyEvent(ezSubject *subject,
                                  void* param1,
                                  void* param2);
 
+#endif /* (EZ_EVENT_NOTIFIER == 1U) */
+
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* (EZ_EVENT_NOTIFIER == 1U) */
 #endif /* _EZ_EVENT_NOTIFIER_H */
 
 /* End of file */

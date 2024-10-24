@@ -26,8 +26,6 @@
 *****************************************************************************/
 #include "ez_linked_list.h"
 
-#if (EZ_LINKEDLIST == 1U)
-
 /*****************************************************************************
 * Component Preprocessor Macros
 *****************************************************************************/
@@ -179,5 +177,4 @@ void ezmLL_ResetNode(Node * node)
 }
 #endif
 
-#endif /* CONFIG_HELPER_LINKEDLIST */
 /* End of file*/
