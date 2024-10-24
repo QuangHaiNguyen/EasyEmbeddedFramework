@@ -53,7 +53,10 @@ extern "C" {
 #define PRINT_LINE              0U  /**< logging shows line number */
 #define PRINT_FUNCTION_NAME     0U  /**< logging shows function name */
 
+/* Print data on stdout by default */
+#ifndef dbg_print(fmt, ...)
 #define dbg_print(fmt, ...)     printf(fmt, ##__VA_ARGS__)
+#endif
 
 #if (EZ_LOGGING_COLOR == 1U)
 #define black       "\033[0;30m"
