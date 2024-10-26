@@ -30,6 +30,11 @@ extern "C" {
 /*******************************************************************************
 * Includes
 *******************************************************************************/
+#if (EZ_BUILD_WITH_CMAKE == 0U)
+#include "ez_target_config.h"
+#endif
+
+#if(EZ_HEXDUMP == 1U)
 #include "stdint.h"
 
 
@@ -76,6 +81,8 @@ extern "C" {
 *
 *****************************************************************************/
 void ezHexdump(void *address, uint16_t size);
+
+#endif /* CONFIG_HELPER_HEXDUMP */
 
 #ifdef __cplusplus
 }

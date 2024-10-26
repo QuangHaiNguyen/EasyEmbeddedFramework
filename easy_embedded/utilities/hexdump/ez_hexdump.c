@@ -24,9 +24,9 @@
 /******************************************************************************
 * Includes
 *******************************************************************************/
-#if(EZ_HEXDUMP == 1U)
-
 #include "ez_hexdump.h"
+
+#if(EZ_HEXDUMP == 1U)
 #include "ez_logging.h"
 #include "stdio.h"
 
@@ -128,6 +128,5 @@ static void PrintAscii(char c)
     }
 }
 
-
-#endif /* CONFIG_HELPER_HEXDUMP */
+#endif /* (EZ_HEXDUMP == 1U) */
 /* End of file*/

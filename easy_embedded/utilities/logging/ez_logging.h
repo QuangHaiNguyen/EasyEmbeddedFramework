@@ -34,8 +34,12 @@ extern "C" {
 /*******************************************************************************
 * Includes
 *******************************************************************************/
+#if (EZ_BUILD_WITH_CMAKE == 0U)
+#include "ez_target_config.h"
+#endif
+
 #include <stdio.h>
-#include "../hexdump/ez_hexdump.h"
+#include "ez_hexdump.h"
 
 /******************************************************************************
 * Module Preprocessor Macros
@@ -54,7 +58,7 @@ extern "C" {
 #define PRINT_FUNCTION_NAME     0U  /**< logging shows function name */
 
 /* Print data on stdout by default */
-#ifndef dbg_print(fmt, ...)
+#ifndef dbg_print
 #define dbg_print(fmt, ...)     printf(fmt, ##__VA_ARGS__)
 #endif
 
