@@ -1,56 +1,39 @@
 # ----------------------------------------------------------------------------
 # Author: Hai Nguyen
-# Name: ez_service_lib
+# Name: ez_middlewares_lib
 # License: This file is published under the license described in LICENSE.md
 # Description: PLEASE ADD TEXT HERE
 # ----------------------------------------------------------------------------
 
-add_library(ez_service_lib STATIC)
+add_library(ez_middlewares_lib STATIC)
 
 message(STATUS "**********************************************************")
-message(STATUS "* Generating ez_service_lib library build files")
+message(STATUS "* Generating ez_middlewares_lib library build files")
 message(STATUS "**********************************************************")
 
 
 set(FRAMEWORK_ROOT_DIR ${CMAKE_SOURCE_DIR}/easy_embedded)
 
 
-# Inlcude subfolders-----------------------------------------------------------
-if(ENABLE_EZ_HAL_DRIVER)
-    add_subdirectory(driver)
-endif()
-
-if(ENABLE_EZ_EVENT_NOTIFIER)
-    add_subdirectory(event_notifier)
-endif()
-
-if(ENABLE_EZ_TASK_WORKER)
-    add_subdirectory(task_worker)
-endif()
-
-if(ENABLE_EZ_STATE_MACHINE)
-    add_subdirectory(state_machine)
-endif()
-
-
 # Source files ---------------------------------------------------------------
-target_sources(ez_service_lib
+target_sources(ez_middlewares_lib
     PRIVATE
-        ez_service.c
+        ez_middlewares.c
 )
 
 
 # Definitions ----------------------------------------------------------------
-target_compile_definitions(ez_service_lib
+target_compile_definitions(ez_middlewares_lib
     PUBLIC
-        EZ_SERVICE_ENABLE=$<BOOL:${ENABLE_EZ_SERVICE}>
+        EZ_MIDDLEWARES_ENABLE=$<BOOL:${ENABLE_EZ_MIDDLEWARES}>
     PRIVATE
         EZ_BUILD_WITH_CMAKE=$<BOOL:${BUILD_WITH_CMAKE}>
+
 )
 
 
 # Include directory -----------------------------------------------------------
-target_include_directories(ez_service_lib
+target_include_directories(ez_middlewares_lib
     PUBLIC
         ${CMAKE_CURRENT_LIST_DIR}
     PRIVATE
@@ -61,14 +44,11 @@ target_include_directories(ez_service_lib
 
 
 # Link libraries -------------------------------------------------------------
-target_link_libraries(ez_service_lib
+target_link_libraries(ez_middlewares_lib
     PUBLIC
-        $<$<BOOL:${ENABLE_EZ_EVENT_NOTIFIER}>:ez_event_notifier_lib>
-        $<$<BOOL:${ENABLE_EZ_TASK_WORKER}>:ez_task_worker_lib>
-        $<$<BOOL:${ENABLE_EZ_STATE_MACHINE}>:ez_state_machine_lib>
-        $<$<BOOL:${ENABLE_EZ_HAL_DRIVER}>:ez_driver_lib>
+        # Please add public libraries
     PRIVATE
-        # Please add private libraries
+        ez_utilities_lib
     INTERFACE
         # Please add interface libraries
 )

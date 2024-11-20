@@ -20,9 +20,13 @@ option(BUILD_WITH_CMAKE "code base is built using CMake. Do not turn this OFF" O
 
 
 # Sub directory --------------------------------------------------------------
-add_subdirectory(utilities)
-add_subdirectory(service)
 add_subdirectory(app)
+add_subdirectory(service)
+add_subdirectory(bsp)
+add_subdirectory(middlewares)
+add_subdirectory(utilities)
+add_subdirectory(hal)
+
 
 
 # Source files ---------------------------------------------------------------
@@ -35,7 +39,7 @@ target_sources(easy_embedded_lib
 # Definitions ----------------------------------------------------------------
 target_compile_definitions(easy_embedded_lib
     PUBLIC
-        # Please add definitions here
+        EZ_BUILD_WITH_CMAKE=$<BOOL:${BUILD_WITH_CMAKE}>
     PRIVATE
         # Please add definitions here
 )
@@ -52,15 +56,16 @@ target_include_directories(easy_embedded_lib
         # Please add interface folders here
 )
 
+
 # Link libraries -------------------------------------------------------------
 target_link_libraries(easy_embedded_lib
     PUBLIC
         ez_app_lib
+        ez_service_lib
+        ez_bsp_lib
+        ez_middlewares_lib
         ez_utilities_lib
-        $<$<BOOL:${ENABLE_EZ_EVENT_NOTIFIER}>:ez_event_notifier_lib>
-        $<$<BOOL:${ENABLE_EZ_TASK_WORKER}>:ez_task_worker_lib>
-        $<$<BOOL:${ENABLE_EZ_STATE_MACHINE}>:ez_state_machine_lib>
-        $<$<BOOL:${ENABLE_EZ_HAL_DRIVER}>:ez_driver_lib>
+        ez_hal_lib
         $<$<BOOL:${ENABLE_LITTLE_FS}>:littlefs>
     PRIVATE
         # Please add private libraries
