@@ -19,6 +19,7 @@ set(FRAMEWORK_ROOT_DIR ${CMAKE_SOURCE_DIR}/easy_embedded)
 target_sources(ez_hal_lib
     PRIVATE
         ez_hal.c
+        $<$<BOOL:${ENABLE_EZ_UART}>:uart/ez_uart.c>
 )
 
 
@@ -28,6 +29,8 @@ target_compile_definitions(ez_hal_lib
         EZ_HAL_ENABLE=$<BOOL:${ENABLE_EZ_HAL}>
     PRIVATE
         EZ_BUILD_WITH_CMAKE=$<BOOL:${BUILD_WITH_CMAKE}>
+        EZ_DRIVER_ENABLE=$<BOOL:${ENABLE_EZ_HAL_DRIVER}>
+        EZ_UART_ENABLE=$<BOOL:${ENABLE_EZ_UART}>
 )
 
 
