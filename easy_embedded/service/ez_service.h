@@ -35,24 +35,19 @@ extern "C" {
 #endif
 
 #if (EZ_SERVICE_ENABLE == 1)
+#include "ez_utilities_common.h"
+
 
 /*****************************************************************************
 * Component Preprocessor Macros
 *****************************************************************************/
-#define A_MACRO     1   /**< a macro*/
+/* None */
+
 
 /*****************************************************************************
 * Component Typedefs
 *****************************************************************************/
-
-/** @brief definition of a new type
- *
- */
-typedef struct
-{
-    int a;  /**< an integer */
-    int b;  /**< an integer */
-}aType;
+/* None */
 
 
 /*****************************************************************************
@@ -60,19 +55,19 @@ typedef struct
 *****************************************************************************/
 /* None */
 
+
 /*****************************************************************************
 * Function Prototypes
 *****************************************************************************/
 
 /*****************************************************************************
-* Function: sum
+* Function: ezService_Intialize
 *//** 
-* @brief one line description
+* @brief Initialize the service component
 *
-* @details Detail description
+* @details Place holder function. They maybe used later.
 *
-* @param    a: (IN)pointer to the ring buffer
-* @param    b: (IN)size of the ring buffer
+* @param    None
 * @return   None
 *
 * @pre None
@@ -80,13 +75,13 @@ typedef struct
 *
 * \b Example
 * @code
-* sum(a, b);
+* ezSTATUS status = ezService_Intialize();
 * @endcode
 *
-* @see sum
+* @see None
 *
 *****************************************************************************/
-int sum(int a, int b);
+ezSTATUS ezService_Intialize(void);
 
 #endif /* EZ_SERVICE_ENABLE == 1 */
 

@@ -35,25 +35,17 @@ extern "C" {
 #endif
 
 #if (EZ_MIDDLEWARES_ENABLE == 1)
+#include "ez_utilities_common.h"
 
 /*****************************************************************************
 * Component Preprocessor Macros
 *****************************************************************************/
-#define A_MACRO     1   /**< a macro*/
+
 
 /*****************************************************************************
 * Component Typedefs
 *****************************************************************************/
-
-/** @brief definition of a new type
- *
- */
-typedef struct
-{
-    int a;  /**< an integer */
-    int b;  /**< an integer */
-}aType;
-
+/* None */
 
 /*****************************************************************************
 * Component Variable Definitions
@@ -65,28 +57,27 @@ typedef struct
 *****************************************************************************/
 
 /*****************************************************************************
-* Function: sum
+* Function: ezMidware_Initialize
 *//** 
-* @brief one line description
+* @brief Initialize the middleware components
 *
-* @details Detail description
+* @details Act as a place holder
 *
-* @param    a: (IN)pointer to the ring buffer
-* @param    b: (IN)size of the ring buffer
-* @return   None
+* @param    None
+* @return   ezSUCCESS if success, ezFAIL if fail
 *
 * @pre None
 * @post None
 *
 * \b Example
 * @code
-* sum(a, b);
+* ezSTATUS status = ezMidware_Initialize();
 * @endcode
 *
-* @see sum
+* @see None
 *
 *****************************************************************************/
-int sum(int a, int b);
+ezSTATUS ezMidware_Initialize(void);
 
 #endif /* EZ_MIDDLEWARES_ENABLE == 1 */
 

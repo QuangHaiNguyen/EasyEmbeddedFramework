@@ -15,9 +15,9 @@
 /** @file   ez_bsp.h
  *  @author Hai Nguyen
  *  @date   19.11.2024
- *  @brief  One line description of the component
+ *  @brief  Public API of the Board Support Package
  *
- *  @details Detail description of the component
+ *  @details This module provides only the initialize function for the BSP
  */
 
 #ifndef _EZ_BSP_H
@@ -35,24 +35,19 @@ extern "C" {
 #endif
 
 #if (EZ_BSP_ENABLE == 1)
+#include "ez_utilities_common.h"
+
 
 /*****************************************************************************
 * Component Preprocessor Macros
 *****************************************************************************/
-#define A_MACRO     1   /**< a macro*/
+/* None */
+
 
 /*****************************************************************************
 * Component Typedefs
 *****************************************************************************/
-
-/** @brief definition of a new type
- *
- */
-typedef struct
-{
-    int a;  /**< an integer */
-    int b;  /**< an integer */
-}aType;
+/* None*/
 
 
 /*****************************************************************************
@@ -60,33 +55,30 @@ typedef struct
 *****************************************************************************/
 /* None */
 
+
 /*****************************************************************************
 * Function Prototypes
 *****************************************************************************/
 
 /*****************************************************************************
-* Function: sum
+* Function: ezBsp_Initialize
 *//** 
-* @brief one line description
+* @brief Initialize the board support package
 *
-* @details Detail description
+* @details Place holder. They maybe used later.
 *
-* @param    a: (IN)pointer to the ring buffer
-* @param    b: (IN)size of the ring buffer
-* @return   None
+* @return   ezSUCCESS if success, ezFAIL if fail
 *
 * @pre None
 * @post None
 *
 * \b Example
 * @code
-* sum(a, b);
+* ezSTATUS status = ezBsp_Initialize();
 * @endcode
 *
-* @see sum
-*
 *****************************************************************************/
-int sum(int a, int b);
+ezSTATUS ezBsp_Initialize(void);
 
 #endif /* EZ_BSP_ENABLE == 1 */
 

@@ -16,10 +16,6 @@ set(FRAMEWORK_ROOT_DIR ${CMAKE_SOURCE_DIR}/easy_embedded)
 
 
 # Inlcude subfolders-----------------------------------------------------------
-if(ENABLE_EZ_HAL_DRIVER)
-    add_subdirectory(driver)
-endif()
-
 if(ENABLE_EZ_EVENT_NOTIFIER)
     add_subdirectory(event_notifier)
 endif()
@@ -66,7 +62,6 @@ target_link_libraries(ez_service_lib
         $<$<BOOL:${ENABLE_EZ_EVENT_NOTIFIER}>:ez_event_notifier_lib>
         $<$<BOOL:${ENABLE_EZ_TASK_WORKER}>:ez_task_worker_lib>
         $<$<BOOL:${ENABLE_EZ_STATE_MACHINE}>:ez_state_machine_lib>
-        $<$<BOOL:${ENABLE_EZ_HAL_DRIVER}>:ez_driver_lib>
     PRIVATE
         # Please add private libraries
     INTERFACE
