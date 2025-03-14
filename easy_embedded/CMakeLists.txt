@@ -20,13 +20,10 @@ option(BUILD_WITH_CMAKE "code base is built using CMake. Do not turn this OFF" O
 
 
 # Sub directory --------------------------------------------------------------
-add_subdirectory(app)
 add_subdirectory(service)
-add_subdirectory(bsp)
 add_subdirectory(middlewares)
 add_subdirectory(utilities)
 add_subdirectory(hal)
-
 
 
 # Source files ---------------------------------------------------------------
@@ -60,9 +57,7 @@ target_include_directories(easy_embedded_lib
 # Link libraries -------------------------------------------------------------
 target_link_libraries(easy_embedded_lib
     PUBLIC
-        ez_app_lib
         ez_service_lib
-        ez_bsp_lib
         ez_middlewares_lib
         ez_utilities_lib
         ez_hal_lib

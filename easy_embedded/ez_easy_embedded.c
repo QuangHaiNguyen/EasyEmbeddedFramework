@@ -28,9 +28,7 @@
 #define DEBUG_LVL   LVL_TRACE   /**< logging level */
 #define MOD_NAME    "ez_easy_embedded"       /**< module name */
 #include "ez_logging.h"
-#include "ez_app.h"
 #include "ez_middlewares.h"
-#include "ez_bsp.h"
 #include "ez_service.h"
 
 
@@ -65,9 +63,7 @@ void ezEasyEmbedded_Initialize(void)
 {
     ezEasyEmbedded_PrintHeader();
     ezMidware_Initialize();
-    ezBsp_Initialize();
     ezService_Intialize();
-    ezApp_Initialize();
 }
 
 
