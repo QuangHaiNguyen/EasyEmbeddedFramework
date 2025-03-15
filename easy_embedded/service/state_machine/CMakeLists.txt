@@ -25,7 +25,7 @@ target_sources(ez_state_machine_lib
 # Definitions ----------------------------------------------------------------
 target_compile_definitions(ez_state_machine_lib
     PUBLIC
-        EZ_STATE_MACHINE_ENABLE=$<BOOL:${ENABLE_EZ_STATE_MACHINE}>
+        EZ_STATE_MACHINE=$<BOOL:${ENABLE_EZ_STATE_MACHINE}>
     PRIVATE
         EZ_BUILD_WITH_CMAKE=$<BOOL:${BUILD_WITH_CMAKE}>
 )

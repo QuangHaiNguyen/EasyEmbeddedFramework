@@ -25,7 +25,7 @@
 *****************************************************************************/
 #include "ez_middlewares.h"
 
-#if (EZ_MIDDLEWARES_ENABLE == 1)
+#if (EZ_MIDDLEWARES == 1)
 
 #define DEBUG_LVL   LVL_TRACE   /**< logging level */
 #define MOD_NAME    "ez_middlewares"       /**< module name */

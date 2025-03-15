@@ -25,7 +25,7 @@ target_sources(ez_ipc_lib
 # Definitions ----------------------------------------------------------------
 target_compile_definitions(ez_ipc_lib
     PUBLIC
-        EZ_IPC_ENABLE=$<BOOL:${ENABLE_EZ_IPC}>
+        EZ_IPC=$<BOOL:${ENABLE_EZ_IPC}>
     PRIVATE
         EZ_BUILD_WITH_CMAKE=$<BOOL:${BUILD_WITH_CMAKE}>
 )

@@ -34,7 +34,7 @@ extern "C" {
 #include "ez_target_config.h"
 #endif
 
-#if (EZ_MIDDLEWARES_ENABLE == 1)
+#if (EZ_MIDDLEWARES == 1)
 #include "ez_utilities_common.h"
 
 /*****************************************************************************

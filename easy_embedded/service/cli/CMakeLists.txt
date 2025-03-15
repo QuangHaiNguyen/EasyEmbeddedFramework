@@ -25,7 +25,7 @@ target_sources(ez_cli_lib
 # Definitions ----------------------------------------------------------------
 target_compile_definitions(ez_cli_lib
     PUBLIC
-        EZ_CLI_ENABLE=$<BOOL:${ENABLE_EZ_CLI}>
+        EZ_CLI=$<BOOL:${ENABLE_EZ_CLI}>
     PRIVATE
         EZ_BUILD_WITH_CMAKE=$<BOOL:${BUILD_WITH_CMAKE}>
 )

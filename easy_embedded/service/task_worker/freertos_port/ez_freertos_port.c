@@ -23,7 +23,7 @@
 /*****************************************************************************
 * Includes
 *****************************************************************************/
-#if (EZ_FREERTOS_PORT_ENABLE == 1)
+#if (EZ_FREERTOS_PORT == 1)
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -505,5 +505,5 @@ static EZ_RTOS_STATUS ezFreeRTOSPort_GetEvent(struct ezTaskWorker *worker,
 }
 
 
-#endif /* EZ_FREERTOS_PORT_ENABLE == 1 */
+#endif /* EZ_FREERTOS_PORT == 1 */
 /* End of file*/

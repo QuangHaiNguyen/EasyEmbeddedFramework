@@ -25,7 +25,7 @@ target_sources(ez_rpc_lib
 # Definitions ----------------------------------------------------------------
 target_compile_definitions(ez_rpc_lib
     PUBLIC
-        EZ_RPC_ENABLE=$<BOOL:${ENABLE_EZ_RPC}>
+        EZ_RPC=$<BOOL:${ENABLE_EZ_RPC}>
     PRIVATE
         EZ_BUILD_WITH_CMAKE=$<BOOL:${BUILD_WITH_CMAKE}>
 )

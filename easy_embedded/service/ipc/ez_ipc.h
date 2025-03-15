@@ -34,7 +34,7 @@ extern "C" {
 #include "ez_target_config.h"
 #endif
 
-#if (EZ_IPC_ENABLE == 1)
+#if (EZ_IPC == 1)
 #include "stdint.h"
 #include "stdbool.h"
 
@@ -227,7 +227,7 @@ bool ezIpc_ReleaseMessage(ezmMailBox receive_from, void *message);
 }
 #endif
 
-#endif /* EZ_IPC_ENABLE == 1 */
+#endif /* EZ_IPC == 1 */
 #endif /* _EZ_IPC_H */
 
 

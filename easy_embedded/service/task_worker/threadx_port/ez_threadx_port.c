@@ -23,7 +23,7 @@
 /*****************************************************************************
 * Includes
 *****************************************************************************/
-#if (EZ_THREADX_PORT_ENABLE == 1)
+#if (EZ_THREADX_PORT == 1)
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -585,5 +585,5 @@ static void ezThreadXPort_PrintThreadXStatusCode(UINT code)
     }
 }
 
-#endif /* EZ_THREADX_PORT_ENABLE == 1 */
+#endif /* EZ_THREADX_PORT == 1 */
 /* End of file*/
