@@ -1,5 +1,4 @@
 option(ENABLE_EZ_SERVICE           "Enable HAL layer"                   ON)
-option(ENABLE_EZ_BSP               "Enable BSP layer"                   ON)
 option(ENABLE_EZ_MIDDLEWARES       "Enable Middlewares layer"           ON)
 option(ENABLE_EZ_HAL               "Enable HAL layer"                   ON)
 

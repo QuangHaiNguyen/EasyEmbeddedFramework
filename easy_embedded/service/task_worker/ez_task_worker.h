@@ -34,13 +34,13 @@ extern "C" {
 #include "ez_target_config.h"
 #endif
 
-#if (EZ_TASK_WORKER_ENABLE == 1)
+#if (EZ_TASK_WORKER == 1)
 #include "ez_linked_list.h"
 #include "ez_queue.h"
 
-#if (EZ_THREADX_PORT_ENABLE == 1)
+#if (EZ_THREADX_PORT == 1)
 #include "tx_api.h"
-#elif (EZ_FREERTOS_PORT_ENABLE == 1)
+#elif (EZ_FREERTOS_PORT == 1)
 #include "FreeRTOS.h"
 #include "task.h"
 #include "semphr.h"
@@ -458,7 +458,7 @@ void ezTaskWorker_ExecuteTaskNoRTOS(void);
 }
 #endif
 
-#endif /* EZ_TASK_WORKER_ENABLE == 1 */
+#endif /* EZ_TASK_WORKER == 1 */
 #endif /* _EZ_TASK_WORKER_H */
 
 
