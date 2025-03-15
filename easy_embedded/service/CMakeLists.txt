@@ -55,7 +55,7 @@ target_sources(ez_service_lib
 # Definitions ----------------------------------------------------------------
 target_compile_definitions(ez_service_lib
     PUBLIC
-        EZ_SERVICE_ENABLE=$<BOOL:${ENABLE_EZ_SERVICE}>
+        EZ_SERVICE=$<BOOL:${ENABLE_EZ_SERVICE}>
         DATA_MODEL=$<BOOL:${ENABLE_DATA_MODEL}>
     PRIVATE
         EZ_BUILD_WITH_CMAKE=$<BOOL:${BUILD_WITH_CMAKE}>

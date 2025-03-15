@@ -26,7 +26,7 @@
 #include <string.h>
 #include "ez_rpc.h"
 
-#if (EZ_RPC_ENABLE == 1)
+#if (EZ_RPC == 1)
 
 #define DEBUG_LVL   LVL_TRACE   /**< logging level */
 #define MOD_NAME    "ez_rpc"       /**< module name */
@@ -1070,5 +1070,5 @@ void ezRpc_PrintCrc(uint8_t *crc, uint32_t size)
 #endif /* DEBUG_LVL == LVL_TRACE */
 
 
-#endif /* EZ_RPC_ENABLE == 1 */
+#endif /* EZ_RPC == 1 */
 /* End of file*/

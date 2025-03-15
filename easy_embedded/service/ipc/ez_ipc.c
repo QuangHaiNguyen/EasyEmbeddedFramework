@@ -25,7 +25,7 @@
 *****************************************************************************/
 #include "ez_ipc.h"
 
-#if (EZ_IPC_ENABLE == 1)
+#if (EZ_IPC == 1)
 
 #define DEBUG_LVL   LVL_TRACE   /**< logging level */
 #define MOD_NAME    "ez_ipc"       /**< module name */
@@ -240,5 +240,5 @@ static void ezIpc_ResetInstance(uint8_t instance_index)
     }
 }
 
-#endif /* EZ_IPC_ENABLE == 1 */
+#endif /* EZ_IPC == 1 */
 /* End of file*/

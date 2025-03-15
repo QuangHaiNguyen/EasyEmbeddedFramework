@@ -34,7 +34,7 @@ extern "C" {
 #include "ez_target_config.h"
 #endif
 
-#if (EZ_HAL_ENABLE == 1)
+#if (EZ_HAL == 1)
 
 /*****************************************************************************
 * Component Preprocessor Macros
@@ -88,7 +88,7 @@ typedef struct
 *****************************************************************************/
 int sum(int a, int b);
 
-#endif /* EZ_HAL_ENABLE == 1 */
+#endif /* EZ_HAL == 1 */
 
 #ifdef __cplusplus
 }

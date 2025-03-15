@@ -30,7 +30,7 @@ extern "C" {
 /*****************************************************************************
 * Includes
 *****************************************************************************/
-#if (EZ_THREADX_PORT_ENABLE == 1)
+#if (EZ_THREADX_PORT == 1)
 #include "ez_task_worker.h"
 
 /*****************************************************************************
@@ -109,7 +109,7 @@ struct ezTaskWorkerThreadInterfaces * ezThreadXPort_GetInterface(void);
 }
 #endif
 
-#endif /* EZ_THREADX_PORT_ENABLE == 1 */
+#endif /* EZ_THREADX_PORT == 1 */
 #endif /* _EZ_THREADX_PORT_H */
 
 

@@ -34,7 +34,7 @@ extern "C" {
 #include "ez_target_config.h"
 #endif
 
-#if (EZ_SERVICE_ENABLE == 1)
+#if (EZ_SERVICE == 1)
 #include "ez_utilities_common.h"
 
 
@@ -83,7 +83,7 @@ extern "C" {
 *****************************************************************************/
 ezSTATUS ezService_Intialize(void);
 
-#endif /* EZ_SERVICE_ENABLE == 1 */
+#endif /* EZ_SERVICE == 1 */
 
 #ifdef __cplusplus
 }

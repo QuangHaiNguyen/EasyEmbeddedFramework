@@ -30,7 +30,7 @@ extern "C" {
 /*****************************************************************************
 * Includes
 *****************************************************************************/
-#if (EZ_CLI_ENABLE == 1)
+#if (EZ_CLI == 1)
 #include <string.h>
 #include <stdarg.h>
 #include <stdbool.h>
@@ -282,7 +282,7 @@ void ezCli_Printf(char *fmt, ...);
 }
 #endif
 
-#endif /* EZ_CLI_ENABLE == 1 */
+#endif /* EZ_CLI == 1 */
 #endif /* _EZ_CLI_H */
 
 

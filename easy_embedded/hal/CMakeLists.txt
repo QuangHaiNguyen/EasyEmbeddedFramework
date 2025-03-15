@@ -26,11 +26,11 @@ target_sources(ez_hal_lib
 # Definitions ----------------------------------------------------------------
 target_compile_definitions(ez_hal_lib
     PUBLIC
-        EZ_HAL_ENABLE=$<BOOL:${ENABLE_EZ_HAL}>
+        EZ_HAL=$<BOOL:${ENABLE_EZ_HAL}>
     PRIVATE
         EZ_BUILD_WITH_CMAKE=$<BOOL:${BUILD_WITH_CMAKE}>
-        EZ_DRIVER_ENABLE=$<BOOL:${ENABLE_EZ_HAL_DRIVER}>
-        EZ_UART_ENABLE=$<BOOL:${ENABLE_EZ_UART}>
+        EZ_DRIVER=$<BOOL:${ENABLE_EZ_HAL_DRIVER}>
+        EZ_UART=$<BOOL:${ENABLE_EZ_UART}>
 )
 
 

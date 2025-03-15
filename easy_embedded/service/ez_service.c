@@ -25,7 +25,7 @@
 *****************************************************************************/
 #include "ez_service.h"
 
-#if (EZ_SERVICE_ENABLE == 1)
+#if (EZ_SERVICE == 1)
 
 #define DEBUG_LVL   LVL_TRACE   /**< logging level */
 #define MOD_NAME    "ez_service"       /**< module name */
@@ -67,5 +67,5 @@ ezSTATUS ezService_Intialize(void)
 * Local functions
 *****************************************************************************/
 
-#endif /* EZ_SERVICE_ENABLE == 1 */
+#endif /* EZ_SERVICE == 1 */
 /* End of file*/

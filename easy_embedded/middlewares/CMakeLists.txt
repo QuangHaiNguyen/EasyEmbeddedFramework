@@ -25,7 +25,7 @@ target_sources(ez_middlewares_lib
 # Definitions ----------------------------------------------------------------
 target_compile_definitions(ez_middlewares_lib
     PUBLIC
-        EZ_MIDDLEWARES_ENABLE=$<BOOL:${ENABLE_EZ_MIDDLEWARES}>
+        EZ_MIDDLEWARES=$<BOOL:${ENABLE_EZ_MIDDLEWARES}>
     PRIVATE
         EZ_BUILD_WITH_CMAKE=$<BOOL:${BUILD_WITH_CMAKE}>
 

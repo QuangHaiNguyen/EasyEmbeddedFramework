@@ -27,7 +27,7 @@
 extern "C" {
 #endif
 
-#if (EZ_FREERTOS_PORT_ENABLE == 1)
+#if (EZ_FREERTOS_PORT == 1)
 
 /*****************************************************************************
 * Includes
@@ -107,7 +107,7 @@ struct ezTaskWorkerThreadInterfaces * ezFreeRTOSPort_GetInterface(void);
 }
 #endif
 
-#endif /* EZ_FREERTOS_PORT_ENABLE == 1 */
+#endif /* EZ_FREERTOS_PORT == 1 */
 #endif /* _EZ_FREERTOS_PORT_H */
 
 

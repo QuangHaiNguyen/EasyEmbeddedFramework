@@ -34,7 +34,7 @@ extern "C" {
 #include "ez_target_config.h"
 #endif
 
-#if (EZ_STATE_MACHINE_ENABLE == 1)
+#if (EZ_STATE_MACHINE == 1)
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -257,7 +257,7 @@ ezState_t* ezSM_GetCurrState(ezStateMachine_t *sm);
 }
 #endif
 
-#endif /* EZ_STATE_MACHINE_ENABLE == 1 */
+#endif /* EZ_STATE_MACHINE == 1 */
 #endif /* _EZ_STATE_MACHINE_H */
 
 

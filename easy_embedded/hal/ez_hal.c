@@ -25,7 +25,7 @@
 *****************************************************************************/
 #include "ez_hal.h"
 
-#if (EZ_HAL_ENABLE == 1)
+#if (EZ_HAL == 1)
 
 #define DEBUG_LVL   LVL_TRACE   /**< logging level */
 #define MOD_NAME    "ez_hal"       /**< module name */
@@ -65,5 +65,5 @@ int sum(int a, int b)
 * Local functions
 *****************************************************************************/
 
-#endif /* EZ_HAL_ENABLE == 1 */
+#endif /* EZ_HAL == 1 */
 /* End of file*/

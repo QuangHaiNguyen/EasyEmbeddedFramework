@@ -25,7 +25,7 @@
 *****************************************************************************/
 #include "ez_cli.h"
 
-#if (EZ_CLI_ENABLE == 1)
+#if (EZ_CLI == 1)
 
 #define DEBUG_LVL   LVL_TRACE       /**< logging level */
 #define MOD_NAME    "ez_cli"        /**< module name */
@@ -938,5 +938,5 @@ static CLI_NOTIFY_CODE  HandleHelpCommand(const char *command, void *value_list)
     return CLI_NC_OK;
 }
 
-#endif /* EZ_CLI_ENABLE == 1 */
+#endif /* EZ_CLI == 1 */
 /* End of file*/

@@ -34,7 +34,7 @@ extern "C" {
 #include "ez_target_config.h"
 #endif
 
-#if (EZ_DRIVER_ENABLE == 1)
+#if (EZ_DRIVER == 1)
 #include "stdint.h"
 #include "stdbool.h"
 #include "ez_linked_list.h"
@@ -235,7 +235,7 @@ static inline void ezDriver_UnlockDriver(struct ezDriverCommon *drv_common)
 }
 #endif
 
-#endif /* EZ_DRIVER_ENABLE == 1 */
+#endif /* EZ_DRIVER == 1 */
 #endif /* _EZ_DRIVER_DEF_H */
 
 

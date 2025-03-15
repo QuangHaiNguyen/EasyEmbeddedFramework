@@ -34,7 +34,7 @@ extern "C" {
 #include "ez_target_config.h"
 #endif
 
-#if (EZ_RPC_ENABLE == 1)
+#if (EZ_RPC == 1)
 #include "stdint.h"
 #include "stdbool.h"
 #include "ez_queue.h"
@@ -461,7 +461,7 @@ bool ezRpc_IsRpcInstanceReady(struct ezRpc *rpc_inst);
 }
 #endif
 
-#endif /* EZ_RPC_ENABLE == 1 */
+#endif /* EZ_RPC == 1 */
 #endif /* _EZ_RPC_H */
 
 
