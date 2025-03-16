@@ -35,7 +35,7 @@
 /*****************************************************************************
 * Component Preprocessor Macros
 *****************************************************************************/
-#define STACK_SIZE    1024
+#define STACK_SIZE    256
 
 /*****************************************************************************
 * Component Typedefs
@@ -57,7 +57,7 @@ static ezOsal_TaskHandle_t task2_handle;
 static const ezOsal_Interfaces_t *rtos_interface = NULL;
 
 static ezOsal_SemaphoreHandle_t semaphore_handle;
-static ezOdal_SemaphoreConfig_t semaphore;
+static ezOsal_SemaphoreConfig_t semaphore;
 
 static ezOsal_TimerHandle_t timer_handle;
 
@@ -78,14 +78,18 @@ void ezApp_OsalInit(void)
     task1.priority = 1;
     task1.task_function = Task1Function;
     task1.argument = NULL;
+#if (EZ_OSAL_USE_STATIC == 1)
     task1.stack = stack1;
+#endif
 
     task2.task_name = "task2";
     task2.stack_size = STACK_SIZE;
     task2.priority = 2;
     task2.task_function = Task2Function;
     task2.argument = NULL;
+#if (EZ_OSAL_USE_STATIC == 1)
     task2.stack = stack2;
+#endif
 
     semaphore.max_count = 1;
 

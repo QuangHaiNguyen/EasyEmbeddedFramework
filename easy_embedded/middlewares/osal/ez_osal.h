@@ -55,7 +55,7 @@ extern "C" {
     #endif
 #else
     #if (EZ_FREERTOS_PORT == 1)
-        #if (((EZ_OSAL_USE_STATIC) & (configSUPPORT_STATIC_ALLOCATION)) == 0)
+        #if ((EZ_OSAL_USE_STATIC == 1) && (configSUPPORT_STATIC_ALLOCATION == 0))
         #error "OSAL configuration and FreeRTOS configuration are not compatible"
         #endif /* (EZ_OSAL_USE_STATIC) & (configSUPPORT_STATIC_ALLOCATION) */
     #endif 

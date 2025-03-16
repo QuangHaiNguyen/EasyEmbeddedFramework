@@ -28,6 +28,7 @@ target_compile_definitions(ez_osal_lib
     PUBLIC
         EZ_OSAL=$<BOOL:${ENABLE_EZ_OSAL}>
         EZ_FREERTOS_PORT=$<BOOL:${ENABLE_FREERTOS}>
+        EZ_OSAL_USE_STATIC=$<BOOL:${ENABLE_EZ_OSAL_USE_STATIC}>
     PRIVATE
         EZ_BUILD_WITH_CMAKE=$<BOOL:${BUILD_WITH_CMAKE}>
 )

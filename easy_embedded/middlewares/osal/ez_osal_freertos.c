@@ -61,7 +61,7 @@ static ezSTATUS ezOsal_FreeRTOSTaskDelay(unsigned long num_of_ticks);
 static unsigned long ezOsal_FreeRTOSTaskGetTickCount(void);
 static void ezOsal_FreeRTOSTaskStartScheduler(void);
 
-static ezOsal_SemaphoreHandle_t ezOsal_FreeRTOSSemaphoreCreate(ezOdal_SemaphoreConfig_t* config);
+static ezOsal_SemaphoreHandle_t ezOsal_FreeRTOSSemaphoreCreate(ezOsal_SemaphoreConfig_t* config);
 static ezSTATUS ezOsal_SemaphoreFreeRTOSDelete(ezOsal_SemaphoreHandle_t semaphore_handle);
 static ezSTATUS ezOsal_SemaphoreFreeRTOSTake(ezOsal_SemaphoreHandle_t semaphore_handle, uint32_t timeout_ticks);
 static ezSTATUS ezOsal_SemaphoreFreeRTOSGive(ezOsal_SemaphoreHandle_t semaphore_handle);
@@ -123,14 +123,14 @@ static ezOsal_TaskHandle_t ezOsal_FreeRTOSTaskCreate(ezOsal_TaskConfig_t* config
             (StackType_t *)config->stack,
             &config->task_block);
 #else
-        if(xTaskCreate(task_function,
-            task_name, 
-            stack_size,
-            argument,
-            priority,
+        if(xTaskCreate(config->task_function,
+            config->task_name, 
+            config->stack_size,
+            config->argument,
+            config->priority,
             &task_handle) == pdFAIL)
         {
-            task_handle == NULL
+            task_handle == NULL;
         }
 #endif /* (EZ_OSAL_USE_STATIC == 1) */
         if(task_handle == NULL)
@@ -198,7 +198,7 @@ static void ezOsal_FreeRTOSTaskStartScheduler(void)
     vTaskStartScheduler();
 }
 
-static ezOsal_SemaphoreHandle_t ezOsal_FreeRTOSSemaphoreCreate(ezOdal_SemaphoreConfig_t* config)
+static ezOsal_SemaphoreHandle_t ezOsal_FreeRTOSSemaphoreCreate(ezOsal_SemaphoreConfig_t* config)
 {
     SemaphoreHandle_t semaphore_handle = NULL;
     if(config != NULL)
