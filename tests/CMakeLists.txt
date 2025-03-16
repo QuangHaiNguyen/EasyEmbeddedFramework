@@ -10,6 +10,10 @@ message(STATUS "************************************")
 
 
 # activate test depend on the activated module
+if(ENABLE_EZ_OSAL)
+    add_subdirectory(middlewares/osal)
+endif()
+
 if(ENABLE_DATA_MODEL)
     add_subdirectory(app/data_model)
 endif()

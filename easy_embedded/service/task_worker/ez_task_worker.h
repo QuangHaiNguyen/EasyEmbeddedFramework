@@ -55,7 +55,7 @@ extern "C" {
 #define EZ_EVENT_TASK_AVAIL     0x01        /* Task avaialble event */
 
 
-#if (EZ_THREADX_PORT_ENABLE == 1)
+#if (EZ_THREADX_PORT == 1)
 
     #ifndef EZ_RTOS_USE_STATIC_ALLOC
         #define EZ_RTOS_USE_STATIC_ALLOC        1
@@ -88,7 +88,7 @@ extern "C" {
             .priority = worker_priority,\
             .stack_size = worker_stack_size,\
         }
-#elif (EZ_FREERTOS_PORT_ENABLE == 1)
+#elif (EZ_FREERTOS_PORT == 1)
 
     #ifndef EZ_RTOS_USE_STATIC_ALLOC
         #define EZ_RTOS_USE_STATIC_ALLOC        configSUPPORT_STATIC_ALLOCATION
@@ -146,14 +146,14 @@ struct ezTaskWorker
     
     ezQueue msg_queue;              /**< Queue containing the tasks to be executed */
     char* worker_name;              /**< Name of the worker */
-#if (EZ_THREADX_PORT_ENABLE == 1)
+#if (EZ_THREADX_PORT == 1)
     uint8_t priority;               /**< Priority of the worker thread, the value must match the number of the activated RTOS */
     uint32_t stack_size;            /**< Stask size of the worker thread, in bytes */
     uint32_t sleep_ticks;           /**< Number of tick the thread must sleep before being activated again */
     TX_THREAD thread;               /**< ThreadX thread */
     TX_SEMAPHORE sem;               /**< ThreadX semaphore */
     TX_EVENT_FLAGS_GROUP events;    /**< ThreadX event */
-#elif (EZ_FREERTOS_PORT_ENABLE == 1)
+#elif (EZ_FREERTOS_PORT == 1)
     uint8_t priority;               /**< Priority of the worker thread, the value must match the number of the activated RTOS */
     uint32_t stack_size;            /**< Stask size of the worker thread, in bytes */
     uint32_t sleep_ticks;           /**< Number of tick the thread must sleep before being activated again */
@@ -166,11 +166,11 @@ struct ezTaskWorker
 #endif /* (EZ_RTOS_USE_STATIC_ALLOC == 1) */
 #else
     struct Node node;               /**< Linked list node */
-#endif /* EZ_THREADX_PORT_ENABLE == 1 */
+#endif /* EZ_THREADX_PORT == 1 */
 };
 
 
-#if ((EZ_THREADX_PORT_ENABLE == 1) || (EZ_FREERTOS_PORT_ENABLE == 1))
+#if ((EZ_THREADX_PORT == 1) || (EZ_FREERTOS_PORT == 1))
 
 /** @brief Return status of the RTOS interfaces
  */
@@ -257,7 +257,7 @@ struct ezTaskWorkerThreadInterfaces
     ezTaskWorkerSetEvent        set_events;         /**< Set event function pointer */
     ezTaskWorkerGetEvent        get_events;         /**< Get event function pointer */
 };
-#endif /* ((EZ_THREADX_PORT_ENABLE == 1) || (EZ_FREERTOS_PORT_ENABLE == 1)) */
+#endif /* ((EZ_THREADX_PORT == 1) || (EZ_FREERTOS_PORT == 1)) */
 
 
 /** @brief Definition of callback function to notify a task is finished or
@@ -322,7 +322,7 @@ bool ezTaskWorker_CreateWorker(struct ezTaskWorker *worker,
                                void *thread_func);
 
 
-#if ((EZ_THREADX_PORT_ENABLE == 1) || (EZ_FREERTOS_PORT_ENABLE == 1))
+#if ((EZ_THREADX_PORT == 1) || (EZ_FREERTOS_PORT == 1))
 /*****************************************************************************
 * Function: ezTaskWorker_SetRtosInterface
 *//** 
@@ -388,7 +388,7 @@ bool ezTaskWorker_EnqueueTask(struct ezTaskWorker *worker,
                               uint32_t context_size,
                               uint32_t ticks_to_wait);
 
-#if ((EZ_THREADX_PORT_ENABLE == 1) || (EZ_FREERTOS_PORT_ENABLE == 1))
+#if ((EZ_THREADX_PORT == 1) || (EZ_FREERTOS_PORT == 1))
 /*****************************************************************************
 * Function: ezTaskWorker_ExecuteTask
 *//** 
