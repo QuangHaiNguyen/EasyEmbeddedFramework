@@ -36,14 +36,12 @@
 *******************************************************************************/
 DEFINE_FFF_GLOBALS;
 FAKE_VALUE_FUNC(ezSTATUS, Init);
-FAKE_VALUE_FUNC(ezOsal_TaskHandle_t, TaskCreate, const char*, uint32_t, uint32_t, ezOsal_fpTaskFunction, void*);
+FAKE_VALUE_FUNC(ezOsal_TaskHandle_t, TaskCreate, ezOsal_TaskConfig_t*);
 FAKE_VALUE_FUNC(ezSTATUS, TaskDelete, ezOsal_TaskHandle_t);
-FAKE_VALUE_FUNC(ezSTATUS, TaskStart, ezOsal_TaskHandle_t);
-FAKE_VALUE_FUNC(ezSTATUS, TaskStop, ezOsal_TaskHandle_t);
 FAKE_VALUE_FUNC(ezSTATUS, TaskSuspend, ezOsal_TaskHandle_t);
 FAKE_VALUE_FUNC(ezSTATUS, TaskResume, ezOsal_TaskHandle_t);
 
-FAKE_VALUE_FUNC(ezOsal_SemaphoreHandle_t, SemaphoreCreate, uint32_t);
+FAKE_VALUE_FUNC(ezOsal_SemaphoreHandle_t, SemaphoreCreate, ezOsal_SemaphoreConfig_t*);
 FAKE_VALUE_FUNC(ezSTATUS, SemaphoreDelete, ezOsal_SemaphoreHandle_t);
 FAKE_VALUE_FUNC(ezSTATUS, SemaphoreGive, ezOsal_SemaphoreHandle_t);
 FAKE_VALUE_FUNC(ezSTATUS, SemaphoreTake, ezOsal_SemaphoreHandle_t, uint32_t);
@@ -108,19 +106,27 @@ TEST_CASE_METHOD(OsalTestsFixture, "Test no interface is implemented", "[middlew
 {
     ezOsal_TaskHandle_t task = NULL;
     ezOsal_SemaphoreHandle_t sem = NULL;
+    ezOsal_TaskConfig_t task_config;
+    ezOsal_SemaphoreConfig_t semaphore_config;
+
+    task_config.task_name = "test task";
+    task_config.stack_size = 1024,
+    task_config.priority = 1;
+    task_config.task_function = NULL;
+    task_config.argument = NULL;
+
+    semaphore_config.max_count =2;
 
     CHECK(ezOsal_Init() == ezFAIL);
 
-    task = ezOsal_TaskCreate("test_task", 1024, 1, NULL, NULL);
+    task = ezOsal_TaskCreate(&task_config);
     CHECK(task == NULL);
 
     CHECK(ezOsal_TaskDelete(task) == ezFAIL);
-    CHECK(ezOsal_TaskStart(task) == ezFAIL);
-    CHECK(ezOsal_TaskStop(task) == ezFAIL);
     CHECK(ezOsal_TaskSuspend(task) == ezFAIL);
     CHECK(ezOsal_TaskResume(task) == ezFAIL);
 
-    sem = ezOsal_SemaphoreCreate(2);
+    sem = ezOsal_SemaphoreCreate(&semaphore_config);
     CHECK(sem == NULL);
 
     CHECK(ezOsal_SemaphoreDelete(sem) == ezFAIL);
@@ -141,6 +147,13 @@ TEST_CASE_METHOD(OsalTestsFixture, "Test task functions", "[middlewares][osal][t
     ezSTATUS status = ezFAIL;
     ezOsal_TaskHandle_t task = NULL;
     ezOsal_SemaphoreHandle_t sem = NULL;
+    ezOsal_TaskConfig_t task_config;
+
+    task_config.task_name = "test task";
+    task_config.stack_size = 1024,
+    task_config.priority = 1;
+    task_config.task_function = NULL;
+    task_config.argument = NULL;
 
     SECTION("ezOsal_pfInit")
     {
@@ -158,18 +171,14 @@ TEST_CASE_METHOD(OsalTestsFixture, "Test task functions", "[middlewares][osal][t
     SECTION("ezOsal_fpTaskCreate")
     {
         TaskCreate_fake.return_val = NULL;
-        task = TaskCreate("test_task", 256, 0, NULL, NULL);
+        task = TaskCreate(&task_config);
         CHECK(task == NULL);
         CHECK(TaskCreate_fake.call_count == 1);
 
         TaskCreate_fake.return_val = &mock_task;
-        task = TaskCreate("test_task", 256, 0, NULL, NULL);
+        task = TaskCreate(&task_config);
         CHECK(task == &mock_task);
         CHECK(TaskCreate_fake.call_count == 2);
-
-        TaskStart_fake.return_val = ezSUCCESS;
-        status = TaskStart(&task);
-        CHECK(status == ezSUCCESS);
     }
 
     SECTION("ezOsal_fpTaskDelete")
@@ -178,22 +187,6 @@ TEST_CASE_METHOD(OsalTestsFixture, "Test task functions", "[middlewares][osal][t
         status = TaskDelete(&task);
         CHECK(status == ezSUCCESS);
         CHECK(TaskDelete_fake.call_count == 1);
-    }
-
-    SECTION("ezOsal_fpTaskStart")
-    {
-        TaskStart_fake.return_val = ezSUCCESS;
-        status = TaskStart(&task);
-        CHECK(status == ezSUCCESS);
-        CHECK(TaskStart_fake.call_count == 1);
-    }
-
-    SECTION("ezOsal_fpTaskStop")
-    {
-        TaskStop_fake.return_val = ezSUCCESS;
-        status = TaskStop(&task);
-        CHECK(status == ezSUCCESS);
-        CHECK(TaskStop_fake.call_count == 1);
     }
 
     SECTION("ezOsal_fpTaskResume")
@@ -218,16 +211,18 @@ TEST_CASE_METHOD(OsalTestsFixture, "Test semaphore functions", "[middlewares][os
 {
     ezSTATUS status = ezFAIL;
     ezOsal_SemaphoreHandle_t sem = NULL;
+    ezOsal_SemaphoreConfig_t semaphore_config;
+    semaphore_config.max_count = 2;
 
     SECTION("ezOsal_fpSemaphoreCreate")
     {
         SemaphoreCreate_fake.return_val = NULL;
-        sem = SemaphoreCreate(2);
+        sem = SemaphoreCreate(&semaphore_config);
         CHECK(sem == NULL);
         CHECK(SemaphoreCreate_fake.call_count == 1);
 
         SemaphoreCreate_fake.return_val = &mock_sem;
-        sem = SemaphoreCreate(2);
+        sem = SemaphoreCreate(&semaphore_config);
         CHECK(sem == &mock_sem);
         CHECK(SemaphoreCreate_fake.call_count == 2);
     }
@@ -308,8 +303,6 @@ OsalTestsFixture::OsalTestsFixture()
     RESET_FAKE(Init);
     RESET_FAKE(TaskCreate);
     RESET_FAKE(TaskDelete);
-    RESET_FAKE(TaskStart);
-    RESET_FAKE(TaskStop);
     RESET_FAKE(TaskSuspend);
     RESET_FAKE(TaskResume);
     RESET_FAKE(SemaphoreCreate);
@@ -324,8 +317,6 @@ OsalTestsFixture::OsalTestsFixture()
     test_interface.Init = Init,
     test_interface.TaskCreate = TaskCreate;
     test_interface.TaskDelete = TaskDelete;
-    test_interface.TaskStart = TaskStart;
-    test_interface.TaskStop = TaskStop;
     test_interface.TaskSuspend = TaskSuspend;
     test_interface.TaskResume = TaskResume;
 

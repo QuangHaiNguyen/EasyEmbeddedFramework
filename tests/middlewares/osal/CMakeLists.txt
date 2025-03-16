@@ -43,7 +43,6 @@ target_link_libraries(ez_osal_test
     PUBLIC
         # Please add public libraries
     PRIVATE
-        unity
         easy_embedded_lib
         Catch2::Catch2WithMain
     INTERFACE

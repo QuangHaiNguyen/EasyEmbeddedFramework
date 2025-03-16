@@ -25,7 +25,7 @@
 *****************************************************************************/
 #include "ez_state_machine.h"
 
-#if (EZ_STATE_MACHINE_ENABLE == 1)
+#if (EZ_STATE_MACHINE == 1)
 
 #define DEBUG_LVL   LVL_TRACE   /**< logging level */
 #define MOD_NAME    "ez_state_machine"       /**< module name */
@@ -236,5 +236,5 @@ ezState_t* ezSM_GetCurrState(ezStateMachine_t *sm)
 * Local functions
 *****************************************************************************/
 
-#endif /* EZ_STATE_MACHINE_ENABLE == 1 */
+#endif /* EZ_STATE_MACHINE == 1 */
 /* End of file*/

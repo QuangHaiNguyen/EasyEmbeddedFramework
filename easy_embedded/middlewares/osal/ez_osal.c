@@ -359,7 +359,7 @@ void ezOsal_TaskStartScheduler(void)
 * @endcode
 *
 *****************************************************************************/
-ezOsal_SemaphoreHandle_t ezOsal_SemaphoreCreate(ezOdal_SemaphoreConfig_t *config)
+ezOsal_SemaphoreHandle_t ezOsal_SemaphoreCreate(ezOsal_SemaphoreConfig_t *config)
 {
     EZTRACE("ezOsal_SemaphoreCreate()");
     if(IS_INTERFACE_IMPLEMENTED(osal_interface, SemaphoreCreate))

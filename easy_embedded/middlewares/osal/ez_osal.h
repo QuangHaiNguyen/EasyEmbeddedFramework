@@ -111,7 +111,7 @@ typedef struct
 #if ((EZ_FREERTOS_PORT == 1) && (EZ_OSAL_USE_STATIC == 1))
     StaticSemaphore_t xSemaphoreBuffer;
 #endif
-}ezOdal_SemaphoreConfig_t;
+}ezOsal_SemaphoreConfig_t;
 
 
 /* Interfaces ***************************************************************/
@@ -160,7 +160,7 @@ typedef unsigned long (*ezOsal_fpTaskGetTickCount)(void);
  * @param: config: Semaphore configuration
  * @return: Semaphore handle
  */
-typedef ezOsal_SemaphoreHandle_t (*ezOsal_fpSemaphoreCreate)(ezOdal_SemaphoreConfig_t *config);
+typedef ezOsal_SemaphoreHandle_t (*ezOsal_fpSemaphoreCreate)(ezOsal_SemaphoreConfig_t *config);
 
 /**@brief: Semaphore delete function
  * @param: semaphore_handle - Semaphore handle
@@ -261,7 +261,7 @@ ezSTATUS ezOsal_TaskDelay(unsigned long num_of_ticks);
 unsigned long ezOsal_TaskGetTickCount(void);
 void ezOsal_TaskStartScheduler(void);
 
-ezOsal_SemaphoreHandle_t ezOsal_SemaphoreCreate(ezOdal_SemaphoreConfig_t *config);
+ezOsal_SemaphoreHandle_t ezOsal_SemaphoreCreate(ezOsal_SemaphoreConfig_t *config);
 ezSTATUS ezOsal_SemaphoreDelete(ezOsal_SemaphoreHandle_t semaphore_handle);
 ezSTATUS ezOsal_SemaphoreTake(ezOsal_SemaphoreHandle_t semaphore_handle, uint32_t timeout_ticks);
 ezSTATUS ezOsal_SemaphoreGive(ezOsal_SemaphoreHandle_t semaphore_handle);
