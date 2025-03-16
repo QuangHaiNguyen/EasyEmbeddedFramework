@@ -15,9 +15,9 @@
 /** @file   ez_osal.c
  *  @author Hai Nguyen
  *  @date   15.03.2025
- *  @brief  One line description of the component
+ *  @brief  Common interface for OS abstraction layer
  *
- *  @details Detail description of the component
+ *  @details None
  */
 
 /*****************************************************************************
@@ -315,6 +315,32 @@ unsigned long ezOsal_TaskGetTickCount(void)
 }
 
 /*****************************************************************************
+* Function: ezOsal_TaskStartScheduler
+*//**
+* @brief Start OS task scheduler
+*
+* @details None
+*
+* @pre OS interfaces must be implemented
+* @post None
+*
+* \b Example
+* @code
+* ezOsal_TaskStartScheduler();
+* @endcode
+*
+*****************************************************************************/
+void ezOsal_TaskStartScheduler(void)
+{
+    EZTRACE("ezOsal_TaskStartScheduler()");
+    if(IS_INTERFACE_IMPLEMENTED(osal_interface, TaskStartScheduler))
+    {
+        osal_interface->TaskStartScheduler();
+    }
+    EZWARNING("Interface is not implemented");
+}
+
+/*****************************************************************************
 * Function: ezOsal_SemaphoreCreate
 *//** 
 * @brief Create a semaphore
@@ -404,7 +430,7 @@ ezSTATUS ezOsal_SemaphoreDelete(ezOsal_SemaphoreHandle_t semaphore_handle)
 *****************************************************************************/
 ezSTATUS ezOsal_SemaphoreTake(ezOsal_SemaphoreHandle_t semaphore_handle, uint32_t timeout_ticks)
 {
-    EZTRACE("ezOsal_SemaphoreTake(timeout_ms = %d)", timeout_ticks);
+    EZTRACE("ezOsal_SemaphoreTake(timeout_ticks = %d)", timeout_ticks);
     if(IS_INTERFACE_IMPLEMENTED(osal_interface, SemaphoreTake))
     {
         return osal_interface->SemaphoreTake(semaphore_handle, timeout_ticks);

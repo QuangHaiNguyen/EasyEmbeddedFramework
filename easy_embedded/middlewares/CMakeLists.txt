@@ -31,7 +31,6 @@ target_sources(ez_middlewares_lib
 target_compile_definitions(ez_middlewares_lib
     PUBLIC
         EZ_MIDDLEWARES=$<BOOL:${ENABLE_EZ_MIDDLEWARES}>
-        EZ_OSAL=$<BOOL:${ENABLE_EZ_OSAL}>
     PRIVATE
         EZ_BUILD_WITH_CMAKE=$<BOOL:${BUILD_WITH_CMAKE}>
 

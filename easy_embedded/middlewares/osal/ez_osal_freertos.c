@@ -15,9 +15,9 @@
 /** @file   ez_osal_freertos.c
  *  @author Hai Nguyen
  *  @date   16.03.2025
- *  @brief  One line description of the component
+ *  @brief  Provide the OSAL interface for FreeRTOS
  *
- *  @details Detail description of the component
+ *  @details None
  */
 
 /*****************************************************************************
@@ -57,6 +57,9 @@ static ezOsal_TaskHandle_t ezOsal_FreeRTOSTaskCreate(ezOsal_TaskConfig_t* config
 static ezSTATUS ezOsal_FreeRTOSTaskDelete(ezOsal_TaskHandle_t task_handle);
 static ezSTATUS ezOsal_FreeRTOSTaskSuspend(ezOsal_TaskHandle_t task_handle);
 static ezSTATUS ezOsal_FreeRTOSTaskResume(ezOsal_TaskHandle_t task_handle);
+static ezSTATUS ezOsal_FreeRTOSTaskDelay(unsigned long num_of_ticks);
+static unsigned long ezOsal_FreeRTOSTaskGetTickCount(void);
+static void ezOsal_FreeRTOSTaskStartScheduler(void);
 
 static ezOsal_SemaphoreHandle_t ezOsal_FreeRTOSSemaphoreCreate(ezOdal_SemaphoreConfig_t* config);
 static ezSTATUS ezOsal_SemaphoreFreeRTOSDelete(ezOsal_SemaphoreHandle_t semaphore_handle);
@@ -80,6 +83,9 @@ ezSTATUS ezOsal_FreeRTOSInit(void)
     freertos_interface.TaskDelete = ezOsal_FreeRTOSTaskDelete;
     freertos_interface.TaskSuspend = ezOsal_FreeRTOSTaskSuspend;
     freertos_interface.TaskResume = ezOsal_FreeRTOSTaskResume;
+    freertos_interface.TaskDelay = ezOsal_FreeRTOSTaskDelay;
+    freertos_interface.TaskGetTickCount = ezOsal_FreeRTOSTaskGetTickCount;
+    freertos_interface.TaskStartScheduler = ezOsal_FreeRTOSTaskStartScheduler;
 
     freertos_interface.SemaphoreCreate = ezOsal_FreeRTOSSemaphoreCreate;
     freertos_interface.SemaphoreDelete = ezOsal_SemaphoreFreeRTOSDelete;
@@ -95,7 +101,7 @@ ezSTATUS ezOsal_FreeRTOSInit(void)
 
 const ezOsal_Interfaces_t *ezOsal_FreeRTOSGetInterface(void)
 {
-    return &freertos_interface;
+    return (const ezOsal_Interfaces_t *)&freertos_interface;
 }
 
 /*****************************************************************************
@@ -171,6 +177,25 @@ static ezSTATUS ezOsal_FreeRTOSTaskResume(ezOsal_TaskHandle_t task_handle)
         return ezSUCCESS;
     }
     return ezFAIL;
+}
+
+
+static ezSTATUS ezOsal_FreeRTOSTaskDelay(unsigned long num_of_ticks)
+{
+    vTaskDelay(num_of_ticks);
+    return ezSUCCESS;
+}
+
+
+static unsigned long ezOsal_FreeRTOSTaskGetTickCount(void)
+{
+    return xTaskGetTickCount();
+}
+
+
+static void ezOsal_FreeRTOSTaskStartScheduler(void)
+{
+    vTaskStartScheduler();
 }
 
 static ezOsal_SemaphoreHandle_t ezOsal_FreeRTOSSemaphoreCreate(ezOdal_SemaphoreConfig_t* config)
