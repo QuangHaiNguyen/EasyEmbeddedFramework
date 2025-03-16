@@ -126,11 +126,7 @@ ezSTATUS ezOsal_SetInterface(const ezOsal_Interfaces_t *interface)
 *
 * @details None
 *
-* @param[in]    task_name: Task's name
-* @param[in]    stack_size: Task's size in bytes
-* @param[in]    priority: Task's priority
-* @param[in]    task_function: Task's function
-* @param[in]    argument: Task's extra argument
+* @param[in]    config: task configuration
 * @return       ezOsal_TaskHandle_t or NULL if failed
 *
 * @pre OS interface must be implemented
@@ -325,7 +321,7 @@ unsigned long ezOsal_TaskGetTickCount(void)
 *
 * @details None
 *
-* @param[in]    max_count: (IN)maximum count of the semaphorem
+* @param[in]    config: semaphore configuration
 * @return   ezOsal_SemaphoreHandle_t or NULL if failed
 *
 * @pre OS interfaces must be implemented
@@ -337,12 +333,12 @@ unsigned long ezOsal_TaskGetTickCount(void)
 * @endcode
 *
 *****************************************************************************/
-ezOsal_SemaphoreHandle_t ezOsal_SemaphoreCreate(uint32_t max_count)
+ezOsal_SemaphoreHandle_t ezOsal_SemaphoreCreate(ezOdal_SemaphoreConfig_t *config)
 {
-    EZTRACE("ezOsal_SemaphoreCreate(max_count = %d)", max_count);
+    EZTRACE("ezOsal_SemaphoreCreate()");
     if(IS_INTERFACE_IMPLEMENTED(osal_interface, SemaphoreCreate))
     {
-        return osal_interface->SemaphoreCreate(max_count);
+        return osal_interface->SemaphoreCreate(config);
     }
     EZWARNING("Interface is not implemented");
     return NULL;
@@ -406,12 +402,12 @@ ezSTATUS ezOsal_SemaphoreDelete(ezOsal_SemaphoreHandle_t semaphore_handle)
 * @see ezOsal_SemaphoreCreate
 *
 *****************************************************************************/
-ezSTATUS ezOsal_SemaphoreTake(ezOsal_SemaphoreHandle_t semaphore_handle, uint32_t timeout_ms)
+ezSTATUS ezOsal_SemaphoreTake(ezOsal_SemaphoreHandle_t semaphore_handle, uint32_t timeout_ticks)
 {
-    EZTRACE("ezOsal_SemaphoreTake(timeout_ms = %d)", timeout_ms);
+    EZTRACE("ezOsal_SemaphoreTake(timeout_ms = %d)", timeout_ticks);
     if(IS_INTERFACE_IMPLEMENTED(osal_interface, SemaphoreTake))
     {
-        return osal_interface->SemaphoreTake(semaphore_handle, timeout_ms);
+        return osal_interface->SemaphoreTake(semaphore_handle, timeout_ticks);
     }
     EZWARNING("Interface is not implemented");
     return ezFAIL;
@@ -474,12 +470,12 @@ ezSTATUS ezOsal_SemaphoreGive(ezOsal_SemaphoreHandle_t semaphore_handle)
 * @endcode
 *
 *****************************************************************************/
-ezOsal_TimerHandle_t ezOsal_TimerCreate(const char* timer_name, uint32_t period_ms, ezOsal_fpTimerElapseCallback timer_callback, void *argument)
+ezOsal_TimerHandle_t ezOsal_TimerCreate(const char* timer_name, uint32_t period_ticks, ezOsal_fpTimerElapseCallback timer_callback, void *argument)
 {
-    EZTRACE("ezOsal_TimerCreate(name = %s, period_ms = %d)", timer_name, period_ms);
+    EZTRACE("ezOsal_TimerCreate(name = %s, period_ticks = %d)", timer_name, period_ticks);
     if(IS_INTERFACE_IMPLEMENTED(osal_interface, TimerCreate))
     {
-        return osal_interface->TimerCreate(timer_name, period_ms, timer_callback, argument);
+        return osal_interface->TimerCreate(timer_name, period_ticks, timer_callback, argument);
     }
     EZWARNING("Interface is not implemented");
     return NULL;
