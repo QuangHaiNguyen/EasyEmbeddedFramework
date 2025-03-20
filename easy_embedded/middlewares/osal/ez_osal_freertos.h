@@ -61,7 +61,6 @@ extern "C" {
 /*****************************************************************************
 * Function Prototypes
 *****************************************************************************/
-ezSTATUS ezOsal_FreeRTOSInit(void);
 const ezOsal_Interfaces_t *ezOsal_FreeRTOSGetInterface(void);
 
 

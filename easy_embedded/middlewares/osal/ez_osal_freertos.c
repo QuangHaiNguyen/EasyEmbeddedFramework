@@ -48,7 +48,7 @@
 /*****************************************************************************
 * Component Variable Definitions
 *****************************************************************************/
-static ezOsal_Interfaces_t freertos_interface;
+//static ezOsal_Interfaces_t freertos_interface;
 
 /*****************************************************************************
 * Function Definitions
@@ -74,31 +74,29 @@ static ezSTATUS ezOsal_FreeRTOSTimerDelete(ezOsal_TimerHandle_t timer_handle);
 static ezSTATUS ezOsal_FreeRTOSTimerStart(ezOsal_TimerHandle_t timer_handle);
 static ezSTATUS ezOsal_FreeRTOSTimerStop(ezOsal_TimerHandle_t timer_handle);
 
+static const ezOsal_Interfaces_t freertos_interface = {
+    .TaskCreate = ezOsal_FreeRTOSTaskCreate,
+    .TaskDelete = ezOsal_FreeRTOSTaskDelete,
+    .TaskSuspend = ezOsal_FreeRTOSTaskSuspend,
+    .TaskResume = ezOsal_FreeRTOSTaskResume,
+    .TaskDelay = ezOsal_FreeRTOSTaskDelay,
+    .TaskGetTickCount = ezOsal_FreeRTOSTaskGetTickCount,
+    .TaskStartScheduler = ezOsal_FreeRTOSTaskStartScheduler,
+
+    .SemaphoreCreate = ezOsal_FreeRTOSSemaphoreCreate,
+    .SemaphoreDelete = ezOsal_SemaphoreFreeRTOSDelete,
+    .SemaphoreTake = ezOsal_SemaphoreFreeRTOSTake,
+    .SemaphoreGive = ezOsal_SemaphoreFreeRTOSGive,
+
+    .TimerCreate = ezOsal_FreeRTOSTimerCreate,
+    .TimerDelete = ezOsal_FreeRTOSTimerDelete,
+    .TimerStart = ezOsal_FreeRTOSTimerStart,
+    .TimerStop = ezOsal_FreeRTOSTimerStop,
+};
+
 /*****************************************************************************
 * Public functions
 *****************************************************************************/
-ezSTATUS ezOsal_FreeRTOSInit(void)
-{
-    freertos_interface.TaskCreate = ezOsal_FreeRTOSTaskCreate;
-    freertos_interface.TaskDelete = ezOsal_FreeRTOSTaskDelete;
-    freertos_interface.TaskSuspend = ezOsal_FreeRTOSTaskSuspend;
-    freertos_interface.TaskResume = ezOsal_FreeRTOSTaskResume;
-    freertos_interface.TaskDelay = ezOsal_FreeRTOSTaskDelay;
-    freertos_interface.TaskGetTickCount = ezOsal_FreeRTOSTaskGetTickCount;
-    freertos_interface.TaskStartScheduler = ezOsal_FreeRTOSTaskStartScheduler;
-
-    freertos_interface.SemaphoreCreate = ezOsal_FreeRTOSSemaphoreCreate;
-    freertos_interface.SemaphoreDelete = ezOsal_SemaphoreFreeRTOSDelete;
-    freertos_interface.SemaphoreTake = ezOsal_SemaphoreFreeRTOSTake;
-    freertos_interface.SemaphoreGive = ezOsal_SemaphoreFreeRTOSGive;
-
-    freertos_interface.TimerCreate = ezOsal_FreeRTOSTimerCreate;
-    freertos_interface.TimerDelete = ezOsal_FreeRTOSTimerDelete;
-    freertos_interface.TimerStart = ezOsal_FreeRTOSTimerStart;
-    freertos_interface.TimerStop = ezOsal_FreeRTOSTimerStop;
-}
-
-
 const ezOsal_Interfaces_t *ezOsal_FreeRTOSGetInterface(void)
 {
     return (const ezOsal_Interfaces_t *)&freertos_interface;

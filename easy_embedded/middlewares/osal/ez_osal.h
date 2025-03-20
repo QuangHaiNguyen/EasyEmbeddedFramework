@@ -84,7 +84,13 @@ typedef void* ezOsal_TimerHandle_t;
 typedef StackType_t ezOsal_Stack_t;
 #endif
 
+/**@brief: Task function pointer
+ */
 typedef void (*ezOsal_fpTaskFunction)(void *argument);
+
+
+/**@brief: Timer elapsed callback function pointer
+ */
 typedef void (*ezOsal_fpTimerElapseCallback)(void *argument);
 
 
@@ -115,7 +121,6 @@ typedef struct
 
 
 /* Interfaces ***************************************************************/
-typedef ezSTATUS (*ezOsal_pfInit)(void);
 
 /**@brief: Task create function
  * @param: config - Task configuration
@@ -215,9 +220,6 @@ typedef ezSTATUS (*ezOsal_pfTimerStop)(ezOsal_TimerHandle_t timer_handle);
  */
 typedef struct
 {
-    /* Initialization function */
-    ezOsal_pfInit           Init;
-
     /* Task functions */
     ezOsal_fpTaskCreate     TaskCreate;
     ezOsal_fpTaskDelete     TaskDelete;
@@ -249,8 +251,6 @@ typedef struct
 /*****************************************************************************
 * Function Prototypes
 *****************************************************************************/
-
-ezSTATUS ezOsal_Init(void);
 ezSTATUS ezOsal_SetInterface(const ezOsal_Interfaces_t *interface);
 
 ezOsal_TaskHandle_t ezOsal_TaskCreate(ezOsal_TaskConfig_t* config);

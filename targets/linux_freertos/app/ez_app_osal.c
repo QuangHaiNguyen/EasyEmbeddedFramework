@@ -93,7 +93,6 @@ void ezApp_OsalInit(void)
 
     semaphore.max_count = 1;
 
-    (void) ezOsal_FreeRTOSInit();
     rtos_interface = ezOsal_FreeRTOSGetInterface();
     (void) ezOsal_SetInterface(rtos_interface);
 

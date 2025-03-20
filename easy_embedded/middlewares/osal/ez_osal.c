@@ -58,37 +58,6 @@ static const ezOsal_Interfaces_t *osal_interface = NULL;
 *****************************************************************************/
 
 /*****************************************************************************
-* Function: ezOsal_Init
-*//** 
-* @brief Initialize the OS
-*
-* @details  None
-*
-* @return   ezSTATUS
-*
-* @pre ezOsal_SetInterface must be called before calling this function
-* @post None
-*
-* \b Example
-* @code
-* ezSTATUS status = ezOsal_Init();
-* @endcode
-*
-* @see ezOsal_SetInterface
-*
-*****************************************************************************/
-ezSTATUS ezOsal_Init(void)
-{
-    EZTRACE("ezOsal_Init()");
-    if(IS_INTERFACE_IMPLEMENTED(osal_interface, Init))
-    {
-        return osal_interface->Init();
-    }
-    return ezFAIL;
-}
-
-
-/*****************************************************************************
 * Function: ezOsal_SetInterface
 *//** 
 * @brief Set the implemented OS interfaces
