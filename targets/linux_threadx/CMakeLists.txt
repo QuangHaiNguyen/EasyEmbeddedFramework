@@ -20,6 +20,8 @@ include(features.cmake)
 target_sources(ez_target
     PRIVATE
         main.c
+        app/ez_app_task_worker.c
+        app/ez_app_osal.c
 )
 
 
@@ -33,13 +35,26 @@ target_compile_definitions(ez_target
 # Include directory -----------------------------------------------------------
 target_include_directories(ez_target
     PUBLIC
-        # Please add private folders here
+        app/
     PRIVATE
         # Please add private folders here
     INTERFACE
         # Please add interface folders here
 )
 
+# Config RTOS -----------------------------------------------------------------
+set(FREERTOS_HEAP "4" CACHE INTERNAL "")
+set(FREERTOS_PORT "GCC_POSIX" CACHE INTERNAL "")
+
+add_library(freertos_config INTERFACE)
+target_include_directories(freertos_config SYSTEM
+INTERFACE
+    ${CMAKE_SOURCE_DIR}/targets/linux_freertos/
+)
+target_compile_definitions(freertos_config
+INTERFACE
+    projCOVERAGE_TEST=0
+)
 
 # Link libraries -------------------------------------------------------------
 target_link_libraries(ez_target
@@ -47,7 +62,6 @@ target_link_libraries(ez_target
         # Please add public libraries
     PRIVATE
         easy_embedded_lib
-        threadx
     INTERFACE
         # Please add interface libraries
 )

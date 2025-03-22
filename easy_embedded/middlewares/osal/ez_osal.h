@@ -41,6 +41,8 @@ extern "C" {
 
 #if (EZ_FREERTOS_PORT == 1)
 #include "FreeRTOS.h"
+#elif (EZ_THREADX_PORT == 1)
+#include "tx_api.h"
 #endif
 
 /*****************************************************************************
@@ -62,27 +64,34 @@ extern "C" {
 #endif /* EZ_OSAL_USE_STATIC */
 
 
+#define EZ_OSAL_DEFINE_TASK_HANDLE(NAME, STACK_SIZE, PRIO, FUNC, ARG, RESOURCE) \
+    ezOsal_TaskHandle_t NAME = { \
+        .task_name = #NAME, \
+        .stack_size = STACK_SIZE, \
+        .priority = PRIO, \
+        .task_function = FUNC, \
+        .argument = ARG, \
+        .static_resource = RESOURCE \
+    }
+
+#define EZ_OSAL_DEFINE_SEMAPHORE_HANDLE(NAME, MAX_COUNT, RESOURCE) \
+    ezOsal_SemaphoreHandle_t NAME = { \
+        .max_count = MAX_COUNT, \
+        .static_resource = RESOURCE \
+    }
+
+#define EZ_OSAL_DEFINE_TIMER_HANDLE(NAME, PERIOD, FUNC, ARG, RESOURCE) \
+    ezOsal_TimerHandle_t NAME = { \
+        .timer_name = #NAME, \
+        .period_ticks = PERIOD, \
+        .timer_callback = FUNC, \
+        .argument = ARG, \
+        .static_resource = RESOURCE \
+    }
+
 /*****************************************************************************
 * Component Typedefs
 *****************************************************************************/
-
-/**@brief OSAL task handle structure
- */
-typedef void* ezOsal_TaskHandle_t;
-
-
-/**@brief OSAL semaphore handle structure
- */
-typedef void* ezOsal_SemaphoreHandle_t;
-
-
-/**@brief OSAL timer handle structure
- */
-typedef void* ezOsal_TimerHandle_t;
-
-#if (EZ_FREERTOS_PORT == 1)
-typedef StackType_t ezOsal_Stack_t;
-#endif
 
 /**@brief: Task function pointer
  */
@@ -100,51 +109,64 @@ typedef struct
 {
     const char* task_name;  /**< Task name */
     uint32_t priority;      /**< Priority */
-    void *argument;         /**< Extra argument */
     uint32_t stack_size;    /**< Stack size */
     ezOsal_fpTaskFunction task_function; /**< Task function */
-#if ((EZ_FREERTOS_PORT == 1) && (EZ_OSAL_USE_STATIC == 1))
-    StaticTask_t task_block; /**< Static task block */
-    ezOsal_Stack_t *stack;   /**< Buffer holding stack in case using static allocation */
-#endif
-}ezOsal_TaskConfig_t;
+    void *argument;         /**< Extra argument */
+    void *task_handle;      /**< RTOS Task handle */
+    void *static_resource;  /**< Point to static resource if RTOS use this mode */
+}ezOsal_TaskHandle_t;
 
 /**@brief: OSAL semaphore configuration structure
  */
 typedef struct
 {
     uint32_t max_count;
-#if ((EZ_FREERTOS_PORT == 1) && (EZ_OSAL_USE_STATIC == 1))
-    StaticSemaphore_t xSemaphoreBuffer;
-#endif
-}ezOsal_SemaphoreConfig_t;
+    void *static_resource;
+    void *handle;
+}ezOsal_SemaphoreHandle_t;
+
+typedef struct
+{
+    const char* timer_name;
+    uint32_t period_ticks;
+    ezOsal_fpTimerElapseCallback timer_callback;
+    void *handle;
+    void *argument;
+    void* static_resource;
+}ezOsal_TimerHandle_t;
 
 
 /* Interfaces ***************************************************************/
 
-/**@brief: Task create function
- * @param: config - Task configuration
- * @return: Task handle
+/**@brief: OSAL interface initialization function
+ * @param: argument - Extra argument
+ * @return: Status
  */
-typedef ezOsal_TaskHandle_t (*ezOsal_fpTaskCreate)  (ezOsal_TaskConfig_t* config);
+typedef ezSTATUS (*ezOsal_fpInit)     (void *argument);
+
+/**@brief: Task create function
+ * @param: handle - Task handle
+ * @return: Task Status
+ */
+typedef ezSTATUS (*ezOsal_fpTaskCreate)  (ezOsal_TaskHandle_t* handle);
 
 /**@brief: Task delete function
  * @param: task_handle - Task handle
  * @return: Status
  */
-typedef ezSTATUS (*ezOsal_fpTaskDelete)     (ezOsal_TaskHandle_t task_handle);
+typedef ezSTATUS (*ezOsal_fpTaskDelete)     (ezOsal_TaskHandle_t* handle);
 
 /**@brief: Task suspend function
  * @param: task_handle - Task handle
  * @return: Status
  */
-typedef ezSTATUS (*ezOsal_fpTaskSuspend)    (ezOsal_TaskHandle_t task_handle);
+typedef ezSTATUS (*ezOsal_fpTaskSuspend)    (ezOsal_TaskHandle_t* handle);
 
 /**@brief: Task resume function
  * @param: task_handle - Task handle
  * @return: Status
  */
-typedef ezSTATUS (*ezOsal_fpTaskResume)     (ezOsal_TaskHandle_t task_handle);
+typedef ezSTATUS (*ezOsal_fpTaskResume)     (ezOsal_TaskHandle_t* handle);
 
 /**@brief: Task delay function
  * @param: num_of_ticks - Number of ticks
@@ -162,64 +184,59 @@ typedef void (*ezOsal_fpTaskStartScheduler)(void);
 typedef unsigned long (*ezOsal_fpTaskGetTickCount)(void);
 
 /**@brief: Semaphore create function
- * @param: config: Semaphore configuration
- * @return: Semaphore handle
+ * @param: handle: Semaphore handle
+ * @return: Status
  */
-typedef ezOsal_SemaphoreHandle_t (*ezOsal_fpSemaphoreCreate)(ezOsal_SemaphoreConfig_t *config);
+typedef ezSTATUS (*ezOsal_fpSemaphoreCreate)(ezOsal_SemaphoreHandle_t *handle);
 
 /**@brief: Semaphore delete function
  * @param: semaphore_handle - Semaphore handle
  * @return: Status
  */
-typedef ezSTATUS (*ezOsal_fpSemaphoreDelete)(ezOsal_SemaphoreHandle_t semaphore_handle);
+typedef ezSTATUS (*ezOsal_fpSemaphoreDelete)(ezOsal_SemaphoreHandle_t *handle);
 
 /**@brief: Semaphore take function
  * @param: semaphore_handle - Semaphore handle
  * @param: timeout_ticks - Timeout in ticks
  * @return: Status
  */
-typedef ezSTATUS (*ezOsal_fpSemaphoreTake)(ezOsal_SemaphoreHandle_t semaphore_handle, uint32_t timeout_ticks);
+typedef ezSTATUS (*ezOsal_fpSemaphoreTake)(ezOsal_SemaphoreHandle_t *handle, uint32_t timeout_ticks);
 
 /**@brief: Semaphore give function
  * @param: semaphore_handle - Semaphore handle
  * @return: Status
  */
-typedef ezSTATUS (*ezOsal_fpSemaphoreGive)(ezOsal_SemaphoreHandle_t semaphore_handle);
+typedef ezSTATUS (*ezOsal_fpSemaphoreGive)(ezOsal_SemaphoreHandle_t *handle);
 
 /**@brief: Timer create function
- * @param: timer_name - Timer name
- * @param: period_ticks - Period in ticks
- * @param: timer_callback - Timer callback function
- * @param: argument - Extra argument
- * @return: Timer handle
+ * @param: handle - Timer handle
+ * @return: Status
  */
-typedef ezOsal_TimerHandle_t (*ezOsal_pfTimerCreate)(const char* timer_name,
-    uint32_t period_ticks,
-    ezOsal_fpTimerElapseCallback timer_callback,
-    void *argument);
+typedef ezSTATUS (*ezOsal_pfTimerCreate)(ezOsal_TimerHandle_t *handle);
 
 /**@brief: Timer delete function
  * @param: timer_handle - Timer handle
  * @return: Status
  */
-typedef ezSTATUS (*ezOsal_pfTimerDelete)(ezOsal_TimerHandle_t timer_handle);
+typedef ezSTATUS (*ezOsal_pfTimerDelete)(ezOsal_TimerHandle_t *handle);
 
 /**@brief: Timer start function
  * @param: timer_handle - Timer handle
  * @return: Status
  */
-typedef ezSTATUS (*ezOsal_pfTimerStart)(ezOsal_TimerHandle_t timer_handle);
+typedef ezSTATUS (*ezOsal_pfTimerStart)(ezOsal_TimerHandle_t *handle);
 
 /**@brief: Timer stop function
  * @param: timer_handle - Timer handle
  * @return: Status
  */
-typedef ezSTATUS (*ezOsal_pfTimerStop)(ezOsal_TimerHandle_t timer_handle);
+typedef ezSTATUS (*ezOsal_pfTimerStop)(ezOsal_TimerHandle_t *handle);
 
 /** @brief List of interface functions must be implemented
  */
 typedef struct
 {
+    ezOsal_fpInit           Init;
     /* Task functions */
     ezOsal_fpTaskCreate     TaskCreate;
     ezOsal_fpTaskDelete     TaskDelete;
@@ -240,6 +257,9 @@ typedef struct
     ezOsal_pfTimerDelete    TimerDelete;
     ezOsal_pfTimerStart     TimerStart;
     ezOsal_pfTimerStop      TimerStop;
+
+    /* Extra interface */
+    void *custom_interfaces;
 }ezOsal_Interfaces_t;
 
 
@@ -252,27 +272,25 @@ typedef struct
 * Function Prototypes
 *****************************************************************************/
 ezSTATUS ezOsal_SetInterface(const ezOsal_Interfaces_t *interface);
+ezSTATUS ezOsal_Init(void *argument);
 
-ezOsal_TaskHandle_t ezOsal_TaskCreate(ezOsal_TaskConfig_t* config);
-ezSTATUS ezOsal_TaskDelete(ezOsal_TaskHandle_t task_handle);
-ezSTATUS ezOsal_TaskSuspend(ezOsal_TaskHandle_t task_handle);
-ezSTATUS ezOsal_TaskResume(ezOsal_TaskHandle_t task_handle);
+ezSTATUS ezOsal_TaskCreate(ezOsal_TaskHandle_t* handle);
+ezSTATUS ezOsal_TaskDelete(ezOsal_TaskHandle_t* handle);
+ezSTATUS ezOsal_TaskSuspend(ezOsal_TaskHandle_t* handle);
+ezSTATUS ezOsal_TaskResume(ezOsal_TaskHandle_t* handle);
 ezSTATUS ezOsal_TaskDelay(unsigned long num_of_ticks);
 unsigned long ezOsal_TaskGetTickCount(void);
 void ezOsal_TaskStartScheduler(void);
 
-ezOsal_SemaphoreHandle_t ezOsal_SemaphoreCreate(ezOsal_SemaphoreConfig_t *config);
-ezSTATUS ezOsal_SemaphoreDelete(ezOsal_SemaphoreHandle_t semaphore_handle);
-ezSTATUS ezOsal_SemaphoreTake(ezOsal_SemaphoreHandle_t semaphore_handle, uint32_t timeout_ticks);
-ezSTATUS ezOsal_SemaphoreGive(ezOsal_SemaphoreHandle_t semaphore_handle);
+ezSTATUS ezOsal_SemaphoreCreate(ezOsal_SemaphoreHandle_t *handle);
+ezSTATUS ezOsal_SemaphoreDelete(ezOsal_SemaphoreHandle_t *handle);
+ezSTATUS ezOsal_SemaphoreTake(ezOsal_SemaphoreHandle_t *handle, uint32_t timeout_ticks);
+ezSTATUS ezOsal_SemaphoreGive(ezOsal_SemaphoreHandle_t *handle);
 
-ezOsal_TimerHandle_t ezOsal_TimerCreate(const char* timer_name,
-    uint32_t period_ticks,
-    ezOsal_fpTimerElapseCallback timer_callback,
-    void *argument);
-ezSTATUS ezOsal_TimerDelete(ezOsal_TimerHandle_t timer_handle);
-ezSTATUS ezOsal_TimerStart(ezOsal_TimerHandle_t timer_handle);
-ezSTATUS ezOsal_TimerStop(ezOsal_TimerHandle_t timer_handle);
+ezSTATUS ezOsal_TimerCreate(ezOsal_TimerHandle_t *handle);
+ezSTATUS ezOsal_TimerDelete(ezOsal_TimerHandle_t *handle);
+ezSTATUS ezOsal_TimerStart(ezOsal_TimerHandle_t *handle);
+ezSTATUS ezOsal_TimerStop(ezOsal_TimerHandle_t *handle);
 
 #endif /* EZ_OSAL == 1 */
 

@@ -20,6 +20,7 @@ target_sources(ez_osal_lib
     PRIVATE
         ez_osal.c
         $<$<BOOL:${ENABLE_FREERTOS}>:ez_osal_freertos.c>
+        $<$<BOOL:${ENABLE_THREADX}>:ez_osal_threadx.c>
 )
 
 
@@ -29,6 +30,7 @@ target_compile_definitions(ez_osal_lib
         EZ_OSAL=$<BOOL:${ENABLE_EZ_OSAL}>
         EZ_FREERTOS_PORT=$<BOOL:${ENABLE_FREERTOS}>
         EZ_OSAL_USE_STATIC=$<BOOL:${ENABLE_EZ_OSAL_USE_STATIC}>
+        EZ_THREADX_PORT=$<BOOL:${ENABLE_THREADX}>
     PRIVATE
         EZ_BUILD_WITH_CMAKE=$<BOOL:${BUILD_WITH_CMAKE}>
 )
@@ -52,6 +54,7 @@ target_link_libraries(ez_osal_lib
     PRIVATE
         ez_utilities_lib
         $<$<BOOL:${ENABLE_FREERTOS}>:freertos_kernel>
+        $<$<BOOL:${ENABLE_THREADX}>:threadx>
     INTERFACE
         # Please add interface libraries
 )

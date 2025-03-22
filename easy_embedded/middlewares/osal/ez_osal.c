@@ -27,7 +27,7 @@
 
 #if (EZ_OSAL == 1)
 
-#define DEBUG_LVL   LVL_TRACE   /**< logging level */
+#define DEBUG_LVL   LVL_ERROR   /**< logging level */
 #define MOD_NAME    "ez_osal"       /**< module name */
 #include "ez_logging.h"
 
@@ -56,6 +56,36 @@ static const ezOsal_Interfaces_t *osal_interface = NULL;
 /*****************************************************************************
 * Public functions
 *****************************************************************************/
+
+/*****************************************************************************
+* Function: ezOsal_Init
+*//**
+* @brief Initialize OS abstraction layer
+*
+* @details None
+*
+* @param[in]    argument: pointer to the argument
+* @return       ezSTATUS
+*
+* @pre OS interfaces must be implemented
+* @post None
+*
+* \b Example
+* @code
+* ezSTATUS status = ezOsal_Init(NULL);
+* @endcode
+*
+*****************************************************************************/
+ezSTATUS ezOsal_Init(void *argument)
+{
+    EZTRACE("ezOsal_Init()");
+    if(IS_INTERFACE_IMPLEMENTED(osal_interface, Init))
+    {
+        return osal_interface->Init(argument);
+    }
+    EZWARNING("Interface is not implemented");
+    return ezFAIL;
+}
 
 /*****************************************************************************
 * Function: ezOsal_SetInterface
@@ -95,7 +125,7 @@ ezSTATUS ezOsal_SetInterface(const ezOsal_Interfaces_t *interface)
 *
 * @details None
 *
-* @param[in]    config: task configuration
+* @param[in]    handle: handle storing task data
 * @return       ezOsal_TaskHandle_t or NULL if failed
 *
 * @pre OS interface must be implemented
@@ -103,19 +133,20 @@ ezSTATUS ezOsal_SetInterface(const ezOsal_Interfaces_t *interface)
 *
 * \b Example
 * @code
-* ezOsal_TaskHandle_t task = ezOsal_TaskCreate("task1", 1024, 1, task_function, NULL);
+* ezOsal_TaskHandle_t handle;
+* (void) ezOsal_TaskCreate(&handle);
 * @endcode
 *
 *****************************************************************************/
-ezOsal_TaskHandle_t ezOsal_TaskCreate(ezOsal_TaskConfig_t* config)
+ezSTATUS ezOsal_TaskCreate(ezOsal_TaskHandle_t* handle)
 {
     EZTRACE("ezOsal_TaskCreate()");
     if(IS_INTERFACE_IMPLEMENTED(osal_interface, TaskCreate))
     {
-        return osal_interface->TaskCreate(config);
+        return osal_interface->TaskCreate(handle);
     }
     EZWARNING("Interface is not implemented");
-    return NULL;
+    return ezFAIL;
 }
 
 
@@ -141,12 +172,12 @@ ezOsal_TaskHandle_t ezOsal_TaskCreate(ezOsal_TaskConfig_t* config)
 * @see ezOsal_TaskCreate
 *
 *****************************************************************************/
-ezSTATUS ezOsal_TaskDelete(ezOsal_TaskHandle_t task_handle)
+ezSTATUS ezOsal_TaskDelete(ezOsal_TaskHandle_t* handle)
 {
     EZTRACE("ezOsal_TaskDelete()");
     if(IS_INTERFACE_IMPLEMENTED(osal_interface, TaskDelete))
     {
-        return osal_interface->TaskDelete(task_handle);
+        return osal_interface->TaskDelete(handle);
     }
     EZWARNING("Interface is not implemented");
     return ezFAIL;
@@ -175,12 +206,12 @@ ezSTATUS ezOsal_TaskDelete(ezOsal_TaskHandle_t task_handle)
 * @see ezOsal_TaskCreate
 *
 *****************************************************************************/
-ezSTATUS ezOsal_TaskSuspend(ezOsal_TaskHandle_t task_handle)
+ezSTATUS ezOsal_TaskSuspend(ezOsal_TaskHandle_t* handle)
 {
     EZTRACE("ezOsal_TaskSuspend()");
     if(IS_INTERFACE_IMPLEMENTED(osal_interface, TaskSuspend))
     {
-        return osal_interface->TaskSuspend(task_handle);
+        return osal_interface->TaskSuspend(handle);
     }
     EZWARNING("Interface is not implemented");
     return ezFAIL;
@@ -209,12 +240,12 @@ ezSTATUS ezOsal_TaskSuspend(ezOsal_TaskHandle_t task_handle)
 * @see ezOsal_TaskCreate
 *
 *****************************************************************************/
-ezSTATUS ezOsal_TaskResume(ezOsal_TaskHandle_t task_handle)
+ezSTATUS ezOsal_TaskResume(ezOsal_TaskHandle_t* handle)
 {
     EZTRACE("ezOsal_TaskResume()");
     if(IS_INTERFACE_IMPLEMENTED(osal_interface, TaskResume))
     {
-        return osal_interface->TaskResume(task_handle);
+        return osal_interface->TaskResume(handle);
     }
     EZWARNING("Interface is not implemented");
     return ezFAIL;
@@ -316,27 +347,28 @@ void ezOsal_TaskStartScheduler(void)
 *
 * @details None
 *
-* @param[in]    config: semaphore configuration
-* @return   ezOsal_SemaphoreHandle_t or NULL if failed
+* @param[in]    handle: semaphore handle
+* @return       ezSTATUS
 *
 * @pre OS interfaces must be implemented
 * @post None
 *
 * \b Example
 * @code
-* ezOsal_SemaphoreHandle_t sem = ezOsal_SemaphoreCreate(2);
+* ezOsal_SemaphoreHandle_t sem;
+* ezOsal_SemaphoreCreate(&sem);
 * @endcode
 *
 *****************************************************************************/
-ezOsal_SemaphoreHandle_t ezOsal_SemaphoreCreate(ezOsal_SemaphoreConfig_t *config)
+ezSTATUS ezOsal_SemaphoreCreate(ezOsal_SemaphoreHandle_t *handle)
 {
     EZTRACE("ezOsal_SemaphoreCreate()");
     if(IS_INTERFACE_IMPLEMENTED(osal_interface, SemaphoreCreate))
     {
-        return osal_interface->SemaphoreCreate(config);
+        return osal_interface->SemaphoreCreate(handle);
     }
     EZWARNING("Interface is not implemented");
-    return NULL;
+    return ezFAIL;
 }
 
 
@@ -362,12 +394,12 @@ ezOsal_SemaphoreHandle_t ezOsal_SemaphoreCreate(ezOsal_SemaphoreConfig_t *config
 * @see ezOsal_SemaphoreCreate
 *
 *****************************************************************************/
-ezSTATUS ezOsal_SemaphoreDelete(ezOsal_SemaphoreHandle_t semaphore_handle)
+ezSTATUS ezOsal_SemaphoreDelete(ezOsal_SemaphoreHandle_t *handle)
 {
     EZTRACE("ezOsal_SemaphoreDelete()");
     if(IS_INTERFACE_IMPLEMENTED(osal_interface, SemaphoreDelete))
     {
-        return osal_interface->SemaphoreDelete(semaphore_handle);
+        return osal_interface->SemaphoreDelete(handle);
     }
     EZWARNING("Interface is not implemented");
     return ezFAIL;
@@ -397,12 +429,12 @@ ezSTATUS ezOsal_SemaphoreDelete(ezOsal_SemaphoreHandle_t semaphore_handle)
 * @see ezOsal_SemaphoreCreate
 *
 *****************************************************************************/
-ezSTATUS ezOsal_SemaphoreTake(ezOsal_SemaphoreHandle_t semaphore_handle, uint32_t timeout_ticks)
+ezSTATUS ezOsal_SemaphoreTake(ezOsal_SemaphoreHandle_t *handle, uint32_t timeout_ticks)
 {
     EZTRACE("ezOsal_SemaphoreTake(timeout_ticks = %d)", timeout_ticks);
     if(IS_INTERFACE_IMPLEMENTED(osal_interface, SemaphoreTake))
     {
-        return osal_interface->SemaphoreTake(semaphore_handle, timeout_ticks);
+        return osal_interface->SemaphoreTake(handle, timeout_ticks);
     }
     EZWARNING("Interface is not implemented");
     return ezFAIL;
@@ -431,12 +463,12 @@ ezSTATUS ezOsal_SemaphoreTake(ezOsal_SemaphoreHandle_t semaphore_handle, uint32_
 * @see ezOsal_SemaphoreCreate
 *
 *****************************************************************************/
-ezSTATUS ezOsal_SemaphoreGive(ezOsal_SemaphoreHandle_t semaphore_handle)
+ezSTATUS ezOsal_SemaphoreGive(ezOsal_SemaphoreHandle_t *handle)
 {
     EZTRACE("ezOsal_SemaphoreGive()");
     if(IS_INTERFACE_IMPLEMENTED(osal_interface, SemaphoreGive))
     {
-        return osal_interface->SemaphoreGive(semaphore_handle);
+        return osal_interface->SemaphoreGive(handle);
     }
     EZWARNING("Interface is not implemented");
     return ezFAIL;
@@ -450,30 +482,27 @@ ezSTATUS ezOsal_SemaphoreGive(ezOsal_SemaphoreHandle_t semaphore_handle)
 *
 * @details None
 *
-* @param[in]    timer_name: timer's name
-* @param[in]    period_ms:  period in millisecond
-* @param[in]    timer_callback: callback function
-* @param[in]    argument: extra argument
-* @return       ezOsal_TimerHandle_t or NULL if failed
+* @param[in]    handle: timer handle
+* @return       ezSTATUS
 *
 * @pre OS interfaces must be implemented
 * @post None
 *
 * \b Example
 * @code
-* ezOsal_TimerHandle_t imter = ezOsal_TimerCreate("timer1", 1000, timer_callback, NULL);
+* ezSTATUS status = ezOsal_TimerCreate(&handle);
 * @endcode
 *
 *****************************************************************************/
-ezOsal_TimerHandle_t ezOsal_TimerCreate(const char* timer_name, uint32_t period_ticks, ezOsal_fpTimerElapseCallback timer_callback, void *argument)
+ezSTATUS ezOsal_TimerCreate(ezOsal_TimerHandle_t *handle)
 {
-    EZTRACE("ezOsal_TimerCreate(name = %s, period_ticks = %d)", timer_name, period_ticks);
+    EZTRACE("ezOsal_TimerCreate()");
     if(IS_INTERFACE_IMPLEMENTED(osal_interface, TimerCreate))
     {
-        return osal_interface->TimerCreate(timer_name, period_ticks, timer_callback, argument);
+        return osal_interface->TimerCreate(handle);
     }
     EZWARNING("Interface is not implemented");
-    return NULL;
+    return ezFAIL;
 }
 
 
@@ -492,19 +521,18 @@ ezOsal_TimerHandle_t ezOsal_TimerCreate(const char* timer_name, uint32_t period_
 *
 * \b Example
 * @code
-* ezOsal_TimerHandle_t imter = ezOsal_TimerCreate("timer1", 1000, timer_callback, NULL);
-* ezSTATUS status = ezOsal_TimerDelete(timer);
+* ezSTATUS status = ezOsal_TimerDelete(&timer);
 * @endcode
 *
 * @see ezOsal_TimerCreate
 *
 *****************************************************************************/
-ezSTATUS ezOsal_TimerDelete(ezOsal_TimerHandle_t timer_handle)
+ezSTATUS ezOsal_TimerDelete(ezOsal_TimerHandle_t *handle)
 {
     EZTRACE("ezOsal_TimerDelete()");
     if(IS_INTERFACE_IMPLEMENTED(osal_interface, TimerDelete))
     {
-        return osal_interface->TimerDelete(timer_handle);
+        return osal_interface->TimerDelete(handle);
     }
     EZWARNING("Interface is not implemented");
     return ezFAIL;
@@ -526,19 +554,18 @@ ezSTATUS ezOsal_TimerDelete(ezOsal_TimerHandle_t timer_handle)
 *
 * \b Example
 * @code
-* ezOsal_TimerHandle_t imter = ezOsal_TimerCreate("timer1", 1000, timer_callback, NULL);
-* ezSTATUS status = ezOsal_TimerStart(timer);
+* ezSTATUS status = ezOsal_TimerStart(&timer);
 * @endcode
 *
 * @see ezOsal_TimerCreate
 *
 *****************************************************************************/
-ezSTATUS ezOsal_TimerStart(ezOsal_TimerHandle_t timer_handle)
+ezSTATUS ezOsal_TimerStart(ezOsal_TimerHandle_t *handle)
 {
     EZTRACE("ezOsal_TimerStart()");
     if(IS_INTERFACE_IMPLEMENTED(osal_interface, TimerStart))
     {
-        return osal_interface->TimerStart(timer_handle);
+        return osal_interface->TimerStart(handle);
     }
     EZWARNING("Interface is not implemented");
     return ezFAIL;
@@ -560,19 +587,18 @@ ezSTATUS ezOsal_TimerStart(ezOsal_TimerHandle_t timer_handle)
 *
 * \b Example
 * @code
-* ezOsal_TimerHandle_t imter = ezOsal_TimerCreate("timer1", 1000, timer_callback, NULL);
-* ezSTATUS status = ezOsal_TimerStop(timer);
+* ezSTATUS status = ezOsal_TimerStop(&timer);
 * @endcode
 *
 * @see ezOsal_TimerCreate
 *
 *****************************************************************************/
-ezSTATUS ezOsal_TimerStop(ezOsal_TimerHandle_t timer_handle)
+ezSTATUS ezOsal_TimerStop(ezOsal_TimerHandle_t *handle)
 {
     EZTRACE("ezOsal_TimerStop()");
     if(IS_INTERFACE_IMPLEMENTED(osal_interface, TimerStop))
     {
-        return osal_interface->TimerStop(timer_handle);
+        return osal_interface->TimerStop(handle);
     }
     EZWARNING("Interface is not implemented");
     return ezFAIL;

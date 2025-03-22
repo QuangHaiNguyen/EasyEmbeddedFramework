@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Filename:         ez_osal_freertos.h
+* Filename:         ez_app_task_worker.h
 * Author:           Hai Nguyen
 * Original Date:    16.03.2025
 *
@@ -12,16 +12,16 @@
 *
 *****************************************************************************/
 
-/** @file   ez_osal_freertos.h
+/** @file   ez_app_task_worker.h
  *  @author Hai Nguyen
  *  @date   16.03.2025
- *  @brief  Provide the OSAL interface for FreeRTOS
+ *  @brief  Application to test Task Worker component
  *
- *  @details None
+ *  @details
  */
 
-#ifndef _EZ_OSAL_FREERTOS_H
-#define _EZ_OSAL_FREERTOS_H
+#ifndef _EZ_APP_TASK_WORKER_H
+#define _EZ_APP_TASK_WORKER_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -34,11 +34,6 @@ extern "C" {
 #include "ez_target_config.h"
 #endif
 
-#if (EZ_FREERTOS_PORT == 1)
-#include <stdint.h>
-#include "ez_utilities_common.h"
-#include "ez_osal.h"
-#include "FreeRTOS.h"
 
 /*****************************************************************************
 * Component Preprocessor Macros
@@ -49,15 +44,7 @@ extern "C" {
 /*****************************************************************************
 * Component Typedefs
 *****************************************************************************/
-typedef struct
-{
-    StaticTask_t task_block;
-    StackType_t *stack;
-}ezOsal_TaskResource_t;
-
-typedef StaticSemaphore_t ezOsal_SemaphoreResource_t;
-
-typedef StackType_t ezOsal_Stack_t;
+/* None */
 
 
 /*****************************************************************************
@@ -69,16 +56,14 @@ typedef StackType_t ezOsal_Stack_t;
 /*****************************************************************************
 * Function Prototypes
 *****************************************************************************/
-const ezOsal_Interfaces_t *ezOsal_FreeRTOSGetInterface(void);
+int ezApp_TaskWorkerInit(void);
 
 
-#endif /* EZ_FREERTOS_PORT == 1 */
+#endif /* EZ_APP_TASK_WORKER_ENABLE == 1 */
 
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* _EZ_OSAL_FREERTOS_H */
 
 
 /* End of file */

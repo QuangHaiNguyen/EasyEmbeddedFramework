@@ -30,7 +30,7 @@
 #define MOD_NAME    "ez_app_osal"       /**< module name */
 #include "ez_logging.h"
 #include "ez_osal.h"
-#include "ez_osal_freertos.h"
+#include "ez_osal_threadx.h"
 
 /*****************************************************************************
 * Component Preprocessor Macros
@@ -45,120 +45,118 @@
 /*****************************************************************************
 * Component Variable Definitions
 *****************************************************************************/
+static ezOsal_TaskConfig_t task1;
+static ezOsal_TaskConfig_t task2;
+static ezOsal_TaskHandle_t task1_handle;
+static ezOsal_TaskHandle_t task2_handle;
+static ezOsal_TaskResource_t task1_resource;
+static ezOsal_TaskResource_t task2_resource;
+
+
 static const ezOsal_Interfaces_t *rtos_interface = NULL;
 
+static ezOsal_SemaphoreHandle_t semaphore_handle;
+static ezOsal_SemaphoreConfig_t semaphore;
+static ezOsal_SemaphoreResource_t semaphore_resource;
+
+static ezOsal_TimerHandle_t timer_handle;
+static ezOsal_TimerResource_t timer_resource;
+
+static ezOsal_TimerConfig_t timer;
 
 /*****************************************************************************
 * Function Definitions
 *****************************************************************************/
-static void Task1Function(void *argument);
-static void Task2Function(void *argument);
+static void Task1Function(void* argument);
+static void Task2Function(void* argument);
 static void TimerElapseCallback(void *argument);
-
-#if (EZ_OSAL_USE_STATIC == 1)
-static ezOsal_Stack_t stack1[STACK_SIZE];
-static ezOsal_Stack_t stack2[STACK_SIZE];
-static ezOsal_TaskResource_t task1_resource;
-static ezOsal_TaskResource_t task2_resource;
-static ezOsal_SemaphoreResource_t semaphore_resource;
-
-EZ_OSAL_DEFINE_TASK_HANDLE(task1, STACK_SIZE, 1, Task1Function, NULL, &task1_resource);
-EZ_OSAL_DEFINE_TASK_HANDLE(task2, STACK_SIZE, 1, Task2Function, NULL, &task2_resource);
-EZ_OSAL_DEFINE_SEMAPHORE_HANDLE(semaphore_handle, 1, &semaphore_resource);
-EZ_OSAL_DEFINE_TIMER_HANDLE(timer, 100, TimerElapseCallback, NULL, NULL);
-#else
-EZ_OSAL_DEFINE_TASK_HANDLE(task1, STACK_SIZE, 1, Task1Function, NULL, NULL);
-EZ_OSAL_DEFINE_TASK_HANDLE(task2, STACK_SIZE, 1, Task2Function, NULL, NULL);
-EZ_OSAL_DEFINE_SEMAPHORE_HANDLE(semaphore_handle, 1, NULL);
-EZ_OSAL_DEFINE_TIMER_HANDLE(timer, 100, TimerElapseCallback, NULL, NULL);
-#endif
 
 /*****************************************************************************
 * Public functions
 *****************************************************************************/
 void ezApp_OsalInit(void)
 {
-#if (EZ_OSAL_USE_STATIC == 1)
-    task1_resource.stack = stack1;
-    task2_resource.stack = stack2;
-#endif
-
-    rtos_interface = ezOsal_FreeRTOSGetInterface();
+    rtos_interface = ezOsal_ThreadXGetInterface();
     (void) ezOsal_SetInterface(rtos_interface);
-
-    (void) ezOsal_SemaphoreCreate(&semaphore_handle);
-    (void) ezOsal_TimerCreate(&timer);
-
-    ezOsal_TimerStart(&timer);
-    (void) ezOsal_TaskCreate(&task1);
-    (void) ezOsal_TaskCreate(&task2);
-
-    ezOsal_TaskSuspend(&task2);
     ezOsal_TaskStartScheduler();
 }
 
+void tx_application_define(void *first_unused_memory)
+{
+    task1.task_name = "task1";
+    task1.stack_size = STACK_SIZE;
+    task1.priority = 1;
+    task1.task_function = Task1Function;
+    task1.argument = NULL;
+    task1.static_resource = &task1_resource;
+
+
+    task2.task_name = "task2";
+    task2.stack_size = STACK_SIZE;
+    task2.priority = 2;
+    task2.task_function = Task2Function;
+    task2.argument = NULL;
+    task2.static_resource = &task2_resource;
+
+    timer.argument = NULL;
+    timer.period_ticks = 500;
+    timer.timer_callback = TimerElapseCallback;
+    timer.timer_name = "timer1";
+    timer.static_resource = &timer_resource;
+
+    semaphore.max_count = 1;
+    semaphore.static_resource = &semaphore_resource;
+
+    ezOsal_Init(first_unused_memory);
+
+    semaphore_handle = ezOsal_SemaphoreCreate(&semaphore);
+    
+    timer_handle = ezOsal_TimerCreate(&timer);
+
+    ezOsal_TimerStart(timer_handle);
+    task1_handle = ezOsal_TaskCreate(&task1);
+    task2_handle = ezOsal_TaskCreate(&task2);
+}
 
 /*****************************************************************************
 * Local functions
 *****************************************************************************/
-static void Task1Function(void *argument)
+static void Task1Function(void* argument)
 {
     uint8_t count = 0;
     ezSTATUS status = ezFAIL;
-
-    EZINFO("Enter Task 1");
     while(1)
     {
-        count++;
-        EZINFO("Task 1 - count = %d", count);
-        if(count == 5)
+        status = ezOsal_SemaphoreTake(semaphore_handle, 50);
+        if(status == ezSUCCESS)
         {
-            status = ezOsal_TaskResume(&task2);
-            if(status == ezSUCCESS)
-            {
-                EZINFO("Resuming task 2");
-            }
+            EZINFO("Task 1 is running, count = %d", count++);
+            ezOsal_SemaphoreGive(semaphore_handle);
         }
-        ezOsal_TaskDelay(10);
+        ezOsal_TaskDelay(100);
     }
 }
 
-static void Task2Function(void *argument)
+static void Task2Function(void* argument)
 {
     uint8_t count = 0;
     ezSTATUS status = ezFAIL;
 
-    EZINFO("Enter Task 2");
     while(1)
     {
-        count++;
-        EZINFO("Task 2 - count = %d", count);
-        if(count == 5)
+        status = ezOsal_SemaphoreTake(semaphore_handle, 100);
+        if(status == ezSUCCESS)
         {
-            status = ezOsal_TaskDelete(&task1);
-            if(status == ezSUCCESS)
-            {
-                EZINFO("delete task 1");
-            }
+            EZINFO("Task 2 is running, count = %d", count++);
+            ezOsal_TaskDelay(100); /* Simulate some heavy load */
         }
-        ezOsal_TaskDelay(20);
+        ezOsal_SemaphoreGive(semaphore_handle);
+        ezOsal_TaskDelay(300);
     }
 }
 
 static void TimerElapseCallback(void *argument)
 {
-    static int count = 0;
-    ezSTATUS status = ezFAIL;
-
-    EZINFO("Timer elapsed, count = %d", count);
-    if(count == 5)
-    {
-        status = ezOsal_TaskDelete(&task2);
-        if(status == ezSUCCESS)
-        {
-            EZINFO("delete task 2");
-        }
-    }
-    count++;
+    EZINFO("Timer elapsed");
 }
 /* End of file*/

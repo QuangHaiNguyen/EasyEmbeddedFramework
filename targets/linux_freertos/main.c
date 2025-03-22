@@ -33,7 +33,6 @@
 #include "ez_easy_embedded.h"
 #include "ez_app_task_worker.h"
 #include "ez_app_osal.h"
-#include "FreeRTOS.h"
 
 /******************************************************************************
 * Module Preprocessor Macros

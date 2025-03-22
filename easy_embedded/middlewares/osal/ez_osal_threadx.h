@@ -1,7 +1,7 @@
 /*****************************************************************************
-* Filename:         ez_osal_freertos.h
+* Filename:         ez_osal_threadx.h
 * Author:           Hai Nguyen
-* Original Date:    16.03.2025
+* Original Date:    21.03.2025
 *
 * ----------------------------------------------------------------------------
 * Contact:          Hai Nguyen
@@ -12,16 +12,16 @@
 *
 *****************************************************************************/
 
-/** @file   ez_osal_freertos.h
+/** @file   ez_osal_threadx.h
  *  @author Hai Nguyen
- *  @date   16.03.2025
- *  @brief  Provide the OSAL interface for FreeRTOS
+ *  @date   21.03.2025
+ *  @brief  Implementing osal interface for ThreadX
  *
- *  @details None
+ *  @details
  */
 
-#ifndef _EZ_OSAL_FREERTOS_H
-#define _EZ_OSAL_FREERTOS_H
+#ifndef _EZ_OSAL_THREADX_H
+#define _EZ_OSAL_THREADX_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -34,11 +34,8 @@ extern "C" {
 #include "ez_target_config.h"
 #endif
 
-#if (EZ_FREERTOS_PORT == 1)
-#include <stdint.h>
-#include "ez_utilities_common.h"
+#if (EZ_THREADX_PORT == 1)
 #include "ez_osal.h"
-#include "FreeRTOS.h"
 
 /*****************************************************************************
 * Component Preprocessor Macros
@@ -49,15 +46,9 @@ extern "C" {
 /*****************************************************************************
 * Component Typedefs
 *****************************************************************************/
-typedef struct
-{
-    StaticTask_t task_block;
-    StackType_t *stack;
-}ezOsal_TaskResource_t;
-
-typedef StaticSemaphore_t ezOsal_SemaphoreResource_t;
-
-typedef StackType_t ezOsal_Stack_t;
+typedef TX_THREAD ezOsal_TaskResource_t;
+typedef TX_SEMAPHORE ezOsal_SemaphoreResource_t;
+typedef TX_TIMER ezOsal_TimerResource_t;
 
 
 /*****************************************************************************
@@ -65,20 +56,19 @@ typedef StackType_t ezOsal_Stack_t;
 *****************************************************************************/
 /* None */
 
-
 /*****************************************************************************
 * Function Prototypes
 *****************************************************************************/
-const ezOsal_Interfaces_t *ezOsal_FreeRTOSGetInterface(void);
 
+const ezOsal_Interfaces_t *ezOsal_ThreadXGetInterface(void);
 
-#endif /* EZ_FREERTOS_PORT == 1 */
+#endif /* EZ_OSAL_THREADX_ENABLE == 1 */
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _EZ_OSAL_FREERTOS_H */
+#endif /* _EZ_OSAL_THREADX_H */
 
 
 /* End of file */
