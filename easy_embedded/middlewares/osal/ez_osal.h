@@ -89,6 +89,11 @@ extern "C" {
         .static_resource = RESOURCE \
     }
 
+#define EZ_OSAL_DEFINE_EVENT_HANDLE(NAME, RESOURCE) \
+    ezOsal_EventHandle_t NAME = { \
+        .static_resource = RESOURCE \
+    }
+
 /*****************************************************************************
 * Component Typedefs
 *****************************************************************************/
@@ -135,6 +140,12 @@ typedef struct
     void* static_resource;
 }ezOsal_TimerHandle_t;
 
+
+typedef struct
+{
+    void *handle;
+    void *static_resource;
+}ezOsal_EventHandle_t;
 
 /* Interfaces ***************************************************************/
 
@@ -232,6 +243,37 @@ typedef ezSTATUS (*ezOsal_pfTimerStart)(ezOsal_TimerHandle_t *handle);
  */
 typedef ezSTATUS (*ezOsal_pfTimerStop)(ezOsal_TimerHandle_t *handle);
 
+/**@brief: Create new event group
+ * @param: handle - Event handle
+ * @return: Status
+ */
+typedef ezSTATUS (*ezOsal_fpEventCreate)(ezOsal_EventHandle_t *handle);
+
+/**@brief: Delete event group
+ * @param: handle - Event handle
+ * @return: Status
+ */
+typedef ezSTATUS (*ezOsal_fpEventDelete)(ezOsal_EventHandle_t *handle);
+
+/**@brief: Wait for events
+ * @param: handle Event handle
+ * @return Status
+ */
+typedef int (*ezOsal_fpEventWait)(ezOsal_EventHandle_t *handle, uint32_t event_mask, uint32_t timeout_ticks);
+
+/**@brief: Set event
+ * @param: handle Event handle
+ * @return Status
+ */
+typedef ezSTATUS (*ezOsal_fpEventSet)(ezOsal_EventHandle_t *handle, uint32_t event_mask);
+
+/**@brief: Clear events
+ * @param: handle Event handle
+ * @return Status
+ */
+typedef ezSTATUS (*ezOsal_fpEventClear)(ezOsal_EventHandle_t *handle, uint32_t event_mask);
+
+
 /** @brief List of interface functions must be implemented
  */
 typedef struct
@@ -257,6 +299,13 @@ typedef struct
     ezOsal_pfTimerDelete    TimerDelete;
     ezOsal_pfTimerStart     TimerStart;
     ezOsal_pfTimerStop      TimerStop;
+
+    /* Event functions */
+    ezOsal_fpEventCreate    EventCreate;
+    ezOsal_fpEventDelete    EventDelete;
+    ezOsal_fpEventWait      EventWait;
+    ezOsal_fpEventSet       EventSet;
+    ezOsal_fpEventClear     EventClear;
 
     /* Extra interface */
     void *custom_interfaces;
@@ -291,6 +340,13 @@ ezSTATUS ezOsal_TimerCreate(ezOsal_TimerHandle_t *handle);
 ezSTATUS ezOsal_TimerDelete(ezOsal_TimerHandle_t *handle);
 ezSTATUS ezOsal_TimerStart(ezOsal_TimerHandle_t *handle);
 ezSTATUS ezOsal_TimerStop(ezOsal_TimerHandle_t *handle);
+
+
+ezSTATUS ezOsal_EventCreate(ezOsal_EventHandle_t *handle);
+ezSTATUS ezOsal_EventDelete(ezOsal_EventHandle_t *handle);
+int ezOsal_EventWait(ezOsal_EventHandle_t *handle, uint32_t event_mask, uint32_t timeout_ticks);
+ezSTATUS ezOsal_EventSet(ezOsal_EventHandle_t *handle, uint32_t event_mask);
+ezSTATUS ezOsal_EventClear(ezOsal_EventHandle_t *handle, uint32_t event_mask);
 
 #endif /* EZ_OSAL == 1 */
 

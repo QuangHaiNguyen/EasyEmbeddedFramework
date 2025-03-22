@@ -54,11 +54,9 @@ typedef struct
     StaticTask_t task_block;
     StackType_t *stack;
 }ezOsal_TaskResource_t;
-
 typedef StaticSemaphore_t ezOsal_SemaphoreResource_t;
-
 typedef StackType_t ezOsal_Stack_t;
-
+typedef StaticEventGroup_t ezOsal_EventResource_t;
 
 /*****************************************************************************
 * Component Variable Definitions

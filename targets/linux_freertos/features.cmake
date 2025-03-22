@@ -29,7 +29,7 @@ option(ENABLE_EZ_HAL_DRIVER     "Enable the Driver module"                  ON)
 option(ENABLE_EZ_UART           "Enable the uart driver"                    ON)
 
 option(ENABLE_EZ_OSAL               "Enable operating system abstract layer"            ON)
-option(ENABLE_EZ_OSAL_USE_STATIC    "Enable operating system using static allocation"   ON)
+option(ENABLE_EZ_OSAL_USE_STATIC    "Enable operating system using static allocation"   OFF)
 
 # Configure HAL driver
 option(ENABLE_EZ_HAL_ECHO       "Enable HAL echo driver"                    OFF)

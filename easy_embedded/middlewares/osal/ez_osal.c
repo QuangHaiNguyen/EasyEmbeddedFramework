@@ -604,6 +604,171 @@ ezSTATUS ezOsal_TimerStop(ezOsal_TimerHandle_t *handle)
     return ezFAIL;
 }
 
+
+/*****************************************************************************
+* Function: ezOsal_EventCreate
+*//**
+* @brief Create a new event group
+*
+* @details None
+*
+* @param[in]    handle: event handle
+* @return       ezSTATUS
+*
+* @pre OS interfaces must be implemented
+* @post None
+*
+* \b Example
+* @code
+* ezOsal_EventHandle_t event;
+* ezOsal_EventCreate(&event);
+* @endcode
+*
+*****************************************************************************/
+ezSTATUS ezOsal_EventCreate(ezOsal_EventHandle_t *handle)
+{
+    EZTRACE("ezOsal_EventCreate()");
+    if(IS_INTERFACE_IMPLEMENTED(osal_interface, EventCreate))
+    {
+        return osal_interface->EventCreate(handle);
+    }
+    EZWARNING("Interface is not implemented");
+    return ezFAIL;
+}
+
+/*****************************************************************************
+* Function: ezOsal_EventDelete
+*//**
+* @brief Delete an event group
+*
+* @details None
+*
+* @param[in]    handle: event handle
+* @return       ezSTATUS
+*
+* @pre OS interfaces must be implemented
+* @post None
+*
+* \b Example
+* @code
+* ezOsal_EventHandle_t event;
+* ezOsal_EventCreate(&event);
+* ezOsal_EventDelete(&event);
+* @endcode
+*
+*****************************************************************************/
+ezSTATUS ezOsal_EventDelete(ezOsal_EventHandle_t *handle)
+{
+    EZTRACE("ezOsal_EventDelete()");
+    if(IS_INTERFACE_IMPLEMENTED(osal_interface, EventDelete))
+    {
+        return osal_interface->EventDelete(handle);
+    }
+    EZWARNING("Interface is not implemented");
+    return ezFAIL;
+}
+
+/*****************************************************************************
+* Function: ezOsal_EventWait
+*//**
+* @brief Wait for events
+*
+* @details None
+*
+* @param[in]    handle: event handle
+* @param[in]    event_mask: event mask
+* @param[in]    timeout_ticks: timeout in ticks
+* @return       event mask
+*
+* @pre OS interfaces must be implemented
+* @post None
+*
+* \b Example
+* @code
+* ezOsal_EventHandle_t event;
+* ezOsal_EventCreate(&event);
+* ezOsal_EventWait(&event, 0x01, 100);
+* @endcode
+*
+*****************************************************************************/
+int ezOsal_EventWait(ezOsal_EventHandle_t *handle, uint32_t event_mask, uint32_t timeout_ticks)
+{
+    EZTRACE("ezOsal_EventWait()");
+    if(IS_INTERFACE_IMPLEMENTED(osal_interface, EventWait))
+    {
+        return osal_interface->EventWait(handle, event_mask, timeout_ticks);
+    }
+    EZWARNING("Interface is not implemented");
+    return 0;
+}
+
+
+/*****************************************************************************
+* Function: ezOsal_EventSet
+*//**
+* @brief Set event
+*
+* @details None
+*
+* @param[in]    handle: event handle
+* @param[in]    event_mask: event mask
+* @return       ezSTATUS
+*
+* @pre OS interfaces must be implemented
+* @post None
+*
+* \b Example
+* @code
+* ezOsal_EventHandle_t event;
+* ezOsal_EventCreate(&event);
+* ezOsal_EventSet(&event, 0x01);
+* @endcode
+*
+*****************************************************************************/
+ezSTATUS ezOsal_EventSet(ezOsal_EventHandle_t *handle, uint32_t event_mask)
+{
+    EZTRACE("ezOsal_EventSet()");
+    if(IS_INTERFACE_IMPLEMENTED(osal_interface, EventSet))
+    {
+        return osal_interface->EventSet(handle, event_mask);
+    }
+    EZWARNING("Interface is not implemented");
+    return ezFAIL;
+}
+
+/*****************************************************************************
+* Function: ezOsal_EventClear
+*//**
+* @brief Clear events
+*
+* @details None
+*
+* @param[in]    handle: event handle
+* @param[in]    event_mask: event mask
+* @return       ezSTATUS
+*
+* @pre OS interfaces must be implemented
+* @post None
+*
+* \b Example
+* @code
+* ezOsal_EventHandle_t event;
+* ezOsal_EventCreate(&event);
+* ezOsal_EventClear(&event, 0x01);
+* @endcode
+*
+*****************************************************************************/
+ezSTATUS ezOsal_EventClear(ezOsal_EventHandle_t *handle, uint32_t event_mask)
+{
+    EZTRACE("ezOsal_EventClear()");
+    if(IS_INTERFACE_IMPLEMENTED(osal_interface, EventClear))
+    {
+        return osal_interface->EventClear(handle, event_mask);
+    }
+    EZWARNING("Interface is not implemented");
+    return ezFAIL;
+}
+
 /*****************************************************************************
 * Local functions
 *****************************************************************************/

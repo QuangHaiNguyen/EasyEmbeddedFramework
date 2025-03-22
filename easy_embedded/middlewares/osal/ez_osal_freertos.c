@@ -27,7 +27,7 @@
 
 #if (EZ_FREERTOS_PORT == 1)
 
-#define DEBUG_LVL   LVL_ERROR           /**< logging level */
+#define DEBUG_LVL   LVL_TRACE           /**< logging level */
 #define MOD_NAME    "ez_osal_freertos"  /**< module name */
 #include "ez_logging.h"
 #include "FreeRTOS.h"
@@ -74,6 +74,12 @@ static ezSTATUS ezOsal_FreeRTOSTimerDelete(ezOsal_TimerHandle_t *handle);
 static ezSTATUS ezOsal_FreeRTOSTimerStart(ezOsal_TimerHandle_t *handle);
 static ezSTATUS ezOsal_FreeRTOSTimerStop(ezOsal_TimerHandle_t *handle);
 
+ezSTATUS ezOsal_FreeRTOSEventCreate(ezOsal_EventHandle_t *handle);
+ezSTATUS ezOsal_FreeRTOSEventDelete(ezOsal_EventHandle_t *handle);
+int ezOsal_FreeRTOSEventWait(ezOsal_EventHandle_t *handle, uint32_t event_mask, uint32_t timeout_ticks);
+ezSTATUS ezOsal_FreeRTOSEventSet(ezOsal_EventHandle_t *handle, uint32_t event_mask);
+ezSTATUS ezOsal_FreeRTOSEventClear(ezOsal_EventHandle_t *handle, uint32_t event_mask);
+
 static const ezOsal_Interfaces_t freertos_interface = {
     .TaskCreate = ezOsal_FreeRTOSTaskCreate,
     .TaskDelete = ezOsal_FreeRTOSTaskDelete,
@@ -92,6 +98,12 @@ static const ezOsal_Interfaces_t freertos_interface = {
     .TimerDelete = ezOsal_FreeRTOSTimerDelete,
     .TimerStart = ezOsal_FreeRTOSTimerStart,
     .TimerStop = ezOsal_FreeRTOSTimerStop,
+
+    .EventCreate = ezOsal_FreeRTOSEventCreate,
+    .EventDelete = ezOsal_FreeRTOSEventDelete,
+    .EventWait = ezOsal_FreeRTOSEventWait,
+    .EventSet = ezOsal_FreeRTOSEventSet,
+    .EventClear = ezOsal_FreeRTOSEventClear
 };
 
 
@@ -135,7 +147,7 @@ ezSTATUS ezOsal_FreeRTOSTaskCreate(ezOsal_TaskHandle_t* handle)
             handle->stack_size,
             handle->argument,
             handle->priority,
-            handle->task_handle) == pdPASS)
+            (TaskHandle_t*)&handle->task_handle) == pdPASS)
         {
             return ezSUCCESS;
         }
@@ -323,6 +335,91 @@ static ezSTATUS ezOsal_FreeRTOSTimerStop(ezOsal_TimerHandle_t *handle)
     return ezFAIL;
 }
 
+ezSTATUS ezOsal_FreeRTOSEventCreate(ezOsal_EventHandle_t *handle)
+{
+    if(handle != NULL)
+    {
+        EZTRACE("ezOsal_FreeRTOSEventCreate()");
+#if (EZ_OSAL_USE_STATIC == 1)
+        handle->handle = (void*)xEventGroupCreateStatic((StaticEventGroup_t*)handle->static_resource);
+#else
+        handle->handle = (void*)xEventGroupCreate();
+#endif
+        if(handle->handle != NULL)
+        {
+            return ezSUCCESS;
+        }
+    }
+    EZERROR("Event create failed");
+    return ezFAIL;
+}
+
+ezSTATUS ezOsal_FreeRTOSEventDelete(ezOsal_EventHandle_t *handle)
+{
+    if(handle != NULL)
+    {
+        EZTRACE("ezOsal_FreeRTOSEventDelete()");
+        vEventGroupDelete((EventGroupHandle_t)handle->handle);
+        return ezSUCCESS;
+    }
+    EZERROR("Event delete failed");
+    return ezFAIL;
+}
+
+int ezOsal_FreeRTOSEventWait(ezOsal_EventHandle_t *handle, uint32_t event_mask, uint32_t timeout_ticks)
+{
+    EventBits_t bits = 0;
+    if(handle != NULL)
+    {
+        EZTRACE("ezOsal_FreeRTOSEventWait()");
+        bits = xEventGroupWaitBits((EventGroupHandle_t)handle->handle, event_mask, pdTRUE, pdFALSE, timeout_ticks);
+        EZDEBUG("events set = %d, event mask = %d", event_mask, bits);
+        if((bits & event_mask) > 0)
+        {
+            EZDEBUG("event is set");
+            return bits;
+        }
+    }
+    EZDEBUG("Event = %d timeout", event_mask);
+    return bits;
+}
+
+ezSTATUS ezOsal_FreeRTOSEventSet(ezOsal_EventHandle_t *handle, uint32_t event_mask)
+{
+    EventBits_t bits = 0;
+    if(handle != NULL)
+    {
+        EZTRACE("ezOsal_FreeRTOSEventSet()");
+        EZDEBUG("Set event mask = %d", event_mask);
+        bits = xEventGroupSetBits((EventGroupHandle_t)handle->handle, event_mask);
+        if((bits & event_mask) == event_mask)
+        {
+            EZDEBUG("Set event success");
+            return ezSUCCESS;
+        }
+    }
+    EZERROR("Event set failed");
+    return ezFAIL;
+}
+
+ezSTATUS ezOsal_FreeRTOSEventClear(ezOsal_EventHandle_t *handle, uint32_t event_mask)
+{
+    EventBits_t bits = 0;
+    if(handle != NULL)
+    {
+        EZTRACE("ezOsal_FreeRTOSEventClear()");
+        EZDEBUG("Clear event mask = %d", event_mask);
+        bits = xEventGroupClearBits((EventGroupHandle_t)handle->handle, event_mask);
+        if((bits & event_mask) == event_mask)
+        {
+            EZDEBUG("Clear event success");
+            return ezSUCCESS;
+        }
+        return ezSUCCESS;
+    }
+    EZERROR("Event clear failed");
+    return ezFAIL;
+}
 
 #endif /* EZ_FREERTOS_PORT == 1 */
 /* End of file*/
