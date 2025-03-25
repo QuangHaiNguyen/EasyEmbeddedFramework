@@ -54,23 +54,29 @@ static CHAR *mem_pointer = NULL;
 *****************************************************************************/
 
 static ezSTATUS ezOsal_ThreadXInit(void* argument);
-static ezOsal_TaskHandle_t ezOsal_ThreadXTaskCreate(ezOsal_TaskConfig_t* config);
-static ezSTATUS ezOsal_ThreadXTaskDelete(ezOsal_TaskHandle_t task_handle);
-static ezSTATUS ezOsal_ThreadXTaskSuspend(ezOsal_TaskHandle_t task_handle);
-static ezSTATUS ezOsal_ThreadXTaskResume(ezOsal_TaskHandle_t task_handle);
+static ezSTATUS ezOsal_ThreadXTaskCreate(ezOsal_TaskHandle_t* task_handle);
+static ezSTATUS ezOsal_ThreadXTaskDelete(ezOsal_TaskHandle_t *task_handle);
+static ezSTATUS ezOsal_ThreadXTaskSuspend(ezOsal_TaskHandle_t *task_handle);
+static ezSTATUS ezOsal_ThreadXTaskResume(ezOsal_TaskHandle_t *task_handle);
 static ezSTATUS ezOsal_ThreadXTaskDelay(unsigned long num_of_ticks);
 static unsigned long ezOsal_ThreadXTaskGetTickCount(void);
 static void ezOsal_ThreadXTaskStartScheduler(void);
 
-static ezOsal_SemaphoreHandle_t ezOsal_ThreadXSemaphoreCreate(ezOsal_SemaphoreConfig_t* config);
-static ezSTATUS ezOsal_SemaphoreThreadXDelete(ezOsal_SemaphoreHandle_t semaphore_handle);
-static ezSTATUS ezOsal_SemaphoreThreadXTake(ezOsal_SemaphoreHandle_t semaphore_handle, uint32_t timeout_ticks);
-static ezSTATUS ezOsal_SemaphoreThreadXGive(ezOsal_SemaphoreHandle_t semaphore_handle);
+static ezSTATUS ezOsal_ThreadXSemaphoreCreate(ezOsal_SemaphoreHandle_t *semaphore_handle);
+static ezSTATUS ezOsal_SemaphoreThreadXDelete(ezOsal_SemaphoreHandle_t *semaphore_handle);
+static ezSTATUS ezOsal_SemaphoreThreadXTake(ezOsal_SemaphoreHandle_t *semaphore_handle, uint32_t timeout_ticks);
+static ezSTATUS ezOsal_SemaphoreThreadXGive(ezOsal_SemaphoreHandle_t *semaphore_handle);
 
-static ezOsal_TimerHandle_t ezOsal_ThreadXTimerCreate(ezOsal_TimerConfig_t *config);
-static ezSTATUS ezOsal_ThreadXTimerDelete(ezOsal_TimerHandle_t timer_handle);
-static ezSTATUS ezOsal_ThreadXTimerStart(ezOsal_TimerHandle_t timer_handle);
-static ezSTATUS ezOsal_ThreadXTimerStop(ezOsal_TimerHandle_t timer_handle);
+static ezSTATUS ezOsal_ThreadXTimerCreate(ezOsal_TimerHandle_t *timer_handle);
+static ezSTATUS ezOsal_ThreadXTimerDelete(ezOsal_TimerHandle_t *timer_handle);
+static ezSTATUS ezOsal_ThreadXTimerStart(ezOsal_TimerHandle_t *timer_handle);
+static ezSTATUS ezOsal_ThreadXTimerStop(ezOsal_TimerHandle_t *timer_handle);
+
+static ezSTATUS ezOsal_ThreadXEventCreate(ezOsal_EventHandle_t *handle);
+static ezSTATUS ezOsal_ThreadXEventDelete(ezOsal_EventHandle_t *handle);
+static int ezOsal_ThreadXOSEventWait(ezOsal_EventHandle_t *handle, uint32_t event_mask, uint32_t timeout_ticks);
+static ezSTATUS ezOsal_ThreadXEventSet(ezOsal_EventHandle_t *handle, uint32_t event_mask);
+static ezSTATUS ezOsal_ThreadXEventClear(ezOsal_EventHandle_t *handle, uint32_t event_mask);
 
 static const ezOsal_Interfaces_t threadx_interface = {
     .Init = ezOsal_ThreadXInit,
@@ -91,6 +97,12 @@ static const ezOsal_Interfaces_t threadx_interface = {
     .TimerDelete = ezOsal_ThreadXTimerDelete,
     .TimerStart = ezOsal_ThreadXTimerStart,
     .TimerStop = ezOsal_ThreadXTimerStop,
+
+    .EventCreate = ezOsal_ThreadXEventCreate,
+    .EventDelete = ezOsal_ThreadXEventDelete,
+    .EventWait = ezOsal_ThreadXOSEventWait,
+    .EventSet = ezOsal_ThreadXEventSet,
+    .EventClear = ezOsal_ThreadXEventClear,
 };
 
 static void ezOsal_ThreadXPrintStatusCode(UINT code);
@@ -124,81 +136,89 @@ static ezSTATUS ezOsal_ThreadXInit(void* argument)
 }
 
 
-static ezOsal_TaskHandle_t ezOsal_ThreadXTaskCreate(ezOsal_TaskConfig_t* config)
+static ezSTATUS ezOsal_ThreadXTaskCreate(ezOsal_TaskHandle_t* task_handle)
 {
     UINT status = TX_THREAD_ERROR;
-    if(config != NULL)
+    if(task_handle != NULL)
     {
         status = tx_byte_allocate(&threadx_byte_pool, 
             (void**)&mem_pointer,
-            config->stack_size,
+            task_handle->stack_size,
             TX_NO_WAIT);
 
         if(status == TX_SUCCESS)
         {
-            status = tx_thread_create((TX_THREAD*)config->static_resource,
-                (CHAR *)config->task_name,
-                (VOID (*)(ULONG))config->task_function,
-                (ULONG)((uintptr_t)config->argument),
+            status = tx_thread_create((TX_THREAD*)task_handle->static_resource,
+                (CHAR *)task_handle->task_name,
+                (VOID (*)(ULONG))task_handle->task_function,
+                (ULONG)((uintptr_t)task_handle->argument),
                 mem_pointer,
-                config->stack_size,
-                config->priority,
-                config->priority,
+                task_handle->stack_size,
+                task_handle->priority,
+                task_handle->priority,
                 TX_NO_TIME_SLICE,
                 TX_AUTO_START);
 
             if(status == TX_SUCCESS)
             {
-                return (ezOsal_TaskHandle_t)config->static_resource;
-            }
-            else
-            {
-                ezOsal_ThreadXPrintStatusCode(status);
+                return ezSUCCESS;
             }
         }
+        ezOsal_ThreadXPrintStatusCode(status);
     }
-    ezOsal_ThreadXPrintStatusCode(status);
-    return NULL;
+    return ezFAIL;
 }
 
 
-static ezSTATUS ezOsal_ThreadXTaskDelete(ezOsal_TaskHandle_t task_handle)
+static ezSTATUS ezOsal_ThreadXTaskDelete(ezOsal_TaskHandle_t *task_handle)
 {
-    UINT status = tx_thread_terminate(task_handle);
-    if(status == TX_SUCCESS)
+    UINT status = TX_THREAD_ERROR;
+    if(task_handle != NULL)
     {
-        status = tx_thread_delete(task_handle);
+        status = tx_thread_terminate((TX_THREAD*)task_handle->static_resource);
         if(status == TX_SUCCESS)
         {
-            task_handle = NULL;
+            status = tx_thread_delete((TX_THREAD*)task_handle->static_resource);
+            if(status == TX_SUCCESS)
+            {
+                task_handle->static_resource = NULL;
+                return ezSUCCESS;
+            }
+        }
+        ezOsal_ThreadXPrintStatusCode(status);
+    }
+    return ezFAIL;
+}
+
+
+static ezSTATUS ezOsal_ThreadXTaskSuspend(ezOsal_TaskHandle_t *task_handle)
+{
+    UINT status = TX_THREAD_ERROR;
+    if(task_handle != NULL)
+    {
+        status = tx_thread_suspend((TX_THREAD*)task_handle->static_resource);
+        if(status == TX_SUCCESS)
+        {
             return ezSUCCESS;
         }
+        ezOsal_ThreadXPrintStatusCode(status);
     }
-    ezOsal_ThreadXPrintStatusCode(status);
     return ezFAIL;
 }
 
 
-static ezSTATUS ezOsal_ThreadXTaskSuspend(ezOsal_TaskHandle_t task_handle)
+static ezSTATUS ezOsal_ThreadXTaskResume(ezOsal_TaskHandle_t *task_handle)
 {
-    UINT status = tx_thread_suspend(task_handle);
-    if(status == TX_SUCCESS)
+    UINT status = TX_THREAD_ERROR;
+    if(task_handle->static_resource != NULL)
     {
-        return ezSUCCESS;
+        status = tx_thread_resume(task_handle->static_resource);
+        if(status == TX_SUCCESS)
+        {
+            return ezSUCCESS;
+        }
+        ezOsal_ThreadXPrintStatusCode(status);
     }
-    ezOsal_ThreadXPrintStatusCode(status);
-    return ezFAIL;
-}
-
-
-static ezSTATUS ezOsal_ThreadXTaskResume(ezOsal_TaskHandle_t task_handle)
-{
-    UINT status = tx_thread_resume(task_handle);
-    if(status == TX_SUCCESS)
-    {
-        return ezSUCCESS;
-    }
-    ezOsal_ThreadXPrintStatusCode(status);
     return ezFAIL;
 }
 
@@ -221,41 +241,61 @@ static void ezOsal_ThreadXTaskStartScheduler(void)
     tx_kernel_enter();
 }
 
-static ezOsal_SemaphoreHandle_t ezOsal_ThreadXSemaphoreCreate(ezOsal_SemaphoreConfig_t* config)
+
+static ezSTATUS ezOsal_ThreadXSemaphoreCreate(ezOsal_SemaphoreHandle_t* semaphore_handle)
 {
     UINT status = TX_THREAD_ERROR;
-    if(config != NULL)
+    if(semaphore_handle != NULL)
     {
-        status = tx_semaphore_create((TX_SEMAPHORE*)config->static_resource, (CHAR *)NULL, config->max_count);
+        status = tx_semaphore_create((TX_SEMAPHORE*)semaphore_handle->static_resource, (CHAR *)NULL, semaphore_handle->max_count);
         if(status == TX_SUCCESS)
         {
-            return (ezOsal_SemaphoreHandle_t)config->static_resource;
+            return ezSUCCESS;
         }
+        ezOsal_ThreadXPrintStatusCode(status);
     }
-    ezOsal_ThreadXPrintStatusCode(status);
-    return NULL;
-}
-
-
-static ezSTATUS ezOsal_SemaphoreThreadXDelete(ezOsal_SemaphoreHandle_t semaphore_handle)
-{
-    UINT status = TX_THREAD_ERROR;
-    status = tx_semaphore_delete(semaphore_handle);
-    if(status == TX_SUCCESS)
-    {
-        semaphore_handle = NULL;
-        return ezSUCCESS;
-    }
-    ezOsal_ThreadXPrintStatusCode(status);
     return ezFAIL;
 }
 
 
-static ezSTATUS ezOsal_SemaphoreThreadXTake(ezOsal_SemaphoreHandle_t semaphore_handle,
+static ezSTATUS ezOsal_SemaphoreThreadXDelete(ezOsal_SemaphoreHandle_t* semaphore_handle)
+{
+    UINT status = TX_THREAD_ERROR;
+    if(semaphore_handle != NULL)
+    {
+        status = tx_semaphore_delete(semaphore_handle->static_resource);
+        if(status == TX_SUCCESS)
+        {
+            semaphore_handle = NULL;
+            return ezSUCCESS;
+        }
+        ezOsal_ThreadXPrintStatusCode(status);
+    }
+    return ezFAIL;
+}
+
+
+static ezSTATUS ezOsal_SemaphoreThreadXTake(ezOsal_SemaphoreHandle_t* semaphore_handle,
     uint32_t timeout_ticks)
 {
     UINT status = TX_THREAD_ERROR;
-    status = tx_semaphore_get(semaphore_handle, timeout_ticks);
+    if(semaphore_handle != NULL)
+    {
+        status = tx_semaphore_get(semaphore_handle->static_resource, timeout_ticks);
+        if(status == TX_SUCCESS)
+        {
+            return ezSUCCESS;
+        }
+        ezOsal_ThreadXPrintStatusCode(status);
+    }
+    return ezFAIL;
+}
+
+
+static ezSTATUS ezOsal_SemaphoreThreadXGive(ezOsal_SemaphoreHandle_t* semaphore_handle)
+{
+    UINT status = TX_THREAD_ERROR;
+    status = tx_semaphore_put(semaphore_handle->static_resource);
     if(status == TX_SUCCESS)
     {
         return ezSUCCESS;
@@ -265,73 +305,143 @@ static ezSTATUS ezOsal_SemaphoreThreadXTake(ezOsal_SemaphoreHandle_t semaphore_h
 }
 
 
-static ezSTATUS ezOsal_SemaphoreThreadXGive(ezOsal_SemaphoreHandle_t semaphore_handle)
+static ezSTATUS ezOsal_ThreadXTimerCreate(ezOsal_TimerHandle_t *timer_handle)
 {
     UINT status = TX_THREAD_ERROR;
-    status = tx_semaphore_put(semaphore_handle);
-    if(status == TX_SUCCESS)
+    if(timer_handle != NULL)
     {
-        return ezSUCCESS;
-    }
-    ezOsal_ThreadXPrintStatusCode(status);
-    return ezFAIL;
-}
-
-static ezOsal_TimerHandle_t ezOsal_ThreadXTimerCreate(ezOsal_TimerConfig_t *config)
-{
-    UINT status = TX_THREAD_ERROR;
-    if(config != NULL)
-    {
-        status = tx_timer_create((TX_TIMER*)config->static_resource,
-            (CHAR *)config->timer_name,
-            (VOID (*)(ULONG))config->timer_callback,
-            (ULONG)((uintptr_t)config->argument),
-            config->period_ticks,
-            config->period_ticks,
+        status = tx_timer_create((TX_TIMER*)timer_handle->static_resource,
+            (CHAR *)timer_handle->timer_name,
+            (VOID (*)(ULONG))timer_handle->timer_callback,
+            (ULONG)((uintptr_t)timer_handle->argument),
+            timer_handle->period_ticks,
+            timer_handle->period_ticks,
             TX_NO_ACTIVATE);
         if(status == TX_SUCCESS)
         {
-            return (ezOsal_TimerHandle_t)config->static_resource;
+            return ezSUCCESS;
+        }
+        ezOsal_ThreadXPrintStatusCode(status);
+    }
+    return ezFAIL;
+}
+
+
+static ezSTATUS ezOsal_ThreadXTimerDelete(ezOsal_TimerHandle_t* timer_handle)
+{
+    UINT status = TX_THREAD_ERROR;
+    if(timer_handle != NULL)
+    {
+        status = tx_timer_delete(timer_handle->static_resource);
+        if(status == TX_SUCCESS)
+        {
+            timer_handle = NULL;
+            return ezSUCCESS;
+        }
+        ezOsal_ThreadXPrintStatusCode(status);
+    }
+    return ezFAIL;
+}
+
+
+static ezSTATUS ezOsal_ThreadXTimerStart(ezOsal_TimerHandle_t* timer_handle)
+{
+    UINT status = TX_THREAD_ERROR;
+    if(timer_handle != NULL)
+    {
+        status = tx_timer_activate(timer_handle->static_resource);
+        if(status == TX_SUCCESS)
+        {
+            return ezSUCCESS;
+        }
+        ezOsal_ThreadXPrintStatusCode(status);
+    }
+    return ezFAIL;
+}
+
+
+static ezSTATUS ezOsal_ThreadXEventCreate(ezOsal_EventHandle_t *handle)
+{
+    if(handle != NULL)
+    {
+        if(tx_event_flags_create((TX_EVENT_FLAGS_GROUP*)handle->static_resource, NULL) ==TX_SUCCESS)
+        {
+            return ezSUCCESS;
         }
     }
-    ezOsal_ThreadXPrintStatusCode(status);
-    return NULL;
-}
-
-
-static ezSTATUS ezOsal_ThreadXTimerDelete(ezOsal_TimerHandle_t timer_handle)
-{
-    UINT status = tx_timer_delete(timer_handle);
-    if(status == TX_SUCCESS)
-    {
-        timer_handle = NULL;
-        return ezSUCCESS;
-    }
-    ezOsal_ThreadXPrintStatusCode(status);
     return ezFAIL;
 }
 
 
-static ezSTATUS ezOsal_ThreadXTimerStart(ezOsal_TimerHandle_t timer_handle)
+static ezSTATUS ezOsal_ThreadXEventDelete(ezOsal_EventHandle_t *handle)
 {
-    UINT status = tx_timer_activate(timer_handle);
-    if(status == TX_SUCCESS)
+    if(handle != NULL)
     {
-        return ezSUCCESS;
+        if(tx_event_flags_delete((TX_EVENT_FLAGS_GROUP*)handle->static_resource) == TX_SUCCESS)
+        {
+            handle->static_resource = NULL;
+            return ezSUCCESS;
+        }
     }
-    ezOsal_ThreadXPrintStatusCode(status);
     return ezFAIL;
 }
 
 
-static ezSTATUS ezOsal_ThreadXTimerStop(ezOsal_TimerHandle_t timer_handle)
+static int ezOsal_ThreadXOSEventWait(ezOsal_EventHandle_t *handle, uint32_t event_mask, uint32_t timeout_ticks)
 {
-    UINT status = tx_timer_deactivate(timer_handle);
-    if(status == TX_SUCCESS)
+    ULONG actual_events;
+    UINT status;
+    if(handle != NULL)
     {
-        return ezSUCCESS;
+        status = tx_event_flags_get((TX_EVENT_FLAGS_GROUP*)handle->static_resource, event_mask, TX_OR, &actual_events, timeout_ticks);
+        if(status == TX_SUCCESS)
+        {
+            return actual_events;
+        }
     }
-    ezOsal_ThreadXPrintStatusCode(status);
+    return 0;
+}
+
+
+static ezSTATUS ezOsal_ThreadXEventSet(ezOsal_EventHandle_t *handle, uint32_t event_mask)
+{
+    if(handle != NULL)
+    {
+        if(tx_event_flags_set((TX_EVENT_FLAGS_GROUP*)handle->static_resource, event_mask, TX_OR) == TX_SUCCESS)
+        {
+            return ezSUCCESS;
+        }
+    }
+    return ezFAIL;
+}
+
+
+static ezSTATUS ezOsal_ThreadXEventClear(ezOsal_EventHandle_t *handle, uint32_t event_mask)
+{
+    if(handle != NULL)
+    {
+        if(tx_event_flags_set((TX_EVENT_FLAGS_GROUP*)handle->static_resource, ~event_mask, TX_AND) == TX_SUCCESS)
+        {
+            return ezSUCCESS;
+        }
+    }
+    return ezFAIL;
+}
+
+
+
+static ezSTATUS ezOsal_ThreadXTimerStop(ezOsal_TimerHandle_t* timer_handle)
+{
+    UINT status = TX_THREAD_ERROR;
+    if(timer_handle != NULL)
+    {
+        status = tx_timer_deactivate(timer_handle->static_resource);
+        if(status == TX_SUCCESS)
+        {
+            return ezSUCCESS;
+        }
+        ezOsal_ThreadXPrintStatusCode(status);
+    }
     return ezFAIL;
 }
 

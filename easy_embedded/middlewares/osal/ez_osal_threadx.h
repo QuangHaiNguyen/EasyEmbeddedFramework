@@ -49,7 +49,7 @@ extern "C" {
 typedef TX_THREAD ezOsal_TaskResource_t;
 typedef TX_SEMAPHORE ezOsal_SemaphoreResource_t;
 typedef TX_TIMER ezOsal_TimerResource_t;
-
+typedef TX_EVENT_FLAGS_GROUP ezOsal_EventResource_t;
 
 /*****************************************************************************
 * Component Variable Definitions
