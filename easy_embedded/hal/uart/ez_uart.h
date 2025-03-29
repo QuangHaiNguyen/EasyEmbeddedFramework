@@ -36,7 +36,7 @@ extern "C" {
 #include "ez_target_config.h"
 #endif
 
-#if (EZ_UART_ENABLE == 1)
+#if (EZ_UART == 1)
 #include <stdint.h>
 #include <stdbool.h>
 
