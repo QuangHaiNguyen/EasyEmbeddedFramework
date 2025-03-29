@@ -27,10 +27,10 @@ target_sources(ez_hal_lib
 target_compile_definitions(ez_hal_lib
     PUBLIC
         EZ_HAL=$<BOOL:${ENABLE_EZ_HAL}>
-    PRIVATE
-        EZ_BUILD_WITH_CMAKE=$<BOOL:${BUILD_WITH_CMAKE}>
         EZ_DRIVER=$<BOOL:${ENABLE_EZ_HAL_DRIVER}>
         EZ_UART=$<BOOL:${ENABLE_EZ_UART}>
+    PRIVATE
+        EZ_BUILD_WITH_CMAKE=$<BOOL:${BUILD_WITH_CMAKE}>
 )
 
 
@@ -38,6 +38,7 @@ target_compile_definitions(ez_hal_lib
 target_include_directories(ez_hal_lib
     PUBLIC
         ${CMAKE_CURRENT_LIST_DIR}
+        ${CMAKE_CURRENT_LIST_DIR}/uart
     PRIVATE
         # Please add private folders here
     INTERFACE

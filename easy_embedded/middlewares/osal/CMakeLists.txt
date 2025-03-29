@@ -1,67 +1,60 @@
 # ----------------------------------------------------------------------------
 # Author: Hai Nguyen
-# Name: ez_target
+# Name: ez_osal_lib
 # License: This file is published under the license described in LICENSE.md
-# Description: CMake file for building linux target
+# Description: PLEASE ADD TEXT HERE
 # ----------------------------------------------------------------------------
 
-add_executable(ez_target)
+add_library(ez_osal_lib STATIC)
 
 message(STATUS "**********************************************************")
-message(STATUS "* Generating ez_target build files")
+message(STATUS "* Generating ez_osal_lib library build files")
 message(STATUS "**********************************************************")
 
 
-# Include --------------------------------------------------------------------
-include(features.cmake)
+set(FRAMEWORK_ROOT_DIR ${CMAKE_SOURCE_DIR}/easy_embedded)
 
 
 # Source files ---------------------------------------------------------------
-target_sources(ez_target
+target_sources(ez_osal_lib
     PRIVATE
-        main.c
-        app/ez_app_task_worker.c
-        app/ez_app_osal.c
+        ez_osal.c
+        $<$<BOOL:${ENABLE_FREERTOS}>:ez_osal_freertos.c>
+        $<$<BOOL:${ENABLE_THREADX}>:ez_osal_threadx.c>
 )
 
 
 # Definitions ----------------------------------------------------------------
-target_compile_definitions(ez_target
+target_compile_definitions(ez_osal_lib
     PUBLIC
-        # Please add definitions here
+        EZ_OSAL=$<BOOL:${ENABLE_EZ_OSAL}>
+        EZ_FREERTOS_PORT=$<BOOL:${ENABLE_FREERTOS}>
+        EZ_OSAL_USE_STATIC=$<BOOL:${ENABLE_EZ_OSAL_USE_STATIC}>
+        EZ_THREADX_PORT=$<BOOL:${ENABLE_THREADX}>
+    PRIVATE
+        EZ_BUILD_WITH_CMAKE=$<BOOL:${BUILD_WITH_CMAKE}>
 )
 
 
 # Include directory -----------------------------------------------------------
-target_include_directories(ez_target
+target_include_directories(ez_osal_lib
     PUBLIC
-        app/
+        ${CMAKE_CURRENT_LIST_DIR}
     PRIVATE
         # Please add private folders here
     INTERFACE
         # Please add interface folders here
 )
 
-# Config RTOS -----------------------------------------------------------------
-set(FREERTOS_HEAP "4" CACHE INTERNAL "")
-set(FREERTOS_PORT "GCC_POSIX" CACHE INTERNAL "")
-
-add_library(freertos_config INTERFACE)
-target_include_directories(freertos_config SYSTEM
-INTERFACE
-    ${CMAKE_SOURCE_DIR}/targets/linux_freertos/
-)
-target_compile_definitions(freertos_config
-INTERFACE
-    projCOVERAGE_TEST=0
-)
 
 # Link libraries -------------------------------------------------------------
-target_link_libraries(ez_target
+target_link_libraries(ez_osal_lib
     PUBLIC
         # Please add public libraries
     PRIVATE
-        easy_embedded_lib
+        ez_utilities_lib
+        $<$<BOOL:${ENABLE_FREERTOS}>:freertos_kernel>
+        $<$<BOOL:${ENABLE_THREADX}>:threadx>
     INTERFACE
         # Please add interface libraries
 )

@@ -14,6 +14,11 @@ message(STATUS "**********************************************************")
 
 set(FRAMEWORK_ROOT_DIR ${CMAKE_SOURCE_DIR}/easy_embedded)
 
+# Inlcude subfolders-----------------------------------------------------------
+if(ENABLE_EZ_OSAL)
+    add_subdirectory(osal)
+endif()
+
 
 # Source files ---------------------------------------------------------------
 target_sources(ez_middlewares_lib
@@ -46,7 +51,7 @@ target_include_directories(ez_middlewares_lib
 # Link libraries -------------------------------------------------------------
 target_link_libraries(ez_middlewares_lib
     PUBLIC
-        # Please add public libraries
+        $<$<BOOL:${ENABLE_EZ_OSAL}>:ez_osal_lib>
     PRIVATE
         ez_utilities_lib
     INTERFACE
