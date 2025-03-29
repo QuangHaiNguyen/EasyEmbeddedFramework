@@ -67,10 +67,11 @@ extern "C" {
 #define EZ_OSAL_DEFINE_TASK_HANDLE(NAME, STACK_SIZE, PRIO, FUNC, ARG, RESOURCE) \
     ezOsal_TaskHandle_t NAME = { \
         .task_name = #NAME, \
-        .stack_size = STACK_SIZE, \
         .priority = PRIO, \
+        .stack_size = STACK_SIZE, \
         .task_function = FUNC, \
         .argument = ARG, \
+        .task_handle = NULL, \
         .static_resource = RESOURCE \
     }
 
