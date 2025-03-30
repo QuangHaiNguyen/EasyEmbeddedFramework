@@ -88,17 +88,8 @@ EZ_OSAL_DEFINE_EVENT_HANDLE(event, NULL);
 /*****************************************************************************
 * Public functions
 *****************************************************************************/
-void ezApp_OsalInit(void)
+void ezApp_OsalInit(void* arg)
 {
-    rtos_interface = ezOsal_ThreadXGetInterface();
-    (void) ezOsal_SetInterface(rtos_interface);
-    ezOsal_TaskStartScheduler();
-}
-
-void tx_application_define(void *first_unused_memory)
-{
-    (void) ezOsal_Init(first_unused_memory);
-
     (void) ezOsal_SemaphoreCreate(&semaphore_handle);
     (void) ezOsal_TimerCreate(&timer);
 
@@ -111,6 +102,7 @@ void tx_application_define(void *first_unused_memory)
 
     ezOsal_TaskSuspend(&task2);
 }
+
 
 /*****************************************************************************
 * Local functions

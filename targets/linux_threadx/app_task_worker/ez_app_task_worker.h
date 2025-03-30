@@ -56,7 +56,7 @@ extern "C" {
 /*****************************************************************************
 * Function Prototypes
 *****************************************************************************/
-int ezApp_TaskWorkerInit(void);
+int ezApp_TaskWorkerInit(void *arg);
 
 
 #endif /* EZ_APP_TASK_WORKER_ENABLE == 1 */
