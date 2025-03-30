@@ -67,10 +67,11 @@ extern "C" {
  */
 struct ezTaskWorker
 {
-#if (EZ_OSAL == 1)
+
     ezQueue msg_queue;                      /**< Queue containing the tasks to be executed */
     char* worker_name;                      /**< Name of the worker */
     uint32_t sleep_ticks;                   /**< Number of tick the thread must sleep before being activated again */
+#if ((EZ_FREERTOS_PORT == 1) || (EZ_THREADX_PORT == 1))
     ezOsal_TaskHandle_t *task_handle;       /**< task handle */
     ezOsal_SemaphoreHandle_t *sem_handle;   /**< semaphore handle */
     ezOsal_EventHandle_t *event_handle;     /**< event handle */

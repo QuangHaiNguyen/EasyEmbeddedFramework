@@ -82,7 +82,7 @@ bool ezTaskWorker_CreateWorker(struct ezTaskWorker *worker,
 
     if(worker != NULL)
     {
-        #if(EZ_OSAL == 1)
+        #if ((EZ_FREERTOS_PORT == 1) || (EZ_THREADX_PORT == 1))
         if(worker->task_handle != NULL && worker->event_handle != NULL && worker->sem_handle != NULL)
         {
             status = ezOsal_TaskCreate(worker->task_handle);
@@ -143,7 +143,7 @@ bool ezTaskWorker_EnqueueTask(struct ezTaskWorker *worker,
     {
         ret = true;
 
-        #if(EZ_OSAL == 1)
+        #if ((EZ_FREERTOS_PORT == 1) || (EZ_THREADX_PORT == 1))
         EZTRACE("Getting semaphore from worker = %s", worker->worker_name);
         status = ezOsal_SemaphoreTake(worker->sem_handle, ticks_to_wait);
         if(status != ezSUCCESS)
@@ -181,12 +181,12 @@ bool ezTaskWorker_EnqueueTask(struct ezTaskWorker *worker,
                     ret = true;
                     EZINFO("Add new task to %s",worker->worker_name);
 
-                    #if (EZ_OSAL == 1)
+                    #if ((EZ_FREERTOS_PORT == 1) || (EZ_THREADX_PORT == 1))
                     if(ezOsal_EventSet(worker->event_handle, EZ_EVENT_TASK_AVAIL) != ezSUCCESS)
                     {
                         ret = false;
                     }
-                    #endif /* (EZ_OSAL == 1) */
+                    #endif /* ((EZ_FREERTOS_PORT == 1) || (EZ_THREADX_PORT == 1)) */
                 }
                 else
                 {
@@ -196,10 +196,10 @@ bool ezTaskWorker_EnqueueTask(struct ezTaskWorker *worker,
                     EZERROR("Cannot add task to %s",worker->worker_name);
                 }
             }
-#if (EZ_OSAL == 1)
+#if ((EZ_FREERTOS_PORT == 1) || (EZ_THREADX_PORT == 1))
             /* Expect nothing wrong when giving semaphore */
             ezOsal_SemaphoreGive(worker->sem_handle);
-#endif /* (EZ_OSAL == 1) */
+#endif /* ((EZ_FREERTOS_PORT == 1) || (EZ_THREADX_PORT == 1)) */
         }
     }
 
@@ -211,7 +211,7 @@ bool ezTaskWorker_EnqueueTask(struct ezTaskWorker *worker,
     return ret;
 }
 
-#if (EZ_OSAL == 1)
+#if ((EZ_FREERTOS_PORT == 1) || (EZ_THREADX_PORT == 1))
 void ezTaskWorker_ExecuteTask(struct ezTaskWorker *worker, uint32_t ticks_to_wait)
 {
     ezSTATUS status = ezFAIL;
