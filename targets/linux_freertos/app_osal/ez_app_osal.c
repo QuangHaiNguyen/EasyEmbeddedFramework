@@ -98,8 +98,6 @@ void ezApp_OsalInit(void)
     task2_resource.stack = stack2;
     task3_resource.stack = stack3;
 #endif
-    rtos_interface = ezOsal_FreeRTOSGetInterface();
-    (void) ezOsal_SetInterface(rtos_interface);
 
     (void) ezOsal_SemaphoreCreate(&semaphore_handle);
     (void) ezOsal_TimerCreate(&timer);
@@ -112,7 +110,6 @@ void ezApp_OsalInit(void)
     ezOsal_EventCreate(&event);
 
     ezOsal_TaskSuspend(&task2);
-    ezOsal_TaskStartScheduler();
 }
 
 
