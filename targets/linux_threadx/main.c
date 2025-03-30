@@ -33,6 +33,8 @@
 #include "ez_easy_embedded.h"
 #include "ez_app_task_worker.h"
 #include "ez_app_osal.h"
+#include "ez_osal.h"
+#include "ez_osal_threadx.h"
 
 /******************************************************************************
 * Module Preprocessor Macros
@@ -47,7 +49,7 @@
 /******************************************************************************
 * Module Variable Definitions
 *******************************************************************************/
-
+static const ezOsal_Interfaces_t *rtos_interface = NULL;
 
 /******************************************************************************
 * Function Definitions
@@ -60,10 +62,18 @@
 void main(void)
 {
     ezEasyEmbedded_Initialize();
-    //ezApp_TaskWorkerInit();
-    ezApp_OsalInit();
+    rtos_interface = ezOsal_ThreadXGetInterface();
+    (void) ezOsal_SetInterface(rtos_interface);
+    ezOsal_TaskStartScheduler();
 }
 
+
+void tx_application_define(void *first_unused_memory)
+{
+    (void) ezOsal_Init(first_unused_memory);
+    ezApp_OsalInit(NULL);
+    ezApp_TaskWorkerInit(NULL);
+}
 
 /******************************************************************************
 * Internal functions

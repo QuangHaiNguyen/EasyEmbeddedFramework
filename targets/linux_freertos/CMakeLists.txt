@@ -20,8 +20,10 @@ include(features.cmake)
 target_sources(ez_target
     PRIVATE
         main.c
-        app/ez_app_task_worker.c
-        app/ez_app_osal.c
+        app_task_worker/ez_app_task_worker.c
+        app_task_worker/ez_worker1.c
+        app_task_worker/ez_worker2.c
+        app_osal/ez_app_osal.c
 )
 
 
@@ -35,7 +37,8 @@ target_compile_definitions(ez_target
 # Include directory -----------------------------------------------------------
 target_include_directories(ez_target
     PUBLIC
-        app/
+        app_osal/
+        app_task_worker/
     PRIVATE
         # Please add private folders here
     INTERFACE

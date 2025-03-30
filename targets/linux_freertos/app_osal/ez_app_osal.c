@@ -30,16 +30,16 @@
 #define MOD_NAME    "ez_app_osal"       /**< module name */
 #include "ez_logging.h"
 #include "ez_osal.h"
-#include "ez_osal_threadx.h"
+#include "ez_osal_freertos.h"
 
 /*****************************************************************************
 * Component Preprocessor Macros
 *****************************************************************************/
 #define STACK_SIZE    256
+
 #define FLAG0  (1 << 0)
 #define FLAG1  (1 << 1)
 #define FLAG2  (1 << 2)
-
 
 /*****************************************************************************
 * Component Typedefs
@@ -60,21 +60,24 @@ static void Task2Function(void *argument);
 static void Task3Function(void *argument);
 static void TimerElapseCallback(void *argument);
 
-
 #if (EZ_OSAL_USE_STATIC == 1)
+static ezOsal_Stack_t stack1[STACK_SIZE];
+static ezOsal_Stack_t stack2[STACK_SIZE];
+static ezOsal_Stack_t stack3[STACK_SIZE];
+
 static ezOsal_TaskResource_t task1_resource;
 static ezOsal_TaskResource_t task2_resource;
 static ezOsal_TaskResource_t task3_resource;
 
 static ezOsal_SemaphoreResource_t semaphore_resource;
+
 static ezOsal_EventResource_t event_resource;
-static ezOsal_TimerResource_t timer_resource;
 
 EZ_OSAL_DEFINE_TASK_HANDLE(task1, STACK_SIZE, 1, Task1Function, NULL, &task1_resource);
 EZ_OSAL_DEFINE_TASK_HANDLE(task2, STACK_SIZE, 1, Task2Function, NULL, &task2_resource);
 EZ_OSAL_DEFINE_TASK_HANDLE(task3, STACK_SIZE, 1, Task3Function, NULL, &task3_resource);
 EZ_OSAL_DEFINE_SEMAPHORE_HANDLE(semaphore_handle, 1, &semaphore_resource);
-EZ_OSAL_DEFINE_TIMER_HANDLE(timer, 50, TimerElapseCallback, NULL, &timer_resource);
+EZ_OSAL_DEFINE_TIMER_HANDLE(timer, 50, TimerElapseCallback, NULL, NULL);
 EZ_OSAL_DEFINE_EVENT_HANDLE(event, &event_resource);
 #else
 EZ_OSAL_DEFINE_TASK_HANDLE(task1, STACK_SIZE, 1, Task1Function, NULL, NULL);
@@ -90,14 +93,11 @@ EZ_OSAL_DEFINE_EVENT_HANDLE(event, NULL);
 *****************************************************************************/
 void ezApp_OsalInit(void)
 {
-    rtos_interface = ezOsal_ThreadXGetInterface();
-    (void) ezOsal_SetInterface(rtos_interface);
-    ezOsal_TaskStartScheduler();
-}
-
-void tx_application_define(void *first_unused_memory)
-{
-    (void) ezOsal_Init(first_unused_memory);
+#if (EZ_OSAL_USE_STATIC == 1)
+    task1_resource.stack = stack1;
+    task2_resource.stack = stack2;
+    task3_resource.stack = stack3;
+#endif
 
     (void) ezOsal_SemaphoreCreate(&semaphore_handle);
     (void) ezOsal_TimerCreate(&timer);
@@ -111,6 +111,7 @@ void tx_application_define(void *first_unused_memory)
 
     ezOsal_TaskSuspend(&task2);
 }
+
 
 /*****************************************************************************
 * Local functions
@@ -225,6 +226,7 @@ static void Task3Function(void *argument)
 
                 ezOsal_TimerDelete(&timer);
                 ezOsal_TaskDelete(&task3);
+                
             }
         }
         ezOsal_TaskDelay(10);

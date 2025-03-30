@@ -18,8 +18,6 @@ set(FRAMEWORK_ROOT_DIR ${CMAKE_SOURCE_DIR}/easy_embedded)
 # Source files ---------------------------------------------------------------
 target_sources(ez_task_worker_lib
     PRIVATE
-        $<$<BOOL:${ENABLE_THREADX}>:threadx_port/ez_threadx_port.c>
-        $<$<BOOL:${ENABLE_FREERTOS}>:freertos_port/ez_freertos_port.c>
         ez_task_worker.c
 )
 
@@ -39,8 +37,6 @@ target_compile_definitions(ez_task_worker_lib
 target_include_directories(ez_task_worker_lib
     PUBLIC
         ${CMAKE_CURRENT_LIST_DIR}
-        $<$<BOOL:${ENABLE_THREADX}>:${CMAKE_CURRENT_LIST_DIR}/threadx_port>
-        $<$<BOOL:${ENABLE_FREERTOS}>:${CMAKE_CURRENT_LIST_DIR}/freertos_port>
     PRIVATE
         #
     INTERFACE
@@ -51,6 +47,7 @@ target_include_directories(ez_task_worker_lib
 # Link libraries -------------------------------------------------------------
 target_link_libraries(ez_task_worker_lib
     PUBLIC
+        $<$<BOOL:${ENABLE_EZ_OSAL}>:ez_osal_lib>
         $<$<BOOL:${ENABLE_FREERTOS}>:freertos_kernel>
         $<$<BOOL:${ENABLE_THREADX}>:threadx>
     PRIVATE
