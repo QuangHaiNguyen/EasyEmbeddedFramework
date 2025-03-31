@@ -63,8 +63,8 @@ static ezOsal_SemaphoreResource_t semaphore_resource;
 static ezOsal_EventResource_t event_resource;
 
 static EZ_OSAL_DEFINE_TASK_HANDLE(worker1_task, STACK_SIZE, 1, worker1_thread, NULL, &task1_resource);
-static EZ_OSAL_DEFINE_SEMAPHORE_HANDLE(worker1_semaphore, 1, &semaphore1_resource);
-static EZ_OSAL_DEFINE_EVENT_HANDLE(worker1_event, &event1_resource);
+static EZ_OSAL_DEFINE_SEMAPHORE_HANDLE(worker1_semaphore, 1, &semaphore_resource);
+static EZ_OSAL_DEFINE_EVENT_HANDLE(worker1_event, &event_resource);
 #else
 static EZ_OSAL_DEFINE_TASK_HANDLE(worker1_task, STACK_SIZE, 1, worker1_thread, NULL, NULL);
 static EZ_OSAL_DEFINE_SEMAPHORE_HANDLE(worker1_semaphore, 1, NULL);

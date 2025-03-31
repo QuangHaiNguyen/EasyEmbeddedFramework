@@ -9,7 +9,7 @@ option(ENABLE_EZ_LOGGING_COLOR  "Enable logging using color feature"    ON)
 option(ENABLE_EZ_LINKEDLIST     "Enable linked list feature"            ON)
 option(ENABLE_EZ_HEXDUMP        "Enable hexdump feature"                ON)
 option(ENABLE_EZ_RING_BUFFER    "Enable ring buffer feature"            ON)
-option(ENABLE_EZ_ASSERT         "Enable assert feature"                 OFF)
+option(ENABLE_EZ_ASSERT         "Enable assert feature"                 ON)
 option(ENABLE_EZ_STATIC_ALLOC   "Enable static allocation feature"      ON)
 option(ENABLE_EZ_SYS_ERROR      "Enable system error feature"           ON)
 option(ENABLE_EZ_QUEUE          "Enable queue feature"                  ON)
@@ -29,7 +29,7 @@ option(ENABLE_EZ_HAL_DRIVER     "Enable the Driver module"                  ON)
 option(ENABLE_EZ_UART           "Enable the uart driver"                    ON)
 
 option(ENABLE_EZ_OSAL               "Enable operating system abstract layer"            ON)
-option(ENABLE_EZ_OSAL_USE_STATIC    "Enable operating system using static allocation"   OFF)
+option(ENABLE_EZ_OSAL_USE_STATIC    "Enable operating system using static allocation"   ON)
 
 # Configure HAL driver
 option(ENABLE_EZ_HAL_ECHO       "Enable HAL echo driver"                    OFF)
