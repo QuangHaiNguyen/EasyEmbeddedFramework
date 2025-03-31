@@ -34,6 +34,7 @@
 #include "task.h"
 #include "semphr.h"
 #include "event_groups.h"
+#include "ez_assert.h"
 
 /*****************************************************************************
 * Component Preprocessor Macros
@@ -121,7 +122,6 @@ const ezOsal_Interfaces_t *ezOsal_FreeRTOSGetInterface(void)
 *****************************************************************************/
 ezSTATUS ezOsal_FreeRTOSTaskCreate(ezOsal_TaskHandle_t* handle)
 {
-    TaskHandle_t task_handle = NULL;
     if(handle != NULL)
     {
         EZTRACE("ezOsal_FreeRTOSTaskCreate(task_name = %s, stack_size = %d, priority = %d)",
@@ -130,6 +130,10 @@ ezSTATUS ezOsal_FreeRTOSTaskCreate(ezOsal_TaskHandle_t* handle)
             handle->priority);
 
 #if (EZ_OSAL_USE_STATIC == 1)
+        ASSERT_MSG(handle->static_resource != NULL, "static resource must be set");
+        ASSERT_MSG(((ezOsal_TaskResource_t*)handle->static_resource)->stack != NULL,
+            "static resource must be set");
+
         handle->task_handle = xTaskCreateStatic(handle->task_function,
             handle->task_name,
             handle->stack_size,
@@ -222,6 +226,7 @@ static ezSTATUS ezOsal_FreeRTOSSemaphoreCreate(ezOsal_SemaphoreHandle_t *handle)
     {
         EZTRACE("ezOsal_FreeRTOSSemaphoreCreate(max_count = %d)", handle->max_count);
 #if (EZ_OSAL_USE_STATIC == 1)
+        ASSERT_MSG(handle->static_resource != NULL, "static_resource must be set");
         handle->handle = xSemaphoreCreateCountingStatic(handle->max_count, 0, (StaticSemaphore_t*)handle->static_resource);
 #else
         handle->handle = xSemaphoreCreateCounting(handle->max_count, 0); 
@@ -275,7 +280,6 @@ static ezSTATUS ezOsal_SemaphoreFreeRTOSGive(ezOsal_SemaphoreHandle_t *handle)
 
 static ezSTATUS ezOsal_FreeRTOSTimerCreate(ezOsal_TimerHandle_t *handle)
 {
-    TimerHandle_t timer_handle = NULL;
     if(handle != NULL)
     {
         EZTRACE("ezOsal_FreeRTOSTimerCreate(name = %s, period_ticks = %d)",
@@ -341,6 +345,7 @@ ezSTATUS ezOsal_FreeRTOSEventCreate(ezOsal_EventHandle_t *handle)
     {
         EZTRACE("ezOsal_FreeRTOSEventCreate()");
 #if (EZ_OSAL_USE_STATIC == 1)
+        ASSERT_MSG(handle->static_resource != NULL, "static_resource must be set");
         handle->handle = (void*)xEventGroupCreateStatic((StaticEventGroup_t*)handle->static_resource);
 #else
         handle->handle = (void*)xEventGroupCreate();

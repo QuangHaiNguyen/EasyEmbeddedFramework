@@ -61,7 +61,6 @@ static void Task3Function(void *argument);
 static void TimerElapseCallback(void *argument);
 
 
-#if (EZ_OSAL_USE_STATIC == 1)
 static ezOsal_TaskResource_t task1_resource;
 static ezOsal_TaskResource_t task2_resource;
 static ezOsal_TaskResource_t task3_resource;
@@ -76,14 +75,6 @@ EZ_OSAL_DEFINE_TASK_HANDLE(task3, STACK_SIZE, 1, Task3Function, NULL, &task3_res
 EZ_OSAL_DEFINE_SEMAPHORE_HANDLE(semaphore_handle, 1, &semaphore_resource);
 EZ_OSAL_DEFINE_TIMER_HANDLE(timer, 50, TimerElapseCallback, NULL, &timer_resource);
 EZ_OSAL_DEFINE_EVENT_HANDLE(event, &event_resource);
-#else
-EZ_OSAL_DEFINE_TASK_HANDLE(task1, STACK_SIZE, 1, Task1Function, NULL, NULL);
-EZ_OSAL_DEFINE_TASK_HANDLE(task2, STACK_SIZE, 1, Task2Function, NULL, NULL);
-EZ_OSAL_DEFINE_TASK_HANDLE(task3, STACK_SIZE, 1, Task3Function, NULL, NULL);
-EZ_OSAL_DEFINE_SEMAPHORE_HANDLE(semaphore_handle, 1, NULL);
-EZ_OSAL_DEFINE_TIMER_HANDLE(timer, 50, TimerElapseCallback, NULL, NULL);
-EZ_OSAL_DEFINE_EVENT_HANDLE(event, NULL);
-#endif
 
 /*****************************************************************************
 * Public functions

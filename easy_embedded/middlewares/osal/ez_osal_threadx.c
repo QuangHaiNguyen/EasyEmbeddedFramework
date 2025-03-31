@@ -31,7 +31,7 @@
 #define MOD_NAME    "ez_osal_threadx"       /**< module name */
 #include "ez_logging.h"
 #include "tx_api.h"
-
+#include "ez_assert.h"
 
 /*****************************************************************************
 * Component Preprocessor Macros
@@ -141,6 +141,8 @@ static ezSTATUS ezOsal_ThreadXTaskCreate(ezOsal_TaskHandle_t* task_handle)
     UINT status = TX_THREAD_ERROR;
     if(task_handle != NULL)
     {
+        ASSERT_MSG(task_handle->static_resource != NULL,
+            "task_handle->static_resource is null, please set it to ezOsal_TaskResource_t");
         status = tx_byte_allocate(&threadx_byte_pool, 
             (void**)&mem_pointer,
             task_handle->stack_size,
@@ -247,6 +249,8 @@ static ezSTATUS ezOsal_ThreadXSemaphoreCreate(ezOsal_SemaphoreHandle_t* semaphor
     UINT status = TX_THREAD_ERROR;
     if(semaphore_handle != NULL)
     {
+        ASSERT_MSG(semaphore_handle->static_resource != NULL,
+            "semaphore_handle->static_resource is null, please set it to ezOsal_SemaphoreResource_t");
         status = tx_semaphore_create((TX_SEMAPHORE*)semaphore_handle->static_resource, (CHAR *)NULL, semaphore_handle->max_count);
         if(status == TX_SUCCESS)
         {
@@ -310,6 +314,8 @@ static ezSTATUS ezOsal_ThreadXTimerCreate(ezOsal_TimerHandle_t *timer_handle)
     UINT status = TX_THREAD_ERROR;
     if(timer_handle != NULL)
     {
+        ASSERT_MSG(timer_handle->static_resource != NULL,
+            "timer_handle->static_resource is null, please set it to ezOsal_TimerResource_t");
         status = tx_timer_create((TX_TIMER*)timer_handle->static_resource,
             (CHAR *)timer_handle->timer_name,
             (VOID (*)(ULONG))timer_handle->timer_callback,
@@ -364,6 +370,8 @@ static ezSTATUS ezOsal_ThreadXEventCreate(ezOsal_EventHandle_t *handle)
 {
     if(handle != NULL)
     {
+        ASSERT_MSG(handle->static_resource != NULL,
+            "handle->static_resource is null, please set it to ezOsal_EventResource_t");
         if(tx_event_flags_create((TX_EVENT_FLAGS_GROUP*)handle->static_resource, NULL) ==TX_SUCCESS)
         {
             return ezSUCCESS;
