@@ -26,6 +26,7 @@
 *******************************************************************************/
 #include <stdint.h>
 #include <stdbool.h>
+#include <string.h>
 #include "unity.h"
 #include "unity_fixture.h"
 #include "ez_state_machine.h"

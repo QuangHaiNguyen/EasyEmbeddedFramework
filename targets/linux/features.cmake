@@ -1,3 +1,7 @@
+option(ENABLE_EZ_SERVICE           "Enable HAL layer"                   ON)
+option(ENABLE_EZ_MIDDLEWARES       "Enable Middlewares layer"           ON)
+option(ENABLE_EZ_HAL               "Enable HAL layer"                   ON)
+
 # Configure Utilities modules
 option(ENABLE_EZ_LOGGING        "Enable logging feature"                ON)
 option(ENABLE_EZ_LOGGING_COLOR  "Enable logging using color feature"    ON)
@@ -22,6 +26,9 @@ option(ENABLE_EZ_RPC            "Enable remote procedure call"              ON)
 option(ENABLE_EZ_IPC            "Enable inter process communication"        ON)
 option(ENABLE_EZ_HAL_DRIVER     "Enable the Driver module"                  ON)
 option(ENABLE_EZ_UART           "Enable the uart driver"                    ON)
+
+option(ENABLE_EZ_OSAL               "Enable operating system abstract layer"            ON)
+option(ENABLE_EZ_OSAL_USE_STATIC    "Enable operating system using static allocation"   OFF)
 
 # Configure HAL driver
 option(ENABLE_EZ_HAL_ECHO       "Enable HAL echo driver"                    OFF)
